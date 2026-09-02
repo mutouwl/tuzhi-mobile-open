@@ -1,0 +1,29 @@
+.container{
+    padding: 15px;
+}
+.store-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 10px auto;
+    background-color: #fff;
+    padding: 20px;
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.store-info-name{
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D2129;
+}
+
+.store-join{
+    padding: 4px 8px;
+    background-color: #FFF3F1;
+    color: #FF6146;
+    font-size: 12px;
+}

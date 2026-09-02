@@ -1,0 +1,19 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508146",
+  "data": {
+    "id": 2,
+    "user_id": 38,
+    "uniacid": 1,
+    "name": "冯浩森",
+    "mobile": "13222222222",
+    "province": "河北省",
+    "city": "秦皇岛市",
+    "district": "北戴河区",
+    "address": "123",
+    "is_default": 1,
+    "createtime": 1778997131,
+    "updatetime": 1778997131
+  }
+}

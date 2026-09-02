@@ -1,0 +1,19 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508195",
+  "data": {
+    "balance": "96471.49",
+    "total_income": "120398.21",
+    "total_withdraw": "4.00",
+    "wechat_bound": false,
+    "withdraw_status": "close",
+    "withdraw_types": [
+      "bank"
+    ],
+    "withdraw_tip": "提现提示文字",
+    "withdraw_min_money": 0,
+    "withdraw_month_times": 5,
+    "month_used_count": 0
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "code": 1,
+  "msg": "返回成功",
+  "time": "1786508182",
+  "data": [
+    {
+      "id": 24,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "家庭育儿",
+      "image": null,
+      "sort": 0,
+      "status": 1,
+      "createtime": 1783680708
+    },
+    {
+      "id": 23,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "考研升学",
+      "image": "",
+      "sort": 0,
+      "status": 1,
+      "createtime": 1782873836
+    },
+    {
+      "id": 20,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "英语留学",
+      "image": "",
+      "sort": 14,
+      "status": 1,
+      "createtime": 1771929157
+    },
+    {
+      "id": 21,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "办公技能",
+      "image": "",
+      "sort": 15,
+      "status": 1,
+      "createtime": 1771929184
+    },
+    {
+      "id": 22,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "健康常识",
+      "image": "",
+      "sort": 16,
+      "status": 1,
+      "createtime": 1771929192
+    }
+  ]
+}

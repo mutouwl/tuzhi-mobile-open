@@ -1,0 +1,32 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508132",
+  "data": {
+    "addressList": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "mobile": "13222222222",
+        "province": "示例",
+        "city": "示例",
+        "district": "示例",
+        "address": "示例地址",
+        "is_default": true
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "mobile": "13222222222",
+        "province": "示例",
+        "city": "示例",
+        "district": "示例",
+        "address": "示例地址",
+        "is_default": true
+      }
+    ],
+    "isSelectMode": "示例",
+    "data": "示例",
+    "loading": "示例"
+  }
+}

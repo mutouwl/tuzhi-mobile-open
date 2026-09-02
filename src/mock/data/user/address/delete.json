@@ -1,0 +1,46 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508132",
+  "data": {
+    "isEdit": "示例",
+    "addressId": 1,
+    "form": {
+      "name": "示例标题",
+      "mobile": "13222222222",
+      "province": "示例",
+      "city": "示例",
+      "district": "示例",
+      "address": "示例地址",
+      "is_default": true
+    },
+    "parseText": "示例内容",
+    "showRegionPicker": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "regionText": "示例内容",
+    "addressList": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "mobile": "13222222222",
+        "province": "示例",
+        "city": "示例",
+        "district": "示例",
+        "address": "示例地址",
+        "is_default": true
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "mobile": "13222222222",
+        "province": "示例",
+        "city": "示例",
+        "district": "示例",
+        "address": "示例地址",
+        "is_default": true
+      }
+    ],
+    "isSelectMode": "示例",
+    "data": "示例",
+    "loading": "示例"
+  }
+}

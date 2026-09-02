@@ -1,0 +1,39 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508121",
+  "data": {
+    "modal": {
+      "pay": 99
+    },
+    "list": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "price": 99,
+        "icon": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "price": 99,
+        "icon": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "giftCount": 10,
+    "checkedOptionsIndex": true,
+    "orderNo": "示例",
+    "data": "示例",
+    "order_no": "示例",
+    "totalPrice": 99,
+    "show": true,
+    "zIndex": "示例",
+    "active": true,
+    "gift_max_count": 10,
+    "loading": "示例"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508157",
+  "data": {
+    "data": {
+      "name": "示例标题",
+      "views": 10,
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "activity_start_time": "1786508157"
+    },
+    "form": {
+      "name": "示例标题",
+      "mobile": "13222222222"
+    },
+    "loading": "示例"
+  }
+}

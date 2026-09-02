@@ -1,0 +1,118 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508102",
+  "data": {
+    "actionList": [
+      {
+        "id": 1,
+        "name": "示例考试",
+        "index": "示例",
+        "fontSize": "示例",
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      },
+      {
+        "id": 2,
+        "name": "示例考试",
+        "index": "示例",
+        "fontSize": "示例",
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      }
+    ],
+    "show": true,
+    "questionList": [
+      {
+        "id": 1,
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      },
+      {
+        "id": 2,
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      }
+    ],
+    "active": true,
+    "isActive": true,
+    "last": "示例",
+    "type": "示例",
+    "score": 5,
+    "questionResultText": "示例内容",
+    "parseAnswer": "示例内容",
+    "answer": "示例内容",
+    "user_answer": "示例用户",
+    "user_score": 5,
+    "edit": "示例",
+    "questionResultClass": "示例",
+    "question": "示例",
+    "errorAnswerComputed": "示例内容",
+    "option": "示例",
+    "optionClickAnswer": "示例内容",
+    "analysis": {
+      "trim": "示例"
+    },
+    "indexOf": "示例",
+    "data": {
+      "question_list": {
+        "length": "示例"
+      },
+      "question_count": 10,
+      "result_true_count": 10,
+      "result_error_count": 10,
+      "updatetime": "1786508102",
+      "createtime": "1786508102",
+      "prop": "示例"
+    },
+    "data.question_list": [
+      {
+        "id": 1,
+        "score": 5,
+        "option": "示例",
+        "type": "示例",
+        "analysis": "示例",
+        "question": "示例",
+        "answer": "示例内容",
+        "title": "示例考试",
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      },
+      {
+        "id": 2,
+        "score": 5,
+        "option": "示例",
+        "type": "示例",
+        "analysis": "示例",
+        "question": "示例",
+        "answer": "示例内容",
+        "title": "示例考试",
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      }
+    ],
+    "$tools": {
+      "formatMediaTime": "1786508102"
+    }
+  }
+}

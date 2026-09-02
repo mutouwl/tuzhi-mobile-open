@@ -1,0 +1,37 @@
+{
+  "code": 1,
+  "msg": "返回成功",
+  "time": "1786508165",
+  "data": [
+    {
+      "id": 1,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "1235",
+      "status": 1,
+      "sort": 0,
+      "createtime": 1712816722,
+      "level": 0
+    },
+    {
+      "id": 5,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "茨木",
+      "status": 1,
+      "sort": 5,
+      "createtime": 1713838125,
+      "level": 0
+    },
+    {
+      "id": 3,
+      "uniacid": 1,
+      "parent_id": 0,
+      "name": "324",
+      "status": 1,
+      "sort": 6,
+      "createtime": 1712819913,
+      "level": 0
+    }
+  ]
+}

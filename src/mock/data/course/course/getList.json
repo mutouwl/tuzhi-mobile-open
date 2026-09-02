@@ -1,0 +1,157 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508176",
+  "data": [
+    {
+      "id": 645,
+      "name": "开心",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260810/7631976f7173f433740831e0f426a134.jpg",
+      "type": "live",
+      "briefing": "",
+      "pay_type": "free",
+      "price": "0.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 644,
+      "name": "李龙",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260808/f27490ef8b3c3fc362c77644e7c606aa.jpeg",
+      "type": "live",
+      "briefing": "李龙生日会",
+      "pay_type": "free",
+      "price": "0.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 430,
+      "name": "سىناق دەرىسلىك",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/3e8411d84caf66fd56d7a46746f72e2e.jpg",
+      "type": "column",
+      "briefing": "简介",
+      "pay_type": "free",
+      "price": "100.00",
+      "price_marking": "50.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 420,
+      "name": "55666666666333333",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/e16476aadf780e297d93cf3c840d5d0f.jpg",
+      "type": "column",
+      "briefing": "123",
+      "pay_type": "pay",
+      "price": "88.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 419,
+      "name": "健康管理2",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "type": "article",
+      "briefing": "健康管理",
+      "pay_type": "pay",
+      "price": "1.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 418,
+      "name": "健康管理1",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "type": "article",
+      "briefing": "健康管理",
+      "pay_type": "pay",
+      "price": "1.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 417,
+      "name": "健康管理",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "type": "article",
+      "briefing": "健康管理",
+      "pay_type": "pay",
+      "price": "1.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 380,
+      "name": "健康管理",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "type": "article",
+      "briefing": "健康管理",
+      "pay_type": "free",
+      "price": "0.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 372,
+      "name": "111",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260712/505920496acd47d8d91c2782db2df2d2.jpeg",
+      "type": "article",
+      "briefing": "",
+      "pay_type": "free",
+      "price": "0.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 331,
+      "name": "自定义播流地址 - 横屏直播｜阿里云消息",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260615/072936d7c65cb51a52e6b2946f0dc9c6.png",
+      "type": "live",
+      "briefing": "",
+      "pay_type": "free",
+      "price": "0.00",
+      "price_marking": "0.00",
+      "is_vip_goods": true,
+      "sales_type": [
+        "alone"
+      ],
+      "is_virtual_pay": 0
+    }
+  ]
+}

@@ -1,0 +1,609 @@
+# 页码列表
+
+## 基本信息
+
+| 项目 | 内容 |
+| --- | --- |
+| API Key | `app/pc/page/index` |
+| 接口地址 | `POST /api/app/pc/page/index` |
+| 请求方式 | POST |
+| 是否需登录 | 是 |
+| 所属模块 | 拓展应用（app） |
+| 所属控制器 | Page（页面） |
+| 登录方式 | 请求头携带 `token`（登录接口返回） |
+| 来源 | 后端控制器（未在 mobile `api_list.js` 中定义） |
+
+## 请求参数
+
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+| --- | --- | --- | --- | --- |
+| page_id | string | 否 | 页码ID | - |
+
+## 请求头
+
+| Header | 说明 |
+| --- | --- |
+| token | 用户登录凭证，登录成功后由 `user/info/login` 返回，前端自动携带 |
+
+## 请求示例
+
+```bash
+curl -X POST '{apiUrl}app/pc/page/index' \
+  -H 'Content-Type: application/json' \
+  -d '{"page_id":"xxx"}'
+```
+
+## 返回示例
+
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509555",
+  "data": {
+    "id": 2,
+    "uniacid": 1,
+    "name": "新建页面",
+    "page": {
+      "bgType": "default",
+      "bgColor": "rgb(249, 199, 199)"
+    },
+    "components": [
+      {
+        "type": "swiper",
+        "remark": "",
+        "name": "轮播",
+        "config": {
+          "autoPlay": true,
+          "showTitle": false,
+          "swiper": [
+            {
+              "link": {
+                "type": "unlink",
+                "config": [],
+                "selected": "unlink",
+                "name": "",
+                "src": "unlink"
+              },
+              "image": "https://tuzhi.mutouweb.com//uploads/1/20240402/1076657288a7fda5f6e29c013625fc5a.png",
+              "title": "凸知云课堂"
+            },
+            {
+              "link": {
+                "type": "",
+                "config": []
+              },
+              "image": "https://tuzhi.mutouweb.com//uploads/1/20240402/cfcf6646d559d82b46ad20c7b0e7070d.png",
+              "title": "知识付费系统源码"
+            },
+            {
+              "link": {
+                "type": "",
+                "config": []
+              },
+              "image": "https://tuzhi.mutouweb.com/uploads/1/20250707/7bc58d0d4f208bfd4459703820a53c4a.jpg",
+              "title": "轮播图"
+            },
+            {
+              "link": {
+                "type": "",
+                "config": []
+              },
+              "image": "https://tuzhi.mutouweb.com/uploads/1/20250506/3dee2ed5bd20b0a36dce409cafd5816f.jpg",
+              "title": "轮播图"
+            }
+          ],
+          "navigation": [
+            {
+              "name": "不跳转",
+              "link": {
+                "type": "unlink",
+                "config": [],
+                "selected": "unlink",
+                "name": "",
+                "src": "unlink"
+              },
+              "type": "parent",
+              "children": []
+            },
+            {
+              "name": "课程",
+              "link": {
+                "type": "course",
+                "config": [],
+                "selected": "course",
+                "name": "[演示]一个产品经理的自我修养",
+                "src": 72
+              },
+              "type": "parent",
+              "children": []
+            },
+            {
+              "name": "在吗",
+              "link": {
+                "type": "",
+                "config": []
+              },
+              "type": "parent",
+              "children": [
+                {
+                  "name": "考试",
+                  "parent_index": 2,
+                  "type": "children",
+                  "link": {
+                    "type": "exercises",
+                    "config": [],
+                    "selected": "exercises",
+                    "name": "题库练习11",
+                    "src": 1
+                  }
+                },
+                {
+                  "name": "线下活动",
+                  "parent_index": 2,
+                  "type": "children",
+                  "link": {
+                    "type": "activity",
+                    "config": [],
+                    "selected": "activity",
+                    "name": "复盘-个人和团队成长加速器",
+                    "src": 6
+                  }
+                }
+              ]
+            }
+          ],
+          "showNavigation": false,
+          "title_common": {
+            "status": false,
+            "title": "标题",
+            "moreText": "查看更多",
+            "moreShow": true,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "no",
+            "link": []
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 0,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          }
+        }
+      },
+      {
+        "type": "goods",
+        "remark": "",
+        "name": "知识商品",
+        "config": {
+          "list": [],
+          "source": "group",
+          "datagroup": [
+            4,
+            3,
+            1
+          ],
+          "maxShowNum": 16,
+          "typeShow": true,
+          "titleShow": true,
+          "priceShow": true,
+          "marketPriceShow": true,
+          "descriptionShow": true,
+          "titleLines": "2",
+          "descriptionLines": "1",
+          "titleWeight": "bold",
+          "rowCount": "6",
+          "gap": 12,
+          "radius": 5,
+          "title_common": {
+            "status": true,
+            "title": "课程列表",
+            "moreText": "查看更多",
+            "moreShow": true,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "diy",
+            "link": {
+              "selected": "page_diy_pc",
+              "type": "page_diy_pc",
+              "name": "新建页面",
+              "src": 3
+            }
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 32,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          },
+          "maxShowCourseNum": 16,
+          "groupChangeValue": [
+            4,
+            3,
+            1
+          ]
+        }
+      },
+      {
+        "type": "goods",
+        "remark": "",
+        "name": "知识商品",
+        "config": {
+          "list": [],
+          "source": "group",
+          "datagroup": [],
+          "maxShowNum": 5,
+          "typeShow": true,
+          "titleShow": true,
+          "priceShow": true,
+          "marketPriceShow": true,
+          "descriptionShow": true,
+          "titleLines": "2",
+          "descriptionLines": "1",
+          "titleWeight": "bold",
+          "rowCount": "5",
+          "gap": 12,
+          "radius": 5,
+          "title_common": {
+            "status": true,
+            "title": "热门直播",
+            "moreText": "查看更多",
+            "moreShow": false,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "no",
+            "link": []
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 0,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          },
+          "maxShowCourseNum": 5,
+          "groupChangeValue": []
+        }
+      },
+      {
+        "type": "vip",
+        "remark": "",
+        "name": "付费会员",
+        "config": {
+          "textColor": "rgb(87, 58, 13)",
+          "bgColor": "rgb(255, 194, 102)",
+          "descriptionShow": true,
+          "equityShow": true,
+          "btnShow": true,
+          "rowCount": "2",
+          "gap": 12,
+          "radius": 5,
+          "list": [
+            {
+              "id": 2,
+              "name": "高级会员",
+              "briefing": "高级会员高级会员",
+              "privilege_discount": 1,
+              "privilege_free": 1,
+              "privilege_discount_val": "9"
+            },
+            {
+              "id": 1,
+              "name": "新会员",
+              "briefing": "全新会员新会员新会员新会员",
+              "privilege_discount": 1,
+              "privilege_free": 1,
+              "privilege_discount_val": "9"
+            }
+          ],
+          "title_common": {
+            "status": false,
+            "title": "标题",
+            "moreText": "查看更多",
+            "moreShow": true,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "no",
+            "link": []
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 12,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          }
+        }
+      },
+      {
+        "type": "teacher",
+        "remark": "",
+        "name": "讲师模块",
+        "config": {
+          "list": [
+            {
+              "course": [],
+              "course_ids": [
+                72,
+                32
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250714/d8d8109a57da7d49f7d0dbca97d7f234.png",
+              "name": "木头",
+              "introduce": "讲师介绍"
+            },
+            {
+              "course": [],
+              "course_ids": [
+                67,
+                66,
+                65
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/20250712/46d08fa698fefb07bc28335108fb2f01.jpeg",
+              "name": "讲师名称",
+              "introduce": "还是木头"
+            },
+            {
+              "course": [
+                {
+                  "id": 71,
+                  "name": "[演示]金牌公关李国威：拒绝中年危机，忠于专业是离开平台的底气",
+                  "cover": "https://tuzhi.mutouweb.com//uploads/1/20240118/7c94074bcc9f0893104a3541cde91567.jpeg",
+                  "createtime": 1705551225,
+                  "views": "1236",
+                  "type": "audio",
+                  "status": 1,
+                  "sales": 0,
+                  "hide": "0",
+                  "sales_type": "[\"alone\",\"column\"]",
+                  "briefing": "",
+                  "uniacid": 1,
+                  "price": "10.00",
+                  "pay_type": "free",
+                  "is_vip_goods": true,
+                  "price_marking": "0.00",
+                  "is_virtual_pay": 0
+                },
+                {
+                  "id": 70,
+                  "name": "[测试]遇言·不止CEO席越：女性在职场中的自我成长",
+                  "cover": "https://tuzhi.mutouweb.com//uploads/1/20240118/15d615056bd04820a0157a8088f1a9e3.jpeg",
+                  "createtime": 1705551195,
+                  "views": "1049",
+                  "type": "audio",
+                  "status": 1,
+                  "sales": 38,
+                  "hide": "0",
+                  "sales_type": "[\"alone\",\"column\"]",
+                  "briefing": "密码：123",
+                  "uniacid": 1,
+                  "price": "10.00",
+                  "pay_type": "pay",
+                  "is_vip_goods": true,
+                  "price_marking": "0.00",
+                  "is_virtual_pay": 0
+                },
+                {
+                  "id": 33,
+                  "name": "[演示]技术产品的产品经理是如何炼成的",
+                  "cover": "https://tuzhi.mutouweb.com/uploads/1/20250506/57a1f0afb73cf9225ae3ad8ef2bc3af0.png",
+                  "createtime": 1701134891,
+                  "views": "697",
+                  "type": "audio",
+                  "status": 1,
+                  "sales": 11,
+                  "hide": "0",
+                  "sales_type": "[\"alone\",\"column\"]",
+                  "briefing": "",
+                  "uniacid": 1,
+                  "price": "0.10",
+                  "pay_type": "pay",
+                  "is_vip_goods": true,
+                  "price_marking": "0.00",
+                  "is_virtual_pay": 0
+                }
+              ],
+              "course_ids": [
+                71,
+                70,
+                33
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250725/b3d9569b0b7d911e8fca6a6b4ec26698.jpg",
+              "name": "讲师名称",
+              "introduce": "DIY 页面"
+            },
+            {
+              "course": [],
+              "course_ids": [
+                227,
+                32
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250718/283300c120fe0aec94e38fbfbcb724cd.png",
+              "name": "讲师名称",
+              "introduce": "讲师介绍"
+            },
+            {
+              "course": [],
+              "course_ids": [
+                72,
+                32
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250714/d8d8109a57da7d49f7d0dbca97d7f234.png",
+              "name": "讲师名称",
+              "introduce": "讲师介绍"
+            },
+            {
+              "course": [],
+              "course_ids": [
+                206,
+                32
+              ],
+              "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250803/c8561e4aa5aadf7f16ee922cd138556d.jpeg",
+              "name": "讲师名称",
+              "introduce": "讲师介绍"
+            }
+          ],
+          "rowCount": "4",
+          "gap": 12,
+          "radius": 3,
+          "title_common": {
+            "status": false,
+            "title": "标题",
+            "moreText": "查看更多",
+            "moreShow": true,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "diy",
+            "link": []
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 27,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          }
+        }
+      },
+      {
+        "type": "goods",
+        "remark": "",
+        "name": "知识商品",
+        "config": {
+          "list": [],
+          "source": "choose",
+          "datagroup": [],
+          "maxShowNum": 5,
+          "typeShow": true,
+          "titleShow": true,
+          "priceShow": true,
+          "marketPriceShow": true,
+          "descriptionShow": true,
+          "titleLines": "2",
+          "descriptionLines": "1",
+          "titleWeight": "bold",
+          "rowCount": "5",
+          "gap": 12,
+          "radius": 5,
+          "title_common": {
+            "status": true,
+            "title": "标题",
+            "moreText": "查看更多",
+            "moreShow": false,
+            "titleColor": "rgb(51, 51, 51)",
+            "titleSize": 20,
+            "titleWeight": "normal",
+            "bgHeight": "normal",
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": "",
+            "linkType": "no",
+            "link": []
+          },
+          "background_common": {
+            "bgXPadding": 0,
+            "bgYPadding": 0,
+            "bgType": "none",
+            "bgColor": "#fff",
+            "bgImage": ""
+          },
+          "maxShowCourseNum": 5,
+          "groupChangeValue": []
+        }
+      }
+    ],
+    "seo_title": "凸知云课堂",
+    "seo_keyword": "244",
+    "seo_description": "456456",
+    "status": 1,
+    "is_index": 1,
+    "updatetime": 1782900300,
+    "createtime": 1711279999
+  }
+}
+```
+
+## 返回参数说明
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
+| msg | string | 提示信息 |
+| data | object | 业务数据 |
+| data.id | integer | ID |
+| data.uniacid | integer | 应用ID（公众号/uniacid） |
+| data.name | string | 名称 |
+| data.page | object | 页码 |
+| data.page.bgType | string | bg类型 |
+| data.page.bgColor | string | bg颜色 |
+| data.components | array | components |
+| data.components[].type | string | 类型 |
+| data.components[].remark | string | 备注 |
+| data.components[].name | string | 名称 |
+| data.components[].config | object | 配置 |
+| data.components[].config.autoPlay | boolean | auto播放 |
+| data.components[].config.showTitle | boolean | show标题 |
+| data.components[].config.swiper | array | swiper |
+| data.components[].config.swiper[].link | object | link |
+| data.components[].config.swiper[].image | string | 图片 |
+| data.components[].config.swiper[].title | string | 标题 |
+| data.components[].config.navigation | array | navigation |
+| data.components[].config.navigation[].name | string | 名称 |
+| data.components[].config.navigation[].link | object | link |
+| data.components[].config.navigation[].type | string | 类型 |
+| data.components[].config.navigation[].children | array | 下级 |
+| data.components[].config.showNavigation | boolean | showNavigation |
+| data.components[].config.title_common | object | 标题common |
+| data.components[].config.title_common.status | boolean | 状态 |
+| data.components[].config.title_common.title | string | 标题 |
+| data.components[].config.title_common.moreText | string | moreText |
+| data.components[].config.title_common.moreShow | boolean | moreShow |
+| data.components[].config.title_common.titleColor | string | 标题颜色 |
+| data.components[].config.title_common.titleSize | integer | 标题数量 |
+| data.components[].config.title_common.titleWeight | string | 标题权重 |
+| data.components[].config.title_common.bgHeight | string | bgHeight |
+| data.components[].config.title_common.bgType | string | bg类型 |
+| data.components[].config.title_common.bgColor | string | bg颜色 |
+| data.components[].config.title_common.bgImage | string | bg图片 |
+| data.components[].config.title_common.linkType | string | link类型 |
+| data.components[].config.title_common.link | array | link |
+| data.components[].config.background_common | object | backgroundcommon |
+| data.components[].config.background_common.bgXPadding | integer | bgXPadding |
+| data.components[].config.background_common.bgYPadding | integer | bgYPadding |
+| data.components[].config.background_common.bgType | string | bg类型 |
+| data.components[].config.background_common.bgColor | string | bg颜色 |
+| data.components[].config.background_common.bgImage | string | bg图片 |
+| data.seo_title | string | seo标题 |
+| data.seo_keyword | string | seo关键词 |
+| data.seo_description | string | seo描述 |
+| data.status | integer | 状态 |
+| data.is_index | integer | 是否列表 |
+| data.updatetime | integer | 更新时间（时间戳） |
+| data.createtime | integer | 创建时间（时间戳） |

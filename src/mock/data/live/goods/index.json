@@ -1,0 +1,66 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508159",
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "goods": {
+          "type": "示例",
+          "name": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "pay_type": 99
+        },
+        "description": "示例内容",
+        "explaining": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "goods": {
+          "type": "示例",
+          "name": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "pay_type": 99
+        },
+        "description": "示例内容",
+        "explaining": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "modal": {
+      "order": "示例",
+      "detail": "示例内容"
+    },
+    "orderParams": {
+      "value": "示例"
+    },
+    "data": {
+      "goods": {
+        "type": "示例",
+        "name": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "pay_type": 99
+      }
+    },
+    "show": true,
+    "zIndex": "示例",
+    "loading": "示例",
+    "lastIframePath": "示例",
+    "url": "示例",
+    "length": "示例"
+  }
+}

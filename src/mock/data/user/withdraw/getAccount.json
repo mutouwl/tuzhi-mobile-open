@@ -1,0 +1,46 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508195",
+  "data": {
+    "list": [
+      {
+        "id": 40,
+        "uniacid": 1,
+        "user_id": 38,
+        "type": "bank",
+        "name": "冯浩森",
+        "account": "6274983943423434",
+        "ext": "港式",
+        "is_default": 0,
+        "createtime": 1785059237,
+        "updatetime": 1785059237
+      },
+      {
+        "id": 39,
+        "uniacid": 1,
+        "user_id": 38,
+        "type": "bank",
+        "name": "冯浩森",
+        "account": "6274983943423434",
+        "ext": "港式",
+        "is_default": 0,
+        "createtime": 1785059237,
+        "updatetime": 1785059237
+      },
+      {
+        "id": 1,
+        "uniacid": 1,
+        "user_id": 38,
+        "type": "alipay",
+        "name": "冯浩森",
+        "account": "13222222222",
+        "ext": "",
+        "is_default": 0,
+        "createtime": 1784624932,
+        "updatetime": 1785048000
+      }
+    ],
+    "wechat_bound": false
+  }
+}

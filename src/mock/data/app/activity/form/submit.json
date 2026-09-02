@@ -1,0 +1,42 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508155",
+  "data": {
+    "modal": {
+      "form": "示例"
+    },
+    "detail": {
+      "id": 1,
+      "title": "示例标题",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "content": "示例内容"
+    },
+    "data": "示例",
+    "apply_info_form": "示例",
+    "checkedTicket": [
+      {
+        "id": 1,
+        "price": 99,
+        "number": 10,
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "price": 99,
+        "number": 10,
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "toFixed": "示例",
+    "$tools": {
+      "systemConfig": "示例"
+    },
+    "loading": "示例",
+    "isVirtualPay": 99
+  }
+}

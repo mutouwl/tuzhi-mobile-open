@@ -1,0 +1,190 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508124",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1
+    },
+    "list": [
+      {
+        "id": 1,
+        "item_name": "示例订单",
+        "refund_fee": 99,
+        "createtime": "1786508124",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "item_name": "示例订单",
+        "refund_fee": 99,
+        "createtime": "1786508124",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "goods": "示例"
+      }
+    ],
+    "$tools": {
+      "formatDate": "1786508124"
+    },
+    "labelWidth": "示例",
+    "labelStyle": {
+      "text-align": "示例内容"
+    },
+    "showSex": true,
+    "data": {
+      "goodsList": "示例",
+      "address": {
+        "consignee": "示例",
+        "mobile": "13222222222",
+        "province_name": "示例订单",
+        "city_name": "示例订单",
+        "district_name": "示例订单",
+        "address": "示例地址"
+      },
+      "status": 1,
+      "describe": "示例内容",
+      "order_type": "示例"
+    },
+    "modal": {
+      "evaluate": "示例",
+      "pay": 99
+    },
+    "error": "示例",
+    "showRefundLogBtn": true,
+    "evaluateOrderNo": "示例",
+    "orderNo": "示例",
+    "payOrderNo": 99,
+    "data.goodsList": [
+      {
+        "id": 1,
+        "snapshoot": {
+          "sub_goods_list": {
+            "length": "示例"
+          },
+          "count": 10,
+          "name": "示例订单",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "type": "示例",
+          "price": 99
+        },
+        "item_id": 1,
+        "count": 10,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "snapshoot": {
+          "sub_goods_list": {
+            "length": "示例"
+          },
+          "count": 10,
+          "name": "示例订单",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "type": "示例",
+          "price": 99
+        },
+        "item_id": 1,
+        "count": 10,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      }
+    ],
+    "item.snapshoot.sub_goods_list": [
+      {
+        "id": 1,
+        "sub_goods_type": "示例",
+        "sub_goods_name": "示例订单",
+        "sub_goods_price": 99,
+        "sub_goods_cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "sub_goods_type": "示例",
+        "sub_goods_name": "示例订单",
+        "sub_goods_price": 99,
+        "sub_goods_cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      }
+    ],
+    "subGoodsTypeName": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      }
+    ],
+    "subGoodsValidity": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      }
+    ],
+    "loading": "示例",
+    "isVirtualPay": 99
+  }
+}

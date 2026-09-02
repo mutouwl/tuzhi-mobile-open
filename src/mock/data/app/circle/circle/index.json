@@ -1,0 +1,27 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "total": 1,
+    "rows": [
+      {
+        "member_id": 5001,
+        "expire_time": 1786723200,
+        "member_status": 1,
+        "id": 1,
+        "name": "产品运营实战圈",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "intro": "聚焦产品与运营实战，每天分享方法、案例与行业资料，和圈友一起成长",
+        "member_count": 158,
+        "post_count": 12,
+        "sell_type": 2,
+        "presale_config": "{\"member_count\":\"show\",\"post_count\":\"show\",\"view_count\":\"show\",\"post_preview\":\"new\",\"post_preview_num\":5}",
+        "is_expired": 0,
+        "expire_text": "2026-08-15",
+        "show_member_count": 1,
+        "show_post_count": 1
+      }
+    ]
+  }
+}

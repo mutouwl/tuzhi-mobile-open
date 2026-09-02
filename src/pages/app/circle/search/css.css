@@ -1,0 +1,36 @@
+.circle-search {
+  min-height: 100vh;
+  background: #f7f8fa;
+  /* tdesign t-search 尺寸/配色变量：紧凑搜索栏对齐项目移动端风格 */
+  --td-search-height: 32px;
+  --td-search-padding: 0 12px;
+  --td-search-icon-size: 16px;
+  --td-search-clear-icon-size: 16px;
+  --td-search-font: 14px;
+  --td-search-placeholder-color: #86909c;
+  /* 方形搜索框圆角：对齐项目 4px 圆角惯例 */
+  --td-search-square-radius: 4px;
+}
+/* 顶部搜索栏：白底通栏，tdesign 搜索框 + 右侧筛选按钮；吸顶固定，滚动动态时搜索栏常驻 */
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 8px 12px;
+  background: #fff;
+}
+.filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  padding: 2px;
+}
+.feed {
+  padding: 8px 12px 70px;
+}
+.tab-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}

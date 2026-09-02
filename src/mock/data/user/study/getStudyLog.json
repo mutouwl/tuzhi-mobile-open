@@ -1,0 +1,157 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508200",
+  "data": [
+    {
+      "total_time": "200",
+      "count": 1,
+      "course__name": "سىناق دەرىسلىك",
+      "course__type": "column",
+      "course__cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/3e8411d84caf66fd56d7a46746f72e2e.jpg",
+      "course__id": 430,
+      "end_time": 1786160728,
+      "course": {
+        "id": 430,
+        "name": "سىناق دەرىسلىك",
+        "type": "column",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/3e8411d84caf66fd56d7a46746f72e2e.jpg"
+      }
+    },
+    {
+      "total_time": "260",
+      "count": 1,
+      "course__name": "course",
+      "course__type": "article",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 450,
+      "end_time": 1786150308,
+      "course": {
+        "id": 450,
+        "name": "course",
+        "type": "article",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "30",
+      "count": 1,
+      "course__name": "cs",
+      "course__type": "video",
+      "course__cover": "https://tuzhi.mutouweb.com/uploads/1/20260428/7c2fc541a5700d7b38c8ebd79c4380bb.png",
+      "course__id": 301,
+      "end_time": 1786149684,
+      "course": {
+        "id": 301,
+        "name": "cs",
+        "type": "video",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260428/7c2fc541a5700d7b38c8ebd79c4380bb.png"
+      }
+    },
+    {
+      "total_time": "50",
+      "count": 1,
+      "course__name": "单词听力 Useful Expressions.mp3",
+      "course__type": "audio",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 548,
+      "end_time": 1786149596,
+      "course": {
+        "id": 548,
+        "name": "单词听力 Useful Expressions.mp3",
+        "type": "audio",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "280",
+      "count": 1,
+      "course__name": "圈子创建的图文课",
+      "course__type": "article",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 447,
+      "end_time": 1786149593,
+      "course": {
+        "id": 447,
+        "name": "圈子创建的图文课",
+        "type": "article",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "70",
+      "count": 1,
+      "course__name": "圈子创建的图文课",
+      "course__type": "article",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 448,
+      "end_time": 1786149589,
+      "course": {
+        "id": 448,
+        "name": "圈子创建的图文课",
+        "type": "article",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "40",
+      "count": 1,
+      "course__name": "5c8a136d1296774934.mp3",
+      "course__type": "audio",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 547,
+      "end_time": 1786149580,
+      "course": {
+        "id": 547,
+        "name": "5c8a136d1296774934.mp3",
+        "type": "audio",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "40",
+      "count": 1,
+      "course__name": "234",
+      "course__type": "article",
+      "course__cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+      "course__id": 637,
+      "end_time": 1786148948,
+      "course": {
+        "id": 637,
+        "name": "234",
+        "type": "article",
+        "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png"
+      }
+    },
+    {
+      "total_time": "120",
+      "count": 1,
+      "course__name": "ئىزلار تورى",
+      "course__type": "video",
+      "course__cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/96cdcb93d554907ab4c6afa7ff110787.jpeg",
+      "course__id": 328,
+      "end_time": 1786117107,
+      "course": {
+        "id": 328,
+        "name": "ئىزلار تورى",
+        "type": "video",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/96cdcb93d554907ab4c6afa7ff110787.jpeg"
+      }
+    },
+    {
+      "total_time": "30",
+      "count": 1,
+      "course__name": "cs",
+      "course__type": "video",
+      "course__cover": "https://tuzhi.mutouweb.com/uploads/1/20260428/7c2fc541a5700d7b38c8ebd79c4380bb.png",
+      "course__id": 300,
+      "end_time": 1786117103,
+      "course": {
+        "id": 300,
+        "name": "cs",
+        "type": "video",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260428/7c2fc541a5700d7b38c8ebd79c4380bb.png"
+      }
+    }
+  ]
+}

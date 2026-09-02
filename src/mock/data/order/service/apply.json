@@ -1,0 +1,91 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508128",
+  "data": {
+    "labelWidth": "示例",
+    "labelStyle": {
+      "text-align": "示例内容"
+    },
+    "showSex": true,
+    "form": {
+      "reason": "示例内容",
+      "mobile": "13222222222",
+      "remark": "示例内容"
+    },
+    "list": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508128",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508128",
+        "goods": "示例"
+      }
+    ],
+    "data": {
+      "goodsList": "示例",
+      "goods_count": 10,
+      "real_price": 99
+    },
+    "modal": {
+      "reason": "示例内容",
+      "evaluate": "示例",
+      "pay": 99
+    },
+    "error": "示例",
+    "reasonText": "示例内容",
+    "data.goodsList": [
+      {
+        "id": 1,
+        "snapshoot": {
+          "count": 10,
+          "name": "示例订单",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "type": "示例",
+          "price": 99
+        },
+        "item_id": 1,
+        "count": 10,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508128",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "snapshoot": {
+          "count": 10,
+          "name": "示例订单",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "type": "示例",
+          "price": 99
+        },
+        "item_id": 1,
+        "count": 10,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508128",
+        "goods": "示例"
+      }
+    ]
+  }
+}

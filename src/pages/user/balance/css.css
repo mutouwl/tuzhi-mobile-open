@@ -1,0 +1,423 @@
+.redpacket-page {
+  min-height: 100vh;
+  background-color: #f5f6fa;
+  padding-bottom: 20px;
+}
+
+.balance-card {
+  background: #fff;
+  padding: 20px 15px;
+  color: #333;
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.balance-label-row {
+  display: flex;
+  align-items: center;
+}
+
+.balance-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.balance-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 8px;
+  color: #333;
+}
+
+.balance-stats {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 30px;
+  background-color: #eee;
+}
+
+.form-item {
+  margin-bottom: 16px;
+}
+
+.form-extra {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.form-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.amount-input-wrap {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.amount-symbol {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-right: 8px;
+}
+
+.amount-input {
+  flex: 1;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.pay-type-list {
+  display: flex;
+  gap: 10px;
+}
+
+.pay-type-item {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background-color: #f5f6fa;
+  border: 1px solid #eee;
+}
+
+.pay-type-item.active {
+  background-color: rgba(9, 104, 246, 0.08);
+  border-color: #0968f6;
+}
+
+.pay-type-name {
+  font-size: 13px;
+  color: #666;
+}
+
+.pay-type-item.active .pay-type-name {
+  color: #0968f6;
+}
+
+.account-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #f5f6fa;
+  border-radius: 6px;
+}
+
+.account-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.account-placeholder {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.account-arrow {
+  margin-left: 8px;
+}
+
+.withdraw-btn {
+  width: 100%;
+  height: 44px;
+  line-height: 44px;
+  background: #0968f6;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 8px;
+}
+
+.withdraw-btn::after {
+  border: none;
+}
+
+.withdraw-disabled-tip {
+  text-align: center;
+  padding: 30px 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.record-menu ::v-deep .u-cell__body {
+  padding: 14px 0 !important;
+}
+
+.record-menu ::v-deep .u-cell__body .u-cell__title-text {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+.record-menu ::v-deep .u-line {
+  border-bottom: 1px solid #f5f5f5 !important;
+}
+
+/* 微信绑定提示 */
+.wechat-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #0968f6;
+  background-color: rgba(9, 104, 246, 0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wechat-bind-link {
+  color: #0968f6;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.account-select.static {
+  background-color: #f8f8f8;
+}
+
+.wechat-realname-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #f5a623;
+  line-height: 1.5;
+}
+
+/* 收款账户弹窗 */
+.account-popup {
+  padding: 16px;
+  min-height: 30vh;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.popup-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.popup-add {
+  font-size: 14px;
+  color: #0968f6;
+}
+
+.account-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #f5f6fa;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.account-no {
+  font-size: 13px;
+  color: #666;
+}
+
+.account-type-tag {
+  font-size: 11px;
+  color: #999;
+  background-color: #eee;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-default {
+  font-size: 11px;
+  color: #0968f6;
+  border: 1px solid #0968f6;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.account-edit {
+  font-size: 12px;
+  color: #0968f6;
+}
+
+.account-del {
+  font-size: 12px;
+  color: #999;
+}
+
+.account-check {
+  font-size: 16px;
+  color: #0968f6;
+  font-weight: 700;
+}
+
+.account-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px 0;
+  color: #999;
+  font-size: 14px;
+}
+
+/* 添加账户弹窗 */
+.add-account-popup {
+  padding: 16px;
+}
+
+.add-form {
+  padding-top: 8px;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  background-color: #f5f6fa;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.save-btn {
+  width: 100%;
+  height: 44px;
+  line-height: 44px;
+  background: linear-gradient(to bottom right, #0968f6, #4c8dff);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 22px;
+  border: none;
+  margin-top: 16px;
+}
+
+.save-btn::after {
+  border: none;
+}
+
+/* 提交中禁用态（防重复点击） */
+.save-btn[disabled],
+.withdraw-btn[disabled] {
+  opacity: 0.6;
+}
+
+.wechat-name-popup {
+  padding: 16px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.wechat-name-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wechat-name-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.wechat-name-input {
+  height: 44px;
+}
+
+.wechat-name-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.wechat-name-btn {
+  flex: 1;
+  height: 42px;
+  line-height: 42px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.wechat-name-btn::after {
+  border: none;
+}
+
+.wechat-name-btn.cancel {
+  background-color: #f5f6fa;
+  color: #666;
+}
+
+.wechat-name-btn.primary {
+  background-color: #0968f6;
+  color: #fff;
+}

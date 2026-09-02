@@ -1,0 +1,272 @@
+.goods-detail {
+	min-height: 100vh;
+	background-color: #F7F8FA;
+	padding-bottom: 70px;
+}
+
+/* 轮播图 */
+.goods-detail .detail-swiper-selector .goods-swiper {
+	width: 100%;
+	height: 100vw;
+	max-height: 480px;
+	background-color: #fff;
+}
+
+.goods-detail .detail-swiper-selector .goods-swiper .swiper-image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+/* 卡片基础样式 */
+.goods-detail .detail-swiper-selector .detail-card {
+	background-color: #fff;
+	margin: 0px 0;
+	padding: 16px;
+}
+
+/* 价格标题卡片 */
+.goods-detail .detail-swiper-selector .title-card .price-box {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .price-wrapper {
+	display: flex;
+	align-items: baseline;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .price-wrapper .price-symbol {
+	font-size: 16px;
+	font-weight: 700;
+	color: #F53F3F;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .price-wrapper .price-text {
+	font-size: 32px;
+	font-weight: 700;
+	color: #F53F3F;
+	line-height: 32px;
+	font-family: OPPOSANS;
+	margin: 0 2px;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .price-wrapper .price-suffix {
+	font-size: 14px;
+	color: #F53F3F;
+	font-weight: 500;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .origin-price-text {
+	font-size: 14px;
+	font-weight: 400;
+	text-decoration: line-through;
+	color: #999;
+	margin-left: 8px;
+}
+
+.goods-detail .detail-swiper-selector .title-card .price-box .sales-text {
+	font-size: 13px;
+	font-weight: 400;
+	color: #999;
+}
+
+.goods-detail .detail-swiper-selector .title-card .title-text {
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 26px;
+	color: #333;
+	margin-bottom: 8px;
+}
+
+.goods-detail .detail-swiper-selector .title-card .subtitle-text {
+	font-size: 14px;
+	font-weight: 400;
+	color: #666;
+	line-height: 20px;
+}
+
+/* 功能卡片 */
+.goods-detail .detail-swiper-selector .detail-cell-card {
+	background-color: #fff;
+	margin: 12px 0;
+	overflow: hidden;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item {
+	display: flex;
+	align-items: center;
+	padding: 16px;
+	border-bottom: 1px solid #F7F8FA;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item:last-child {
+	border-bottom: none;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-label {
+	font-size: 14px;
+	color: #666;
+	width: 50px;
+	font-weight: 400;
+	flex-shrink: 0;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	font-size: 14px;
+	color: #333;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value .cell-value-text {
+	color: #333;
+	margin-right: 8px;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value .cell-value-count {
+	color: #999;
+	font-size: 13px;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.service-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.service-tags .service-tag {
+	display: flex;
+	align-items: center;
+	padding: 4px 10px;
+	background-color: #F7F8FA;
+	font-size: 12px;
+	color: #666;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.service-tags .service-tag .service-text {
+	margin-left: 4px;
+}
+
+/* 保障标签 */
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.guarantee-tags {
+	flex: 1;
+	overflow: hidden;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.guarantee-tags .guarantee-text {
+	font-size: 14px;
+	color: #333;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 参数标签 */
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.params-tags {
+	flex: 1;
+	overflow: hidden;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value.params-tags .params-text {
+	font-size: 14px;
+	color: #333;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value .delivery-text {
+	color: #333;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-value .delivery-subtext {
+	color: #999;
+	font-size: 13px;
+	margin-left: 8px;
+}
+
+.goods-detail .detail-swiper-selector .detail-cell-card .cell-item .cell-arrow {
+	font-size: 14px;
+	color: #ccc;
+	margin-left: 4px;
+	flex-shrink: 0;
+}
+
+/* 详情内容卡片 */
+.goods-detail .detail-swiper-selector .detail-content-card {
+	background-color: #fff;
+	margin: 12px 0;
+	padding: 16px;
+}
+
+.goods-detail .detail-swiper-selector .detail-content-card .content-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #F7F8FA;
+}
+
+/* 底部操作栏 */
+.goods-detail .detail-tabbar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	background-color: #fff;
+	box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+	/* 微信小程序端：底部安全区按设计加半（iPhone X 约 17px），按钮不直贴屏底 */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+	/* #endif */
+}
+
+.goods-detail .detail-tabbar .add-btn {
+	flex: 1;
+	height: 44px;
+	line-height: 44px;
+	font-weight: 500;
+	font-size: 15px;
+	background-color: #E8F4FF;
+	color: #0968f6;
+	margin-right: 1px;
+}
+
+.goods-detail .detail-tabbar .buy-btn {
+	flex: 1;
+	height: 44px;
+	line-height: 44px;
+	font-weight: 500;
+	font-size: 15px;
+	background: #0968f6;
+	color: #fff;
+}
+
+.goods-detail .detail-tabbar .buy-btn-full {
+	width: 100%;
+	height: 44px;
+	line-height: 44px;
+	font-weight: 500;
+	font-size: 15px;
+	background: #0968f6;
+	color: #fff;
+}
+
+.goods-detail .detail-tabbar .disabled-btn {
+	width: 100%;
+	height: 44px;
+	line-height: 44px;
+	font-weight: 500;
+	font-size: 15px;
+	background: #ccc;
+	color: #fff;
+}

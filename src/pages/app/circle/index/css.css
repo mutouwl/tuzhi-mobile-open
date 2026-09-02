@@ -1,0 +1,282 @@
+.circle-index {
+  min-height: 100vh;
+  background: #f7f8fa;
+}
+.head {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 14px 16px;
+  background: #8c7668; /* 封面为空时的兜底色 */
+}
+/* 封面图背景：高斯模糊 + 暗色遮罩，内容浮于其上 */
+.head-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.head-bg-img {
+  width: 100%;
+  height: 100%;
+  /* 外扩避免模糊后边缘透出底色 */
+  transform: scale(1.15);
+  filter: blur(36px);
+}
+.head-bg-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.head-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* 上边距增加一倍：head 顶部 padding 20px → 头信息区总上间距 40px */
+  margin-top: 20px;
+}
+/* 封面缩略图：模糊背景之上保留清晰小图 */
+.head-cover {
+  width: 72px;
+  height: 52px;
+  flex: none;
+  border-radius: 6px;
+}
+.head-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.head-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+.head-name {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.head-intro {
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.head-members {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+}
+.member-count {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+}
+.member-number {
+  color: #fff;
+  font-size: 13px;
+  margin-right: 4px;
+}
+.member-divider {
+  margin: 0 9px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+}
+.head-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 0 0 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+  line-height: 1;
+}
+.head-share::after {
+  border: 0;
+}
+/* 搜索图标按钮（位于分享按钮左侧）：样式与 head-share 一致 */
+.head-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 0 0 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+  line-height: 1;
+}
+.head-search::after {
+  border: 0;
+}
+.top-posts {
+  position: relative;
+  margin-top: 20px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.top-post-row {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+.top-post-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 3px;
+  background: #fff;
+  color: #8c7668; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+}
+.top-post-title {
+  flex: 1;
+  min-width: 0;
+  margin-left: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 黑名单状态提示（可浏览内容但限制互动） */
+.ban-banner {
+  margin: 8px 12px 0;
+  padding: 10px 12px;
+  background: #fff0f0;
+  border-radius: 4px;
+  color: #f53f3f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.task-bar {
+  background: #fff;
+  margin: 8px 12px 0;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.task-tag {
+  font-size: 11px;
+  color: #fff;
+  background: #ff7d00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.task-title {
+  flex: 1;
+  font-size: 13px;
+  color: #1d2129;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-action {
+  font-size: 12px;
+  color: #0968f6;
+  flex-shrink: 0;
+}
+.nav-bar {
+  background: #fff;
+}
+.sticky-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+}
+.sort-box {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding-right: 12px;
+  font-size: 12px;
+  color: #4e5969;
+}
+.sort-text {
+  color: #4e5969;
+}
+.feed {
+  padding: 8px 12px 70px;
+}
+.tab-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+.publish-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 160px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e5e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  color: #86909c; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+  z-index: 90;
+}
+.more-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 100px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e5e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  color: #86909c; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+  z-index: 90;
+}
+/* 更多弹窗（与 hover-btn 弹窗一致：快捷导航网格） */
+.more-grid {
+  width: calc(100% - 20px);
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-row-gap: 20px;
+  grid-column-gap: 10px;
+}
+.more-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #1D2129;
+}

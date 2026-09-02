@@ -1,0 +1,9 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509554",
+  "data": {
+    "path": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx0000000000000000&redirect_uri=https%3A%2F%2Ftuzhi.mutouweb.com%2Findex.php%3Fi%3D1%26route%3Dapi%2Fapp/pc/login/pcLoginCallback/ticket/76ta1lzImS&response_type=code&scope=snsapi_userinfo&state=https://tuzhi.mutouweb.com/index.php?i=1&route=api/",
+    "ticket": "76ta1lzImS"
+  }
+}

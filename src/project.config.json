@@ -1,0 +1,133 @@
+{
+    "setting": {
+        "ignoreUploadUnusedFiles": true
+    },
+    "packOptions": {
+        "ignore": [
+            {
+                "type": "folder",
+                "value": "mock"
+            },
+            {
+                "type": "folder",
+                "value": "components/qiun-data-charts/static/h5"
+            },
+            {
+                "type": "folder",
+                "value": "components/qiun-data-charts/static/app-plus"
+            },
+            {
+                "type": "folder",
+                "value": "components/video/assets/components"
+            },
+            {
+                "type": "folder",
+                "value": "common/utils/sdk"
+            },
+            {
+                "type": "folder",
+                "value": "static/lib/dms"
+            },
+            {
+                "type": "file",
+                "value": "components/video/assets/aliplayer-min.js"
+            },
+            {
+                "type": "file",
+                "value": "components/video/assets/aliplayer-min.css"
+            },
+            {
+                "type": "file",
+                "value": "components/video/assets/aliplayercomponents-1.0.9.min.js"
+            },
+            {
+                "type": "file",
+                "value": "static/assets/font/icon/iconfont.ttf"
+            },
+            {
+                "type": "suffix",
+                "value": ".DS_Store"
+            }
+        ]
+    },
+    "subPackages": [
+        {
+          "root": "pages/course/",
+          "pages": [
+            "group/group",
+            "detail/detail",
+            "live/live"
+          ]
+        },{
+          "root": "pages/order/",
+          "pages": [
+            "submit/submit",
+            "detail/detail",
+            "list/list",
+            "evaluate/submit/submit",
+            "evaluate/list/list",
+            "service/detail/detail",
+            "service/refundlog/refundlog",
+            "service/form/form"
+          ]
+        },
+        {
+          "root": "pages/user/",
+          "pages": [
+            "index/index",
+            "bindaccount/bindaccount",
+            "assets/assets",
+            "merge/merge",
+            "changemobile/changemobile",
+            "setting/setting",
+            "study/study",
+            "subscription/subscription",
+            "collect/collect",
+            "address/list/list",
+            "address/edit/edit",
+            "balance/index",
+            "redpacket/log",
+            "redpacket/withdraw-log"
+          ]
+        },
+        {
+          "root": "pages/app/",
+          "pages": [
+            "agent/wallet/settle/settle",
+            "agent/wallet/withdraw/withdraw",
+            "agent/center/center",
+            "agent/member/recruit/recruit",
+            "agent/member/level/level",
+            "agent/wallet/withdrawlog/withdrawlog",
+            "agent/wallet/detail/detail",
+            "agent/log/earnings/log/log",
+            "agent/log/customer/log/log",
+            "agent/log/customer/detail/detail",
+            "agent/recommend/goods/goods",
+            "agent/wallet/bank/bank",
+            "exchange/center/center",
+            "exchange/log/log",
+            "sign/center/center",
+            "sign/log/log",
+            "score/center/center",
+            "vip/center/center",
+            "vip/goods/goods",
+            "exam/center/center",
+            "exam/detail/detail",
+            "exam/result/result",
+            "exam/log/log",
+            "exam/goods/goods",
+            "exam/work/work",
+            "activity/sign/result/result",
+            "activity/ticket/ticket",
+            "activity/form/form",
+            "activity/result/result",
+            "activity/sign/sign",
+            "activity/user/user",
+            "activity/index/index",
+            "activity/detail/detail"
+          ]
+        }
+      ]
+    
+  }

@@ -1,0 +1,18 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508093",
+  "data": {
+    "data": {
+      "value": "示例"
+    },
+    "config": {
+      "status": 1
+    },
+    "status": 1,
+    "userCondition": {
+      "pay_count": 99,
+      "pay_price": 99
+    }
+  }
+}

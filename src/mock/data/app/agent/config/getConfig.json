@@ -1,0 +1,86 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508152",
+  "data": {
+    "mode": "2",
+    "levelPlan": [
+      {
+        "name": "A",
+        "condition": {
+          "customer": {
+            "status": "",
+            "value": "0"
+          },
+          "customer_pay": {
+            "status": "",
+            "value": "0"
+          },
+          "self_pay": {
+            "status": "",
+            "value": "0"
+          },
+          "agent": {
+            "status": "",
+            "value": "0"
+          }
+        },
+        "proportion": {
+          "customer": "0",
+          "goods": "0"
+        },
+        "saved": "1"
+      },
+      {
+        "id": "1322222222227",
+        "saved": "1",
+        "name": "B",
+        "condition": {
+          "customer": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "customer_pay": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "self_pay": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "agent": {
+            "status": "1",
+            "disabled": "",
+            "value": "100"
+          }
+        },
+        "proportion": {
+          "goods": "10",
+          "customer": "0"
+        }
+      }
+    ],
+    "upgrade": "2",
+    "withdraw_status": "1",
+    "withdraw_minmoney": "0",
+    "withdraw_monthlimit": "0",
+    "withdraw_platform": [
+      "wechat"
+    ],
+    "withdraw_audit": "2",
+    "withdraw_tips": "恭喜你获得推广奖励，再接再厉。",
+    "status": "1",
+    "member_recruit_poster": "<p>尊享套餐399元享受本站全部课程资源，并取得分销资格。</p>",
+    "member_recruit_condition": "0",
+    "member_recruit_condition_payprice_status": "1",
+    "member_recruit_audit": "0",
+    "member_recruit_condition_payprice_value": "399",
+    "member_recruit_status": "1",
+    "member_recruit_condition_paycount_status": "1",
+    "member_recruit_condition_paycount_value": "1",
+    "channels": true
+  }
+}

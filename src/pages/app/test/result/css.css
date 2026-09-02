@@ -1,0 +1,103 @@
+
+page{
+    /* background-color: #fff; */
+}
+.test-info-degree{
+    display: flex;
+    /* align-items: center; */
+
+    font-size: 12px;
+    color: #fff;
+    margin-top: 10px;
+}
+
+
+.test-info-degree .test-info-rate{
+    margin-left: 5px;
+}
+
+.test-property-box{
+    display: flex;
+    justify-content: space-between;
+    width: 270px;
+    margin: 30px auto 0;
+}
+
+.test-property-box .test-property-item{
+    text-align: center;
+}
+
+.test-property-item-name{
+    font-size: 12px;
+    color: #86909C;
+}
+
+.test-property-item-value{
+    color: #1D2129;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.test-property-item-unit{
+    color: #4E5969;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.btn-groups{
+    display: flex;
+    align-content: center;
+}
+
+.btn{
+    width: 100%;
+    margin: 0 5px;
+    flex: 1;
+}
+
+
+.result-box{
+    text-align: center;
+    width: 200px;
+    margin: 50px auto;
+}
+
+.result-box .result-name{
+    font-size: 12px;
+    color: #86909C;
+    margin-bottom: 10px;
+}
+
+.result-box .result-val{
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.result-val-num{
+    font-size: 30px;
+    font-weight: 600;
+}
+.result-val-unit{
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+
+.test-time{
+    font-size: 12px;
+    text-align: center;
+    margin-top: 40px;
+    color: #86909C;
+    line-height: 22px;
+}
+
+.grade-status-tips{
+    text-align: center;
+    font-size: 13px;
+    color: #FF7D00;
+    background-color: #FFF7E8;
+    padding: 8px 15px;
+    margin: -10px 15px 0;
+    border-radius: 5px;
+}

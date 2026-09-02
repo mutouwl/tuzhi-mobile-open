@@ -1,0 +1,70 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508153",
+  "data": [
+    {
+      "id": 14,
+      "uniacid": 1,
+      "parent_id": 38,
+      "user_id": 606,
+      "status": 1,
+      "createtime": 1749093954,
+      "order": {
+        "price_success": 0,
+        "price_waiting": 0,
+        "order_count": 0,
+        "order_success_count": 0,
+        "order_waiting_count": 0,
+        "order_last_time": ""
+      },
+      "user": {
+        "id": 606,
+        "nickname": "微信用户",
+        "avatar": "/assets/img/avatar.png"
+      }
+    },
+    {
+      "id": 12,
+      "uniacid": 1,
+      "parent_id": 38,
+      "user_id": 424,
+      "status": 1,
+      "createtime": 1740582185,
+      "order": {
+        "price_success": 0,
+        "price_waiting": 0,
+        "order_count": 0,
+        "order_success_count": 0,
+        "order_waiting_count": 0,
+        "order_last_time": ""
+      },
+      "user": {
+        "id": 424,
+        "nickname": "加油吧",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250226/a1252422bed247009ba64e77c5a0ff63.jpeg"
+      }
+    },
+    {
+      "id": 15,
+      "uniacid": 1,
+      "parent_id": 38,
+      "user_id": 603,
+      "status": 1,
+      "createtime": null,
+      "order": {
+        "price_success": 0,
+        "price_waiting": 0,
+        "order_count": 0,
+        "order_success_count": 0,
+        "order_waiting_count": 0,
+        "order_last_time": ""
+      },
+      "user": {
+        "id": 603,
+        "nickname": "微信用户",
+        "avatar": "/assets/img/avatar.png"
+      }
+    }
+  ]
+}

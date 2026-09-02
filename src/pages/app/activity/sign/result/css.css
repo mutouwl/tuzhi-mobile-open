@@ -1,0 +1,99 @@
+
+page{
+  /* background-color: #fff; */
+}
+
+.icon{
+  width: 60px;
+  height: 60px;
+  margin: 80px auto 20px;
+  text-align: center;
+}
+
+.icon span{
+  display: block;
+}
+
+.icon img{
+  width: 100%;
+  height: 100%;
+}
+.tip {
+  width: 100%;
+  text-align: center;
+  margin: 20px 0 30px;
+}
+
+.tip .title{
+  font-size: 20px;
+  color: #1D2129;
+}
+
+.tip .subtitle{
+  font-size: 13px;
+  color: #86909C;
+  width: 80%;
+  margin: 6px auto;
+}
+
+.get-code-btn{
+  color:#0968f6
+}
+
+.btn-group{
+  /* display: flex;
+  justify-content: space-between; */
+}
+
+.btn-group button{
+  width: 68%!important;
+  margin-top: 15px;
+}
+
+.ticket-item{
+  box-sizing: border-box;
+  padding: 15px 15px;
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #F2F3F5;
+}
+
+.ticket-item:last-child{
+  border-bottom: none;
+}
+
+.ticket-item-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticket-item-name{
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+.ticket-item-num{
+  font-size: 12px;
+  color: #86909C;
+  margin-left: 5px;
+}
+
+.ticket-item-status{
+  font-size: 14px;
+  color: #4E5969;
+  font-weight: 600;
+}
+
+.ticket-item-list{
+  margin-top: 5px;
+  font-size: 14px;
+  color: #86909C;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticket-item-value{
+  color: #1D2129;
+  margin: 0 3px;   
+}

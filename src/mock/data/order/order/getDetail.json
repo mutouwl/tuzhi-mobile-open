@@ -1,0 +1,47 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508202",
+  "data": {
+    "createtime": 1786148544,
+    "goods_count": 1,
+    "live_id": 0,
+    "coupon_discount_fee": "0.00",
+    "real_price": "23.00",
+    "evaluate": 0,
+    "service": 0,
+    "status": "success",
+    "order_no": "202608222487831090038000",
+    "user_id": 38,
+    "pay_type": "balance",
+    "score_amount": 0,
+    "vip_discount_price": "0.00",
+    "order_type": "circle",
+    "is_virtual_pay": 0,
+    "goodsList": [
+      {
+        "snapshoot": {
+          "id": 3168,
+          "cover": "http://selfbuilt.cn/uploads/1/20260804/d0ad3297b776726b8e86964ddd0e7b48.png",
+          "type": "circle",
+          "name": "新圈子",
+          "price": "23.00"
+        },
+        "item_id": 3168,
+        "createtime": 1786148544,
+        "count": 1,
+        "id": 2160
+      }
+    ],
+    "goods_total_price": 1,
+    "controll": {
+      "evaluate": true,
+      "cancel": false,
+      "pay": false,
+      "service": false,
+      "surereceive": false,
+      "express": false
+    },
+    "describe": "订单已完成交易"
+  }
+}

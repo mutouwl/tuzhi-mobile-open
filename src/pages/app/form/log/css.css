@@ -1,0 +1,53 @@
+.cert-item{
+  /* width: 100%; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 15px 0;
+  border-bottom: 1px solid #efefef;
+}
+
+.cert-item:last-child{
+  border-bottom: none;
+}
+
+.cert-item-info{
+  width: calc(100% - 80px);
+  flex: 0 0 auto;
+}
+
+.cert-item-info-title{
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cert-item-info-step{
+  display: flex;
+  align-items: center;
+  
+}
+
+.cert-item-start{
+  width: 60px;
+  flex: 0 0 auto;
+}
+.cert-item-info-step{
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.cert-item-info-step div{
+  margin-right: 10px;
+}
+
+
+.progress-val{
+  color: #86909C;
+  /* margin-left: 10px; */
+}
+
+.progress-prop{
+  font-weight: 500;
+  color: #4E5969;
+}

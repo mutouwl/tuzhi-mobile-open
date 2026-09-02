@@ -1,0 +1,286 @@
+.course-info {
+    background-color: #fff;
+}
+
+
+.course-info .price {
+    font-size: 14px;
+}
+
+
+
+
+.course-info .price {
+    font-weight: 700;
+    font-size: 22px;
+    color: #F53F3F;
+}
+
+.course-info .score{
+    font-weight: 700;
+    font-size: 20px;
+    color: #0968f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-info .score .unit{
+    font-size: 14px;
+    font-weight: 400;
+    margin-right: 4px;
+}
+
+.course-info .price .unit {
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.course-info .price .price-value {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.course-info .price .coin-name {
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 2px;
+}
+
+.course-info .price_marking {
+    font-size: 14px;
+    color: #C9CDD4;
+    font-weight: 400;
+    margin-right: 10px;
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+
+.course-info .sales{
+    font-size: 14px;
+    color: #86909C;
+    font-weight: 400;
+}
+
+
+
+.info {
+    /* margin-top: 10px; */
+}
+
+.info .title {
+    color: #1D2129;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.info .subtitle {
+    color: #86909C;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+
+
+.course-info .title {
+    color: #1D2129;
+    font-weight: 500;
+    font-size: 16px;
+
+    margin-top: 10px;
+}
+
+.course-info .subtitle {
+    color: #86909C;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.evaluate-list{
+    background-color: #fff;
+    padding: 0 10px;
+}
+
+.evaluate-list .evaluate-item{
+    border-bottom: 2px solid rgb(250, 250, 250);   
+}
+
+.evaluate-list .evaluate-item:last-child{
+    border: none;
+}
+
+
+.content-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-header .filter{
+    display: flex;
+    font-size: 14px;
+    color: #86909C;
+    align-items: center;
+    vertical-align: middle;
+}
+
+
+.vip-bar{
+    width: 100%;
+    padding: 6px 10px;
+    margin-top: 5px;
+
+    border-radius: 6px;
+
+    box-sizing: border-box;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(50deg, #FFF7EB,#FFF6E7,#FFF2DC,#FFF3E0,#FFF5E5);
+}
+
+.vip-bar .vip-tag{
+    padding: 2px 8px;
+    border-radius: 6px;
+
+    font-size: 12px;
+    background: linear-gradient(50deg, #494949,#494949,#2D2D2D);
+    margin-right: 6px;
+    color: #FFD893;
+}
+
+.vip-bar .vip-privilege{
+    color: #FF5429;
+    margin: 0 5px;
+}
+
+.recommend-box{
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 圈子课程详情底部导航：三个按钮各占 1/3 宽，内容居中 */
+.circle-course-nav {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	min-height: 88rpx;
+	/* #ifndef MP-WEIXIN */
+	padding-bottom: env(safe-area-inset-bottom);
+	/* #endif */
+	/* 微信小程序端：安全区按设计减半（iPhone X 约 17px），与 tab bar 一致，避免底栏过厚 */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+	/* #endif */
+	background: #fff;
+	box-shadow: 0 -2rpx 12rpx rgba(31, 35, 41, 0.08);
+}
+.circle-course-nav-item { flex: 1; display: flex; align-items: center; justify-content: center; color: #59616b; font-size: 25rpx; padding: 16rpx 0; }
+.circle-course-nav-content { display: flex; align-items: center; justify-content: center; gap: 8rpx; line-height: 32rpx; }
+.circle-course-nav-content text { display: block; line-height: 32rpx; }
+
+/* 课程详情加载骨架屏：全屏遮罩，覆盖底部固定按钮；样式限定在容器内避免与其它页 sk-* 类冲突 */
+.course-detail-skeleton {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background-color: #F7F8FA;
+    overflow: hidden;
+}
+
+.course-detail-skeleton .sk-cover {
+    width: 100%;
+    padding-top: 56.25%;
+    background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
+    background-size: 400% 100%;
+    animation: course-sk-animate 1.8s ease infinite;
+}
+
+.course-detail-skeleton .sk-card,
+.course-detail-skeleton .sk-block {
+    background-color: #fff;
+    padding: 15px;
+}
+
+.course-detail-skeleton .sk-block {
+    margin-top: 8px;
+    padding-bottom: 20px;
+}
+
+.course-detail-skeleton .sk-line {
+    height: 15px;
+    border-radius: 3px;
+    margin-top: 12px;
+    background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
+    background-size: 400% 100%;
+    animation: course-sk-animate 1.8s ease infinite;
+}
+
+.course-detail-skeleton .sk-price {
+    height: 22px;
+    width: 18%;
+    margin-top: 0;
+}
+
+.course-detail-skeleton .sk-avatar {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
+    background-size: 400% 100%;
+    animation: course-sk-animate 1.8s ease infinite;
+}
+
+.course-detail-skeleton .sk-avatar-sm {
+    width: 28px;
+    height: 28px;
+}
+
+.course-detail-skeleton .sk-comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+.course-detail-skeleton .sk-comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.course-detail-skeleton .sk-tabs {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 6px;
+}
+
+.course-detail-skeleton .sk-tabs .sk-line {
+    height: 17px;
+    margin-top: 0;
+}
+
+.course-detail-skeleton .sk-w-90 { width: 90%; }
+.course-detail-skeleton .sk-w-70 { width: 70%; }
+.course-detail-skeleton .sk-w-50 { width: 50%; }
+.course-detail-skeleton .sk-w-45 { width: 45%; }
+.course-detail-skeleton .sk-w-30 { width: 30%; }
+.course-detail-skeleton .sk-w-25 { width: 25%; }
+.course-detail-skeleton .sk-w-20 { width: 20%; }
+
+@keyframes course-sk-animate {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}

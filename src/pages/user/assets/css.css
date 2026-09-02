@@ -1,0 +1,87 @@
+
+.balance {
+    padding: 20px 15px;
+    background-image: linear-gradient(to bottom right,  #6B6C85,#3A4054);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.balance .balance-left {
+    display: flex;
+    align-items: baseline;
+}
+
+.balance .value{
+    font-weight: 500;
+    font-size: 30px;
+}
+
+.balance .name{
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.balance .withdraw-btn {
+    display: inline-block;
+    padding: 6px 18px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    font-size: 13px;
+    color: #fff;
+}
+
+.balance .withdraw-btn:active {
+    opacity: 0.8;
+}
+
+.filter{
+    padding: 15px 10px;
+    background-color: #F7F8FA;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter div{
+    width: 50%;
+    text-align: center;
+    font-size: 14px;
+    color: #4E5969;
+}
+
+
+.filter div span{
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+
+::v-deep .u-cell__body{
+    padding: 10px 0!important;
+}
+
+
+::v-deep .u-cell__body .u-cell__title-text{
+    font-size:14px!important;
+    font-weight:400!important;
+}
+
+::v-deep .u-cell__body .u-cell__label--large{
+    font-size: 12px!important;
+    
+}
+
+::v-deep .u-cell__body .u-cell__label{
+    margin-top: 0!important;
+}
+
+::v-deep .u-cell__body .u-cell__value{
+    font-size: 14px!important;
+    font-weight: 700!important;
+}
+
+::v-deep .u-line{
+    border-bottom: 1px solid #efefef!important;
+}

@@ -1,0 +1,18 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508153",
+  "data": {
+    "id": 11,
+    "uniacid": 1,
+    "user_id": 38,
+    "money": "0.15",
+    "money_freeze": "0.00",
+    "money_total": "0.15",
+    "money_withdraw": "0.00",
+    "level": "1322222222227",
+    "status": 1,
+    "audit": 1,
+    "createtime": 1710598574
+  }
+}

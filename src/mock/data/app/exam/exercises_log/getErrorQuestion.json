@@ -1,0 +1,63 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508107",
+  "data": {
+    "modal": {
+      "answerSheet": "示例内容"
+    },
+    "data": {
+      "question_list": [
+        {
+          "id": 1,
+          "title": "示例考试",
+          "score": 5,
+          "status": 1,
+          "total": 99,
+          "pass_score": 5,
+          "duration": 10
+        },
+        {
+          "id": 2,
+          "title": "示例考试",
+          "score": 5,
+          "status": 1,
+          "total": 99,
+          "pass_score": 5,
+          "duration": 10
+        }
+      ],
+      "test": {
+        "test_duration_val": 10,
+        "test_duration_limit": 10
+      },
+      "status": 1
+    },
+    "swiperHeight": [
+      {
+        "id": 1,
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      },
+      {
+        "id": 2,
+        "title": "示例考试",
+        "score": 5,
+        "status": 1,
+        "total": 99,
+        "pass_score": 5,
+        "duration": 10
+      }
+    ],
+    "windowHeight": "示例",
+    "currentIndex": "示例",
+    "loading": "示例",
+    "pageParams": {
+      "jobtype": "示例"
+    }
+  }
+}

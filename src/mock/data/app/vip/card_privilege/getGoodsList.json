@@ -1,0 +1,104 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508113",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "type": "示例",
+      "name": "示例标题",
+      "sort": 10,
+      "order": "示例",
+      "privilege_type": "示例",
+      "card_id": 1,
+      "pageParams": {
+        "value": "示例"
+      }
+    },
+    "sortType": [
+      {
+        "id": 1,
+        "type": "示例",
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "type": "示例",
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "is_subscribe": true
+      }
+    ],
+    "list": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "modal": {
+      "time": "1786508113",
+      "mode": "示例",
+      "type": "示例",
+      "share": "示例"
+    },
+    "userInfo": {
+      "value": "示例"
+    },
+    "type": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "key": "示例",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "key": "示例",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "is_subscribe": true
+      }
+    ],
+    "typeChecked": true,
+    "shareGoodsId": 1,
+    "name": "示例标题"
+  }
+}

@@ -1,0 +1,28 @@
+.aliplayer-copyright {
+    position: absolute;
+    white-space: nowrap;
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+    opacity: 0.6;
+    animation: aliplayercopyright 20s linear infinite;
+}
+
+.aliplayer-copyright-bg {
+    background-color: rgba(178, 178, 178, .5);
+    width: 100%;
+    top: 20px;
+    position: absolute;
+    height: 20px;
+    line-height: 20px;
+}
+
+@keyframes aliplayercopyright {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: 0%;
+        transform: translateX(-100%)
+    }
+}

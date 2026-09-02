@@ -1,0 +1,36 @@
+
+.container{
+    padding: 10px;
+}
+/*  #ifdef H5  */
+::v-deep .u-tabs__wrapper__nav__item{ 
+    height: 50px!important;
+    line-height: 50px!important;
+}
+/*  #endif  */
+
+/*  #ifdef MP  */
+::v-deep .u-tabs__wrapper__nav__item{ 
+    height: 45px!important;
+    line-height: 45px!important;
+}
+/*  #endif  */
+
+.search-box{
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.load-more-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.load-more-text {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #999;
+}

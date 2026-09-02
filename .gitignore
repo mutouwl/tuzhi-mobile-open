@@ -1,0 +1,21 @@
+node_modules/
+.DS_Store
+dist-ssr/
+*.local
+dist/
+*.md
+
+# 本地部署替换脚本（勿提交）
+replace_mobile.sh
+
+# HBuilderX 本地配置（不入库）
+.hbuilderx/
+
+# 变更导出快照（不入库）
+git_extracted_changes/
+
+# 开源发布工具（不入库）
+tools/open-source-export/
+
+# 接口文档（随仓库与开源快照发布，例外于 *.md 规则）
+!docs/接口文档/**

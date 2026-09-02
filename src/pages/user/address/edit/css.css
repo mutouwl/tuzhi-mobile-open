@@ -1,0 +1,164 @@
+.address-edit-page {
+	min-height: 100vh;
+	background-color: #F7F8FA;
+	padding-bottom: 100px;
+}
+
+.form-section {
+	background-color: #fff;
+	margin-bottom: 12px;
+}
+
+.form-item {
+	display: flex;
+	align-items: center;
+	padding: 16px;
+	border-bottom: 1px solid #F7F8FA;
+}
+
+.form-item:last-child {
+	border-bottom: none;
+}
+
+.form-label {
+	width: 80px;
+	font-size: 15px;
+	color: #333;
+	flex-shrink: 0;
+}
+
+.form-input {
+	flex: 1;
+	font-size: 15px;
+	color: #333;
+	border: none;
+	background: transparent;
+}
+
+.form-input::placeholder {
+	color: #ccc;
+}
+
+.mobile-input {
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+
+.mobile-prefix {
+	font-size: 15px;
+	color: #333;
+	margin-right: 8px;
+}
+
+.form-value {
+	flex: 1;
+	font-size: 15px;
+	color: #333;
+}
+
+.form-value.placeholder {
+	color: #ccc;
+}
+
+.parse-section {
+	background-color: #fff;
+	padding: 16px;
+	margin-bottom: 12px;
+}
+
+.parse-textarea {
+	width: 100%;
+	height: 80px;
+	background-color: #F7F8FA;
+	border-radius: 8px;
+	padding: 12px;
+	font-size: 14px;
+	color: #333;
+	box-sizing: border-box;
+	border: none;
+}
+
+.parse-textarea::placeholder {
+	color: #ccc;
+}
+
+.parse-btns {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 12px;
+	gap: 12px;
+}
+
+.parse-btn {
+	flex: 1;
+	padding: 8px 0;
+	font-size: 14px;
+	border-radius: 4px;
+	border: none;
+}
+
+.parse-btn.clear {
+	background-color: #fff;
+	color: #666;
+	border: 1px solid #ddd;
+}
+
+.parse-btn.confirm {
+	background-color: #0968f6;
+	color: #fff;
+}
+
+.default-section {
+	background-color: #fff;
+	padding: 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.default-label {
+	font-size: 15px;
+	color: #333;
+}
+
+.default-switch {
+	transform: scale(0.8);
+}
+
+.bottom-btns {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 10px 16px;
+	background-color: #fff;
+	border-top: 1px solid #F7F8FA;
+	display: flex;
+	gap: 12px;
+	/* 微信小程序端：底部安全区按设计加半（iPhone X 约 17px），按钮不直贴屏底 */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+	/* #endif */
+}
+
+.delete-btn {
+	width: 100px;
+	height: 46px;
+	line-height: 46px;
+	background-color: #fff;
+	color: #666;
+	font-size: 15px;
+	border: 1px solid #ddd;
+}
+
+.save-btn {
+	flex: 1;
+	height: 46px;
+	line-height: 46px;
+	background-color: #0968f6;
+	color: #fff;
+	font-size: 16px;
+	border: none;
+}

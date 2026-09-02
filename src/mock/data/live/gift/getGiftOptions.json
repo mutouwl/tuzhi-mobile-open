@@ -1,0 +1,18 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508183",
+  "data": [
+    {
+      "id": 11,
+      "uniacid": 1,
+      "name": "打火机",
+      "price": "10.00",
+      "icon": "https://tuzhi.mutouweb.com/uploads/1/20250821/f18048b8171f2f5027d062ab7a1af115.jpeg",
+      "status": 1,
+      "weigh": 11,
+      "createtime": 1780127176,
+      "status_text": "Status 1"
+    }
+  ]
+}

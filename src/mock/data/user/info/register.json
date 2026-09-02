@@ -1,0 +1,16 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508130",
+  "data": {
+    "form": {
+      "mobile": "13222222222",
+      "code": "000000"
+    },
+    "tips": "示例",
+    "value": "示例",
+    "$tools": {
+      "systemConfig": "示例"
+    }
+  }
+}

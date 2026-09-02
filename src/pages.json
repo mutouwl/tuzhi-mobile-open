@@ -1,0 +1,1260 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"pullToRefresh": {
+						"color": "#007aff"
+					}
+				},
+				"h5": {
+					"titleNView": false
+				}
+			}
+		}
+	],
+	"subPackages": [
+		{
+			"root": "pages/public/",
+			"pages": [
+				{
+					"path": "login/login",
+					"style": {
+						"navigationBarTitleText": "用户登录",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "banpc/banpc",
+					"style": {
+						"navigationBarTitleText": "提示",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "register/register",
+					"style": {
+						"navigationBarTitleText": "用户注册",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "resetpwd/resetpwd",
+					"style": {
+						"navigationBarTitleText": "找回密码",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "result/result",
+					"style": {
+						"navigationBarTitleText": "操作结果",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "search/search",
+					"style": {
+						"navigationBarTitleText": "搜索",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "message/message",
+					"style": {
+						"navigationBarTitleText": "消息通知",
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "browser/browser",
+					"style": {
+						"navigationBarTitleText": "浏览器",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+				"path": "agreement/agreement",
+				"style": {
+					"navigationBarTitleText": "用户协议",
+					"h5": {
+						"titleNView": false
+					}
+				}
+			}
+		]
+	},
+		{
+			"root": "pages/app/",
+			"pages": [
+				{
+					"path": "complaint/index/index",
+					"style": {
+						"navigationBarTitleText": "投诉",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "complaint/submit/submit",
+					"style": {
+						"navigationBarTitleText": "投诉",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "form/submit/submit",
+					"style": {
+						"navigationBarTitleText": "填写表单",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "form/log/log",
+					"style": {
+						"navigationBarTitleText": "表单记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "form/result/result",
+					"style": {
+						"navigationBarTitleText": "填写结果",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "cert/index/index",
+					"style": {
+						"navigationBarTitleText": "我的成就",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "coupon/receive/receive",
+					"style": {
+						"navigationBarTitleText": "领取优惠券",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "coupon/my/my",
+					"style": {
+						"navigationBarTitleText": "我的优惠券",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "coupon/use/use",
+					"style": {
+						"navigationBarTitleText": "使用优惠券",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "channels/sharer/invite/invite",
+					"style": {
+						"navigationBarTitleText": "成为分享员",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "channels/delivery/delivery",
+					"style": {
+						"navigationBarTitleText": "视频号分享员",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "channels/center/center",
+					"style": {
+						"navigationBarTitleText": "视频号分享员",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "channels/sharer/bind/bind",
+					"style": {
+						"navigationBarTitleText": "我的分享员",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/wallet/settle/settle",
+					"style": {
+						"navigationBarTitleText": "结算中心",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "agent/wallet/withdraw/withdraw",
+					"style": {
+						"navigationBarTitleText": "提现",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "agent/center/center",
+					"style": {
+						"navigationBarTitleText": "分销员中心",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/member/recruit/recruit",
+					"style": {
+						"navigationBarTitleText": "分销员招募",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/member/level/level",
+					"style": {
+						"navigationBarTitleText": "分销员等级",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "agent/wallet/withdrawlog/withdrawlog",
+					"style": {
+						"navigationBarTitleText": "提现记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/wallet/detail/detail",
+					"style": {
+						"navigationBarTitleText": "收支明细",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/log/earnings/log/log",
+					"style": {
+						"navigationBarTitleText": "累计收益",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/log/customer/log/log",
+					"style": {
+						"navigationBarTitleText": "累计客户",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/log/customer/detail/detail",
+					"style": {
+						"navigationBarTitleText": "客户详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/recommend/goods/goods",
+					"style": {
+						"navigationBarTitleText": "推荐商品",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "agent/wallet/bank/bank",
+					"style": {
+						"navigationBarTitleText": "银行卡设置",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "exchange/center/center",
+					"style": {
+						"navigationBarTitleText": "兑换中心",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "exchange/log/log",
+					"style": {
+						"navigationBarTitleText": "兑换记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "sign/center/center",
+					"style": {
+						"navigationBarTitleText": "签到中心",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "sign/log/log",
+					"style": {
+						"navigationBarTitleText": "签到记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/center/center",
+					"style": {
+						"navigationBarTitleText": "积分商城",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "vip/center/center",
+					"style": {
+						"navigationBarTitleText": "付费会员",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "vip/goods/goods",
+					"style": {
+						"navigationBarTitleText": "会员商品",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/center/center",
+					"style": {
+						"navigationBarTitleText": "作业练习",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/detail/detail",
+					"style": {
+						"navigationBarTitleText": "练习介绍",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/result/result",
+					"style": {
+						"navigationBarTitleText": "练习结束",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/log/log",
+					"style": {
+						"navigationBarTitleText": "练习记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/goods/goods",
+					"style": {
+						"navigationBarTitleText": "练习列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "exam/work/work",
+					"style": {
+						"navigationBarTitleText": "练习",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "exam/group/group",
+					"style": {
+						"navigationBarTitleText": "练习分类",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "test/detail/detail",
+					"style": {
+						"navigationBarTitleText": "考试详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "test/log/log",
+					"style": {
+						"navigationBarTitleText": "考试记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "test/result/result",
+					"style": {
+						"navigationBarTitleText": "考试成绩",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "activity/sign/result/result",
+					"style": {
+						"navigationBarTitleText": "签到结果",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "activity/ticket/ticket",
+					"style": {
+						"navigationBarTitleText": "活动票券",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "activity/form/form",
+					"style": {
+						"navigationBarTitleText": "购票信息",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "activity/result/result",
+					"style": {
+						"navigationBarTitleText": "支付成功",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "activity/sign/sign",
+					"style": {
+						"navigationBarTitleText": "签到",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "activity/user/user",
+					"style": {
+						"navigationBarTitleText": "活动票券",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "activity/index/index",
+					"style": {
+						"navigationBarTitleText": "活动列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "activity/detail/detail",
+					"style": {
+						"navigationBarTitleText": "活动详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "physical/category/category",
+					"style": {
+						"navigationBarTitleText": "商品分类",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "physical/list/list",
+					"style": {
+						"navigationBarTitleText": "商品列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+					{
+						"path": "physical/detail/detail",
+						"style": {
+							"navigationBarTitleText": "商品详情",
+							"h5": {
+								"titleNView": false
+							},
+							"enablePullDownRefresh": true,
+							"app-plus": {
+								"pullToRefresh": {
+									"color": "#007aff"
+								}
+							}
+						}
+					},
+					{
+						"path": "composite/detail/detail",
+					"style": {
+						"navigationBarTitleText": "组合商品",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "circle/presale/presale",
+					"style": {
+						"navigationBarTitleText": "圈子",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "circle/index/index",
+					"style": {
+						"navigationBarTitleText": "圈子",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "circle/post/publish",
+					"style": {
+						"navigationBarTitleText": "发布动态",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "circle/post/detail",
+					"style": {
+						"navigationBarTitleText": "动态详情",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "circle/my/index",
+					"style": {
+						"navigationBarTitleText": "我的圈子",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "circle/my/home",
+					"style": {
+						"navigationBarTitleText": "我的主页",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "circle/user/home",
+					"style": {
+						"navigationBarTitleText": "个人主页",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "circle/search/search",
+					"style": {
+						"navigationBarTitleText": "搜索动态",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				}
+		]
+	},
+		{
+			"root": "pages/user/",
+			"pages": [
+				{
+					"path": "changemobile/changemobile",
+					"style": {
+						"navigationBarTitleText": "修改手机号"
+					}
+				},
+				{
+					"path": "index/index",
+					"style": {
+						"navigationBarTitleText": "用户中心",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "bindaccount/bindaccount",
+					"style": {
+						"navigationBarTitleText": "绑定账号",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "assets/assets",
+					"style": {
+						"navigationBarTitleText": "资产管理",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "merge/merge",
+					"style": {
+						"navigationBarTitleText": "合并账户",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "setting/setting",
+					"style": {
+						"navigationBarTitleText": "设置",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "study/study",
+					"style": {
+						"navigationBarTitleText": "学习中心",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "subscription/subscription",
+					"style": {
+						"navigationBarTitleText": "我的订阅",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "collect/collect",
+					"style": {
+						"navigationBarTitleText": "我的收藏",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "address/list/list",
+					"style": {
+						"navigationBarTitleText": "收货地址",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "address/edit/edit",
+					"style": {
+						"navigationBarTitleText": "编辑地址",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+				"path": "balance/index",
+				"style": {
+					"navigationBarTitleText": "余额",
+					"h5": {
+						"titleNView": false
+					},
+					"enablePullDownRefresh": true,
+					"app-plus": {
+						"pullToRefresh": {
+							"color": "#007aff"
+						}
+					}
+				}
+			},
+			{
+				"path": "redpacket/log",
+					"style": {
+						"navigationBarTitleText": "红包记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+						"path": "redpacket/withdraw-log",
+						"style": {
+							"navigationBarTitleText": "提现记录",
+							"enablePullDownRefresh": true,
+							"h5": {
+								"titleNView": false
+							}
+						}
+					}
+			]
+		},
+		{
+			"root": "pages/order/",
+			"pages": [
+				{
+					"path": "submit/submit",
+					"style": {
+						"navigationBarTitleText": "提交订单",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "订单详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "list/list",
+					"style": {
+						"navigationBarTitleText": "订单列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "evaluate/submit/submit",
+					"style": {
+						"navigationBarTitleText": "评价",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "evaluate/list/list",
+					"style": {
+						"navigationBarTitleText": "评价列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "service/detail/detail",
+					"style": {
+						"navigationBarTitleText": "售后详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "service/refundlog/refundlog",
+					"style": {
+						"navigationBarTitleText": "退款记录",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "service/form/form",
+					"style": {
+						"navigationBarTitleText": "售后申请",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "express/log/log",
+					"style": {
+						"navigationBarTitleText": "物流详情",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/course/",
+			"pages": [
+				{
+					"path": "category/category",
+					"style": {
+						"navigationBarTitleText": "分类",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "group/group",
+					"style": {
+						"navigationBarTitleText": "列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "课程详情",
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						},
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "live/live",
+					"style": {
+						"navigationBarTitleText": "直播详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				}
+			]
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "加载中",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"easycom": {
+		"^u-(.*)": "@/components/uview-ui/components/u-$1/u-$1.vue",
+		"^tz-(.*)": "@/components/tz/$1.vue",
+		"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
+		"^t-(.*)": "@tdesign/uniapp/$1/$1.vue"
+	}
+}

@@ -1,0 +1,43 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508152",
+  "data": {
+    "order": {
+      "total": {
+        "price_waiting": 0,
+        "sales_waiting": 0,
+        "sales_success": 0,
+        "price_success": 0,
+        "price_goods": 0,
+        "price_invite": 0,
+        "order_count": 0,
+        "price_total": 0,
+        "sales_total": 0
+      },
+      "today": {
+        "price_waiting": 0,
+        "sales_waiting": 0,
+        "sales_success": 0,
+        "price_success": 0,
+        "price_goods": 0,
+        "price_invite": 0,
+        "order_count": 0,
+        "price_total": 0,
+        "sales_total": 0
+      }
+    },
+    "customer": {
+      "total": {
+        "count": 3,
+        "normal": 3,
+        "hidden": 0
+      },
+      "today": {
+        "count": 0,
+        "normal": 0,
+        "hidden": 0
+      }
+    }
+  }
+}

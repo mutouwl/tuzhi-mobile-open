@@ -1,0 +1,73 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "id": 1,
+    "name": "产品运营实战圈",
+    "intro": "聚焦产品与运营实战，每天分享方法、案例与行业资料，和圈友一起成长",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "member_count": 158,
+    "show_member_count": 1,
+    "post_count": 12,
+    "show_post_count": 1,
+    "showcase_count": 2,
+    "course_count": 3,
+    "owner_post_count": 4,
+    "top_posts": [
+      {
+        "id": 101,
+        "content": "【圈公告】欢迎大家加入产品运营实战圈。每周日下午 17:00 会更新一期行业拆解直播，资料放在课程 tab，有问题随时发帖提问。"
+      }
+    ],
+    "content_protect": 0,
+    "nav_config": [
+      {
+        "type": "all",
+        "name": "全部",
+        "key": "all",
+        "status": 1,
+        "sort": 1
+      },
+      {
+        "type": "essence",
+        "name": "精选",
+        "key": "essence",
+        "status": 1,
+        "sort": 2
+      },
+      {
+        "type": "tag",
+        "name": "运营干货",
+        "key": "301",
+        "status": 1,
+        "sort": 3
+      },
+      {
+        "type": "showcase",
+        "name": "橱窗",
+        "key": "showcase",
+        "status": 1,
+        "sort": 4
+      }
+    ],
+    "avatars": [
+      "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    ],
+    "tags": [
+      { "id": 301, "name": "运营干货", "sort": 1 },
+      { "id": 302, "name": "每日打卡", "sort": 2 },
+      { "id": 303, "name": "问答求助", "sort": 3 }
+    ],
+    "my_member": {
+      "role": "member",
+      "status": 1,
+      "expire_time": 1786723200,
+      "expire_text": "2026-08-15",
+      "is_expired": 0,
+      "createtime": 1786060800
+    }
+  }
+}

@@ -1,0 +1,57 @@
+page{
+    
+}
+
+.exam-item{
+    /* width: 100%; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 0;
+    border-bottom: 1px solid #efefef;
+}
+
+.exam-item:last-child{
+    border-bottom: none;
+}
+
+.exam-item-info{
+    width: calc(100% - 80px);
+    flex: 0 0 auto;
+}
+
+.exam-item-info-title{
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.exam-item-info-step{
+    display: flex;
+    align-items: center;
+    
+}
+
+.exam-item-start{
+    width: 60px;
+    flex: 0 0 auto;
+}
+.exam-item-info-step{
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.exam-item-info-step div{
+    margin-right: 10px;
+}
+
+
+.progress-val{
+    color: #86909C;
+    /* margin-left: 10px; */
+}
+
+.progress-prop{
+    font-weight: 500;
+    color: #4E5969;
+}

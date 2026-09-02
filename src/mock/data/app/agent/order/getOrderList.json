@@ -1,0 +1,105 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508092",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "time": "1786508092",
+      "status": 1,
+      "type": "示例"
+    },
+    "list": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      }
+    ],
+    "modal": {
+      "time": "1786508092"
+    },
+    "typeList": [
+      {
+        "id": 1,
+        "name": "示例订单",
+        "type": "示例",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "name": "示例订单",
+        "type": "示例",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      }
+    ],
+    "checkTab": "示例",
+    "total": {
+      "order_count": 10,
+      "price_success": 99,
+      "price_waiting": 99
+    },
+    "customerDetail": {
+      "user": {
+        "nickname": "示例用户"
+      }
+    },
+    "statusList": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508092",
+        "goods": "示例"
+      }
+    ],
+    "data": "示例",
+    "$tools": {
+      "yearmonth": "示例"
+    },
+    "pageParams": {
+      "uid": 1
+    }
+  }
+}

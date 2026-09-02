@@ -1,0 +1,123 @@
+.complaint-submit-page {
+	min-height: 100vh;
+	padding: 18px 16px 110px;
+	box-sizing: border-box;
+	background: #fff;
+	--td-brand-color: #07c160;
+	--td-button-primary-bg-color: #07c160;
+	--td-button-primary-border-color: #07c160;
+	--td-button-primary-active-bg-color: #06ad56;
+	--td-button-primary-active-border-color: #06ad56;
+	--td-button-primary-disabled-bg: rgba(7, 193, 96, 0.45);
+	--td-button-primary-disabled-border-color: rgba(7, 193, 96, 0.45);
+	--td-button-primary-disabled-color: #fff;
+	--td-textarea-border-color: #07c160;
+}
+
+.section {
+	padding: 0 0 24px;
+	border-bottom: 1px solid #f2f2f2;
+	margin-bottom: 20px;
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.section-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #111;
+	margin-bottom: 12px;
+}
+
+.section-count {
+	font-size: 16px;
+	color: #aaa;
+}
+
+.category-path {
+	font-size: 14px;
+	line-height: 22px;
+	color: #666;
+}
+
+::v-deep .t-textarea {
+	padding: 0 !important;
+	background: #fff !important;
+}
+
+::v-deep .t-textarea__wrapper {
+	min-height: 86px !important;
+}
+
+::v-deep .t-textarea__textarea {
+	font-size: 15px !important;
+	line-height: 24px !important;
+}
+
+.submit-footer {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 14px 72px 30px;
+	background: #fff;
+	box-sizing: border-box;
+	/* 微信小程序端：在固定 30px 基础上叠加半安全区（iPhone X 约 17px） */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(30px + constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(30px + env(safe-area-inset-bottom) / 2);
+	/* #endif */
+}
+
+::v-deep .t-button {
+	height: 50px !important;
+	font-size: 18px !important;
+	font-weight: 600 !important;
+}
+
+.success-page {
+	
+	padding: 38px 16px 110px;
+	box-sizing: border-box;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.success-icon {
+	width: 80px;
+	height: 80px;
+	margin-bottom: 20px;
+}
+
+.success-icon image {
+	width: 80px;
+	height: 80px;
+}
+
+.success-text {
+	font-size: 20px;
+	font-weight: 600;
+	color: #111;
+}
+
+.success-footer {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 14px 72px 30px;
+	background: #fff;
+	box-sizing: border-box;
+	/* 微信小程序端：在固定 30px 基础上叠加半安全区（iPhone X 约 17px） */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(30px + constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(30px + env(safe-area-inset-bottom) / 2);
+	/* #endif */
+}

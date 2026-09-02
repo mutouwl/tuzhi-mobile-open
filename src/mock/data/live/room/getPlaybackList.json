@@ -1,0 +1,373 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508117",
+  "data": {
+    "coverImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "isClearScreen": "示例",
+    "showVideoControlBar": true,
+    "startX": 5,
+    "startY": 5,
+    "safeAreaBottom": "示例",
+    "tabsChecked": true,
+    "messageBoxHeight": "示例内容",
+    "modal": {
+      "playbackVideo": "示例",
+      "columnCourse": "示例",
+      "speed": "示例",
+      "mode": "示例",
+      "control": "示例",
+      "preview": "示例",
+      "detail": "示例内容",
+      "interaction": "示例",
+      "goods": "示例",
+      "gift": "示例",
+      "column": "示例",
+      "share": "示例",
+      "giftTransition": "示例",
+      "courseware": "示例",
+      "bindData": "示例"
+    },
+    "data": {
+      "warm_up_cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "live_screen_ratio": "示例",
+      "live_type": "示例",
+      "live_start_time": "1786508117",
+      "live_end_time": "1786508117",
+      "id": 1
+    },
+    "roomData": {
+      "config": {
+        "value": "示例",
+        "notice": "示例",
+        "bantalk": "示例",
+        "gift": "示例",
+        "goods": "示例"
+      },
+      "push_url": {
+        "value": "示例"
+      },
+      "status_text": 1,
+      "status": 1,
+      "message_topic": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "message_pubkey": "示例内容",
+      "message_subkey": "示例内容",
+      "message_provider": "示例内容",
+      "message_enabled": true
+    },
+    "isLive": "示例",
+    "roomStatus": 1,
+    "videoUrl": "示例",
+    "studyTime": "1786508117",
+    "isPlaying": "示例",
+    "isFullscreen": "示例",
+    "onlineUserNum": 10,
+    "videoBoxHeight": "示例",
+    "windowHeight": "示例",
+    "currentQualityName": "示例标题",
+    "backgroundImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "pageParams": {
+      "id": 1,
+      "column_id": 1
+    },
+    "loading": "示例",
+    "isCustomVideoLive": "示例",
+    "playbackAutoplay": "示例",
+    "height": "示例",
+    "qualitySwitching": "示例",
+    "videoErrorLocked": "示例",
+    "showViewerCount": 10,
+    "showQualitySwitch": true,
+    "$tools": {
+      "systemConfig": "示例",
+      "formatMediaTime": "1786508117",
+      "timestamp": "1786508117",
+      "formatDate": "1786508117"
+    },
+    "activeIndex": true,
+    "videoList": [
+      {
+        "id": 1,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "requestId": 1,
+    "show": true,
+    "active": true,
+    "opacity": "示例",
+    "value": "示例",
+    "speedOption": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "checked": true,
+    "audio": {
+      "duration": 10
+    },
+    "isplay": "示例",
+    "videoCtx": "示例",
+    "isMuted": "示例",
+    "src": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "singer": "示例",
+    "playState": "示例",
+    "setSinger": "示例",
+    "playerOnPlay": "示例",
+    "playerOnPause": "示例",
+    "playerOnEnded": "示例",
+    "playerOnTimeupdate": "1786508117",
+    "playerOnWaiting": "示例",
+    "playerOnError": "示例",
+    "stop": "示例",
+    "seek": "示例",
+    "play": "示例",
+    "pause": "示例",
+    "playbackRate": "示例",
+    "sliderChange": "示例",
+    "sliderChanging": "示例",
+    "currentTime": "1786508117",
+    "duration": 10,
+    "patch": "示例",
+    "actionlist": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "option": "示例",
+    "pdfLink": "示例",
+    "list": {
+      "test": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "exercises": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "activity": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "form": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "length": "示例"
+    },
+    "visible": "示例",
+    "zIndex": "示例",
+    "title": "示例标题",
+    "showMore": true,
+    "subscription": "示例",
+    "courseId": 1,
+    "columnId": 1,
+    "course": {
+      "no": "示例",
+      "name": "示例标题",
+      "type": "示例",
+      "updatetime": "1786508117",
+      "views": 10,
+      "id": 1,
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "bordered": "示例",
+    "selected": true,
+    "is_try": true,
+    "checkedDir": true,
+    "countdown": 10,
+    "isShow": true,
+    "coursewareList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "bind_data": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "iscollect": true,
+    "bindData": {
+      "length": "示例"
+    },
+    "limit_copy": 10,
+    "liveDetail": "示例内容",
+    "forumModal": {
+      "control": "示例"
+    },
+    "testshow": true,
+    "examshow": true,
+    "formshow": true,
+    "list.exercises": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "list.test": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "list.activity": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "list.form": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "length": "示例",
+    "tip": "示例",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "endTime": "1786508117",
+    "startTime": "1786508117",
+    "input": {
+      "text": "示例内容",
+      "focus": "示例"
+    },
+    "bottomHeight": "示例",
+    "bantalk": "示例",
+    "isMessageEnabled": true,
+    "scroller": {
+      "top": "示例",
+      "animation": "示例"
+    },
+    "form": {
+      "page": 1,
+      "limit": 10
+    },
+    "messageList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "isLoad": "示例",
+    "linkStatus": 1,
+    "tipText": "示例内容",
+    "giftDetail": {
+      "nickname": "示例用户",
+      "message": "示例内容",
+      "user_id": 1
+    },
+    "includes": "示例",
+    "time": "1786508117",
+    "timeShowInterval": "1786508117",
+    "text": "示例内容",
+    "name": "示例标题",
+    "path": "示例"
+  }
+}

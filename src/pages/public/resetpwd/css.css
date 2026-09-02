@@ -1,0 +1,108 @@
+page{
+	/* background-color: #fff; */
+	    background: linear-gradient(107deg,#f5f9ff 0%,#ebf1fa 99.63%);
+	/* flex-direction: column; */
+	height: 100vh;
+    overflow-y: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	/* padding: 0 30px; */
+	box-sizing: border-box;
+} 
+
+.container{
+    padding: 15px 25px;
+	box-shadow: 4px 4px 16px rgba(255, 255, 255, .3) inset;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eee;
+	max-width: 480px;
+	background-color: #fff;
+	width: 100%;
+	margin: 0 30px;
+}
+
+.header-tip {
+	font-size: 22px;
+	font-weight: 500;
+	color: #1D2129;
+
+	margin-top: 40px;
+}
+
+.header-tip .title {
+	/* font-size: 36px; */
+}
+
+.header-tip .sub-title {
+	/* font-size: 16px; */
+	margin-top: 20rpx;
+}
+
+.header-tip .nav-text {
+	margin-left: 10rpx;
+}
+
+.get-code-btn {
+	font-size: 14px;
+}
+
+.input-box,
+.btn-box {
+	margin-top: 40px;
+}
+
+.get-code-btn {
+	color: #0968f6;
+}
+
+
+.nav-btn {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	font-size: 14px;
+	color: #86909c;
+}
+
+.nav-btn .register-btn span {
+	margin-left: 10px;
+}
+
+
+.login-more-btn {
+	position: fixed;
+	width: calc(100% - 30px);
+	left: 15px;
+	bottom: 60px;
+}
+
+.login-more-btn .platform-btn {
+	margin: 10px 10px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+}
+
+
+.login-more-btn .platform-btn .weixin {
+	color: green;
+	font-size: 30px;
+}
+
+
+.u-input-diy{
+	/* padding: 5px 10px!important;
+    background: #F7F8FA;
+	margin-bottom: 10px; */
+}
+
+::v-deep .u-input{
+    padding: 20px 15px!important;
+	background: #F7F8FA;
+	margin-bottom: 10px;
+	height: 50px;
+	line-height: 50px;
+	margin-bottom: 15px;
+}

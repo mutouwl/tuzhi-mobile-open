@@ -1,0 +1,23 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509546",
+  "data": {
+    "oss": {
+      "status": "close",
+      "uploadmode": "client",
+      "direct": 0,
+      "uploadurl": "https://tuzistudy.oss-cn-beijing.aliyuncs.com",
+      "cdnurl": "https://tuzistudy.oss-cn-beijing.aliyuncs.com",
+      "maxsize": "1000M",
+      "expire": 999999
+    },
+    "vod": {
+      "status": "close",
+      "direct": 0
+    },
+    "server": {
+      "maxsize": "50mb"
+    }
+  }
+}

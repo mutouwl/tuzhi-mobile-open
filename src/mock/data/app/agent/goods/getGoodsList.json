@@ -1,0 +1,331 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508155",
+  "data": [
+    {
+      "id": 3,
+      "name": "平安扣",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260810/7631976f7173f433740831e0f426a134.jpg",
+      "createtime": 1786365011,
+      "views": "0",
+      "type": "physical",
+      "status": null,
+      "sales": null,
+      "hide": "is_hide",
+      "sales_type": "alone",
+      "briefing": null,
+      "uniacid": 1,
+      "price": "300.00",
+      "pay_type": "pay",
+      "goods_id": 3,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "spec_type": "single",
+      "image": "https://tuzhi.mutouweb.com/uploads/1/20260810/7631976f7173f433740831e0f426a134.jpg",
+      "status_text": "",
+      "spec_type_text": "单规格",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "30.00",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 3168,
+      "name": "学习论坛",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260808/f27490ef8b3c3fc362c77644e7c606aa.jpeg",
+      "createtime": 1785917437,
+      "views": "0",
+      "type": "circle",
+      "status": null,
+      "sales": 3,
+      "hide": "0",
+      "sales_type": "alone",
+      "briefing": "简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容",
+      "uniacid": 1,
+      "price": "23.00",
+      "pay_type": "pay",
+      "goods_id": 3168,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "2.30",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 2308,
+      "name": "123",
+      "cover": "http://selfbuilt.cn/uploads/1/20260730/dfca4c4fbff604720c9598890bd04cd2.png",
+      "createtime": 1785897564,
+      "views": "0",
+      "type": "circle",
+      "status": null,
+      "sales": 1,
+      "hide": "0",
+      "sales_type": "alone",
+      "briefing": "123",
+      "uniacid": 1,
+      "price": "23.00",
+      "pay_type": "pay",
+      "goods_id": 2308,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "2.30",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 420,
+      "name": "55666666666333333",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/e16476aadf780e297d93cf3c840d5d0f.jpg",
+      "createtime": 1785410608,
+      "views": "4",
+      "type": "column",
+      "status": null,
+      "sales": 0,
+      "hide": "0",
+      "sales_type": "[\"alone\"]",
+      "briefing": "123",
+      "uniacid": 1,
+      "price": "88.00",
+      "pay_type": "pay",
+      "goods_id": 420,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "8.80",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "name": "Python 学习交流圈",
+      "cover": "http://selfbuilt.cn/uploads/1/20260802/40fce2ec85c1d72e933072ac15f5e21e.png",
+      "createtime": 1785397831,
+      "views": "0",
+      "type": "circle",
+      "status": null,
+      "sales": 1,
+      "hide": "0",
+      "sales_type": "alone",
+      "briefing": "一起学 Python，打卡交流，资料分享",
+      "uniacid": 1,
+      "price": "29.90",
+      "pay_type": "pay",
+      "goods_id": 22,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "59.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "2.99",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 418,
+      "name": "健康管理1",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "createtime": 1785235474,
+      "views": "9",
+      "type": "article",
+      "status": null,
+      "sales": 3,
+      "hide": "0",
+      "sales_type": "[\"alone\"]",
+      "briefing": "健康管理",
+      "uniacid": 1,
+      "price": "1.00",
+      "pay_type": "pay",
+      "goods_id": 418,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "0.10",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 417,
+      "name": "健康管理",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260720/5b67fabd7ece549dcd890f4ae9d8c2bc.jpg",
+      "createtime": 1785217206,
+      "views": "18",
+      "type": "article",
+      "status": null,
+      "sales": 2,
+      "hide": "0",
+      "sales_type": "[\"alone\"]",
+      "briefing": "健康管理",
+      "uniacid": 1,
+      "price": "1.00",
+      "pay_type": "pay",
+      "goods_id": 417,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "0.10",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 325,
+      "name": "测试课程",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260616/3cd1f6398ddc48ab334a442e4898f6d1.png",
+      "createtime": 1782823400,
+      "views": "5",
+      "type": "video",
+      "status": null,
+      "sales": 1,
+      "hide": "0",
+      "sales_type": "[\"alone\"]",
+      "briefing": "这是课程的介绍",
+      "uniacid": 1,
+      "price": "0.20",
+      "pay_type": "pay",
+      "goods_id": 325,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": "0.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "0.02",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 317,
+      "name": "外贸社媒全流程线上课",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260616/3cd1f6398ddc48ab334a442e4898f6d1.png",
+      "createtime": 1782115934,
+      "views": "18",
+      "type": "column",
+      "status": 1,
+      "sales": 0,
+      "hide": "0",
+      "sales_type": "[\"alone\"]",
+      "briefing": "专线网络搭建，Tik Tok注册下载",
+      "uniacid": 1,
+      "price": "3980.00",
+      "pay_type": "pay",
+      "goods_id": 317,
+      "goods_type": "course",
+      "mode": 2,
+      "prop_rule": "{\"0\":{\"proportion\":{\"customer\":\"1\",\"goods\":\"40\"},\"price\":{\"customer\":\"0\",\"goods\":\"0\"}},\"1322222222227\":{\"proportion\":{\"goods\":\"10\",\"customer\":\"1\"},\"price\":{\"customer\":\"0\",\"goods\":\"0\"}}}",
+      "price_marking": "6980.00",
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "398.00",
+          "customer": "0.00"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "名称",
+      "cover": "http://selfbuilt.cn/uploads/1/20260531/395826a3e28838ecd43b3bdf54fe6746.png",
+      "createtime": 1781591227,
+      "views": "53",
+      "type": "composite",
+      "status": null,
+      "sales": null,
+      "hide": "0",
+      "sales_type": "alone",
+      "briefing": null,
+      "uniacid": 1,
+      "price": "0.01",
+      "pay_type": "pay",
+      "goods_id": 3,
+      "goods_type": null,
+      "mode": null,
+      "prop_rule": null,
+      "price_marking": 0,
+      "prop": {
+        "mode": 1,
+        "prop": {
+          "goods": "10",
+          "customer": "0"
+        },
+        "price": {
+          "goods": "0.00",
+          "customer": "0.00"
+        }
+      }
+    }
+  ]
+}

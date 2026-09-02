@@ -1,0 +1,48 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508104",
+  "data": {
+    "code": "000000",
+    "modal": {
+      "answerSheet": "示例内容"
+    },
+    "data": {
+      "question_list": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "test": {
+        "test_duration_val": 10,
+        "test_duration_limit": 10
+      },
+      "status": 1
+    },
+    "swiperHeight": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "windowHeight": "示例",
+    "currentIndex": "示例",
+    "loading": "示例",
+    "pageParams": {
+      "jobtype": "示例"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508203",
+  "data": {
+    "id": 12,
+    "uniacid": 1,
+    "name": "测试",
+    "price": "0.00",
+    "location": "测试的",
+    "activity_start_time": 1777996800,
+    "activity_end_time": 1778083200,
+    "apply_time_type": 1,
+    "apply_start_time": 1777996800,
+    "apply_end_time": 1778083200,
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260224/5042c1b029a934bafb155b1e18cce768.jpeg",
+    "detail": "<p><br></p>",
+    "ticket_show_rule": 1,
+    "apply_member_show": 1,
+    "apply_info_collet": 1,
+    "apply_info_form": "[]",
+    "sales": 0,
+    "status": 0,
+    "views": 7,
+    "createtime": 1778018524,
+    "type": "activity",
+    "apply_status": 0,
+    "apply_user_count": 0,
+    "is_virtual_pay": 0
+  }
+}

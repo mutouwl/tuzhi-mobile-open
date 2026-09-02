@@ -1,0 +1,690 @@
+@charset "UTF-8";
+/* 全局容器：黑色背景，禁止溢出 */
+/* line 3, /stdin */
+.tiktok-live-room {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 480px;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  overflow: hidden;
+  z-index: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+  /* opacity: 0.6; */
+  /* transform: scale(1.1); */
+}
+
+/* 层级 1: 背景高斯模糊 */
+/* line 18, /stdin */
+.bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(55px);
+  /* 核心：高斯模糊 */
+  opacity: 0.6;
+  transform: scale(1.1);
+  /* 放大一点防止白边 */
+}
+
+/* line 33, /stdin */
+.bg-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  /* 叠加一层黑蒙版让文字更清晰 */
+}
+
+/* 层级 2: 视频容器 */
+/* line 44, /stdin */
+.video-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  /* 垂直居中核心 */
+}
+
+/* 适配视频组件 */
+/* line 57, /stdin */
+.main-video {
+  width: 100%;
+  /* 如果是横屏游戏直播，这里会让其宽度100%，高度自适应，并垂直居中 */
+  /* 如果是竖屏直播，会撑满全屏 */
+}
+
+/* line 63, /stdin */
+.status-tip {
+  text-align: center;
+  color: #fff;
+}
+
+/* line 67, /stdin */
+.status-tip .status-cover {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* 层级 3: UI 悬浮层 */
+/* line 76, /stdin */
+.ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 直播间浮层体系：
+     播放器内部层级全局生效（.prism-cover 8 < .prism-info-display 90 < 大播放按钮/loading-center 100），
+     本层必须高于它们（原 20 会输给大按钮的 100，导致申请连麦等弹窗被播放按钮盖住）；
+     同时低于清屏恢复按钮(200)、插件引导遮挡(9999)、根挂载弹窗(10200+)与全屏模拟(99999) */
+  z-index: 150;
+  pointer-events: none;
+  /* 让点击穿透到视频层，只有按钮可点 */
+}
+
+/* 恢复指针事件 */
+/* line 88, /stdin */
+.ui-layer > * {
+  pointer-events: auto;
+}
+
+/* 顶部 Header */
+/* line 93, /stdin */
+.live-header {
+  position: absolute;
+  top: 30px;
+  /* 避开刘海屏 */
+  left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* 左侧区域 */
+/* line 105, /stdin */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 返回按钮 */
+/* line 112, /stdin */
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* line 124, /stdin */
+.back-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* line 128, /stdin */
+.playback-btn {
+  font-size: 12px;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0px 12px;
+  border-radius: 20px;
+  height: 32px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* line 141, /stdin */
+.clear-screen-btn {
+  font-size: 12px;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0px 12px;
+  border-radius: 20px;
+  height: 32px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* line 156, /stdin */
+.clear-screen-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  /* line 162, /stdin */
+  .header-right {
+    max-width: 65%;
+  }
+}
+
+@media (max-width: 320px) {
+  /* line 168, /stdin */
+  .header-right {
+    max-width: 60%;
+    gap: 8px;
+  }
+  /* line 173, /stdin */
+  .playback-btn,
+.clear-screen-btn {
+    padding: 0px 10px;
+    font-size: 11px;
+    height: 28px;
+  }
+}
+
+/* line 181, /stdin */
+.anchor-info {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0px 12px;
+  border-radius: 20px;
+  height: 32px;
+  vertical-align: middle;
+  align-items: center;
+}
+
+/* line 191, /stdin */
+.anchor-info .avatar {
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+}
+
+/* line 197, /stdin */
+.anchor-info .avatar img {
+  width: 100%;
+}
+
+/* line 201, /stdin */
+.anchor-info .info-text {
+  color: #fff;
+}
+
+/* line 204, /stdin */
+.anchor-info .info-text .name {
+  font-size: 14px;
+  font-weight: bold;
+  max-width: 80px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* line 213, /stdin */
+.anchor-info .info-text .likes {
+  font-size: 12px;
+  color: #ddd;
+}
+
+/* line 219, /stdin */
+.anchor-info .follow-btn {
+  background: #FF2C55;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* line 229, /stdin */
+.header-right {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  max-width: 70%;
+}
+
+/* line 237, /stdin */
+.header-right .online-users {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+/* line 245, /stdin */
+.header-right .online-users .user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: -8px;
+  border: 1px solid #fff;
+}
+
+/* line 253, /stdin */
+.header-right .online-users .count {
+  margin-left: 12px;
+  color: #fff;
+  font-size: 12px;
+}
+
+/* line 260, /stdin */
+.header-right .control-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+/* 左下角聊天区 */
+/* line 274, /stdin */
+.chat-panel {
+  position: absolute;
+  bottom: 70px;
+  /* 留出底部工具栏高度 */
+  left: 0;
+  width: 75%;
+  max-height: 300px;
+  padding-left: 15px;
+  mask-image: linear-gradient(to bottom, transparent, black 20%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%);
+}
+
+/* 聊天面板内部样式 - 适配新的底部容器 */
+/* line 287, /stdin */
+.message-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* line 293, /stdin */
+.system-notice {
+  background: rgba(255, 44, 85, 0.2);
+  color: #ff8ca0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+/* line 302, /stdin */
+.system-notice .notice-tag {
+  color: #FF2C55;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+/* 强制修改 message-box 内部样式以适应透明背景 */
+/* 注意：这里使用了 ::v-deep 穿透修改子组件样式 */
+/* line 313, /stdin */
+.msg-scroll-area ::v-deep .u-cell,
+.msg-scroll-area ::v-deep .list-cell {
+  background: transparent !important;
+}
+
+/* line 318, /stdin */
+.msg-scroll-area ::v-deep .msg-content {
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  display: inline-block;
+  font-size: 13px;
+}
+
+/* line 328, /stdin */
+.msg-scroll-area ::v-deep .user-name {
+  color: #8ce1ff;
+  margin-right: 4px;
+}
+
+/* 底部工具栏 */
+/* line 335, /stdin */
+.bottom-toolbar {
+  position: absolute;
+  bottom: 60px;
+  /* 距离底部60px，为视频播放器控制栏预留空间 */
+  left: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+/* 底部容器 */
+/* line 351, /stdin */
+.bottom-container {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* z-index: 10; */
+}
+
+/* 聊天面板 */
+/* line 362, /stdin */
+.message-box {
+  position: relative;
+  width: 100%;
+}
+
+/* 底部控制区 */
+/* line 368, /stdin */
+.footer-control-box {
+  position: relative;
+  width: 100%;
+  transition: bottom 0.3s ease;
+}
+
+/* 当视频控制栏不显示时，footer-control-box贴底 */
+/* line 375, /stdin */
+.footer-control-box.at-bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+/* line 380, /stdin */
+.control-bottom {
+  bottom: 45px;
+}
+
+/* 视频控制栏 */
+/* line 385, /stdin */
+.video-control-box {
+  position: relative;
+  width: 100%;
+  height: 45px;
+  /* 假设视频控制栏高度为60px */
+  z-index: -1;
+}
+
+/* line 393, /stdin */
+.chat-input-fake {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  margin-right: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+/* line 406, /stdin */
+.tool-icons {
+  display: flex;
+  align-items: center;
+}
+
+/* line 410, /stdin */
+.tool-icons .icon-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+/* line 418, /stdin */
+.tool-icons .icon-btn .icon-img {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 424, /stdin */
+.tool-icons .buy-btn {
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(#ffeebf, #dca81b);
+  border-radius: 50%;
+  padding: 6px;
+  animation: pulse 2s infinite;
+}
+
+/* line 432, /stdin */
+.tool-icons .buy-btn .icon-cart {
+  width: 100%;
+  height: 100%;
+}
+
+/* 清屏模式下的恢复按钮 */
+/* line 440, /stdin */
+.restore-btn {
+  position: absolute;
+  top: 30px;
+  right: 15px;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* line 456, /stdin */
+.restore-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* 动画 */
+/* line 461, /stdin */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+/* line 466, /stdin */
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(220, 168, 27, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(220, 168, 27, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(220, 168, 27, 0);
+  }
+}
+
+/* 直播间加载骨架屏：数据加载期间展示，布局与真实直播间结构一致（顶栏 / 视频画面 / 聊天气泡 / 底部输入栏）；
+样式限定在 .live-skeleton 内避免与其它页 sk-* 类冲突 */
+.live-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background-color: #f2f3f5;
+  overflow: hidden;
+}
+
+/* 顶部栏：返回按钮 + 观看人数 / 右上角按钮组 */
+.live-skeleton .sk-header {
+  position: absolute;
+  top: 30px;
+  left: 15px;
+  right: 15px;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.live-skeleton .sk-left,
+.live-skeleton .sk-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-skeleton .sk-right {
+  justify-content: flex-end;
+  max-width: 70%;
+}
+
+/* 中间视频画面 */
+.live-skeleton .sk-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* 视频区中间加载提示：绝对定位居中 */
+.live-skeleton .sk-loading-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.live-skeleton .sk-loading-tip {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 左下角聊天气泡 */
+.live-skeleton .sk-chat {
+  position: absolute;
+  left: 15px;
+  bottom: 120px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 60%;
+}
+
+/* 底部输入栏 */
+.live-skeleton .sk-bottom-bar {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 30px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-skeleton .sk-input {
+  flex: 1;
+  height: 36px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #e5e6eb 25%, #f2f3f5 37%, #e5e6eb 50%);
+  background-size: 400% 100%;
+  animation: live-sk-animate 1.8s ease infinite;
+}
+
+/* 骨架块通用样式 */
+.live-skeleton .sk-circle {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e5e6eb 25%, #f2f3f5 37%, #e5e6eb 50%);
+  background-size: 400% 100%;
+  animation: live-sk-animate 1.8s ease infinite;
+}
+
+.live-skeleton .sk-circle-sm {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e5e6eb 25%, #f2f3f5 37%, #e5e6eb 50%);
+  background-size: 400% 100%;
+  animation: live-sk-animate 1.8s ease infinite;
+}
+
+.live-skeleton .sk-pill {
+  height: 32px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #e5e6eb 25%, #f2f3f5 37%, #e5e6eb 50%);
+  background-size: 400% 100%;
+  animation: live-sk-animate 1.8s ease infinite;
+}
+
+.live-skeleton .sk-bubble {
+  height: 26px;
+  border-radius: 13px;
+  background: linear-gradient(90deg, #e5e6eb 25%, #f2f3f5 37%, #e5e6eb 50%);
+  background-size: 400% 100%;
+  animation: live-sk-animate 1.8s ease infinite;
+}
+
+.live-skeleton .sk-w-30 { width: 30%; }
+.live-skeleton .sk-w-38 { width: 38%; }
+.live-skeleton .sk-w-45 { width: 45%; }
+.live-skeleton .sk-w-56 { width: 56px; }
+.live-skeleton .sk-w-60 { width: 60px; }
+
+@keyframes live-sk-animate {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}

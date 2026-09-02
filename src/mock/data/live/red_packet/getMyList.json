@@ -1,0 +1,140 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508198",
+  "data": {
+    "total": 13,
+    "rows": [
+      {
+        "id": 273,
+        "uniacid": 1,
+        "redpacket_id": 241,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "1.13",
+        "is_max": 0,
+        "createtime": 1785295580,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 272,
+        "uniacid": 1,
+        "redpacket_id": 240,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "100.00",
+        "is_max": 1,
+        "createtime": 1785222854,
+        "redpacket_type": "lucky",
+        "admin_name": "liveteach",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 271,
+        "uniacid": 1,
+        "redpacket_id": 239,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "1.36",
+        "is_max": 0,
+        "createtime": 1785222813,
+        "redpacket_type": "lucky",
+        "admin_name": "liveteach",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 270,
+        "uniacid": 1,
+        "redpacket_id": 238,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "2.00",
+        "is_max": 1,
+        "createtime": 1785222666,
+        "redpacket_type": "equal",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 269,
+        "uniacid": 1,
+        "redpacket_id": 237,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "1.66",
+        "is_max": 0,
+        "createtime": 1785222650,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 268,
+        "uniacid": 1,
+        "redpacket_id": 236,
+        "course_id": 312,
+        "user_id": 38,
+        "amount": "11.00",
+        "is_max": 1,
+        "createtime": 1785131587,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 竖屏直播"
+      },
+      {
+        "id": 267,
+        "uniacid": 1,
+        "redpacket_id": 234,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "9.39",
+        "is_max": 0,
+        "createtime": 1785118830,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 265,
+        "uniacid": 1,
+        "redpacket_id": 232,
+        "course_id": 414,
+        "user_id": 38,
+        "amount": "0.38",
+        "is_max": 0,
+        "createtime": 1785112852,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": null
+      },
+      {
+        "id": 36,
+        "uniacid": 1,
+        "redpacket_id": 67,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "5.36",
+        "is_max": 0,
+        "createtime": 1785050388,
+        "redpacket_type": "lucky",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      },
+      {
+        "id": 35,
+        "uniacid": 1,
+        "redpacket_id": 66,
+        "course_id": 331,
+        "user_id": 38,
+        "amount": "0.59",
+        "is_max": 0,
+        "createtime": 1785050312,
+        "redpacket_type": "equal",
+        "admin_name": "admin",
+        "course_name": "自定义播流地址 - 横屏直播｜阿里云消息"
+      }
+    ]
+  }
+}

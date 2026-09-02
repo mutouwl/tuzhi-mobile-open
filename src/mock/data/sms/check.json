@@ -1,0 +1,22 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508134",
+  "data": {
+    "form": {
+      "confirm": {
+        "captcha": "示例"
+      },
+      "change": {
+        "mobile": "13222222222",
+        "captcha": "示例"
+      }
+    },
+    "step": "示例",
+    "mobile": "13222222222",
+    "tips": {
+      "old": "示例",
+      "new": "示例"
+    }
+  }
+}

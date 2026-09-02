@@ -1,0 +1,583 @@
+/* 连麦申请弹窗（底部弹出，对齐申请弹窗底部样式）：
+   设最低高度避免空态/单条记录时弹窗过小观感失衡（对齐红包记录弹窗 40vh 惯例）；
+   flex 列布局使富余空间收在内容区与底部操作之间 */
+.link-apply-modal {
+  position: relative;
+  width: 100%;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px 12px 0 0;
+  padding: 20px 16px 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 右上角关闭按钮（对齐 redpacket-modal .modal-close） */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-close:active {
+  opacity: 0.7;
+}
+
+/* 标题对齐 live 页内其他弹窗（清晰度/红包记录：16px/600/#333） */
+.apply-title {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 描述对齐辅助信息规范（12px 偏灰，同连麦面板辅助信息） */
+.apply-desc {
+  margin-top: 6px;
+  text-align: left;
+  font-size: 12px;
+  color: #86909c;
+}
+
+/* 模式选择（列表形式） */
+.apply-type-list {
+  margin-top: 18px;
+}
+
+.apply-type-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e6eb;
+  border-radius: 10px;
+  background-color: #f7f8fa;
+}
+
+.apply-type-item + .apply-type-item {
+  margin-top: 10px;
+}
+
+.apply-type-item:active {
+  background-color: #eef4ff;
+  border-color: #0968f6;
+}
+
+/* 提交中：选中项高亮，另一项弱化禁点 */
+.apply-type-item.is-loading {
+  background-color: #eef4ff;
+  border-color: #0968f6;
+}
+
+.apply-type-item.is-muted {
+  opacity: 0.5;
+}
+
+.type-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.type-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.type-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1d2129;
+}
+
+.type-desc {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #86909c;
+}
+
+/* 点击工具条后的骨架加载态（对齐回放列表弹窗骨架样式） */
+.apply-skeleton {
+  margin-top: 14px;
+  padding: 4px 0;
+}
+
+/* 骨架随弹窗富余空间撑高（pending 模式避免底部大片留白集中在骨架区下方） */
+.record-scroll.apply-skeleton {
+  flex: 1;
+}
+
+.apply-skeleton-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f2f3f5;
+}
+
+.apply-skeleton-item:last-child {
+  border-bottom: none;
+}
+
+/* 连麦记录列表 */
+.record-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  flex: 1;
+}
+
+.record-loading-text {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #86909c;
+}
+
+.record-scroll {
+  max-height: 40vh;
+  margin-top: 14px;
+  flex: 1;
+}
+
+.record-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 空态在最低高度弹窗内近似垂直居中（对齐红包记录弹窗空态做法） */
+  min-height: 24vh;
+  padding: 24px 0;
+}
+
+/* 被禁止申请连麦空态（个人禁止/全场禁止主动连麦）：对齐连麦记录空态布局 */
+.apply-disabled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 24vh;
+  padding: 24px 0;
+}
+
+.apply-disabled-tip {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #86909c;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f2f3f5;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f7f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.record-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.record-type {
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.record-meta {
+  margin-top: 3px;
+  font-size: 11px;
+  color: #86909c;
+}
+
+.record-right {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.record-status {
+  font-size: 12px;
+  color: #86909c;
+}
+
+.record-status.status-1 {
+  color: #00b42a;
+}
+
+.record-status.status-3 {
+  color: #f53f3f;
+}
+
+.record-btn {
+  height: 26px;
+  line-height: 26px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.record-btn:active {
+  opacity: 0.7;
+}
+
+.record-btn-cancel {
+  background-color: #f2f3f5;
+  color: #4e5969;
+}
+
+.record-btn-accept {
+  background-color: #0968f6;
+  color: #fff;
+}
+
+.record-btn-reject {
+  background-color: #ffece8;
+  color: #f53f3f;
+  margin-left: 8px;
+}
+
+/* 邀请内容占满弹窗富余空间并整体垂直居中（同骨架/加载态 flex:1 撑高思路，
+   避免图标停留在弹窗顶部、富余空白集中在操作区上方） */
+.invite-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 邀请/同意提示图标 */
+.invite-icon-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.invite-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #f7f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 邀请信息 */
+.invite-info {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.invite-type {
+  font-size: 15px;
+  color: #1d2129;
+}
+
+/* 底部操作（圆角矩形 8px，对齐弹窗内双按钮规范，如余额弹窗 .wechat-name-btn）：
+   贴底展示——弹窗设最低高度后，富余空间收在内容区与操作区之间；
+   padding-top 兜底保证内容撑满时操作区与上方仍有间隙 */
+.apply-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  padding-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.apply-btn-cancel {
+  flex: 1;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #f2f3f5;
+  color: #4e5969;
+  font-size: 14px;
+}
+
+.apply-btn-accept {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #0968f6;
+  color: #fff;
+  font-size: 14px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apply-btn-reject {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #f53f3f;
+  color: #fff;
+  font-size: 14px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 接听/拒绝提交中：另一按钮弱化禁点（防重复点击），提交中按钮由 u-loading-icon 展示加载 */
+.apply-btn-accept.is-muted,
+.apply-btn-reject.is-muted {
+  opacity: 0.5;
+}
+
+.apply-btn-text {
+  margin-left: 6px;
+}
+
+/* 连麦中控制面板（底部弹出，对齐申请弹窗底部样式） */
+.link-panel-modal {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 12px 12px 0 0;
+  padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 面板标题与申请弹窗标题统一（16px/600/#333） */
+.panel-title {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 连麦时长行（面板顶部，对齐辅助信息规范 12px 偏灰；时长值主题色高亮；
+   语音连麦时右侧同行展示「语音连麦模式」标识） */
+.panel-duration {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.panel-duration .duration-value {
+  color: #0968f6;
+  font-weight: 500;
+}
+
+/* 模式标识（时长行右侧，与左侧辅助信息同规范） */
+.panel-mode {
+  flex-shrink: 0;
+  margin-left: 12px;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.panel-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+/* 仅一项配置（语音连麦只有麦克风）：横向居中，上下间距放大一倍 */
+.panel-grid.panel-grid-single {
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.panel-grid.panel-grid-single .panel-item {
+  width: auto;
+  padding: 0 40px;
+  margin-bottom: 28px;
+}
+
+/* 设置项最多两项（麦克风/摄像头，翻转已移除），各占半行 */
+.panel-item {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+}
+
+.panel-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #f2f3f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-icon.active {
+  /* 激活态改为浅蓝底 + 深色图标（icon 颜色在模板内联 #0968f6），比蓝底白图标更协调 */
+  background-color: #e8f3ff;
+}
+
+.panel-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #4e5969;
+}
+
+.panel-end {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #f53f3f;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  margin-top: 6px;
+}
+
+/* 连麦入口图标 */
+.link-entry-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.link-entry-icon:active {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+/* 连麦本地预览浮层（H5，上麦后展示自己的画面小窗，位于视频区右下、底部工具条上方）
+   层级在 ui-layer(150) 栈内、播放器内部层级之上；纯展示，不拦截点击 */
+.link-local-preview {
+  position: fixed;
+  right: 12px;
+  bottom: 150px;
+  width: 108px;
+  height: 144px;
+  border-radius: 8px;
+  background-color: #000;
+  overflow: hidden;
+  z-index: 120;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.link-local-preview video.link-local-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 语音连麦本地占位：方形头像小窗（音频模式无摄像头画面，以该学员头像替代空置的深色背景） */
+.link-local-preview.link-local-voice {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+}
+
+.link-local-voice-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.link-local-voice-tip {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* 连麦中分屏布局（按直播画面比例 course.live_screen_ratio）：
+   竖屏直播（=2）画面上下分布：主画面在上半屏、本地画面在下半屏，各占 1/2；
+   横屏直播画面左右分布：主画面在左半屏、本地画面在右半屏，各占 1/2。
+   直播间为居中 max-width:480px 的竖向容器，分屏需以房间几何为准（非 viewport）：
+   竖屏→满宽下半屏（width:100% + max-width:480px 对齐房间宽）；
+   横屏→右半屏（width:50% + max-width:240px 对齐房间半边宽） */
+.link-local-preview.link-split-vertical {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 50%;
+  border-radius: 0;
+  box-shadow: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  box-sizing: border-box;
+}
+
+.link-local-preview.link-split-horizontal {
+  top: 0;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  width: 50%;
+  max-width: 240px;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  box-sizing: border-box;
+}

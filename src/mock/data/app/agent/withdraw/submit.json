@@ -1,0 +1,36 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508094",
+  "data": {
+    "member": {
+      "value": "示例"
+    },
+    "form": {
+      "money": 99
+    },
+    "bank": {
+      "name": "示例标题"
+    },
+    "config": {
+      "value": "示例"
+    },
+    "withdrawChannel": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "data": "示例"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508216",
+  "data": [
+    {
+      "id": 73,
+      "subscription": false,
+      "course": {
+        "id": 282,
+        "name": "兰兰小课",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260110/f3a4d11a8588e2684fd31a7bfd1d696c.jpeg"
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508163",
+  "data": [
+    {
+      "id": 1,
+      "pid": 0,
+      "title": "诈骗",
+      "description": "",
+      "status_text": "",
+      "has_children": 1
+    },
+    {
+      "id": 2,
+      "pid": 0,
+      "title": "传播不实信息",
+      "description": "",
+      "status_text": "",
+      "has_children": 1
+    },
+    {
+      "id": 3,
+      "pid": 0,
+      "title": "抄袭/洗稿、滥用原创",
+      "description": "",
+      "status_text": "",
+      "has_children": 1
+    },
+    {
+      "id": 4,
+      "pid": 0,
+      "title": "内容侵权",
+      "description": "",
+      "status_text": "",
+      "has_children": 1
+    },
+    {
+      "id": 5,
+      "pid": 0,
+      "title": "违规营销",
+      "description": "",
+      "status_text": "",
+      "has_children": 1
+    }
+  ]
+}

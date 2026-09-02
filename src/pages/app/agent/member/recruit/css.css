@@ -1,0 +1,77 @@
+.box {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: calc(100% - 20px);
+    /* height: 50px; */
+
+    padding: 10px 10px 10px;
+
+    background-color: #fff;
+    box-shadow: 0 0 8px 0 rgb(0 0 0 / 8%);
+
+    display: flex;
+    justify-content: space-between;
+
+    align-items: center;
+
+    z-index: 10000;
+
+    /* #ifndef MP-WEIXIN */
+    padding-bottom: calc(constant(safe-area-inset-bottom) + 10px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+    /* #endif */
+    /* 微信小程序端：安全区按设计减半（iPhone X 约 17px）+ 固定 10px，与 tab bar 一致 */
+    /* #ifdef MP-WEIXIN */
+    padding-bottom: calc(constant(safe-area-inset-bottom) / 2 + 10px);
+    padding-bottom: calc(env(safe-area-inset-bottom) / 2 + 10px);
+    /* #endif */
+}
+
+.empty-btn{
+    width: 200px;
+    margin: 30px auto;
+}
+
+.condition-box{
+}
+
+.condition-box .condition-header{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.condition-box .condition-header .condition-header-title{
+    font-size: 14px;
+    color: #1D2129;
+}
+
+.condition-box .condition-header .condition-header-subtitle{
+    font-size: 12px;
+
+    color: #4E5969;
+    margin-top: 4px;
+}
+
+::v-deep .u-cell__label{
+    margin-top: 0!important;
+}
+
+::v-deep .u-cell__body{
+    padding: 5px 5px!important;
+}
+
+::v-deep .u-cell__value{
+    font-size: 12px!important;
+    font-weight: 700!important;
+}
+
+.condition-icon{
+    width: 30px;
+    height: 30px;
+}
+
+.custom-style{
+    width: 100%;
+}

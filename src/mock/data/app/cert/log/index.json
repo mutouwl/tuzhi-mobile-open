@@ -1,0 +1,208 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508157",
+  "data": [
+    {
+      "id": 21,
+      "uniacid": 1,
+      "cert_id": 12,
+      "user_id": 38,
+      "data": {
+        "score": 8
+      },
+      "cert_no": "CT6388258565631352",
+      "createtime": "2025-04-08 16:01:02",
+      "type": "test",
+      "title": "证书的标题",
+      "cert": {
+        "type": "test",
+        "title": "证书的标题",
+        "type_text": "考试",
+        "status_text": "正常",
+        "issue_condition_course_type_text": "Issue_condition_course_type part",
+        "background_type_text": "Background_type default",
+        "user_info_text": "User_info nickname,User_info avatar",
+        "test_display_text": "test_display show",
+        "test_name_display_text": "test_name_display normal",
+        "course_display_text": "Course_display show",
+        "course_name_display_text": "Course_name_display diy",
+        "course_data_text": "Course_data course_count,Course_data study_time",
+        "test_data_text": "Test_data score",
+        "issue_date_display_text": "Issue_date_display show",
+        "number_display_text": "Number_display random",
+        "qr_code_display_text": "Qr_code_display show",
+        "qr_code_link_text": "Qr_code_link course",
+        "bind_content": {
+          "id": 2,
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20250506/f61a95907b27e0e9c7ae7c0dbab4c595.png",
+          "name": "考试测验演示",
+          "type": "test",
+          "issue_time_text": "",
+          "test_time_end_text": "",
+          "test_time_start_text": "",
+          "status_text": "",
+          "join_user_num": 14,
+          "join_user_times": 60,
+          "status_submit": 60,
+          "status_unsubmit": 0
+        },
+        "user_info": [
+          "nickname",
+          "avatar"
+        ],
+        "course_data": [
+          "course_count",
+          "study_time"
+        ],
+        "get_user_number": 7
+      }
+    },
+    {
+      "id": 20,
+      "uniacid": 1,
+      "cert_id": 13,
+      "user_id": 38,
+      "data": {
+        "course_count": 7,
+        "study_time": 4.5
+      },
+      "cert_no": "CT1322222222292342",
+      "createtime": "2025-04-02 12:27:23",
+      "type": "course",
+      "title": "你好",
+      "cert": {
+        "type": "course",
+        "title": "你好",
+        "type_text": "Course",
+        "status_text": "正常",
+        "issue_condition_course_type_text": "Issue_condition_course_type all",
+        "background_type_text": "Background_type default",
+        "user_info_text": "User_info nickname,User_info avatar",
+        "test_display_text": "test_display show",
+        "test_name_display_text": "test_name_display normal",
+        "course_display_text": "Course_display show",
+        "course_name_display_text": "Course_name_display diy",
+        "course_data_text": "Course_data course_count,Course_data study_time",
+        "test_data_text": "Test_data score",
+        "issue_date_display_text": "Issue_date_display show",
+        "number_display_text": "Number_display random",
+        "qr_code_display_text": "Qr_code_display show",
+        "qr_code_link_text": "Qr_code_link course",
+        "bind_content": {
+          "id": 306,
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260529/3e8a1d523fa3174394fb472e829c38a4.jpg",
+          "name": "测试",
+          "type": "column"
+        },
+        "user_info": [
+          "nickname",
+          "avatar"
+        ],
+        "course_data": [
+          "course_count",
+          "study_time"
+        ],
+        "get_user_number": 1
+      }
+    },
+    {
+      "id": 13,
+      "uniacid": 1,
+      "cert_id": 10,
+      "user_id": 38,
+      "data": {
+        "course_count": 5,
+        "study_time": 0.9
+      },
+      "cert_no": "CT4073834550366698",
+      "createtime": "2025-04-02 11:45:05",
+      "type": "course",
+      "title": "凸知卖课系统",
+      "cert": {
+        "type": "course",
+        "title": "凸知卖课系统",
+        "type_text": "Course",
+        "status_text": "正常",
+        "issue_condition_course_type_text": "Issue_condition_course_type part",
+        "background_type_text": "Background_type default",
+        "user_info_text": "User_info nickname,User_info avatar",
+        "test_display_text": "test_display show",
+        "test_name_display_text": "test_name_display normal",
+        "course_display_text": "Course_display show",
+        "course_name_display_text": "Course_name_display diy",
+        "course_data_text": "Course_data course_count,Course_data study_time",
+        "test_data_text": "Test_data score",
+        "issue_date_display_text": "Issue_date_display show",
+        "number_display_text": "Number_display random",
+        "qr_code_display_text": "Qr_code_display show",
+        "qr_code_link_text": "Qr_code_link course",
+        "bind_content": null,
+        "user_info": [
+          "nickname",
+          "avatar"
+        ],
+        "course_data": [
+          "course_count",
+          "study_time"
+        ],
+        "get_user_number": 5
+      }
+    },
+    {
+      "id": 3,
+      "uniacid": 1,
+      "cert_id": 3,
+      "user_id": 38,
+      "data": {
+        "score": 20
+      },
+      "cert_no": "CT4934213222222222",
+      "createtime": "2025-03-30 10:26:19",
+      "type": "test",
+      "title": "安全员培训",
+      "cert": {
+        "type": "test",
+        "title": "安全员培训",
+        "type_text": "考试",
+        "status_text": "正常",
+        "issue_condition_course_type_text": "Issue_condition_course_type part",
+        "background_type_text": "Background_type default",
+        "user_info_text": "User_info nickname,User_info avatar",
+        "test_display_text": "test_display show",
+        "test_name_display_text": "test_name_display normal",
+        "course_display_text": "Course_display show",
+        "course_name_display_text": "Course_name_display diy",
+        "course_data_text": "Course_data course_count,Course_data study_time",
+        "test_data_text": "Test_data score",
+        "issue_date_display_text": "Issue_date_display show",
+        "number_display_text": "Number_display random",
+        "qr_code_display_text": "Qr_code_display show",
+        "qr_code_link_text": "Qr_code_link course",
+        "bind_content": {
+          "id": 2,
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20250506/f61a95907b27e0e9c7ae7c0dbab4c595.png",
+          "name": "考试测验演示",
+          "type": "test",
+          "issue_time_text": "",
+          "test_time_end_text": "",
+          "test_time_start_text": "",
+          "status_text": "",
+          "join_user_num": 14,
+          "join_user_times": 60,
+          "status_submit": 60,
+          "status_unsubmit": 0
+        },
+        "user_info": [
+          "nickname",
+          "avatar"
+        ],
+        "course_data": [
+          "course_count",
+          "study_time"
+        ],
+        "get_user_number": 2
+      }
+    }
+  ]
+}

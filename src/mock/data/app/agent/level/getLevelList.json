@@ -1,0 +1,67 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508152",
+  "data": {
+    "list": [
+      {
+        "name": "A",
+        "condition": {
+          "customer": {
+            "status": "",
+            "value": "0"
+          },
+          "customer_pay": {
+            "status": "",
+            "value": "0"
+          },
+          "self_pay": {
+            "status": "",
+            "value": "0"
+          },
+          "agent": {
+            "status": "",
+            "value": "0"
+          }
+        },
+        "proportion": {
+          "customer": "0",
+          "goods": "0"
+        },
+        "saved": "1"
+      },
+      {
+        "id": "1322222222227",
+        "saved": "1",
+        "name": "B",
+        "condition": {
+          "customer": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "customer_pay": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "self_pay": {
+            "status": "0",
+            "disabled": "",
+            "value": ""
+          },
+          "agent": {
+            "status": "1",
+            "disabled": "",
+            "value": "100"
+          }
+        },
+        "proportion": {
+          "goods": "10",
+          "customer": "0"
+        }
+      }
+    ],
+    "user": 1
+  }
+}

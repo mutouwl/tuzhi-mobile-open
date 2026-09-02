@@ -1,0 +1,68 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "member": {
+      "expire_time": 1786723200,
+      "expire_text": "2026-08-15",
+      "is_expired": 0,
+      "createtime": 1786060800
+    },
+    "circle": {
+      "id": 1,
+      "name": "产品运营实战圈",
+      "sell_type": 2,
+      "renew_discount": "8"
+    },
+    "specs": [
+      {
+        "id": 201,
+        "circle_id": 1,
+        "name": "1个月",
+        "price": "59.00",
+        "marking_price": "99.00",
+        "duration_type": "month",
+        "duration_value": 1,
+        "duration_text": "1个月",
+        "status": 1,
+        "sort": 1,
+        "createtime": 1786060800,
+        "updatetime": 1786060800
+      },
+      {
+        "id": 202,
+        "circle_id": 1,
+        "name": "3个月",
+        "price": "129.00",
+        "marking_price": "199.00",
+        "duration_type": "month",
+        "duration_value": 3,
+        "duration_text": "3个月",
+        "status": 1,
+        "sort": 2,
+        "createtime": 1786060800,
+        "updatetime": 1786060800
+      },
+      {
+        "id": 203,
+        "circle_id": 1,
+        "name": "1年",
+        "price": "299.00",
+        "marking_price": "499.00",
+        "duration_type": "year",
+        "duration_value": 1,
+        "duration_text": "1年",
+        "status": 1,
+        "sort": 3,
+        "createtime": 1786060800,
+        "updatetime": 1786060800
+      }
+    ],
+    "stats": {
+      "post_count": 3,
+      "like_count": 6,
+      "comment_count": 2
+    }
+  }
+}

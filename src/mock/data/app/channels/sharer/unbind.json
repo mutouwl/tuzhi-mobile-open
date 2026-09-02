@@ -1,0 +1,45 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508096",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "order": "示例",
+      "name": "示例标题"
+    },
+    "list": [
+      {
+        "id": 1,
+        "store": {
+          "nickname": "示例用户"
+        },
+        "bind_time_text": "1786508096",
+        "wechat": "示例",
+        "nickname": "示例用户",
+        "sharer_type_text": "示例内容",
+        "status_text": 1,
+        "status": 1,
+        "openid": "****",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "store": {
+          "nickname": "示例用户"
+        },
+        "bind_time_text": "1786508096",
+        "wechat": "示例",
+        "nickname": "示例用户",
+        "sharer_type_text": "示例内容",
+        "status_text": 1,
+        "status": 1,
+        "openid": "****",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ]
+  }
+}

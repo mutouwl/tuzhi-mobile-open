@@ -1,0 +1,247 @@
+.container {
+    padding: 10px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* 物流信息 */
+.express-info-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding:10px 15px;
+    margin-bottom: 10px;
+}
+
+.express-info-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.express-info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 14px;
+    color: #666;
+    min-width: 80px;
+}
+
+.info-value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    flex: 1;
+}
+
+.copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background-color: #f7f8fa;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.copy-text {
+    font-size: 12px;
+    color: #0968f6;
+}
+
+/* 暂未发货 */
+.no-ship-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 40px 20px;
+    margin-bottom: 10px;
+}
+
+/* 物流状态头部 */
+.express-header {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 15px;
+    margin-bottom: 10px;
+}
+
+.express-status {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.status-icon.status-signfor {
+    background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+}
+
+.status-icon.status-delivery {
+    background: linear-gradient(135deg, #ff781f 0%, #ffa940 100%);
+}
+
+.status-icon.status-transport {
+    background: linear-gradient(135deg, #0968f6 0%, #4a90e2 100%);
+}
+
+.status-icon.status-noinfo,
+.status-icon.status-refuse,
+.status-icon.status-difficulty,
+.status-icon.status-invalid,
+.status-icon.status-timeout,
+.status-icon.status-fail,
+.status-icon.status-back {
+    background: linear-gradient(135deg, #999 0%, #bfbfbf 100%);
+}
+
+.status-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.express-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.express-info .company {
+    font-size: 15px;
+    color: #333;
+    margin-right: 10px;
+}
+
+.express-info .number {
+    font-size: 15px;
+    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-right: 10px;
+}
+
+.copy-btn {
+    padding: 4px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* 物流轨迹 */
+.timeline-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.timeline-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+}
+
+.refresh-text {
+    font-size: 13px;
+    color: #0968f6;
+    margin-left: 4px;
+}
+
+.timeline-list {
+    padding-left: 5px;
+}
+
+.timeline-item {
+    display: flex;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+    position: relative;
+}
+
+.timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.timeline-dot.active {
+    width: 12px;
+    height: 12px;
+    background-color: #ff781f;
+}
+
+.timeline-line {
+    width: 2px;
+    flex: 1;
+    background-color: #eee;
+    margin-top: 5px;
+}
+
+.timeline-content {
+    flex: 1;
+    padding-top: 0;
+}
+
+.timeline-item.active .timeline-content {
+    padding-top: 0;
+}
+
+.timeline-text {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+.timeline-item.active .timeline-text {
+    color: #333;
+    font-weight: 500;
+}
+
+.timeline-time {
+    font-size: 12px;
+    color: #999;
+}
+
+.empty-timeline {
+    padding: 40px 0;
+}

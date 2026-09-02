@@ -1,0 +1,70 @@
+{
+  "code": 1,
+  "msg": "操作成功",
+  "time": "1786508220",
+  "data": {
+    "id": 90,
+    "uniacid": 1,
+    "course_id": 645,
+    "app_name": "live",
+    "stream_name": "jt4hdDovSI",
+    "message_topic": "brOxeETiq9",
+    "live_record_key": "b1l0GJ2qET",
+    "config": {
+      "play_back": "1",
+      "play_back_type": "1",
+      "play_pause": "0",
+      "views": "0",
+      "discuss_public": "0",
+      "like": "0",
+      "comment_audit": 0,
+      "low_latency": "1",
+      "notice": "测试看看",
+      "ban_words": "流量,抖音",
+      "play_back_record": "1",
+      "bullet_screen": "1",
+      "play_back_save_type": "vod",
+      "gift": 1,
+      "gift_max_count": "10000",
+      "goods": 1,
+      "redpacket": 1
+    },
+    "createtime": 1786365122,
+    "push_url": {
+      "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI?auth_key=1786508820-0-0-104e7357e628309c89c00306867e4ec1",
+      "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI?auth_key=1786508820-0-0-104e7357e628309c89c00306867e4ec1",
+      "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI.flv?auth_key=1786508820-0-0-3f680e329564c77ba85a1d89c0b4111a",
+      "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI.m3u8?auth_key=1786508820-0-0-842851279df2d905850098cb7eebc888"
+    },
+    "qualities": [
+      {
+        "name": "标清",
+        "template_id": "lsd",
+        "level": 2,
+        "url": {
+          "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI_lsd?auth_key=1786508820-0-0-52ad29f8c9870286561a7ad8270be601",
+          "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI_lsd?auth_key=1786508820-0-0-52ad29f8c9870286561a7ad8270be601",
+          "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI_lsd.flv?auth_key=1786508820-0-0-23171b83b8a34aa51265fa820115668d",
+          "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI_lsd.m3u8?auth_key=1786508820-0-0-9a00270f11f47dc0cd97626f2742249d"
+        }
+      },
+      {
+        "name": "流畅",
+        "template_id": "lld",
+        "level": 1,
+        "url": {
+          "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI_lld?auth_key=1786508820-0-0-a63a6a3f164ea56dc9ae2f9f4afbe273",
+          "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI_lld?auth_key=1786508820-0-0-a63a6a3f164ea56dc9ae2f9f4afbe273",
+          "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI_lld.flv?auth_key=1786508820-0-0-29c0ccde842bf5602123001c50e8ab7f",
+          "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI_lld.m3u8?auth_key=1786508820-0-0-598be196c7f41d4b2ee766b803b83ddc"
+        }
+      }
+    ],
+    "status": "wait_playback",
+    "status_text": "待生成回放视频",
+    "message_pubkey": "pub_76f9c3928af87c1bd6c1d71698035cf4",
+    "message_provider": "aodianyun",
+    "message_enabled": 1,
+    "user_count": 2
+  }
+}

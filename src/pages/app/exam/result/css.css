@@ -1,0 +1,71 @@
+
+page{
+    background-color: #fff;
+}
+.exam-info-degree{
+    display: flex;
+    /* align-items: center; */
+
+    font-size: 12px;
+    color: #fff;
+    margin-top: 10px;
+}
+
+
+.exam-info-degree .exam-info-rate{
+    margin-left: 5px;
+}
+
+.exam-property-box{
+    display: flex;
+    justify-content: space-between;
+    width: 270px;
+    margin: 30px auto 0;
+}
+
+.exam-property-box .exam-property-item{
+    text-align: center;
+}
+
+.exam-property-item-name{
+    font-size: 12px;
+    color: #86909C;
+}
+
+.exam-property-item-value{
+    color: #1D2129;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.exam-property-item-unit{
+    color: #4E5969;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.btn{
+    margin-top: 20px;
+}
+
+.result-box{
+    text-align: center;
+    width: 200px;
+    margin: 50px auto;
+}
+
+.result-box .result-name{
+    font-size: 12px;
+    color: #86909C;
+    margin-bottom: 10px;
+}
+
+.result-box .result-val{
+    
+    font-size: 14px;
+    color: #0968f6;
+
+    margin-bottom: 10px;
+
+}

@@ -1,0 +1,1 @@
+let siteinfo = wx.getExtConfigSync? wx.getExtConfigSync(): {};export default{apiUrl:siteinfo.siteroot+"?i="+siteinfo.uniacid+"&c=entry&m=tuzi_v1&do=index&route=api/"};

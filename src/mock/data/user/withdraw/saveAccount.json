@@ -1,0 +1,141 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508134",
+  "data": {
+    "balance": 99,
+    "totalIncome": 99,
+    "totalWithdraw": 99,
+    "wechatBound": "示例",
+    "withdrawStatus": 1,
+    "withdrawTypes": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "withdrawTip": "示例",
+    "withdrawMinMoney": 99,
+    "withdrawMonthTimes": "1786508134",
+    "monthUsedCount": 10,
+    "withdrawAmount": 99,
+    "withdrawType": "示例",
+    "allPayTypes": [
+      {
+        "id": 1,
+        "label": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "label": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "accountTypes": [
+      {
+        "id": 1,
+        "label": "示例",
+        "value": "示例",
+        "name": "示例标题",
+        "account": 10,
+        "ext": "示例",
+        "is_default": true,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "label": "示例",
+        "value": "示例",
+        "name": "示例标题",
+        "account": 10,
+        "ext": "示例",
+        "is_default": true,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "selectedAccount": {
+      "name": "示例标题",
+      "account": 10,
+      "id": 1
+    },
+    "accountList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "showAccountPopup": 10,
+    "showAddAccount": 10,
+    "accountForm": {
+      "id": 1,
+      "type": "示例",
+      "account_name": 10,
+      "account_no": 10,
+      "ext": "示例"
+    },
+    "showWechatNamePopup": true,
+    "wechatRealName": "示例标题",
+    "total_income": 99,
+    "total_withdraw": 99,
+    "withdraw_status": 1,
+    "withdraw_tip": "示例",
+    "list": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "currentTypeAccounts": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "payTypes": 99,
+    "toFixed": "示例",
+    "monthRemaining": "示例",
+    "currentAccountTypeLabel": 10,
+    "accountNameLabel": 10,
+    "accountNoLabel": 10,
+    "amountPlaceholder": 99,
+    "active": true,
+    "withdrawSubmitting": "示例",
+    "accountNamePlaceholder": 10,
+    "accountNoPlaceholder": 10,
+    "accountSaving": 10,
+    "isWithdrawEnabled": true,
+    "needAccount": 10,
+    "needWechatRealName": "示例标题"
+  }
+}

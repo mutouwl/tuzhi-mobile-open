@@ -1,0 +1,73 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508121",
+  "data": {
+    "coverImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "isClearScreen": "示例",
+    "showVideoControlBar": true,
+    "startX": 5,
+    "startY": 5,
+    "safeAreaBottom": "示例",
+    "tabsChecked": true,
+    "messageBoxHeight": "示例内容",
+    "modal": {
+      "playbackVideo": "示例",
+      "columnCourse": "示例"
+    },
+    "data": {
+      "warm_up_cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "live_screen_ratio": "示例",
+      "live_type": "示例",
+      "live_start_time": "1786508121",
+      "live_end_time": "1786508121",
+      "id": 1
+    },
+    "roomData": {
+      "config": {
+        "value": "示例",
+        "notice": "示例",
+        "bantalk": "示例",
+        "gift": "示例",
+        "goods": "示例"
+      },
+      "push_url": {
+        "value": "示例"
+      },
+      "status_text": 1,
+      "status": 1,
+      "message_topic": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "message_pubkey": "示例内容",
+      "message_subkey": "示例内容",
+      "message_provider": "示例内容",
+      "message_enabled": true
+    },
+    "isLive": "示例",
+    "roomStatus": 1,
+    "videoUrl": "示例",
+    "studyTime": "1786508121",
+    "isPlaying": "示例",
+    "isFullscreen": "示例",
+    "onlineUserNum": 10,
+    "videoBoxHeight": "示例",
+    "windowHeight": "示例",
+    "currentQualityName": "示例标题",
+    "backgroundImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "pageParams": {
+      "id": 1,
+      "column_id": 1
+    },
+    "loading": "示例",
+    "isCustomVideoLive": "示例",
+    "playbackAutoplay": "示例",
+    "height": "示例",
+    "qualitySwitching": "示例",
+    "videoErrorLocked": "示例",
+    "showViewerCount": 10,
+    "showQualitySwitch": true,
+    "$tools": {
+      "systemConfig": "示例"
+    }
+  }
+}

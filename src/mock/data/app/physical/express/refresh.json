@@ -1,0 +1,35 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508146",
+  "data": {
+    "refreshing": "示例",
+    "orderNo": "示例",
+    "expressInfo": {
+      "logs": {
+        "length": "示例"
+      },
+      "express_name": "示例标题",
+      "express_no": "示例",
+      "status": 1
+    },
+    "data": "示例",
+    "expressInfo.logs": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "change_date": "1786508146",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "change_date": "1786508146",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "loading": "示例"
+  }
+}
