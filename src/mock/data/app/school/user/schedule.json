@@ -1,0 +1,118 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980028",
+  "data": {
+    "list": [
+      {
+        "id": 9820,
+        "schedule_id": 8709,
+        "lessons": "1.00",
+        "sign_time": 1789890895,
+        "verify_status": 1,
+        "account_id": 1748,
+        "leave_id": 0,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "start_ts": 1789898400,
+        "end_ts": 1789905600,
+        "type": 1,
+        "course_id": 2675,
+        "campus_id": 1994,
+        "user_remark": "",
+        "course_name": "计算机算法结构课程一对一",
+        "class_name": "刘洋-计算机算法结构课程一对一",
+        "campus_name": "山东大学",
+        "classroom_name": "",
+        "teachers": [
+          {
+            "id": 1944,
+            "name": "李**",
+            "role": 1,
+            "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+            "intro": "计算机老师"
+          }
+        ],
+        "main_teacher": "李老师",
+        "student_name": "刘**",
+        "schedule_id_num": 8709,
+        "date_text": "2026-09-20 周日",
+        "status_text": "已签到",
+        "sign_status_text": "已签到",
+        "consume_status_text": "已消课",
+        "list_status_text": "已消课",
+        "consume_pending": 0,
+        "can_sign": false,
+        "can_leave": false
+      },
+      {
+        "id": 9831,
+        "schedule_id": 8728,
+        "lessons": "1.00",
+        "sign_time": 1789891085,
+        "verify_status": 1,
+        "account_id": 1747,
+        "leave_id": 0,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "start_ts": 1789898400,
+        "end_ts": 1789905600,
+        "type": 1,
+        "course_id": 2676,
+        "campus_id": 1994,
+        "user_remark": "",
+        "course_name": "计算机算法结构课程一对多",
+        "class_name": "算法结构一对多",
+        "campus_name": "山东大学",
+        "classroom_name": "计算机学院",
+        "teachers": [
+          {
+            "id": 1944,
+            "name": "李**",
+            "role": 1,
+            "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+            "intro": "计算机老师"
+          }
+        ],
+        "main_teacher": "李老师",
+        "student_name": "刘**",
+        "schedule_id_num": 8728,
+        "date_text": "2026-09-20 周日",
+        "status_text": "已签到",
+        "sign_status_text": "已签到",
+        "consume_status_text": "已消课",
+        "list_status_text": "已消课",
+        "consume_pending": 0,
+        "can_sign": false,
+        "can_leave": false
+      }
+    ],
+    "has_more": false,
+    "allow_leave": true,
+    "student_sign": true,
+    "course_options": [
+      {
+        "id": 0,
+        "name": "全**"
+      },
+      {
+        "id": 2675,
+        "name": "计**",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/6edaf6c84972ddde4a1bf2c0d466c08d.png",
+        "intro": "学会计算机",
+        "is_one_to_one": 1,
+        "type_text": "一对一"
+      },
+      {
+        "id": 2676,
+        "name": "计**",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "intro": "",
+        "is_one_to_one": 0,
+        "type_text": "一对多"
+      }
+    ]
+  }
+}

@@ -1,16 +1,19 @@
 {
-    "code": 1,
-    "msg": "success",
-    "data": {
-        "list": [
-            {
-                "id": 1,
-                "name": "王小明",
-                "avatar": "",
-                "phone": "13222222222",
-                "gender": 1,
-                "birthday": 1470000000
-            }
-        ]
-    }
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980027",
+  "data": {
+    "list": [
+      {
+        "id": 3619,
+        "name": "刘**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "phone": "187****4234",
+        "gender": 1,
+        "birthday": 1789833600,
+        "class_names": "刘洋-计算机算法结构课程一对一"
+      }
+    ],
+    "student_limit": 5
+  }
 }

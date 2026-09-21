@@ -1,0 +1,85 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980035",
+  "data": {
+    "list": [
+      {
+        "id": 1282,
+        "uniacid": 1,
+        "user_id": 38,
+        "student_id": 3619,
+        "schedule_id": 8728,
+        "schedule_student_id": 9831,
+        "course_id": 2676,
+        "booking_date": 1789833600,
+        "lessons": "1.00",
+        "status": 2,
+        "source": 2,
+        "cancel_source": 0,
+        "cancel_reason": "",
+        "contact_name": "刘**",
+        "contact_phone": "187****4234",
+        "confirm_admin_id": 0,
+        "confirm_time": 1789891051,
+        "remark": "",
+        "admin_remark": "",
+        "deleted": 0,
+        "createtime": 1789891051,
+        "updatetime": 1789891085,
+        "student_name": "刘**",
+        "student_avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "student_phone": "187****4234",
+        "student_gender": 1,
+        "course_name": "计算机算法结构课程一对多",
+        "course_cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "course_intro": "",
+        "course_is_one_to_one": 0,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "schedule_lessons": "1.00",
+        "campus_id": 1994,
+        "class_id": 1947,
+        "classroom_id": 738,
+        "campus_name": "山东大学",
+        "class_name": "算法结构一对多",
+        "classroom_name": "计算机学院",
+        "date_text": "2026-09-20",
+        "teachers": [
+          {
+            "id": 1944,
+            "teacher_id": 1944,
+            "name": "李**",
+            "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+            "phone": "187****8778",
+            "gender": 1,
+            "intro": "计算机老师",
+            "role": 1
+          }
+        ],
+        "main_teacher": "李老师",
+        "main_teacher_list": [
+          {
+            "id": 1944,
+            "teacher_id": 1944,
+            "name": "李**",
+            "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+            "phone": "187****8778",
+            "gender": 1,
+            "intro": "计算机老师",
+            "role": 1
+          }
+        ],
+        "assistant_teacher": "",
+        "status_text": "已上课",
+        "source_text": "线上预约",
+        "createtime_text": "2026-09-20 15:57:31",
+        "confirm_time_text": "2026-09-20 15:57:31",
+        "cancel_allowed": false
+      }
+    ],
+    "has_more": false,
+    "total": 1
+  }
+}

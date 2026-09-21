@@ -1,80 +1,48 @@
 {
-    "code": 1,
-    "msg": "success",
-    "data": {
-        "list": [
-            {
-                "id": 201,
-                "lessons": 2,
-                "verify_status": 1,
-                "sign_time": 1788750000,
-                "lesson_date": 1788710400,
-                "start_time": "09:00",
-                "end_time": "10:30",
-                "type": 1,
-                "course_name": "少儿编程入门",
-                "class_name": "编程A班·周六班"
-            },
-            {
-                "id": 202,
-                "lessons": 1,
-                "verify_status": 0,
-                "sign_time": 0,
-                "lesson_date": 1788537600,
-                "start_time": "14:00",
-                "end_time": "15:00",
-                "type": 1,
-                "course_name": "英语自然拼读",
-                "class_name": "英语K1班"
-            },
-            {
-                "id": 203,
-                "lessons": 1,
-                "verify_status": 1,
-                "sign_time": 1788255000,
-                "lesson_date": 1788192000,
-                "start_time": "16:00",
-                "end_time": "17:00",
-                "type": 1,
-                "course_name": "美术创意班",
-                "class_name": "美术启蒙班"
-            },
-            {
-                "id": 204,
-                "lessons": 2,
-                "verify_status": 1,
-                "sign_time": 1787200000,
-                "lesson_date": 1787155200,
-                "start_time": "10:00",
-                "end_time": "12:00",
-                "type": 1,
-                "course_name": "乒乓球基础",
-                "class_name": "乒乓球提高班"
-            },
-            {
-                "id": 205,
-                "lessons": 1,
-                "verify_status": 3,
-                "sign_time": 0,
-                "lesson_date": 1784908800,
-                "start_time": "15:00",
-                "end_time": "16:00",
-                "type": 2,
-                "course_name": "口才表达",
-                "class_name": "口才小班"
-            },
-            {
-                "id": 206,
-                "lessons": 1,
-                "verify_status": 1,
-                "sign_time": 1781480000,
-                "lesson_date": 1781443200,
-                "start_time": "08:30",
-                "end_time": "09:30",
-                "type": 1,
-                "course_name": "数学思维",
-                "class_name": "数学B班"
-            }
-        ]
-    }
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980029",
+  "data": {
+    "list": [
+      {
+        "id": 9831,
+        "lessons": "1.00",
+        "verify_status": 1,
+        "sign_time": 1789891085,
+        "account_id": 1747,
+        "leave_id": 0,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "type": 1,
+        "course_name": "计算机算法结构课程一对多",
+        "class_name": "算法结构一对多",
+        "status_text": "已签到",
+        "sign_status_text": "已签到",
+        "consume_status_text": "已消课",
+        "consume_pending": 0,
+        "list_status_text": "已消课"
+      },
+      {
+        "id": 9820,
+        "lessons": "1.00",
+        "verify_status": 1,
+        "sign_time": 1789890895,
+        "account_id": 1748,
+        "leave_id": 0,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "type": 1,
+        "course_name": "计算机算法结构课程一对一",
+        "class_name": "刘洋-计算机算法结构课程一对一",
+        "status_text": "已签到",
+        "sign_status_text": "已签到",
+        "consume_status_text": "已消课",
+        "consume_pending": 0,
+        "list_status_text": "已消课"
+      }
+    ],
+    "has_more": false
+  }
 }

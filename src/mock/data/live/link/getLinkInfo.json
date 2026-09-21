@@ -1,0 +1,34 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980020",
+  "data": {
+    "course_id": 1585,
+    "channel_id": "link_1585",
+    "link_enabled": 1,
+    "link_pc_enabled": 1,
+    "link_mobile_enabled": 1,
+    "message_enabled": 1,
+    "platform_link_enabled": 1,
+    "allow_link": 0,
+    "room_link": 1,
+    "forbid_apply_link": 0,
+    "ban_link": 0,
+    "max_link_count": 1,
+    "provider": "aliyun",
+    "my_link": null,
+    "rtc_user_id": "link_1585_38",
+    "sdk_auth": {
+      "app_id": "aed28cbe-34e1-4b06-babd-2171986c50b5",
+      "region_id": "cn-shanghai",
+      "data_center": "cn-shanghai",
+      "user_id": 38,
+      "role": "audience",
+      "channel_id": "link_1585",
+      "channel_join_token": "****",
+      "timestamp": 1790066420,
+      "token": "****"
+    },
+    "my_records": []
+  }
+}

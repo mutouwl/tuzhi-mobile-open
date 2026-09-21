@@ -1,0 +1,147 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980021",
+  "data": {
+    "list": [
+      {
+        "id": 946,
+        "name": "秋季课本同步辅导09211624套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 945,
+        "name": "秋季课本同步辅导09211622套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 944,
+        "name": "秋季课本同步辅导09211619套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 943,
+        "name": "秋季课本同步辅导09211558套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 942,
+        "name": "秋季课本同步辅导09211555套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 941,
+        "name": "秋季课本同步辅导09211553套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 940,
+        "name": "秋季课本同步辅导09211547套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 939,
+        "name": "秋季课本同步辅导09211544套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 938,
+        "name": "秋季课本同步辅导09211541套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 937,
+        "name": "秋季课本同步辅导09211528套餐",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png",
+        "intro": "",
+        "sort": 0,
+        "price": "299.00",
+        "tags": [],
+        "campus_names": [
+          "山东大学"
+        ]
+      },
+      {
+        "id": 834,
+        "name": "山大计算机培训课",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "intro": "",
+        "sort": 0,
+        "price": "1.00",
+        "tags": [
+          "山东大学",
+          "精品课"
+        ],
+        "campus_names": [
+          "山东大学"
+        ]
+      }
+    ],
+    "categories": [],
+    "has_more": false,
+    "total": 11
+  }
+}

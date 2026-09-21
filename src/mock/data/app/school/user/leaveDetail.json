@@ -1,0 +1,31 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980128",
+  "data": {
+    "id": 1235,
+    "uniacid": 1,
+    "student_id": 63,
+    "user_id": 38,
+    "schedule_student_id": 8762,
+    "schedule_id": 5813,
+    "type": 2,
+    "reason": "你好",
+    "images": "[]",
+    "lessons": "1.00",
+    "status": 1,
+    "is_deduct": 0,
+    "audit_remark": "",
+    "audit_time": 1789818479,
+    "createtime": 1789818479,
+    "updatetime": 1789818479,
+    "student_name": "冯**",
+    "course_name": "",
+    "class_name": "",
+    "campus_name": "",
+    "campus_id": 0,
+    "lesson_date_text": "",
+    "start_time": "",
+    "end_time": ""
+  }
+}

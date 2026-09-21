@@ -1,0 +1,32 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980026",
+  "data": {
+    "info": {
+      "id": 31,
+      "name": "小雅老师",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260731/94f405e93d2ca771b0ee1ea77a2516f4.jpg",
+      "phone": "176****2595",
+      "gender": 1,
+      "intro": "小雅老师是专业的小提琴老师"
+    },
+    "packages": [],
+    "campuses": [
+      {
+        "id": 37,
+        "name": "凸知校园",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "address": "123",
+        "business_hours": "18:05 - 22:00"
+      },
+      {
+        "id": 160,
+        "name": "实验中学",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260821/cd7af56d4c7645c41f017df0bbc71cc5.jpg",
+        "address": "山东日照",
+        "business_hours": "09:00 - 14:00"
+      }
+    ]
+  }
+}

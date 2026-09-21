@@ -1,0 +1,31 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980026",
+  "data": {
+    "order_no": "202605051921909744003800",
+    "status": "success",
+    "status_text": "已完成",
+    "real_price": "2.00",
+    "package_name": "山大计算机培训课",
+    "package_id": 834,
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+    "sku_name": "一对一",
+    "lessons_total": 20,
+    "courses": [
+      {
+        "name": "计算机算法结构课程一对一",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/6edaf6c84972ddde4a1bf2c0d466c08d.png",
+        "lessons": "20.00"
+      }
+    ],
+    "student_name": "刘**",
+    "student_phone": "187****4234",
+    "class_names": "刘洋-计算机算法结构课程一对一",
+    "campus_id": 1994,
+    "campus_name": "山东大学",
+    "open_status": 1,
+    "valid_text": "长期有效",
+    "createtime_text": "2026-09-20 17:05"
+  }
+}

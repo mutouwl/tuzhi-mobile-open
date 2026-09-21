@@ -1,0 +1,57 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980033",
+  "data": {
+    "list": [
+      {
+        "id": 8728,
+        "lesson_date": 1789833600,
+        "start_time": "18:00",
+        "end_time": "20:00",
+        "start_ts": 1789898400,
+        "end_ts": 1789905600,
+        "lessons": "1.00",
+        "capacity": 0,
+        "booked_count": 1,
+        "is_booking": 1,
+        "booking_rule": "",
+        "course_id": 2676,
+        "campus_id": 1994,
+        "classroom_id": 738,
+        "course_name": "计算机算法结构课程一对多",
+        "course_cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "course_intro": "",
+        "course_is_one_to_one": 0,
+        "campus_name": "山东大学",
+        "class_name": "算法结构一对多",
+        "classroom_name": "计算机学院",
+        "date_text": "2026-09-20",
+        "teachers": [
+          {
+            "id": 1944,
+            "name": "李**",
+            "role": 1,
+            "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+            "intro": "计算机老师"
+          }
+        ],
+        "main_teacher": "李老师",
+        "joined_count": 0,
+        "remain_seat": 0,
+        "unlimited_seat": true,
+        "remain_lessons": 9,
+        "booked": true,
+        "can_book": false,
+        "reason": "已上课",
+        "schedule_student_id": 9831
+      }
+    ],
+    "total": 1,
+    "has_more": false,
+    "day_counts": {
+      "2026-09-20": 1
+    },
+    "enrolled_course_count": 2
+  }
+}

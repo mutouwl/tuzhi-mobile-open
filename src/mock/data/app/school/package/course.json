@@ -1,0 +1,30 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980024",
+  "data": {
+    "list": [
+      {
+        "id": 834,
+        "name": "山大计算机培训课",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "intro": "",
+        "tags": [
+          "山东大学",
+          "精品课"
+        ],
+        "sale_status": 1,
+        "price": "1.00",
+        "lessons": 10,
+        "sold_out": false,
+        "buyable": true,
+        "status_text": "",
+        "campus_names": [
+          "山东大学"
+        ]
+      }
+    ],
+    "has_more": false,
+    "total": 1
+  }
+}

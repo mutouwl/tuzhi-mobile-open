@@ -1,11 +1,12 @@
 # 接口文档
 
-> 本目录由 [`tools/api-doc-gen`](../../tools/api-doc-gen/README.md) 脚本自动生成，**请勿手工修改**。
-> 数据源：`tuzhi-selfbuilt-mobile/src/common/request/api_list.js`（Mobile 端接口配置文件）。
+> 本目录由 [`tools/api-doc-gen`](../../../tools/api-doc-gen/README.md) 脚本自动生成，**请勿手工修改**。
+> 数据源：`tuzi-mobile/src/common/request/api_list.js`（Mobile 端接口配置文件）+ 后端 `application/api/controller/**`。
+> 目录与文件按「中文名_变量」命名（文件名前缀即接口标题），由生成器统一维护，重命名请用 `--all` 全量刷新。
 
-- 生成时间：2026/8/12 13:49:20
-- 接口总数：311 个（19 个模块）
-- 已生成文档：311 份
+- 生成时间：2026/9/21 16:48:00
+- 接口总数：353 个（19 个模块）
+- 已生成文档：353 份
 
 ## 通用约定
 
@@ -380,6 +381,20 @@
 | `POST /api/live/goods/action` | 用户点击商品行为 | [查看](直播_live/商品_goods/用户点击商品行为_action.md) |
 | `POST /api/live/goods/getGoods` | 获取商品（后端） | [查看](直播_live/商品_goods/获取商品_getGoods.md) |
 
+#### 连麦（link）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/live/link/apply` | 学员申请连麦 | [查看](直播_live/连麦_link/学员申请连麦_apply.md) |
+| `POST /api/live/link/accept` | 学员接听连麦邀请 | [查看](直播_live/连麦_link/学员接听连麦邀请_accept.md) |
+| `POST /api/live/link/reject` | 学员拒绝连麦邀请 | [查看](直播_live/连麦_link/学员拒绝连麦邀请_reject.md) |
+| `POST /api/live/link/cancel` | 学员取消连麦申请 | [查看](直播_live/连麦_link/学员取消连麦申请_cancel.md) |
+| `POST /api/live/link/end` | 学员主动下麦 | [查看](直播_live/连麦_link/学员主动下麦_end.md) |
+| `POST /api/live/link/getLinkInfo` | 连麦信息与鉴权 | [查看](直播_live/连麦_link/连麦信息与鉴权_getLinkInfo.md) |
+| `POST /api/live/link/getLinkList` | 连麦中成员列表 | [查看](直播_live/连麦_link/连麦中成员列表_getLinkList.md) |
+| `POST /api/live/link/updateLocal` | 连麦本地操作上报 | [查看](直播_live/连麦_link/连麦本地操作上报_updateLocal.md) |
+| `POST /api/live/link/agree` | 讲师同意连麦申请（后端） | [查看](直播_live/连麦_link/讲师同意连麦申请_agree.md) |
+
 #### 直播间（room）
 
 | 接口 | 说明 | 文档 |
@@ -466,6 +481,7 @@
 | `POST /api/app/form/form/log` | 提交记录 | [查看](拓展应用_app/表单_form/表单_form/提交记录_log.md) |
 | `POST /api/app/form/form/getCourseBindForm` | 获取课程关联的考试 | [查看](拓展应用_app/表单_form/表单_form/获取课程关联的考试_getCourseBindForm.md) |
 | `POST /api/app/form/form/checkBeforeBuy` | 检查购买课程前表单是否已提交 | [查看](拓展应用_app/表单_form/表单_form/检查购买课程前表单是否已提交_checkBeforeBuy.md) |
+| `POST /api/app/form/form/checkBeforeLearn` | 加入学习前表单校验 | [查看](拓展应用_app/表单_form/表单_form/加入学习前表单校验_checkBeforeLearn.md) |
 | `POST /api/app/form/form/validateRequiredFields` | 验证必填字段（后端） | [查看](拓展应用_app/表单_form/表单_form/验证必填字段_validateRequiredFields.md) |
 
 #### 证书（cert）
@@ -612,6 +628,65 @@
 | `POST /api/app/agent/wallet/getMoney` | 获取金额（后端） | [查看](拓展应用_app/分销_agent/wallet/获取金额_getMoney.md) |
 | `POST /api/app/agent/withdraw/check` | 检查（后端） | [查看](拓展应用_app/分销_agent/提现_withdraw/检查_check.md) |
 
+#### 教务（school）
+
+##### 课包（school/package）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/school/package/list` | 课包列表 | [查看](拓展应用_app/教务_school/课包_package/课包列表_list.md) |
+| `POST /api/app/school/package/detail` | 课包详情 | [查看](拓展应用_app/教务_school/课包_package/课包详情_detail.md) |
+| `POST /api/app/school/package/campus` | 课包可选校区 | [查看](拓展应用_app/教务_school/课包_package/课包可选校区_campus.md) |
+| `POST /api/app/school/package/course` | 课程对应课包 | [查看](拓展应用_app/教务_school/课包_package/课程对应课包_course.md) |
+
+##### 校区（school/campus）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/school/campus/list` | 校区列表 | [查看](拓展应用_app/教务_school/校区_campus/校区列表_list.md) |
+| `POST /api/app/school/campus/detail` | 校区详情 | [查看](拓展应用_app/教务_school/校区_campus/校区详情_detail.md) |
+
+##### 老师（school/teacher）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/school/teacher/detail` | 教师详情 | [查看](拓展应用_app/教务_school/老师_teacher/教师详情_detail.md) |
+
+##### 套餐订单（school/order）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/school/order/detail` | 课包订单详情 | [查看](拓展应用_app/教务_school/套餐订单_order/课包订单详情_detail.md) |
+| `POST /api/app/school/order/submit` | 提交课包订单（后端） | [查看](拓展应用_app/教务_school/套餐订单_order/提交课包订单_submit.md) |
+| `POST /api/app/school/order/list` | 我的课包订单（后端） | [查看](拓展应用_app/教务_school/套餐订单_order/我的课包订单_list.md) |
+
+##### 学生端（school/user）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/school/user/students` | 名下学生列表 | [查看](拓展应用_app/教务_school/学生端_user/名下学生列表_students.md) |
+| `POST /api/app/school/user/studentAdd` | 新建名下学生 | [查看](拓展应用_app/教务_school/学生端_user/新建名下学生_studentAdd.md) |
+| `POST /api/app/school/user/studentDetail` | 学生详情 | [查看](拓展应用_app/教务_school/学生端_user/学生详情_studentDetail.md) |
+| `POST /api/app/school/user/studentEdit` | 编辑名下学生 | [查看](拓展应用_app/教务_school/学生端_user/编辑名下学生_studentEdit.md) |
+| `POST /api/app/school/user/schedule` | 我的课表 | [查看](拓展应用_app/教务_school/学生端_user/我的课表_schedule.md) |
+| `POST /api/app/school/user/scheduleCounts` | 课表每日课数 | [查看](拓展应用_app/教务_school/学生端_user/课表每日课数_scheduleCounts.md) |
+| `POST /api/app/school/user/records` | 上课记录 | [查看](拓展应用_app/教务_school/学生端_user/上课记录_records.md) |
+| `POST /api/app/school/user/balance` | 课时余额 | [查看](拓展应用_app/教务_school/学生端_user/课时余额_balance.md) |
+| `POST /api/app/school/user/logs` | 课时流水 | [查看](拓展应用_app/教务_school/学生端_user/课时流水_logs.md) |
+| `POST /api/app/school/user/leaveSubmit` | 提交请假 | [查看](拓展应用_app/教务_school/学生端_user/提交请假_leaveSubmit.md) |
+| `POST /api/app/school/user/lessonLeave` | 课次已有请假单 | [查看](拓展应用_app/教务_school/学生端_user/课次已有请假单_lessonLeave.md) |
+| `POST /api/app/school/user/leaveList` | 请假列表 | [查看](拓展应用_app/教务_school/学生端_user/请假列表_leaveList.md) |
+| `POST /api/app/school/user/leaveDetail` | 请假详情 | [查看](拓展应用_app/教务_school/学生端_user/请假详情_leaveDetail.md) |
+| `POST /api/app/school/user/leaveCancel` | 撤回请假 | [查看](拓展应用_app/教务_school/学生端_user/撤回请假_leaveCancel.md) |
+| `POST /api/app/school/user/sign` | 学生签到 | [查看](拓展应用_app/教务_school/学生端_user/学生签到_sign.md) |
+| `POST /api/app/school/user/teacherDetail` | 授课老师信息 | [查看](拓展应用_app/教务_school/学生端_user/授课老师信息_teacherDetail.md) |
+| `POST /api/app/school/user/bookable` | 可预约场次 | [查看](拓展应用_app/教务_school/学生端_user/可预约场次_bookable.md) |
+| `POST /api/app/school/user/bookableCounts` | 可预约场次每日数量 | [查看](拓展应用_app/教务_school/学生端_user/可预约场次每日数量_bookableCounts.md) |
+| `POST /api/app/school/user/book` | 提交预约 | [查看](拓展应用_app/教务_school/学生端_user/提交预约_book.md) |
+| `POST /api/app/school/user/bookCancel` | 取消预约 | [查看](拓展应用_app/教务_school/学生端_user/取消预约_bookCancel.md) |
+| `POST /api/app/school/user/bookingList` | 我的预约列表 | [查看](拓展应用_app/教务_school/学生端_user/我的预约列表_bookingList.md) |
+| `POST /api/app/school/user/bookingDetail` | 预约详情 | [查看](拓展应用_app/教务_school/学生端_user/预约详情_bookingDetail.md) |
+
 #### pc（pc）
 
 | 接口 | 说明 | 文档 |
@@ -707,8 +782,8 @@
 | 订单（order） | 20 | 20 |
 | 课程（course） | 20 | 20 |
 | 用户（user） | 49 | 49 |
-| 直播（live） | 19 | 19 |
-| 拓展应用（app） | 139 | 139 |
+| 直播（live） | 28 | 28 |
+| 拓展应用（app） | 172 | 172 |
 | 数据（data） | 7 | 7 |
 | 分享（share） | 3 | 3 |
 | 配置（config） | 1 | 1 |
@@ -716,12 +791,12 @@
 | token（token） | 2 | 2 |
 | validate（validate） | 8 | 8 |
 | virtual_pay（virtual_pay） | 8 | 8 |
-| **合计** | **311** | **311** |
+| **合计** | **353** | **353** |
 
 ## 新增接口文档流程
 
-1. 在 `tuzhi-selfbuilt-mobile/src/common/request/api_list.js` 中新增接口定义（key、url、auth、method）。
+1. 在 `tuzi-mobile/src/common/request/api_list.js` 中新增接口定义（key、url、auth、method）。
 2. 可选：在 `tools/api-doc-gen/details.js` 的 `apis` 中补充参数说明、返回字段说明、备注。
 3. 运行 `node tools/api-doc-gen/index.js --key=模块.key`，文档即产出；运行 `--all` 全量刷新。
 
-详见 [`tools/api-doc-gen/README.md`](../../tools/api-doc-gen/README.md)。
+详见 [`tools/api-doc-gen/README.md`](../../../tools/api-doc-gen/README.md)。

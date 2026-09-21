@@ -1,0 +1,101 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980030",
+  "data": {
+    "course_count": 2,
+    "total_lessons": 70,
+    "used_lessons": 2,
+    "remain_lessons": 68,
+    "accounts": [
+      {
+        "id": 1748,
+        "uniacid": 1,
+        "student_id": 3619,
+        "user_id": 38,
+        "course_id": 2675,
+        "campus_id": 1994,
+        "total_lessons": "60.00",
+        "used_lessons": "1.00",
+        "expire_time": 0,
+        "source": 1,
+        "status": 1,
+        "deleted": 0,
+        "createtime": 1789890530,
+        "updatetime": 1789895121,
+        "course_name": "计算机算法结构课程一对一",
+        "campus_name": "山东大学"
+      },
+      {
+        "id": 1747,
+        "uniacid": 1,
+        "student_id": 3619,
+        "user_id": 38,
+        "course_id": 2676,
+        "campus_id": 1994,
+        "total_lessons": "10.00",
+        "used_lessons": "1.00",
+        "expire_time": 0,
+        "source": 1,
+        "status": 1,
+        "deleted": 0,
+        "createtime": 1789890512,
+        "updatetime": 1789891085,
+        "course_name": "计算机算法结构课程一对多",
+        "campus_name": "山东大学"
+      }
+    ],
+    "has_more": false,
+    "total": 2,
+    "course_options": [
+      {
+        "id": 0,
+        "name": "全**"
+      },
+      {
+        "id": 2675,
+        "name": "计**",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/6edaf6c84972ddde4a1bf2c0d466c08d.png",
+        "intro": "学会计算机",
+        "is_one_to_one": 1,
+        "type_text": "一对一"
+      },
+      {
+        "id": 2676,
+        "name": "计**",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "intro": "",
+        "is_one_to_one": 0,
+        "type_text": "一对多"
+      }
+    ],
+    "campus_options": [
+      {
+        "id": 0,
+        "name": "全**"
+      },
+      {
+        "id": 1994,
+        "name": "山**",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+        "address": "山东济南学府路",
+        "contact_phone": "187****8782",
+        "business_hours": "16:00 - 23:00"
+      }
+    ],
+    "student": {
+      "id": 3619,
+      "uniacid": 1,
+      "user_id": 38,
+      "name": "刘**",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+      "phone": "187****4234",
+      "gender": 1,
+      "birthday": 1789833600,
+      "remark": "",
+      "deleted": 0,
+      "createtime": 1789890438,
+      "updatetime": 1789890438
+    }
+  }
+}

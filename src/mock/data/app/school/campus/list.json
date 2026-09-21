@@ -1,0 +1,47 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1789980025",
+  "data": {
+    "list": [
+      {
+        "id": 37,
+        "name": "凸知校园",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260822/40fce2ec85c1d72e933072ac15f5e21e.png",
+        "address": "123",
+        "contact_name": "1**",
+        "contact_phone": "****",
+        "business_hours": "18:05 - 22:00"
+      },
+      {
+        "id": 121,
+        "name": "幸福小学",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260818/000e0fb1cf8c0169425a08117383530f.jpg",
+        "address": "山东日照市",
+        "contact_name": "李**",
+        "contact_phone": "187****7890",
+        "business_hours": ""
+      },
+      {
+        "id": 160,
+        "name": "实验中学",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260821/cd7af56d4c7645c41f017df0bbc71cc5.jpg",
+        "address": "山东日照",
+        "contact_name": "封**",
+        "contact_phone": "187****2345",
+        "business_hours": "09:00 - 14:00"
+      },
+      {
+        "id": 1994,
+        "name": "山东大学",
+        "logo": "https://tuzhi.mutouweb.com/uploads/1/20260919/dab4a5dd42ed4382c324322b22a24acd.png",
+        "address": "山东济南学府路",
+        "contact_name": "李**",
+        "contact_phone": "187****8782",
+        "business_hours": "16:00 - 23:00"
+      }
+    ],
+    "has_more": false,
+    "total": 4
+  }
+}
