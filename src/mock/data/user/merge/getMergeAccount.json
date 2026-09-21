@@ -1,0 +1,23 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508136",
+  "data": {
+    "accountCheck": 10,
+    "userInfo": {
+      "nickname": "示例用户",
+      "platform": "示例",
+      "money": 99,
+      "score": 5,
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "mergeAccountInfo": {
+      "username": "示例用户",
+      "platform": "示例",
+      "money": 99,
+      "score": 5,
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "data": "示例"
+  }
+}

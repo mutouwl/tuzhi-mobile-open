@@ -1,0 +1,321 @@
+.container{
+    padding: 10px;
+}
+::v-deep .u-form-item__body {
+    padding: 0 !important;
+}
+
+::v-deep .u-button {
+    width: 80px !important;
+    font-size: 12px !important;
+    height: 30px !important;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.total-box {
+    text-align: right;
+    color: #4E5969;
+    font-size: 13px;
+}
+
+.total-box .price {
+    color: #f53f3f;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.total-box .unit {
+    font-size: 10px;
+    margin-right: 2px;
+}
+
+::v-deep .u-cell__body {
+    padding: 0 0 !important;
+}
+
+::v-deep .u-cell__body--large {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+::v-deep .u-cell__title-text--large,
+::v-deep .u-cell__value--large {
+    font-size: 14px !important;
+}
+
+
+
+.order-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.order-footer .order-btn {
+    margin: 0px 3px;
+    padding: 4px 15px;
+    font-size: 14px;
+    color: #4E5969;
+    margin-left: 5px;
+    background-color: #f5f5f5 !important;
+    border-radius: 4px;
+}
+
+.order-footer .order-btn:last-child {
+    margin-right: 0px;
+}
+
+.order-footer .order-btn:first-child {
+    margin-left: 0px;
+}
+
+/* 收货地址样式 */
+.address-detail {
+    width: 100%;
+}
+
+.user-info {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.user-info .name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 12px;
+}
+
+.user-info .mobile {
+    font-size: 16px;
+    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.address-text {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* 组合商品内含子商品 */
+.sub-goods-list {
+    padding: 0 0 8px;
+}
+.sub-goods-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-top: 8px;
+    background: #F7F8FA;
+    border-radius: 6px;
+}
+.sub-goods-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    background: #e5e6eb;
+    flex-shrink: 0;
+    position: relative;
+}
+.sub-goods-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 6px;
+}
+.sub-goods-type-tag {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 9px;
+    color: #fff;
+    background: rgba(0,0,0,.45);
+    border-radius: 3px;
+    padding: 0 4px;
+    line-height: 14px;
+}
+.sub-goods-info {
+    flex: 1;
+    margin-left: 10px;
+    overflow: hidden;
+}
+.sub-goods-name {
+    font-size: 14px;
+    color: #1d2129;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+.sub-goods-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+.sub-goods-price {
+    font-size: 13px;
+    color: #86909c;
+}
+.sub-goods-validity {
+    font-size: 11px;
+    color: #F53F3F;
+}
+
+/* 报名信息弹层 - 教务订单（版式复用确认报名页：商品卡 + 校区/学生卡） */
+.enroll-popup {
+    background: #fff;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+}
+
+.enroll-popup-title {
+    padding: 15px 16px 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2129;
+    text-align: left;
+}
+
+/* 弹层内容区不另铺灰底：整个弹层按白底呈现（与续费弹层、预约详情弹层同款底部弹层一致），
+   卡片靠上下间距与行分隔线区分，不加描边 */
+.enroll-popup-body {
+    padding: 0 10px 12px;
+    box-sizing: border-box;
+}
+
+/* 报名信息弹层骨架屏：尺寸与真实内容逐块对齐（商品卡 14/16 内边距 + 90px 封面、
+   信息行 52px 行高 = 18px 上下内边距 + 16px 灰条、底部按钮行 16px 上间距），
+   灰条颜色取 uview 骨架屏静态块口径（与确认报名页 sk-cover 一致） */
+.enroll-sk-card {
+    background: #fff;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.enroll-sk-goods {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    box-sizing: border-box;
+}
+
+.enroll-sk-cover {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #e5e6eb;
+}
+
+.enroll-sk-goods-info {
+    flex: 1;
+    min-width: 0;
+    margin-left: 12px;
+}
+
+/* 信息行：灰条起点与 .enroll-cell / .enroll-label 同口径（16px 左内边距 + 标签列），切换真实内容时不位移 */
+.enroll-sk-cell {
+    display: flex;
+    align-items: center;
+    padding: 18px 16px;
+    box-sizing: border-box;
+}
+
+.enroll-sk-cell + .enroll-sk-cell {
+    border-top: 1px solid #f7f8fa;
+}
+
+.enroll-sk-label {
+    width: 54px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.enroll-sk-value {
+    width: 45%;
+    height: 16px;
+    margin-left: 16px;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+/* 底部「进入教务中心」按钮占位（tz-button size=normal + long：10px 上下内边距 + 20px 行高） */
+.enroll-sk-ops {
+    margin-top: 16px;
+    height: 40px;
+    border-radius: 4px;
+    background: #f2f3f5;
+}
+
+/* 套餐商品卡（同确认报名页 goods-card，可点击跳转套餐详情） */
+/* 商品卡为共用组件 package-goods-card（视觉样式在组件内），此处仅控制弹层内位置 */
+.enroll-goods-card {
+    margin-top: 10px;
+}
+
+/* 校区 / 上课学生 cell 卡片（同确认报名页 cell-card，只读展示） */
+.enroll-cell-card {
+    background: #fff;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+/* 校区 / 上课学生 / 班级 cell 列表（对齐校区/教师详情信息行与实物商品详情页：16px 行内边距 + 标签列定宽 + 1px 分隔线） */
+.enroll-cell {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f7f8fa;
+}
+
+.enroll-cell:last-child {
+    border-bottom: none;
+}
+
+.enroll-label {
+    font-size: 14px;
+    color: #666;
+    width: 70px;
+    flex-shrink: 0;
+}
+
+.enroll-value {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.enroll-value-text {
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* flex 占满箭头以外的剩余宽度，校区行带跳转箭头时超长校区名仍省略号收口 */
+    flex: 1;
+    min-width: 0;
+}
+
+/* 校区行跳转箭头（同请假详情行尾箭头口径） */
+.enroll-arrow {
+    flex-shrink: 0;
+    margin-left: 4px;
+}
+
+.enroll-value-text.enroll-placeholder {
+    color: #86909c;
+}
+
+/* 弹层底部操作行：与上方信息卡的间距同「我的预约」详情弹层的 .bl-popup-ops（16px）；
+   按钮本体交给共用组件 tz-button（size=normal + long，默认灰底档），页面不再覆写宽度与边框 */
+.enroll-popup-ops {
+    margin-top: 16px;
+}

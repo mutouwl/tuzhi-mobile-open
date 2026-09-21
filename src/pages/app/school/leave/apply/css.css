@@ -1,0 +1,367 @@
+
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row .label {
+  flex-shrink: 0;
+  margin-right: 16px;
+  color: #4e5969;
+}
+
+/* 只读展示值（如请假学生回显）：与可点击项的蓝色链接区分 */
+.row .value {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  color: #1d2129;
+  word-break: break-all;
+}
+
+.row .value.placeholder {
+  color: #c9cdd4;
+}
+
+.row .link {
+  display: flex;
+  align-items: center;
+  color: #0968f6;
+}
+
+.block-title {
+  margin-bottom: 6px;
+  padding-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.block-title .tip {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #86909c;
+}
+
+.reason {
+  width: 100%;
+  height: 120px;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.count {
+  padding-bottom: 12px;
+  text-align: right;
+  font-size: 12px;
+  color: #86909c;
+}
+
+/* 图片编辑区：媒体编辑器九宫格（三列，含末尾的添加格），底部留白与原格子区一致 */
+.imgs-block {
+  padding-bottom: 14px;
+}
+
+.submit {
+  width: 100%;
+  border: none;
+}
+
+/* 弹层顶部圆角保持本页原档位（内衬走全局档 .school-popup） */
+.la-popup {
+  border-radius: 10px 10px 0 0;
+}
+
+.popup-count {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #0968f6;
+}
+
+/* 选课次弹层的筛选行（课程 + 时间水平排列）：版式照课时余额页的课程/校区筛选行
+   （灰标签 + 深色值 + 右箭头，两项之间一条竖线）。弹层本身已是白底，故不再套白色卡片，
+   只在行尾补一条横线与下方课次列表分隔 */
+.pick-filter {
+  display: flex;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f2f3f5;
+}
+
+.pick-filter-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+
+/* 分隔线用相邻兄弟左边框实现（同课时余额页筛选行） */
+.pick-filter-item + .pick-filter-item {
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid #f2f3f5;
+}
+
+.pick-filter-label {
+  flex-shrink: 0;
+  margin-right: 6px;
+  color: #86909c;
+}
+
+.pick-filter-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1d2129;
+}
+
+/* 未按课程筛选时值置灰，同课时余额页的「全部课程 / 全部校区」 */
+.pick-filter-value.dim {
+  color: #86909c;
+}
+
+/* 时间范围值不截断：完整的起止日期比省略号有用，半点宽度放不下时在「至」两侧空格处折行
+   （「2026-09-16 至 2026-10-16」满宽约 164px，手机上半行可用约 115px） */
+.pick-filter-value.range {
+  white-space: normal;
+  line-height: 17px;
+}
+
+.popup-loadmore {
+  padding: 8px 0 4px;
+}
+
+.popup-confirm {
+  margin-top: 12px;
+}
+/* uview 2.x 按钮内部类为 u-button/u-reset-button（自带小程序边框重置），
+   原规则 .popup-confirm .u-btn 两端均无该类，为死代码已移除 */
+
+/* 时间范围筛选用 TDesign 区间日历；标题左对齐并与项目弹窗标题同字号
+   （与 tz-filter-popup 的日历覆盖同一条规则：只覆盖 TDesign 组件，其余样式不动） */
+.t-calendar .t-calendar__title {
+  padding-left: 14px !important;
+  color: #1d2129 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 44px !important;
+  text-align: left !important;
+}
+
+.pick-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 14px;
+  color: #1d2129;
+}
+
+/* 分隔线用相邻兄弟上边框实现：最后一个成员不显示边框。
+   取色对齐教务模块弹层分隔线（campus-item/student-item/option-item 均为 #f2f3f5），
+   原 #f7f8fa 与白色弹层底对比过低，真机上等于看不见 */
+.pick-item + .pick-item {
+  border-top: 1px solid #f2f3f5;
+}
+
+/* 单选弹层选中项文字：与 course-select/campus-select 弹窗的选中态一致 */
+.pick-item .active {
+  color: #0968f6;
+}
+
+/* 加载态骨架屏行：行高、分隔线与真实课次行（.pick-item 48px）对齐，列表高度不跳动 */
+.pick-skeleton-item {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+}
+
+.pick-skeleton-item + .pick-skeleton-item {
+  border-top: 1px solid #f2f3f5;
+}
+
+/* 文字条：占据课次行文字的位置，与右侧方形选择器留出同样间距 */
+.pick-sk-text {
+  flex: 1;
+  min-width: 0;
+  margin-right: 12px;
+}
+
+/* 方形占位：与 .checkbox 同尺寸同圆角（18px / 4px），只是填成骨架灰 */
+.pick-sk-box {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #e5e6eb;
+  box-sizing: border-box;
+}
+
+/* 单选弹层右侧圆形选择器：选中蓝底 + 内白环（与 course-select/campus-select/student-select 弹窗同一套单选标识） */
+.radio {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid #c9cdd4;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.radio.on {
+  border-color: #0968f6;
+  background: #0968f6;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+/* 多选弹层右侧方形选择器：选中蓝底 + CSS 白色对勾（不依赖字体图标，与 .tab.active::after 同方案） */
+.checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid #c9cdd4;
+  border-radius: 4px;
+  background: #fff;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.checkbox.on {
+  border-color: #0968f6;
+  background: #0968f6;
+}
+
+.checkbox.on::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status.green {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.red {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+.status.gray {
+  color: #86909c;
+  background: #f2f3f5;
+}
+
+.line {
+  font-size: 13px;
+  color: #4e5969;
+  line-height: 22px;
+}
+
+.ops {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+.empty {
+  padding: 60px 0;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.apply-btn {
+  width: 100%;
+  border: none;
+}
+
+.status.s1 {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.status.s2 {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.s3 {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+.log-item {
+  display: flex;
+  padding: 10px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  margin: 6px 12px 0 0;
+  border-radius: 50%;
+  background: #0968f6;
+}
+
+.log-body {
+  flex: 1;
+}
+
+.log-body view {
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.log-time {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #86909c;
+}

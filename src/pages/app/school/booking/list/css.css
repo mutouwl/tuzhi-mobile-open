@@ -1,0 +1,203 @@
+
+
+/* 时间筛选按钮：挂在页签行右侧（u-tabs 的 right 插槽，随页签一起吸顶）。
+   对齐圈子搜索页右上角筛选按钮的写法——仅图标、无边框，生效时图标转主色；
+   页签行不再加页面级左/上内边距（与订单列表一致，左右边界由 u-tabs 的 item 内边距承担），
+   故右侧留白由本按钮自己补齐 12px，与搜索栏同款边界 */
+.bl-filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 12px 2px 8px;
+}
+
+/* 列表区 */
+.bl-list {
+  padding: 10px;
+}
+
+/* 时间轴（左侧时间列 + 轨道圆点 + 卡体）由共用组件 tz-school-timeline 渲染
+   （「我的课表」「预约上课」「我的预约」三页共用，组件内样式 scoped 不外泄），本页只写卡内内容样式 */
+
+/* 卡片头部：课程名（标识）+ 状态，与订单卡「订单号 + 状态」同版式 */
+.bl-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.bl-title {
+  flex: 1;
+  min-width: 0;
+  margin-right: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bl-status {
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 状态配色：待确认橙 / 待上课蓝 / 已上课绿 / 已取消灰（与后台列表口径一致） */
+.bl-status.orange {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.bl-status.blue {
+  color: #0968f6;
+  background: #eef6ff;
+}
+
+.bl-status.green {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.bl-status.gray {
+  color: #86909c;
+  background: #f2f3f5;
+}
+
+/* 信息行：label 定宽浅灰 + 值深灰（对齐我的课表课程卡） */
+.bl-row {
+  display: flex;
+  align-items: flex-start;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+.bl-label {
+  flex-shrink: 0;
+  min-width: 56px;
+  color: #86909c;
+}
+
+.bl-value {
+  flex: 1;
+  min-width: 0;
+  color: #4e5969;
+  word-break: break-all;
+}
+
+/* 操作行：按钮右对齐（对齐订单卡按钮行） */
+.bl-ops {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bl-btn {
+  margin-left: 10px;
+}
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距 */
+.bl-loadmore {
+  padding: 8px 0;
+}
+
+/* 列表骨架屏：卡内内容骨架（时间列灰块与轨道灰点由组件渲染） */
+.bl-sk-bar {
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+.bl-sk-title {
+  width: 45%;
+  height: 15px;
+}
+
+/* 状态块：按状态标签实际高度 ~19px */
+.bl-sk-status {
+  width: 48px;
+  height: 19px;
+}
+
+.bl-sk-line {
+  width: 70%;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.bl-sk-line.short {
+  width: 45%;
+}
+
+/* 骨架屏按钮：按 mid 按钮实际占位（4 字 × 14px + 左右 13px 内边距 ≈ 82×27） */
+.bl-sk-btn {
+  width: 82px;
+  height: 27px;
+}
+
+/* 底部「预约上课」入口 */
+.bl-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  padding: 10px 16px;
+  padding-bottom: calc(10px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  /*  #ifdef  MP-WEIXIN  */
+  /* 底部安全区按全局教务档减半（与 App.vue 的 .school-footer / .school-popup 同口径） */
+  padding-bottom: calc(10px + constant(safe-area-inset-bottom) / 2);
+  padding-bottom: calc(10px + env(safe-area-inset-bottom) / 2);
+  /*  #endif  */
+}
+
+.bl-apply-btn {
+  width: 100%;
+  border: none;
+}
+
+/* 预约详情弹层
+   信息行由 u-cell（自带 15px 左右内边距）承载，弹层自身不再加左右内边距，
+   避免与 cell 叠加成双份留白；标题与操作行各自补 15px，保持同一左边界 */
+.bl-popup {
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  padding: 20px 0;
+  padding-bottom: calc(20px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  /*  #ifdef  MP-WEIXIN  */
+  /* 底部安全区按全局教务档减半；u-popup 自带安全区已在本页关掉，此处只算一份 */
+  padding-bottom: calc(20px + constant(safe-area-inset-bottom) / 2);
+  padding-bottom: calc(20px + env(safe-area-inset-bottom) / 2);
+  /*  #endif  */
+}
+
+.bl-popup-title {
+  padding: 0 16px 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.bl-popup-ops {
+  margin: 16px 16px 0;
+  display: flex;
+}
+
+/* 弹层内按钮横排等宽（单个时自然占满整行，与改版前的整宽按钮一致）；
+   间距用相邻兄弟的 margin-left，避免小程序端 flex gap 在低版本 iOS 无效 */
+.bl-popup-ops .bl-btn {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.bl-popup-ops .bl-btn + .bl-btn {
+  margin-left: 10px;
+}

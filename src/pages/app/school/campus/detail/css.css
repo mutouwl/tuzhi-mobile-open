@@ -1,0 +1,108 @@
+/* 校区详情：版式对齐课程详情页（完整展示封面 + 标题介绍行 + 信息行 + 内容卡） */
+.campus-detail {
+  min-height: 100vh;
+  background-color: #F7F8FA;
+  padding-bottom: 70px;
+}
+
+/* ===== 顶部环境图：对齐实物商品详情页轮播图（100vw 高度上限 480px，白底等比完整展示不裁切） ===== */
+.campus-detail .banner {
+  width: 100%;
+  height: 100vw;
+  max-height: 480px;
+  background-color: #fff;
+}
+
+.campus-detail .banner .banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.campus-detail .banner-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 名称卡片（标题样式对齐实物商品详情页：18px/600；地址在下方信息行列表展示） ===== */
+.campus-detail .title-card {
+  background-color: #fff;
+  padding: 16px;
+}
+
+.campus-detail .title-card .title-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  color: #333;
+}
+
+.campus-detail .campus-detail-section {
+  margin-top: 12px;
+}
+
+/* 信息行样式对齐实物商品详情页（physical/detail）的选择/保障/参数行：16px 行内边距 + 标签列定宽 + 1px 分隔线 */
+.campus-detail .cell-card .cell-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #F7F8FA;
+}
+
+.campus-detail .cell-card .cell-item:last-child {
+  border-bottom: none;
+}
+
+.campus-detail .cell-card .cell-item .cell-label {
+  width: 70px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
+
+.campus-detail .cell-card .cell-item .cell-value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.campus-detail .cell-card .cell-item .cell-value .cell-value-text {
+  line-height: 20px;
+}
+
+/* 本页套餐卡片标签换行完整展示（覆盖 tz-package 单行截断，避免标签被拦腰裁切） */
+.campus-detail .package-item-box .info .tags {
+  white-space: normal !important;
+}
+
+/* 教师列表弹窗顶部圆角：保持本页原档位（与套餐详情页同款，弹窗内衬走全局档 .school-popup） */
+.cd-popup {
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+/* ===== 联系电话/地址操作弹窗 ===== */
+/* 弹窗模板与样式已抽入共用组件 tz-contact-popup（本页电话/地址与教师详情电话共用） */
+
+/* ===== 初始化骨架屏 ===== */
+.skeleton-page {
+  padding-bottom: 30px;
+}
+
+.cd-sk-banner {
+  width: 100%;
+  height: 100vw;
+  max-height: 480px;
+  background: #e5e6eb;
+}
+
+.school-sk-card .sk-cell {
+  padding: 6px 0;
+}
+
+/* ===== 整页空态 ===== */

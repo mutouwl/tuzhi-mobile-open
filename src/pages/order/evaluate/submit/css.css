@@ -1,0 +1,11 @@
+::v-deep .u-form-item__body{
+    padding: 0!important;
+}
+
+.u-textarea{
+    background-color: #f6f6f6!important;
+}
+
+::v-deep .u-form-item__body__right__content__slot{
+    justify-content: end!important;
+}

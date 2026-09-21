@@ -1,0 +1,88 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508080",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "sort": 10
+    },
+    "loadStatus": 1,
+    "commentList": [
+      {
+        "id": 1,
+        "user": {
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "nickname": "示例用户"
+        },
+        "createtime": "1786508080",
+        "content": "示例内容",
+        "islike": true,
+        "like_count": 10,
+        "reply": {
+          "user": {
+            "nickname": "示例用户"
+          },
+          "content": "示例内容"
+        },
+        "candel": "示例",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "is_like": true
+      },
+      {
+        "id": 2,
+        "user": {
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "nickname": "示例用户"
+        },
+        "createtime": "1786508080",
+        "content": "示例内容",
+        "islike": true,
+        "like_count": 10,
+        "reply": {
+          "user": {
+            "nickname": "示例用户"
+          },
+          "content": "示例内容"
+        },
+        "candel": "示例",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "is_like": true
+      }
+    ],
+    "multipleSize": "示例",
+    "urls": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508080",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508080",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "username": "示例用户",
+    "time": "1786508080",
+    "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "content": "示例内容",
+    "show": true,
+    "$tools": {
+      "timestamp": "1786508080"
+    }
+  }
+}

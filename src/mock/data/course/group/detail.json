@@ -1,0 +1,13 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508201",
+  "data": {
+    "id": 24,
+    "name": "家庭育儿",
+    "parent_id": 0,
+    "image": "",
+    "sort": 0,
+    "parent_name": ""
+  }
+}

@@ -1,0 +1,50 @@
+.complaint-page {
+	min-height: 100vh;
+	background: #fff;
+	--td-brand-color: #07c160;
+	--td-cell-left-icon-color: #07c160;
+}
+
+.complaint-title {
+	padding: 54px 22px 42px;
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 36px;
+	text-align: center;
+	color: #111;
+}
+
+.complaint-list {
+	padding: 0 22px 30px;
+}
+
+::v-deep .t-cell {
+	padding: 18px 0 !important;
+}
+
+::v-deep .t-cell--bordered::after {
+	left: 0 !important;
+	border-color: #e7e7e7 !important;
+}
+
+::v-deep .t-cell__title {
+	font-size: 20px !important;
+	font-weight: 600 !important;
+	color: #111 !important;
+}
+
+::v-deep .t-cell__description {
+	display: none !important;
+}
+
+::v-deep .t-cell__description:not(:empty) {
+	display: block !important;
+	margin-top: 8px !important;
+	font-size: 14px !important;
+	line-height: 22px !important;
+	color: #999 !important;
+}
+
+::v-deep .t-cell__right-icon {
+	color: #b5b5b5 !important;
+}

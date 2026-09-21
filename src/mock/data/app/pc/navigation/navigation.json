@@ -1,0 +1,131 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509555",
+  "data": {
+    "logo": {
+      "img": "https://tuzhi.mutouweb.com/uploads/1/20250718/ed7bbb9550732b95d8ab29b13946f9d3.jpeg",
+      "link": {
+        "type": "",
+        "config": []
+      }
+    },
+    "quick_access": {
+      "search": {
+        "status": "1",
+        "text": "搜索"
+      },
+      "record": {
+        "status": "1",
+        "text": "学习记录"
+      },
+      "purchased": {
+        "status": "1",
+        "text": "我的已购"
+      }
+    },
+    "background": {
+      "type": "white",
+      "img": "https://tuzhi.mutouweb.com/uploads/1/20250908/9686fa51275d259a90fd6052acf7a42b.jpg",
+      "color": "rgb(2, 83, 250)"
+    },
+    "font": {
+      "size": "medium",
+      "color": "rgb(150, 48, 48)"
+    },
+    "navigation": [
+      {
+        "key": "5s4c3f",
+        "name": "首页",
+        "link": {
+          "type": "unlink",
+          "config": [],
+          "selected": "unlink",
+          "name": "",
+          "src": "unlink"
+        },
+        "type": "parent",
+        "children": [
+          {
+            "key": "iq9xa5",
+            "name": "z招生院校",
+            "parent_index": "0",
+            "type": "children",
+            "link": {
+              "type": "page_diy_pc",
+              "config": [],
+              "selected": "page_diy_pc",
+              "name": "新建页面",
+              "src": "6"
+            }
+          },
+          {
+            "key": "ynkx8i",
+            "name": "在线报名",
+            "parent_index": "0",
+            "type": "children",
+            "link": {
+              "type": "exercises",
+              "config": [],
+              "selected": "exercises",
+              "name": "题库练习11",
+              "src": "1"
+            }
+          },
+          {
+            "key": "0p8yco",
+            "name": "课程列表",
+            "parent_index": "0",
+            "type": "children",
+            "link": {
+              "type": "course",
+              "config": [],
+              "selected": "course",
+              "name": "非遗1",
+              "src": "201"
+            }
+          }
+        ]
+      },
+      {
+        "key": "ivzjv1",
+        "name": "在线报名",
+        "link": {
+          "type": "url",
+          "config": [],
+          "selected": "url",
+          "name": "https://tuzhi.mutouweb.com?i=1&route=index#/pages/app/form/submit/submit?id=28",
+          "src": "https://tuzhi.mutouweb.com?i=1&route=index#/pages/app/form/submit/submit?id=28"
+        },
+        "type": "parent",
+        "children": []
+      },
+      {
+        "key": "1pyi1e",
+        "name": "123",
+        "link": {
+          "type": "exercises",
+          "config": [],
+          "selected": "exercises",
+          "name": "历年真题",
+          "src": "1"
+        },
+        "type": "parent",
+        "children": []
+      },
+      {
+        "key": "jr28ts",
+        "name": "12",
+        "link": {
+          "type": "exercises",
+          "config": [],
+          "selected": "exercises",
+          "name": "随堂测试练习题，职业测试",
+          "src": "6"
+        },
+        "type": "parent",
+        "children": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509554",
+  "data": {
+    "status": "1",
+    "navigation": [
+      {
+        "icon": {
+          "src": "banben",
+          "type": "icon"
+        },
+        "icon_name": "测试图标",
+        "show_icon": "1",
+        "show_type": "1",
+        "img": "https://tuzhi.mutouweb.com/uploads/1/20251117/4ab65235cea6696a1ceabee1e3125ada.png",
+        "discribe": "请输入描述内容请输入描述内容请输入描述内容",
+        "link": {
+          "type": "course",
+          "config": [],
+          "selected": "course",
+          "name": "圆明园的四十景",
+          "src": "111"
+        }
+      }
+    ]
+  }
+}

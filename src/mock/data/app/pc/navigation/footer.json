@@ -1,0 +1,55 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509555",
+  "data": {
+    "type": "2",
+    "icp": "京ICP备2312323号",
+    "copyright": "版权信息",
+    "location": "文本输入二",
+    "mobile": "文本输入一",
+    "navigation": [
+      {
+        "name": "课程",
+        "link": {
+          "type": "course",
+          "config": [],
+          "selected": "course",
+          "name": "[演示]一个产品经理的自我修养",
+          "src": "72"
+        }
+      },
+      {
+        "name": "自定义链接",
+        "link": {
+          "type": "url",
+          "config": [],
+          "selected": "url",
+          "name": "https://wei.mutouweb.com",
+          "src": "https://wei.mutouweb.com"
+        }
+      }
+    ],
+    "link": [
+      {
+        "type": "weibo",
+        "name": "微博",
+        "link": "1111111111111111111",
+        "status": "0"
+      },
+      {
+        "type": "weixin",
+        "name": "微信",
+        "link": "https://tuzhi.mutouweb.com//uploads/1/20240224/b5aed4c49b5e121854ce908ca65bfb57.png",
+        "status": "0"
+      },
+      {
+        "type": "qq",
+        "name": "QQ",
+        "link": "5555555",
+        "status": "0"
+      }
+    ],
+    "name": "凸知学堂"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1783400947",
+  "data": {
+    "data": {
+      "testpaper": {
+        "value": "示例"
+      },
+      "button": {
+        "value": "示例"
+      },
+      "name": "示例考试",
+      "test_time_start_text": "1783400947",
+      "test_time_end_text": "1783400947",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "test_time_limit": "1783400947"
+    },
+    "modal": {
+      "exercisesControl": "示例"
+    },
+    "loading": "示例"
+  }
+}

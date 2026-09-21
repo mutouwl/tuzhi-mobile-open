@@ -1,0 +1,135 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508170",
+  "data": [
+    {
+      "id": 12,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "h5uUIf9xDa",
+      "goods_id": 111,
+      "batch_id": 12,
+      "createtime": 1758595896,
+      "batch": {
+        "name": "抖店商品"
+      },
+      "course": {
+        "name": null,
+        "type": null
+      }
+    },
+    {
+      "id": 8,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "NARsrade0B",
+      "goods_id": 69,
+      "batch_id": 7,
+      "createtime": 1742349453,
+      "batch": {
+        "name": "课程兑换码测试"
+      },
+      "course": {
+        "name": "[演示]从nlp思维模型看产品经理的思考框架和职业发展",
+        "type": "video"
+      }
+    },
+    {
+      "id": 9,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "NARsrade0B",
+      "goods_id": 68,
+      "batch_id": 7,
+      "createtime": 1742349453,
+      "batch": {
+        "name": "课程兑换码测试"
+      },
+      "course": {
+        "name": "[演示]年轻人如何打造个人IP—做120分职场人",
+        "type": "video"
+      }
+    },
+    {
+      "id": 10,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "NARsrade0B",
+      "goods_id": 28,
+      "batch_id": 7,
+      "createtime": 1742349453,
+      "batch": {
+        "name": "课程兑换码测试"
+      },
+      "course": {
+        "name": "[演示]考纲词汇及词法第一讲11",
+        "type": "video"
+      }
+    },
+    {
+      "id": 5,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "nmQoOeM0jX",
+      "goods_id": 88,
+      "batch_id": 4,
+      "createtime": 1724209265,
+      "batch": {
+        "name": "434434"
+      },
+      "course": {
+        "name": null,
+        "type": null
+      }
+    },
+    {
+      "id": 6,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "nmQoOeM0jX",
+      "goods_id": 72,
+      "batch_id": 4,
+      "createtime": 1724209265,
+      "batch": {
+        "name": "434434"
+      },
+      "course": {
+        "name": null,
+        "type": null
+      }
+    },
+    {
+      "id": 7,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "nmQoOeM0jX",
+      "goods_id": 32,
+      "batch_id": 4,
+      "createtime": 1724209265,
+      "batch": {
+        "name": "434434"
+      },
+      "course": {
+        "name": null,
+        "type": null
+      }
+    },
+    {
+      "id": 4,
+      "uniacid": 1,
+      "user_id": 38,
+      "code": "mBWliL1I2G",
+      "goods_id": 69,
+      "batch_id": 2,
+      "createtime": 1712133417,
+      "batch": {
+        "name": "私密"
+      },
+      "course": {
+        "name": "[演示]从nlp思维模型看产品经理的思考框架和职业发展",
+        "type": "video"
+      }
+    }
+  ]
+}

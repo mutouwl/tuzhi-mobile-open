@@ -1,0 +1,134 @@
+
+
+/* 课程信息卡贴顶：全局档 .school-block 带 12px 上边距，本页首卡不需要。
+   覆盖类用页内前缀 sd-（H5 页面样式全局生效，直改 .school-block 会波及其他教务页） */
+.school-block.sd-block {
+  margin-top: 0;
+}
+
+/* 操作卡：签到/请假按钮横排靠右，尺寸与排列对齐订单详情底部按钮（size=small + 间距 10px）；仅剩一个按钮时同样靠右 */
+.ops-card {
+  margin: 12px 0 0;
+  background: #fff;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 按钮包裹层：尺寸随按钮收缩；保留包裹是为了让置灰的签到按钮仍能接到外层点击（弹原因提示） */
+.ops-btn + .ops-btn {
+  margin-left: 10px;
+}
+
+.block-title {
+  margin-bottom: 6px;
+  padding-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row .label {
+  flex-shrink: 0;
+  margin-right: 16px;
+  color: #4e5969;
+}
+
+/* 行右侧值区：容纳课程名 + 补课标签并排；老师行则容纳姓名 + 箭头，长姓名换行不挤到左侧标签 */
+.val-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  margin-left: 16px;
+  text-align: right;
+}
+
+/* 信息行右侧箭头（校区行、老师行提示可点进对应详情页），间距与 .cell-arrow 同类写法一致 */
+.row-arrow {
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+/* 补课标识（与管理端排课详情的补课标签同色系） */
+.type-tag {
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #722ed1;
+  background: #f5eeff;
+}
+
+.empty-wrap {
+  padding-top: 80px;
+  padding-bottom: 30px;
+}
+
+/* ===== 初始化骨架屏：版式对齐课程信息卡（标题 + 信息行）与操作区骨架 ===== */
+.skeleton-page {
+  padding-bottom: 30px;
+}
+
+/* 骨架卡与真实卡同步贴顶，避免加载完成时跳版 */
+.school-sk-card.sd-sk-card {
+  margin-top: 0;
+}
+
+.sk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.sk-row:last-child {
+  border-bottom: none;
+}
+
+.sk-row .sk-label {
+  width: 64px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #f2f3f5;
+}
+
+/* 操作区骨架与操作卡同版式：靠右的两个 small 按钮块。
+   类名用页内前缀 sd-（而非通用 sk-）：H5 页面样式全局生效，「我的课表」页已占用 .sk-ops/.sk-btn
+   （.sk-btn 为 52x22 无底色），同名会随加载顺序互相覆盖骨架尺寸 */
+.sd-ops {
+  margin: 12px 0 0;
+  background: #fff;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sd-btn {
+  width: 72px;
+  height: 30px;
+  border-radius: 4px;
+  background: #f2f3f5;
+}
+
+.sd-btn + .sd-btn {
+  margin-left: 10px;
+}

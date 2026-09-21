@@ -1,0 +1,21 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "user": {
+      "id": 1002,
+      "nickname": "学员小李",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "is_owner": 0,
+      "join_time": 1786061184,
+      "location": "上海"
+    },
+    "stats": {
+      "post_count": 3,
+      "like_count": 6,
+      "essence_count": 0
+    },
+    "content_protect": 0
+  }
+}

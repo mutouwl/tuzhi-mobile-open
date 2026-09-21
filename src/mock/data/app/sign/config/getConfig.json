@@ -1,0 +1,11 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508173",
+  "data": {
+    "status": "1",
+    "basic_score": "100",
+    "continuity_days": "5",
+    "continuity_score": "30"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508094",
+  "data": {
+    "data": {
+      "value": "示例"
+    },
+    "form": {
+      "name": "示例标题",
+      "card_no": "示例",
+      "address": "示例地址"
+    },
+    "config": {
+      "value": "示例"
+    },
+    "withdrawChannel": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "validity": "示例",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "validity": "示例",
+        "status": 1
+      }
+    ],
+    "rules": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "validity": "示例",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "validity": "示例",
+        "status": 1
+      }
+    ]
+  }
+}

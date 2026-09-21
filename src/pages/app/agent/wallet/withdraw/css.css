@@ -1,0 +1,42 @@
+
+.withdraw-tip{
+    font-size: 14px;
+    color: #4E5969;
+}
+
+.withdraw-banalce-tip{
+    font-size: 12px;
+    color: #86909C;
+}
+
+.withdraw-unit{
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.withdraw-btn{
+    margin-top: 20px;
+}
+
+.withdraw-banalce-tip{
+    margin-top: 10px;
+}
+
+::v-deep .u-cell__title-text--large,::v-deep .u-cell__value--large{
+    font-size: 14px!important;
+}
+
+.bold{
+    font-weight: bold;
+    color: #1D2129;
+    margin: 0 2px;
+}
+
+.all{
+    color: #0968f6;
+}
+
+.tips{
+    font-size: 12px;
+    color: #4E5969;
+}

@@ -1,0 +1,68 @@
+
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status.green {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.orange {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.status.red {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+.line {
+  font-size: 13px;
+  color: #4e5969;
+  line-height: 22px;
+}
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距 */
+.loadmore {
+  padding: 8px 0;
+}
+
+.sk-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sk-bar {
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+.sk-title {
+  width: 45%;
+  height: 15px;
+}
+
+.sk-status {
+  width: 48px;
+  height: 15px;
+}

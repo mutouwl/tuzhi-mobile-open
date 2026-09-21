@@ -1,0 +1,9 @@
+{
+  "extEnable": true,
+  "extAppid": "wx0000000000000000",
+  "directCommit": false,
+  "ext": {
+    "uniacid": "1",
+    "siteroot": "https://tuzhi.mutouweb.com/"
+  }
+}

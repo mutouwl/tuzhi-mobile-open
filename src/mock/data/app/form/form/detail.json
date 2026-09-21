@@ -1,0 +1,143 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508213",
+  "data": {
+    "form": {
+      "id": 30,
+      "uniacid": 1,
+      "name": "客户信息收集",
+      "can_modify": 0,
+      "allow_multiple": 0,
+      "end_condition": 1,
+      "target_count": 100,
+      "complete_message": "问卷收集已结束",
+      "time_limit_type": 0,
+      "end_time": 0,
+      "share_title": "请填写反馈意见",
+      "share_desc": "期待你的宝贵建议，帮助我们改进产品",
+      "share_cover": "",
+      "bind_type": "before_buy",
+      "status": 1,
+      "createtime": 1781702189,
+      "end_time_text": "1970-01-01 08:00:00",
+      "bind_type_text": "Bind_type before_buy",
+      "status_text": "Status 1",
+      "is_recycle": false,
+      "content_list": [
+        {
+          "id": 316,
+          "name": "羽毛球课程",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "createtime": 1782010866,
+          "views": "9",
+          "type": "column",
+          "status": 1,
+          "sales": 0,
+          "hide": "0",
+          "sales_type": "[\"alone\"]",
+          "briefing": "",
+          "uniacid": 1,
+          "price": "0.00",
+          "pay_type": "free"
+        }
+      ],
+      "page": {
+        "diyColor": "#fff",
+        "bgColor": "default",
+        "name": "客户信息收集",
+        "status": 1,
+        "banner_bg_img": "",
+        "banner_desc": "",
+        "banner_show": 1
+      },
+      "components": [
+        {
+          "type": "input",
+          "remark": "",
+          "name": "单行文本框",
+          "config": {
+            "desc": "",
+            "maxlength": 50,
+            "title": "姓名",
+            "title_desc": "请输入你的姓名",
+            "title_show": 1,
+            "required": 1,
+            "id": "5v7isgm4ae"
+          }
+        },
+        {
+          "type": "input",
+          "remark": "",
+          "name": "单行文本框",
+          "config": {
+            "desc": "",
+            "maxlength": 50,
+            "title": "年龄",
+            "title_desc": "表单描述",
+            "title_show": 1,
+            "required": 1,
+            "id": "ggdxe6m9ee"
+          }
+        },
+        {
+          "type": "divider",
+          "remark": "",
+          "name": "分隔",
+          "config": {
+            "bgColor": "#f5f5f5",
+            "padding": 0,
+            "margin": 0,
+            "round": 0,
+            "height": 10,
+            "title": "表单名称",
+            "title_desc": "表单描述",
+            "title_show": 1,
+            "required": 1,
+            "id": "785f959epi"
+          }
+        },
+        {
+          "type": "input",
+          "remark": "",
+          "name": "单行文本框",
+          "config": {
+            "desc": "",
+            "maxlength": 50,
+            "title": "性别",
+            "title_desc": "表单描述",
+            "title_show": 1,
+            "required": 1,
+            "id": "l6mh5y85ef"
+          }
+        },
+        {
+          "type": "input",
+          "remark": "",
+          "name": "单行文本框",
+          "config": {
+            "desc": "",
+            "maxlength": 50,
+            "title": "手机号",
+            "title_desc": "表单描述",
+            "title_show": 1,
+            "required": 1,
+            "id": "keyqyej22f"
+          }
+        }
+      ]
+    },
+    "value": {
+      "ggdxe6m9ee": "234"
+    },
+    "status_info": {
+      "is_end": false,
+      "can_submit": true,
+      "can_modify": true,
+      "can_resubmit": true,
+      "is_submitted": true,
+      "is_auth": true,
+      "message": "修改"
+    }
+  }
+}

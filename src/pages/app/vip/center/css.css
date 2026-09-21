@@ -1,0 +1,249 @@
+.price-cell{
+
+}
+
+.privilege-tip{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 30px 15px;
+}
+
+.privilege-tip .u-icon{
+	opacity: 0.6;
+}
+
+.privilege-tip-text{
+	margin-top: 12px;
+	font-size: 14px;
+	color: #0968f6;
+	opacity: 0.6;
+}
+
+.price-cell .cell-item{
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center; */
+    border-radius: 10px;
+    padding: 20px 5px;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, .08);
+    box-sizing: border-box;
+    margin-right: 10px;
+    margin: 10px 10px 10px 4px;
+    text-align: center;
+    border: 2px solid #fff;
+}
+
+.price-cell .cell-item.active{
+    border: 2px solid #1D2129;
+    background-color: #fff;
+}
+
+
+.value-unit{
+    font-size: 11px;
+    margin-right: 2px;
+}
+.price-cell .cell-item .cell-title{
+    color: #1D2129;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.price-cell .cell-item .cell-value{
+    font-weight: 600;
+    color: #1D2129;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+.price-cell .cell-item .cell-label{
+    color: #86909C;
+    font-size: 12px;
+    margin-top: 6px;
+    width: 100px;
+}
+
+
+::v-deep .card-swiper .uni-swiper-dot,.card-swiper  .wx-swiper-dot{
+    width: 16px!important;
+    height: 4px!important;
+    background-color: #efefef!important;
+    border-radius: 2px!important;
+}
+
+/* 
+
+::v-deep .card-swiper uni-swiper-item:first-child{
+    margin-left: 0!important;
+} */
+
+::v-deep .card-swiper .uni-swiper-dot.uni-swiper-dot-active,.card-swiper .wx-swiper-dot-active{
+    background-color: #000000!important;
+}
+
+
+.card-swiper{
+    height: 190px;
+    margin-top: 5px;
+    /* 与 .vip-card 圆角一致，裁剪框始终为圆角，滑动中途外框也不会变直角 */
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.vip-card{
+
+    /* background: linear-gradient(130deg,#1C1C1C, #414141,#3E3E3E,#242424,#404040); */
+    /* background: linear-gradient(130deg,#5A606A, #444953,#33363D,#282C31); */
+    /* backdrop-filter: blur(10px); */
+    color: #fff;
+    width: 100%;
+    /* height: 100px; */
+    border-radius: 5px;
+    padding: 25px 20px 20px;
+    box-sizing: border-box;
+}
+
+/* 高度测量完成后统一撑满 swiper，与最高的卡片同高 */
+.vip-card.card-measured{
+    height: 100%;
+}
+
+.vip-card .card-title{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.vip-card .card-subtitle{
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.card-icon,.card-icon img{
+    width: 77px;
+    height: 67px;
+}
+
+.card-icon{
+    position: absolute;
+    right: 15px;
+    bottom: 34px;
+    opacity: .1;
+}
+
+.privilege{
+    margin-top: 20px;
+    font-size: 10px;
+}
+
+.privilege .u-grid-item text{
+    margin-top: 4px;
+    color: #C5C5C5;
+}
+
+
+
+
+.user-descip{
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    color: #44464A;
+}
+
+.viptag{
+    font-size: 12px;
+    background-color: #efefef;
+    /* border: 1px solid #BFBFBF; */
+    color: #BFBFBF;
+
+    margin-right: 6px;
+    /* border-radius: 40px; */
+    padding: 2px 6px;
+}
+
+.viptag span{
+    margin-left: 2px;
+}
+
+.viptag.pay{
+    background-color: #F6EFE2;
+    /* border: 1px solid #5a3c23; */
+    color: #5a3c23;
+    border: none;
+}
+
+/*  #ifdef MP-TOUTIAO  */
+.privilege .u-grid{
+	display: block!important;
+}
+/*  #endif  */
+
+
+
+.user-header{
+    position: relative;
+    background: linear-gradient(to bottom, #EFEFEF, #FFF);
+    padding: 30px 15px 0px;
+}
+
+
+.user-header .info{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.user-header .info .avatar{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #FFFCF7;
+}
+
+.user-header .info .avatar img{
+    width: 100%;
+    height: 100%;
+}
+
+.user-header .info .content {
+    width: calc(100% - 100px);
+    padding: 10px 0;
+
+    margin-left: 10px;
+    
+}
+
+.user-header .info .content .username{
+    color: #1D2129;
+    /* color: #fff; */
+    font-size: 16px;
+    font-weight:500;
+    display: flex;
+    align-items: center;
+}
+
+.vip-privilege-icon{
+    width: 34px;
+    height: 34px;
+    border-radius: 34px;
+    text-align: center;
+    box-shadow: 0 0px 4px 0 #fff;   
+    opacity: .8;
+    margin-top: 2px;
+}
+
+.privilege .name{
+    color: #fff;
+}
+
+/*  #ifdef H5  */
+::v-deep .u-tabs__wrapper__nav__item{ 
+    height: 50px!important;
+    line-height: 50px!important;
+}
+/*  #endif  */

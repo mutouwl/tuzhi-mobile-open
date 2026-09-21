@@ -1,0 +1,286 @@
+
+
+/* 初始化骨架屏 */
+.skeleton-page {
+  padding-bottom: 30px;
+}
+
+/* 骨架版状态卡与真实卡同版式：贴顶（抵消全局档 .school-sk-card 的 12px 上边距），避免加载完成时跳版 */
+.ld-sk-status {
+  margin-top: 0;
+  padding: 18px 16px;
+}
+
+.ld-sk-title {
+  width: 30%;
+  height: 20px;
+  margin: 6px 0 10px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+.sk-cell {
+  padding: 6px 0;
+}
+
+/* 空状态/失败态 */
+.empty-wrap {
+  padding-top: 80px;
+  padding-bottom: 30px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row .label {
+  flex-shrink: 0;
+  margin-right: 16px;
+  color: #4e5969;
+}
+
+/* 行右侧值区：容纳取值与行尾箭头，长校区名换行不挤到左侧标签（与课次详情页同口径） */
+.val-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  margin-left: 16px;
+  text-align: right;
+}
+
+/* 信息行右侧箭头（校区行提示可点进校区详情），间距与课次详情的 .row-arrow 一致 */
+.row-arrow {
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.row .link {
+  color: #0968f6;
+}
+
+.block-title {
+  margin-bottom: 6px;
+  padding-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.block-title .tip {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #86909c;
+}
+
+.reason {
+  width: 100%;
+  height: 120px;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.count {
+  padding-bottom: 12px;
+  text-align: right;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+.img {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: #e5e6eb;
+}
+
+/* 状态卡是页面首个元素：去掉上边距贴顶（原 12px 上留白），下方各 .school-block 的 12px 间距不受影响 */
+.status-card {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  background: #fff;
+  padding: 15px 16px;
+}
+
+.ld-status-icon {
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.status-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.pick-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c9cdd4;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.radio.on {
+  border-color: #0968f6;
+  background: #0968f6;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+.popup-cancel {
+  margin-top: 12px;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 14px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.line {
+  font-size: 13px;
+  color: #4e5969;
+  line-height: 22px;
+}
+
+.ops {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+.apply-btn {
+  width: 100%;
+  border: none;
+}
+
+/* 审批记录纵向时间线：节点 + 贯穿节点的轨道竖线（几何口径对齐共用时间轴组件
+   components/tz/school-timeline.vue：轨道 22px、线宽 2px #e5e6eb、节点 10px）。
+   首尾两个节点各收一段线，避免线头露出圆点上下 */
+.ld-log-item {
+  display: flex;
+}
+
+.ld-log-rail {
+  position: relative;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.ld-log-rail::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e5e6eb;
+}
+
+.ld-logs .ld-log-item:first-child .ld-log-rail::before {
+  top: 18px;
+}
+
+.ld-logs .ld-log-item:last-child .ld-log-rail::before {
+  bottom: auto;
+  height: 18px;
+}
+
+/* 只有一个节点（待审核：仅「申请已提交」）时不出轨道，避免圆点下方留一段线头 */
+.ld-logs .ld-log-item:first-child:last-child .ld-log-rail::before {
+  display: none;
+}
+
+.ld-log-dot {
+  position: absolute;
+  left: 6px;
+  top: 13px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0968f6;
+}
+
+/* 骨架态圆点：比轨道灰同色，加载完与真实节点同位 */
+.ld-log-dot.sk {
+  background: #e5e6eb;
+}
+
+/* 行上下留白放在内容列而非行容器：轨道列随 flex 拉伸到行内容盒高度，
+   留白留在行容器上会让上下各差一段（相邻节点线接不上、圆点也够不到文案行） */
+.ld-log-body {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+}
+
+/* 节点文案行；只吃首行，避免通用选择器把 12px 灰字的时间/拒绝理由也抬成正文样式 */
+.ld-log-body > view:first-child {
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.ld-log-remark {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #4e5969;
+}
+
+.ld-log-time {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #86909c;
+}

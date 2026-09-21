@@ -1,0 +1,20 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "media_image_limit": 9,
+    "media_audio_limit": 9,
+    "media_video_limit": 1,
+    "media_file_limit": 9,
+    "media_image_size": 10,
+    "media_audio_size": 20,
+    "media_video_size": 200,
+    "media_file_size": 20,
+    "media_file_types": "doc,docx,xls,xlsx,pdf",
+    "media_image_enable": 1,
+    "media_video_enable": 1,
+    "media_audio_enable": 1,
+    "media_file_enable": 1
+  }
+}

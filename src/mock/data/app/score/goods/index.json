@@ -1,0 +1,47 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508172",
+  "data": [
+    {
+      "id": 28,
+      "uniacid": 1,
+      "goods_id": 222,
+      "status": 1,
+      "stock": 1,
+      "sales": 0,
+      "score": 1,
+      "createtime": 1767683787,
+      "updatetime": 1767683809,
+      "course": {
+        "id": 222,
+        "name": "小燕子音频",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20250718/8483ce2182efaf5518129a0e71de2ece.png",
+        "type": "audio",
+        "pay_type": "pay",
+        "price": "1.00",
+        "price_marking": "0.00"
+      }
+    },
+    {
+      "id": 13,
+      "uniacid": 1,
+      "goods_id": 28,
+      "status": 1,
+      "stock": 10,
+      "sales": 0,
+      "score": 102,
+      "createtime": 1705553495,
+      "updatetime": 1768293618,
+      "course": {
+        "id": 28,
+        "name": "[演示]考纲词汇及词法第一讲11",
+        "cover": "https://tuzhi.mutouweb.com//uploads/1/20231228/a54db2cf7076b038cdb5f571d5f9b35d.png",
+        "type": "video",
+        "pay_type": "pay",
+        "price": "0.10",
+        "price_marking": "0.00"
+      }
+    }
+  ]
+}

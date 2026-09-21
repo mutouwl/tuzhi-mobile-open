@@ -1,0 +1,55 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508171",
+  "data": {
+    "total": 3,
+    "per_page": 10,
+    "current_page": 1,
+    "last_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "name": "123123",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260616/3cd1f6398ddc48ab334a442e4898f6d1.png",
+        "price": 1,
+        "stock": 1,
+        "virtual_sales": 0,
+        "weigh": 0,
+        "createtime": 1776570565,
+        "spec_type": "single",
+        "is_virtual_pay": 0,
+        "status_text": "",
+        "spec_type_text": "单规格"
+      },
+      {
+        "id": 2,
+        "name": "人工智能学习实体资料",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260224/5042c1b029a934bafb155b1e18cce768.jpeg",
+        "price": 99,
+        "stock": 93,
+        "virtual_sales": 0,
+        "weigh": 0,
+        "createtime": 1777794934,
+        "spec_type": "multi",
+        "is_virtual_pay": 0,
+        "status_text": "",
+        "spec_type_text": "多规格"
+      },
+      {
+        "id": 3,
+        "name": "平安扣",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260810/7631976f7173f433740831e0f426a134.jpg",
+        "price": 300,
+        "stock": 99999,
+        "virtual_sales": 0,
+        "weigh": 0,
+        "createtime": 1786365011,
+        "spec_type": "single",
+        "is_virtual_pay": 0,
+        "status_text": "",
+        "spec_type_text": "单规格"
+      }
+    ]
+  }
+}

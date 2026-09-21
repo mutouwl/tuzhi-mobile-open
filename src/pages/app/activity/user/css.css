@@ -1,0 +1,84 @@
+/*  #ifdef H5  */
+::v-deep .u-tabs__wrapper__nav__item{ 
+    height: 50px!important;
+    line-height: 50px!important;
+}
+/*  #endif  */
+
+.ticket-item{
+  padding: 15px 0;
+  background-color: #fff;
+  border-bottom: 1px solid #F2F3F5;
+}
+
+.ticket-item:last-child{
+  border-bottom: none;
+}
+
+.ticket-item-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticket-item-name{
+  font-size: 14px;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+.ticket-item-num{
+  font-size: 12px;
+  color: #86909C;
+  margin-left: 5px;
+}
+
+.ticket-item-status{
+  font-size: 14px;
+  color: #4E5969;
+  font-weight: 600;
+}
+
+.ticket-item-list{
+  margin-top: 5px;
+  font-size: 14px;
+  color: #86909C;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticket-item-value{
+  color: #1D2129;
+  margin: 0 3px;   
+}
+
+.ticket-price-value{
+  font-size: 14px;
+  font-weight: 600;
+  color: #F53F3F;
+}
+
+.ticket-price-unit{
+  font-size: 12px;
+  color: #F53F3F;
+  margin-right: 2px;
+}
+
+.ticket-coin-name{
+  font-size: 10px;
+  color: #F53F3F;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.more-btn{
+  color: #0968f6;
+  border-bottom: 1px solid #0968f6;
+}
+
+::v-deep .u-modal__content{
+  padding: 5px;
+}
+
+::v-deep .u-modal__title{
+  padding-top: 14px;
+}

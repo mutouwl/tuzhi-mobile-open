@@ -1,0 +1,14 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508207",
+  "data": {
+    "express_name": "",
+    "express_code": "",
+    "express_no": "",
+    "status": "noexpress",
+    "status_text": "无需物流",
+    "order_id": 2115,
+    "logs": []
+  }
+}

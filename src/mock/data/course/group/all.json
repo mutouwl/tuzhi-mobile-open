@@ -1,0 +1,47 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509551",
+  "data": [
+    {
+      "id": 23,
+      "name": "考研升学",
+      "parent_id": 0,
+      "image": "",
+      "sort": 0,
+      "is_virtual_pay": 1
+    },
+    {
+      "id": 24,
+      "name": "家庭育儿",
+      "parent_id": 0,
+      "image": "",
+      "sort": 0,
+      "is_virtual_pay": 1
+    },
+    {
+      "id": 20,
+      "name": "英语留学",
+      "parent_id": 0,
+      "image": "",
+      "sort": 14,
+      "is_virtual_pay": 1
+    },
+    {
+      "id": 21,
+      "name": "办公技能",
+      "parent_id": 0,
+      "image": "",
+      "sort": 15,
+      "is_virtual_pay": 0
+    },
+    {
+      "id": 22,
+      "name": "健康常识",
+      "parent_id": 0,
+      "image": "",
+      "sort": 16,
+      "is_virtual_pay": 1
+    }
+  ]
+}

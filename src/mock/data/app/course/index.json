@@ -1,0 +1,51 @@
+{
+	"code": 1,
+	"msg": "success",
+	"data": {
+		"banners": [
+			{
+				"id": 1,
+				"image": "https://example.com/banner1.jpg",
+				"link": "/pages/course/detail?id=1"
+			}
+		],
+		"categories": [
+			{
+				"id": 1,
+				"name": "推荐"
+			},
+			{
+				"id": 2,
+				"name": "视频课"
+			},
+			{
+				"id": 3,
+				"name": "音频课"
+			},
+			{
+				"id": 4,
+				"name": "专栏"
+			}
+		],
+		"courses": [
+			{
+				"id": 1,
+				"title": "Vue2 实战开发课程",
+				"cover": "https://example.com/cover1.jpg",
+				"price": "99.00",
+				"original_price": "199.00",
+				"study_count": 1200,
+				"tag": "热销"
+			},
+			{
+				"id": 2,
+				"title": "uni-app 跨端开发入门",
+				"cover": "https://example.com/cover2.jpg",
+				"price": "49.00",
+				"original_price": "99.00",
+				"study_count": 856,
+				"tag": "新课"
+			}
+		]
+	}
+}

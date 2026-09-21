@@ -1,0 +1,71 @@
+{
+  "code": 1,
+  "msg": "订阅成功",
+  "time": "1786508200",
+  "data": [
+    {
+      "id": 952,
+      "uniacid": 1,
+      "user_id": 38,
+      "mobile": "",
+      "course_id": 430,
+      "get_type": "free",
+      "validity_time": "9999999999",
+      "createtime": 1786160722,
+      "course": {
+        "id": 430,
+        "name": "سىناق دەرىسلىك",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/3e8411d84caf66fd56d7a46746f72e2e.jpg",
+        "type": "column"
+      }
+    },
+    {
+      "id": 967,
+      "uniacid": 1,
+      "user_id": 38,
+      "mobile": "",
+      "course_id": 233,
+      "get_type": "free",
+      "validity_time": "9999999999",
+      "createtime": 1786156229,
+      "course": {
+        "id": 233,
+        "name": "不同材料的注射方法",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20250814/fda962f1e00c0616fe5099d6267968a8.jpg",
+        "type": "live"
+      }
+    },
+    {
+      "id": 961,
+      "uniacid": 1,
+      "user_id": 38,
+      "mobile": "",
+      "course_id": 300,
+      "get_type": "free",
+      "validity_time": "9999999999",
+      "createtime": 1786117100,
+      "course": {
+        "id": 300,
+        "name": "cs",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260428/7c2fc541a5700d7b38c8ebd79c4380bb.png",
+        "type": "video"
+      }
+    },
+    {
+      "id": 951,
+      "uniacid": 1,
+      "user_id": 38,
+      "mobile": "",
+      "course_id": 434,
+      "get_type": "free",
+      "validity_time": "9999999999",
+      "createtime": 1786071885,
+      "course": {
+        "id": 434,
+        "name": "示例视频.mp4",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260730/3e8411d84caf66fd56d7a46746f72e2e.jpg",
+        "type": "video"
+      }
+    }
+  ]
+}

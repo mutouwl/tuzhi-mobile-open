@@ -1,0 +1,74 @@
+page{
+    /* background-color: #fff; */
+}
+
+::v-deep .u-sticky{
+    box-shadow: 0 2px 14px 0 rgb(100 101 102 / 12%)!important;
+}
+
+.filter{
+    padding: 5px 10px 10px;
+    background-color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter div{
+    /* width: 50%; */
+    text-align: center;
+    font-size: 14px;
+    color: #4E5969;
+}
+
+
+.filter div span{
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+
+.filter .type{
+    text-align: left;
+    font-size: 14px;
+    /* width: 90px; */
+    padding: 4px 10px;
+    background-color: rgb(242, 242, 242);
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter .sort{
+    text-align: right;
+}
+
+.filter .sort span{
+    font-size: 14px;
+    margin: 0 10px;
+    color: #1D2129;
+}
+
+.filter .sort span.active{
+    font-weight: 700;
+    color: #0968f6;
+}
+
+::v-deep .u-action-sheet__item-wrap__item__name{
+    font-size: 14px!important;
+}
+
+.load-more-box {
+    padding: 10px 0;
+    text-align: center;
+}
+
+::v-deep .u-loadmore__content__text {
+    font-size: 12px;
+}
+
+::v-deep .u-search__content {
+    padding: 2px 10px;
+}

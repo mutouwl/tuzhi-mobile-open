@@ -1,0 +1,50 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508135",
+  "data": {
+    "type": "示例",
+    "name": "示例标题",
+    "round": "示例",
+    "border": "示例",
+    "margin": "示例",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "nickname": "示例用户",
+    "modal": {
+      "nickname": "示例用户"
+    },
+    "userInfo": {
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "list": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "orderNav": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "icon": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "icon": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "isWechat": "示例",
+    "data": "示例"
+  }
+}

@@ -1,0 +1,26 @@
+# 开源快照统一以 LF 入库与检出：
+#   源库 blob 本就是 LF，但 Git Bash 的 tar 解包会写成 CRLF，
+#   不声明这条就会在发布仓库里留下混合行尾（GitHub 网页端与 Linux 用户都会踩到）。
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
+*.mp3 binary
+*.mp4 binary
+*.pdf binary
+*.apk binary
+
+*.md text eol=lf
+*.vue text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.scss text eol=lf

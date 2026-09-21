@@ -1,0 +1,223 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508082",
+  "data": {
+    "10": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "couponCheckedId": 1,
+    "uselist": {
+      "cannot": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "price": 99,
+          "limit": 10,
+          "start_time": "1786508082",
+          "end_time": "1786508082",
+          "status": 1
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "price": 99,
+          "limit": 10,
+          "start_time": "1786508082",
+          "end_time": "1786508082",
+          "status": 1
+        }
+      ],
+      "can": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "price": 99,
+          "limit": 10,
+          "start_time": "1786508082",
+          "end_time": "1786508082",
+          "status": 1
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "price": 99,
+          "limit": 10,
+          "start_time": "1786508082",
+          "end_time": "1786508082",
+          "status": 1
+        }
+      ]
+    },
+    "current": "示例",
+    "tabs": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "type": "示例",
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "uselist.cannot": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "cannot_use": "示例",
+    "uselist.can": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "can_use": true,
+    "current == 0 ? uselist.can : uselist.cannot": [
+      {
+        "id": 1,
+        "cannot_use_msg": "示例",
+        "coupon": "示例",
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "cannot_use_msg": "示例",
+        "coupon": "示例",
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "show": true,
+    "length": "示例",
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "search": "示例",
+      "order": "示例",
+      "sort": 10
+    },
+    "modal": {
+      "receive": "示例"
+    },
+    "list": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "price": 99,
+        "limit": 10,
+        "start_time": "1786508082",
+        "end_time": "1786508082",
+        "status": 1
+      }
+    ],
+    "amount_text": 99,
+    "stateMap": {
+      "unused": "示例",
+      "used": "示例",
+      "expired": "示例"
+    },
+    "showMore": true,
+    "data": {
+      "type": "示例",
+      "amount": 99,
+      "discount": 10,
+      "enough_status": 1,
+      "enough": "示例",
+      "name": "示例标题",
+      "use_time_type": "1786508082",
+      "use_start_time": "1786508082",
+      "use_end_time": "1786508082",
+      "received": "示例",
+      "description": "示例内容",
+      "get_status": 1,
+      "type_text": "示例内容",
+      "status": 1
+    },
+    "getExpireDate": "1786508082",
+    "disabled": "示例",
+    "cantUseMsg": "示例",
+    "checkedId": 1,
+    "ucId": 1,
+    "picker": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "opacity": "示例"
+  }
+}

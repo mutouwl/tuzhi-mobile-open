@@ -1,0 +1,12 @@
+.circle-search {
+  min-height: 100vh;
+  background: #f7f8fa;
+}
+.feed {
+  padding: 8px 12px 70px;
+}
+.tab-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}

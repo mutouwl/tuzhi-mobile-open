@@ -1,0 +1,272 @@
+
+
+/* ===== 课时余额 ===== */
+/* 筛选栏是页面首个元素：去掉上边距贴顶通栏（原 12px 上留白），与下方统计卡的 12px 间距仍由 .stats 的 margin-top 给 */
+.bal-filter-bar {
+  display: flex;
+  margin: 0;
+  background: #fff;
+  padding: 12px 16px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.filter-item + .filter-item {
+  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid #f2f3f5;
+}
+
+.filter-label {
+  color: #86909c;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.filter-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1d2129;
+}
+
+.filter-value.dim {
+  color: #86909c;
+}
+
+/* 统计卡去掉上边距：紧贴上方筛选栏（两块同为白底，视觉上连成顶部一整块） */
+.stats {
+  margin: 0;
+  background: #fff;
+  padding: 10px 0 10px;
+  display: flex;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat .num {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1d2129;
+}
+
+.stat .num.orange {
+  color: #ff7d00;
+}
+
+.bal-stat-label {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.accounts {
+  padding: 10px;
+}
+
+/* 已购课程条目卡：教务列表页条目卡统一不做圆角（直角） */
+.account {
+  background: #fff;
+  border-radius: 0;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+/* 卡头只留课程名：预约按钮已下移到卡片右下角 */
+.acc-head {
+  display: flex;
+  align-items: center;
+}
+
+.acc-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+  line-height: 20px;
+}
+
+/* 卡片头状态标签（右上角）：仅异常状态展示，配色对齐预约列表卡片头状态标（灰=已过期 / 橙=课时不足） */
+.acc-status {
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.acc-status.gray {
+  color: #86909c;
+  background: #f2f3f5;
+}
+
+.acc-status.orange {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+/* 预约按钮外壳：接管点击（置灰时也响应提示），置于卡片右下角（操作行右对齐，同预约卡 .bl-ops） */
+.book-entry {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 卡片元信息行式排版：字段排列对齐订单详情数据列表——label 居左、value 靠右（标签浅灰、值深灰） */
+.acc-meta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #4e5969;
+}
+
+/* 全部限定在 .acc-meta 下：.meta-row/.meta-label/.meta-value 在课表页样式里同名，且两页样式均为非 scoped，H5 下全局生效，需靠更高优先级避免相互覆盖 */
+.acc-meta .meta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  line-height: 20px;
+}
+
+/* 字段之间留出上下间距，避免多行挤在一起 */
+.acc-meta .meta-row + .meta-row {
+  margin-top: 10px;
+}
+
+.acc-meta .meta-label {
+  flex-shrink: 0;
+  color: #86909c;
+}
+
+/* value 为 <text>，小程序下需块级才吃 text-align */
+.acc-meta .meta-value {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+  text-align: right;
+  color: #4e5969;
+  word-break: break-all;
+}
+
+.acc-meta .meta-value .orange {
+  font-weight: 600;
+  color: #ff7d00;
+}
+
+/* 账户明细分页加载行（类名带页面前缀：页面样式非 scoped，H5 下全站生效） */
+.acc-loadmore {
+  padding: 8px 0;
+}
+
+/* ===== 课时余额加载态骨架屏（类名统一 bal- 前缀：页面样式非 scoped，H5 下全站生效，避免与其他页重名） ===== */
+/* 统计块占位：结构/内边距/圆角对齐 .stats，高度按真实内容（22px 数字 + 6px 间隔 + 12px 标签）预留 */
+/* 骨架统计块与真实统计卡同版式：同样去掉上边距，避免加载完成时跳版 */
+.bal-sk-stats {
+  margin: 0;
+  background: #fff;
+  padding: 10px 0 10px;
+  display: flex;
+}
+
+.bal-sk-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bal-sk-bar {
+  background: #e5e6eb;
+  border-radius: 3px;
+}
+
+.bal-sk-num {
+  width: 56px;
+  height: 22px;
+}
+
+.bal-sk-label {
+  width: 40px;
+  height: 12px;
+  margin-top: 6px;
+}
+
+.bal-sk-accounts {
+  padding: 10px;
+}
+
+/* 账户卡占位：结构/内边距/直角对齐 .account（课程名条 + 4 行 meta + 右下角操作按钮条） */
+.bal-sk-card {
+  background: #fff;
+  border-radius: 0;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.bal-sk-name {
+  width: 45%;
+  height: 15px;
+  margin-bottom: 10px;
+}
+
+.bal-sk-entry {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 骨架屏按钮：按 mid 按钮实际占位（2 字 × 14px + 左右 13px 内边距 ≈ 54×27），与课表卡 .sk-btn 同尺寸 */
+.bal-sk-btn {
+  width: 54px;
+  height: 27px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.type {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff7d00;
+}
+
+.type.down {
+  color: inherit;
+}
+
+.change {
+  font-size: 16px;
+  font-weight: 700;
+  color: #00b42a;
+}
+
+.change.down {
+  color: #f53f3f;
+}
+
+.line {
+  font-size: 13px;
+  color: #4e5969;
+  line-height: 22px;
+}
+
+.line.time {
+  color: #86909c;
+}

@@ -1,0 +1,45 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508137",
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "label": "示例",
+        "transfer_no": "示例",
+        "status_text": 1,
+        "can_confirm_wechat_transfer": true,
+        "amount": 99,
+        "type_text": "示例内容",
+        "createtime": "1786508137",
+        "is_max": true,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "label": "示例",
+        "transfer_no": "示例",
+        "status_text": 1,
+        "can_confirm_wechat_transfer": true,
+        "amount": 99,
+        "type_text": "示例内容",
+        "createtime": "1786508137",
+        "is_max": true,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "page": 1,
+    "limit": 10,
+    "hasMore": "示例",
+    "showReceivePopup": true,
+    "selectedWithdraw": true,
+    "canUseWechatReceive": "示例",
+    "receiveGuideText": 1,
+    "$tools": {
+      "formatDate": "1786508137"
+    }
+  }
+}

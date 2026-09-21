@@ -1,0 +1,293 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508120",
+  "data": {
+    "4": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "buyTypes": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "payChecked": 99,
+    "form": {
+      "limit": 10,
+      "page": 1
+    },
+    "data": {
+      "bind_data": [
+        {
+          "id": 1,
+          "content": "示例内容",
+          "nickname": "示例用户",
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "createtime": "1786508120",
+          "like_count": 10,
+          "is_like": true,
+          "reply": "示例内容"
+        },
+        {
+          "id": 2,
+          "content": "示例内容",
+          "nickname": "示例用户",
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "createtime": "1786508120",
+          "like_count": 10,
+          "is_like": true,
+          "reply": "示例内容"
+        }
+      ],
+      "sales_type": [
+        {
+          "id": 1,
+          "content": "示例内容",
+          "nickname": "示例用户",
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "createtime": "1786508120",
+          "like_count": 10,
+          "is_like": true,
+          "reply": "示例内容"
+        },
+        {
+          "id": 2,
+          "content": "示例内容",
+          "nickname": "示例用户",
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "createtime": "1786508120",
+          "like_count": 10,
+          "is_like": true,
+          "reply": "示例内容"
+        }
+      ],
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "type": "示例",
+      "name": "示例评论标题",
+      "audio_path": {
+        "fullurl": "示例"
+      },
+      "video_patch": "示例",
+      "video_path": {
+        "fullurl": "示例",
+        "play_auth": "示例"
+      },
+      "bullet_screen": "示例",
+      "subscription": "示例"
+    },
+    "modal": {
+      "password_pay": 99,
+      "buy_type": "示例",
+      "columnCourse": "示例",
+      "comment": "示例",
+      "share": "示例",
+      "columnNextTip": "示例",
+      "circleCourse": "示例"
+    },
+    "columnNextCourse": {
+      "value": "示例"
+    },
+    "circleCourseList": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "circleCourseContext": "示例内容",
+    "tabsChecked": true,
+    "tabs": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "courseBindColumn": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "commentSort": 10,
+    "scoreGoodsDetail": {
+      "value": "示例"
+    },
+    "mediaProgress": "示例",
+    "isLogin": "示例",
+    "recommendGoodsList": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "circleList": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "list": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "columnDir": "示例",
+    "goodsVipPrivilege": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "nickname": "示例用户",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508120",
+        "like_count": 10,
+        "is_like": true,
+        "reply": "示例内容"
+      }
+    ],
+    "evaluate": "示例",
+    "iscollect": true,
+    "loading": "示例"
+  }
+}

@@ -1,0 +1,16 @@
+
+
+::v-deep .u-cell__body{
+    padding: 10px 0!important;
+}
+
+
+::v-deep .u-cell__body .u-cell__value{
+    font-size: 14px!important;
+    font-weight: 700!important;
+}
+
+::v-deep .u-line{
+    border-bottom: 1px solid #efefef!important;
+}
+

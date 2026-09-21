@@ -1,0 +1,15 @@
+.bullet-screen {
+    position: absolute;
+    white-space: nowrap;
+    animation: bullet 30s linear infinite;
+  }
+  
+  @keyframes bullet {
+    from {
+      left: 100%;
+    }
+    to {
+      left: 0%;
+      transform: translateX(-100%) 
+    }
+  }

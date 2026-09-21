@@ -1,0 +1,182 @@
+/* 新建学生表单页（参照收货地址编辑页样式） */
+.student-edit-page {
+  min-height: 100vh;
+  background: #f7f8fa;
+  padding-bottom: 100px;
+}
+
+.student-edit-page .form-section {
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.student-edit-page .form-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.student-edit-page .form-item:last-child {
+  border-bottom: none;
+}
+
+.student-edit-page .form-label {
+  width: 70px;
+  font-size: 15px;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.student-edit-page .form-input {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+  border: none;
+  background: transparent;
+  /* 正文靠右，与头像/性别/生日等行内容右对齐保持一致 */
+  text-align: right;
+}
+
+.student-edit-page .form-input::placeholder {
+  color: #ccc;
+}
+
+.student-edit-page .avatar-wrap {
+  margin-left: auto;
+}
+
+.student-edit-page .gender-group {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.student-edit-page .gender-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #333;
+}
+
+.student-edit-page .gender-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c9cdd4;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.student-edit-page .gender-item.on .gender-radio {
+  border-color: #0968f6;
+  background: #0968f6;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+.student-edit-page .picker-row {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.student-edit-page .form-value {
+  font-size: 15px;
+  color: #333;
+  text-align: right;
+  margin-right: 8px;
+}
+
+.student-edit-page .form-value.placeholder {
+  color: #ccc;
+}
+
+.student-edit-page .bottom-btns {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 16px;
+  background: #fff;
+  border-top: 1px solid #f7f8fa;
+  display: flex;
+  /* 微信小程序端：底部安全区按设计加半，按钮不直贴屏底 */
+  /* #ifdef MP-WEIXIN */
+  padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+  padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+  /* #endif */
+}
+
+/* 保存按钮改用 u-button（type=primary，对齐学校模块其余页面按钮） */
+.student-edit-page .save-btn {
+  width: 100%;
+  border: none;
+}
+
+/* 编辑模式初始化骨架屏（TDesign t-skeleton）：白卡 + 行距对齐表单节奏 */
+.student-edit-page .sk-card {
+  background: #fff;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.student-edit-page .sk-rows {
+  --td-skeleton-row-spacing: 28px;
+}
+
+/* 学生不存在空态：白卡 + 居中空提示 + 新建按钮 */
+.student-edit-page .empty-state {
+  background: #fff;
+  margin-bottom: 12px;
+  padding: 48px 16px;
+}
+
+.student-edit-page .empty-btn {
+  width: 200px;
+  margin: 24px auto 0;
+}
+
+.student-edit-page .student-birthday-popup {
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  /*  #ifdef  MP-WEIXIN  */
+  /* 微信端底部安全区减半，与本页底部按钮条 .bottom-btns 同口径 */
+  padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+  padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+  /*  #endif  */
+}
+
+.student-edit-page .student-birthday-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 16px 12px;
+}
+
+.student-edit-page .student-birthday-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+  text-align: left;
+}
+
+.student-edit-page .student-birthday-cancel,
+.student-edit-page .student-birthday-confirm {
+  margin-left: 16px;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.student-edit-page .student-birthday-cancel {
+  color: #86909c;
+}
+
+.student-edit-page .student-birthday-confirm {
+  color: #0968f6;
+}

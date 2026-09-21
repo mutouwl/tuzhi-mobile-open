@@ -1,0 +1,98 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508126",
+  "data": {
+    "labelWidth": "示例",
+    "labelStyle": {
+      "text-align": "示例内容"
+    },
+    "showSex": true,
+    "form": {
+      "limit": 10,
+      "page": 1
+    },
+    "list": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508126",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508126",
+        "goods": "示例"
+      }
+    ],
+    "data": {
+      "service": "示例"
+    },
+    "modal": {
+      "evaluate": "示例",
+      "pay": 99
+    },
+    "error": "示例",
+    "statusCode": 1,
+    "reasonOption": [
+      {
+        "id": 1,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508126",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508126",
+        "goods": "示例"
+      }
+    ],
+    "statusTip": {
+      "0": {
+        "title": "示例订单",
+        "describe": "示例内容",
+        "img": "示例"
+      },
+      "1": {
+        "title": "示例订单",
+        "describe": "示例内容",
+        "img": "示例"
+      },
+      "2": {
+        "title": "示例订单",
+        "describe": "示例内容",
+        "img": "示例"
+      },
+      "3": {
+        "title": "示例订单",
+        "describe": "示例内容",
+        "img": "示例"
+      }
+    },
+    "service_detail": {
+      "value": "示例"
+    },
+    "fontWeight": "示例",
+    "title": "示例订单",
+    "describe": "示例内容",
+    "img": "示例"
+  }
+}

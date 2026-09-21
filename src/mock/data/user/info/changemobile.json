@@ -1,0 +1,65 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508082",
+  "data": {
+    "form": {
+      "confirm": {
+        "captcha": "示例"
+      },
+      "change": {
+        "mobile": "13222222222",
+        "captcha": "示例"
+      },
+      "mobile": "13222222222",
+      "captcha": "示例",
+      "nickname": "示例用户",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "step": "示例",
+    "mobile": "13222222222",
+    "tips": "示例",
+    "show": true,
+    "payUrl": 99,
+    "circleId": 1,
+    "currentCourseId": 1,
+    "code": "000000",
+    "current": "示例",
+    "imgs": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "checkTab": "示例",
+    "posterSrc": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "posterThemes": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "posterThemesChecked": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "article": {
+      "text": "示例内容",
+      "poster": {
+        "length": "示例"
+      }
+    },
+    "data": "示例",
+    "zIndex": "示例",
+    "tabs": "示例"
+  }
+}

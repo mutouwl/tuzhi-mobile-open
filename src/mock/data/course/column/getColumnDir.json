@@ -1,0 +1,709 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508115",
+  "data": {
+    "4": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "list": {
+      "test": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "exercises": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "activity": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "form": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "length": "示例"
+    },
+    "subscription": "示例",
+    "checkedDir": true,
+    "loading": "示例",
+    "opacity": "示例",
+    "value": "示例",
+    "modal": {
+      "speed": "示例",
+      "mode": "示例",
+      "control": "示例",
+      "preview": "示例",
+      "detail": "示例内容",
+      "interaction": "示例",
+      "goods": "示例",
+      "gift": "示例",
+      "column": "示例",
+      "share": "示例",
+      "giftTransition": "示例",
+      "password_pay": 99,
+      "buy_type": "示例",
+      "columnCourse": "示例",
+      "comment": "示例",
+      "columnNextTip": "示例",
+      "circleCourse": "示例",
+      "courseware": "示例",
+      "bindData": "示例"
+    },
+    "speedOption": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "checked": true,
+    "audio": {
+      "duration": 10
+    },
+    "isplay": "示例",
+    "videoCtx": "示例",
+    "isMuted": "示例",
+    "src": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "singer": "示例",
+    "playState": "示例",
+    "setSinger": "示例",
+    "playerOnPlay": "示例",
+    "playerOnPause": "示例",
+    "playerOnEnded": "示例",
+    "playerOnTimeupdate": "1786508115",
+    "playerOnWaiting": "示例",
+    "playerOnError": "示例",
+    "stop": "示例",
+    "seek": "示例",
+    "play": "示例",
+    "pause": "示例",
+    "playbackRate": "示例",
+    "sliderChange": "示例",
+    "sliderChanging": "示例",
+    "$tools": {
+      "formatMediaTime": "1786508115",
+      "timestamp": "1786508115",
+      "formatDate": "1786508115"
+    },
+    "currentTime": "1786508115",
+    "duration": 10,
+    "patch": "示例",
+    "actionlist": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "option": "示例",
+    "pdfLink": "示例",
+    "visible": "示例",
+    "zIndex": "示例",
+    "title": "示例标题",
+    "showMore": true,
+    "show": true,
+    "courseId": 1,
+    "columnId": 1,
+    "course": {
+      "no": "示例",
+      "name": "示例标题",
+      "type": "示例",
+      "updatetime": "1786508115",
+      "views": 10,
+      "id": 1,
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "bordered": "示例",
+    "selected": true,
+    "is_try": true,
+    "countdown": 10,
+    "isShow": true,
+    "coursewareList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "bind_data": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "data": {
+      "bind_data": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "sales_type": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "price": 99,
+          "sales": 10,
+          "subtitle": "示例标题",
+          "type": "示例",
+          "is_subscribe": true
+        }
+      ],
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "type": "示例",
+      "name": "示例标题",
+      "audio_path": {
+        "fullurl": "示例"
+      },
+      "video_patch": "示例",
+      "video_path": {
+        "fullurl": "示例",
+        "play_auth": "示例"
+      },
+      "bullet_screen": "示例",
+      "subscription": "示例"
+    },
+    "iscollect": true,
+    "bindData": {
+      "length": "示例"
+    },
+    "limit_copy": 10,
+    "liveDetail": "示例内容",
+    "forumModal": {
+      "control": "示例"
+    },
+    "testshow": true,
+    "examshow": true,
+    "formshow": true,
+    "list.exercises": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "list.test": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "list.activity": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "list.form": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "length": "示例",
+    "tip": "示例",
+    "height": "示例",
+    "backgroundImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "endTime": "1786508115",
+    "startTime": "1786508115",
+    "input": {
+      "text": "示例内容",
+      "focus": "示例"
+    },
+    "bottomHeight": "示例",
+    "bantalk": "示例",
+    "isMessageEnabled": true,
+    "scroller": {
+      "top": "示例",
+      "animation": "示例"
+    },
+    "form": {
+      "page": 1,
+      "limit": 10
+    },
+    "messageList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "isLoad": "示例",
+    "linkStatus": 1,
+    "tipText": "示例内容",
+    "giftDetail": {
+      "nickname": "示例用户",
+      "message": "示例内容",
+      "user_id": 1
+    },
+    "includes": "示例",
+    "time": "1786508115",
+    "timeShowInterval": "1786508115",
+    "activeIndex": true,
+    "videoList": [
+      {
+        "id": 1,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "requestId": 1,
+    "active": true,
+    "text": "示例内容",
+    "name": "示例标题",
+    "path": "示例",
+    "buyTypes": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "payChecked": 99,
+    "columnNextCourse": {
+      "value": "示例"
+    },
+    "circleCourseList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "circleCourseContext": "示例内容",
+    "tabsChecked": true,
+    "tabs": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "courseBindColumn": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "commentSort": 10,
+    "scoreGoodsDetail": {
+      "value": "示例"
+    },
+    "mediaProgress": "示例",
+    "isLogin": "示例",
+    "recommendGoodsList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "circleList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "columnDir": "示例",
+    "goodsVipPrivilege": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "evaluate": "示例"
+  }
+}

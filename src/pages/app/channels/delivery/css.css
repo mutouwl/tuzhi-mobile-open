@@ -1,0 +1,264 @@
+page{
+    background-image: linear-gradient(to bottom, #dfe9f3 0%, white 100%);
+}
+.wrapper.background-semicircle-blue {
+    /* background: linear-gradient(107deg,#f5f9ff 0%,#ebf1fa 99.63%); */
+    
+    /* background-position: center -250px;
+    background-size: 1000px 500px;
+    background-repeat: no-repeat;
+    background-image: -webkit-radial-gradient(ellipse, #007aff 0, #007aff 50%, #fff 50.5%, #fff 100%);
+    background-image: radial-gradient(ellipse, #007aff 0, #007aff 50%, #fff 50.5%, #fff 100%); */
+}
+
+.wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    /* background: #fff; */
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding-bottom: 128px;
+    height: 100vh;   
+}
+
+
+.navigation-menu {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    border-radius: 20px 0 0 20px;
+    background: rgba(53, 53, 53, .3);
+    position: fixed;
+    right: 0;
+    bottom: 200px;
+    padding: 5px;
+    z-index: 1;
+    color: #fff;
+}
+
+.navigation-menu .navi-text {
+    margin-left: 6px;
+    font-size: 12px;
+}
+
+.wrapper .gift-content-wrapper {
+    padding: 30px 24px;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.wrapper .gift-content-wrapper .gift-code-detail {
+    background-color: #fff;
+    width: 100%;
+    border-radius: 10px;
+    /* box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .05);
+    -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .05); */
+}
+
+.wrapper .gift-code-header {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    padding: 20px 14px;
+}
+
+.wrapper .gift-code-header .logo {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+}
+
+.wrapper .gift-code-header .store-name {
+    font-size: 14px;
+    margin-left: 8px;
+    color: #333;
+}
+
+.wrapper .detail-line {
+    height: 1px;
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, .08), rgba(0, 0, 0, .08) 5px, transparent 0, transparent);
+    background: linear-gradient(90deg, rgba(0, 0, 0, .08), rgba(0, 0, 0, .08) 5px, transparent 0, transparent);
+    background-size: 10px 100%;
+    position: relative;
+}
+
+
+.wrapper .gift-code-image {
+    width: 300px;
+    height: 170px;
+    margin: 14px auto 0 auto;
+}
+
+.wrapper .gift-code-image .goods-cover-box {
+    width: 100%;
+    height: 100%;
+}
+.goods-cover-box {
+    position: relative;
+    display: inline-block;
+}
+
+.goods-cover-bg {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    position: absolute;
+    background: hsla(0, 0%, 100%, .25) border-box;
+    overflow: hidden;
+    text-shadow: 0 1px 1px hsla(0, 0%, 100%, .3);
+    -webkit-user-select: none;
+    user-select: none;
+    z-index: 0;
+}
+
+.goods-cover-bg::before {
+    background: var(--back-ground);
+    background-repeat: no-repeat;
+    background-size: cover;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: -28px;
+    z-index: 1;
+    background-position: center center;
+}
+
+.goods-cover {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+
+.goods-cover-bg {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    position: absolute;
+    background: rgba(255, 255, 255, .25) border-box;
+    overflow: hidden;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, .3);
+    -webkit-user-select: none;
+    user-select: none;
+    z-index: 0;
+    border: solid 1px transparent;
+    box-sizing: border-box;
+}
+
+
+.wrapper .gift-code-price {
+    width: calc(100% - 20px);
+    margin: 14px auto 0 auto;
+    font-size: 22px;
+    color: #ff781f;
+}
+
+.wrapper .gift-code-price .company {
+    font-size: 6px;
+}
+
+.wrapper .gift-code-title {
+    width: calc(100% - 20px);
+    margin: 14px auto 14px auto;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+
+.wrapper .tips-wrapper {
+    padding: 0 15px 20px;
+    /* width: calc(100% - 20px); */
+    margin: 14px auto 0 auto;
+    padding-bottom: 14px;
+}
+
+.wrapper .tips-wrapper .tips-title {
+    font-size: 13px;
+    color: #333;
+}
+
+
+.wrapper .tips-wrapper .tips-content {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #999;
+    word-break: break-all;
+}
+
+.wrapper .fix-button {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, .08);
+    padding: 14px 0;
+}
+
+
+.wrapper .fix-button .use-btn {
+    width: 90%;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    background-color: #007aff;
+    margin: auto;
+    font-size: 14px;
+    color: #fff;
+}
+
+
+
+.qrcode-box{
+    text-align: center;
+}
+
+.qrcode{
+    width: 200px;
+    height: 200px;
+}
+
+.scan-qrcode-tip{
+    margin-top: 12px;
+    font-size: 12px;
+    color: #86909C;
+}
+.order-no{
+    font-size: 12px;
+    padding: 15px;
+    /* font-weight: 600; */
+    padding-bottom: 0;
+}
+
+.order-no span{
+    margin-left: 10px;
+    color: #007aff;
+}
+
+.goodsinfo{
+    /* 禁止点击 */
+    pointer-events: none;
+}

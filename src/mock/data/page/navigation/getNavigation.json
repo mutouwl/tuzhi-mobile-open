@@ -1,0 +1,129 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508150",
+  "data": {
+    "id": 1,
+    "uniacid": 1,
+    "name": "默认导航",
+    "config": {
+      "name": "默认导航",
+      "color": {
+        "default": "rgb(199, 203, 205)",
+        "selected": "rgb(9, 104, 246)"
+      },
+      "take_page": [],
+      "platform": [
+        "wx"
+      ],
+      "navigation": [
+        {
+          "name": "首页",
+          "link": {
+            "type": "page_system",
+            "src": "/pages/index/index?id=",
+            "name": "首页",
+            "selected": "page_system"
+          },
+          "icon": {
+            "default": {
+              "src": "homepage",
+              "type": "icon"
+            },
+            "selected": {
+              "src": "homepage",
+              "type": "icon"
+            }
+          }
+        },
+        {
+          "name": "课程分类",
+          "link": {
+            "type": "page_system",
+            "config": [],
+            "selected": "page_system",
+            "name": "课程分类",
+            "src": "/pages/course/category/category"
+          },
+          "icon": {
+            "default": {
+              "src": "supply",
+              "type": "icon"
+            },
+            "selected": {
+              "src": "supply",
+              "type": "icon"
+            }
+          }
+        },
+        {
+          "name": "圈子",
+          "link": {
+            "type": "circle",
+            "config": [],
+            "selected": "circle",
+            "name": "新圈子",
+            "src": 3168
+          },
+          "icon": {
+            "default": {
+              "type": "icon",
+              "src": "wanchengrenwu"
+            },
+            "selected": {
+              "type": "icon",
+              "src": "wanchengrenwu"
+            }
+          }
+        },
+        {
+          "name": "实物商品",
+          "link": {
+            "type": "page_system",
+            "config": [],
+            "selected": "page_system",
+            "name": "实物商品列表",
+            "src": "/pages/app/physical/list/list"
+          },
+          "icon": {
+            "default": {
+              "type": "icon",
+              "src": "commodity"
+            },
+            "selected": {
+              "type": "icon",
+              "src": "commodity"
+            }
+          }
+        },
+        {
+          "name": "我的",
+          "link": {
+            "type": "page_system",
+            "config": [],
+            "selected": "page_system",
+            "name": "用户中心",
+            "src": "/pages/user/index/index"
+          },
+          "icon": {
+            "default": {
+              "src": "people",
+              "type": "icon"
+            },
+            "selected": {
+              "src": "people",
+              "type": "icon"
+            }
+          }
+        }
+      ],
+      "status": 0
+    },
+    "status": 0,
+    "platform": "|wx|",
+    "default_navigation": 1,
+    "take_page": "",
+    "createtime": 1676805928,
+    "updatetime": 1786097863
+  }
+}

@@ -1,0 +1,182 @@
+
+.test-header-box,.test-cover{
+    width: 100%;
+    background-color: #fff;
+}
+
+.test-info-box{
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+
+.test-info-title{
+    font-size: 18px;
+    color: #1D2129;
+}
+
+.test-info-time{
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 5px;
+}
+
+.test-info-degree{
+    display: flex;
+    /* align-items: center; */
+    position: sticky;
+    font-size: 12px;
+    color: #fff;
+    margin-top: 8px;
+    
+}
+.test-info-degree div,.test-info-title{
+    /* z-index: 10000; */
+}
+
+
+.test-info-degree .test-info-rate{
+    margin-left: 5px;
+}
+
+.test-property-box{
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    margin: 0 auto;
+}
+
+.test-property-box .test-property-item{
+    text-align: center;
+    padding: 0 0 10px;
+}
+
+.test-property-item-name{
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+}
+
+.test-property-item-value{
+    color: #1D2129;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+
+.test-property-item-unit{
+    color: #4E5969;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.test-property-item.price .test-property-item-value,.test-property-item.price .test-property-item-unit{
+    color: #F53F3F!important;
+}
+.test-property-item.price .test-property-item-value{
+    font-size: 18px;
+}
+
+
+
+
+
+.btn-box {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    /* height: 50px; */
+    /* width: 100%; */
+
+    padding: 10px 10px 10px;
+
+    background-color: #fff;
+    box-shadow: 0 0 8px 0 rgb(0 0 0 / 8%);
+
+    display: flex;
+    justify-content: space-between;
+
+    align-items: center;
+
+    z-index: 10;
+
+    /*  #ifdef  MP-WEIXIN  */
+    /* 微信小程序端：底部安全区按设计加半（iPhone X 约 17px），按钮不直贴屏底 */
+    padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+    padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+    /*  #endif  */
+}
+
+.btn-box>div {
+    margin: 0 5px;
+}
+
+.btn-box .u-button,.btn-box .tz-button {
+    margin: 0 5px;
+}
+
+.btn-box>div:last-child,
+.btn-box>div:first-child {
+    /* margin: 0; */
+}
+
+.btn-box>div:first-child {
+    margin-left: 0;
+}
+
+.btn-box .filler-box {
+    width: 100%;
+    height: 60px;
+    background: none;
+}
+
+.btn-box .price {
+    font-weight: 600;
+    font-size: 22px;
+    color: #f53f3f;
+
+    line-height: 40px;
+
+    width: 400px;
+}
+
+.btn-box .price .total-text {
+    font-weight: 400;
+    font-size: 14px;
+    color: #1D2129;
+}
+
+.btn-box .price .unit {
+    font-weight: 400;
+    font-size: 16px;
+    margin-right: 2px;
+    margin-left: 4px;
+}
+
+
+.btn-box .dir-btn {
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+
+    padding-bottom: 10px;
+}
+
+
+.btn-box .control-box {
+    justify-content: center;
+}
+
+.btn-box .control-btn {
+    width: 60px;
+    text-align: center;
+    font-size: 10px;
+    color: #888;
+}
+
+.btn-box .custom-style {
+    width: 100%;
+}

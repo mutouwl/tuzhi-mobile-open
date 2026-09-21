@@ -1,0 +1,23 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508172",
+  "data": [
+    {
+      "id": 1,
+      "uniacid": 1,
+      "name": "虚拟商品",
+      "sort": 0,
+      "status": 1,
+      "createtime": 1691415880
+    },
+    {
+      "id": 3,
+      "uniacid": 1,
+      "name": "书籍",
+      "sort": 2,
+      "status": 1,
+      "createtime": 1724737029
+    }
+  ]
+}

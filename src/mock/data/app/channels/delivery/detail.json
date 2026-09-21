@@ -1,0 +1,33 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508096",
+  "data": {
+    "store": {
+      "logo": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "name": "示例标题"
+    },
+    "goods": {
+      "name": "示例标题",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "order": "示例",
+    "modal": {
+      "qrcode": "000000"
+    },
+    "qrcode": "000000",
+    "goods_info": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "loading": "示例"
+  }
+}

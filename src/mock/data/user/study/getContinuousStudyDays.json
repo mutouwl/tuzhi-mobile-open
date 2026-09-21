@@ -1,0 +1,9 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508200",
+  "data": {
+    "study_days": 0,
+    "join_days": 866
+  }
+}

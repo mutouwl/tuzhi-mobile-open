@@ -1,0 +1,167 @@
+/* 教师详情：版式对齐校区详情页（头像卡 + 信息行 + 内容卡） */
+.teacher-detail {
+  min-height: 100vh;
+  background-color: #F7F8FA;
+  padding-bottom: 70px;
+}
+
+/* ===== 教师头卡（头像 + 姓名 + 简介描述） ===== */
+.teacher-detail .head-card {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px 16px;
+}
+
+.teacher-detail .avatar-wrap {
+  width: 53px;
+  height: 53px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: #f2f3f5;
+}
+
+.teacher-detail .avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 头像加载失败占位（图片图标填充，对齐校区 LOGO 兜底样式） */
+.teacher-detail .avatar-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2f3f5;
+}
+
+/* 无头像占位（蓝底首字） */
+.teacher-detail .avatar-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0968f6;
+  color: #fff;
+  font-size: 20px;
+}
+
+.teacher-detail .head-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.teacher-detail .head-name {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  color: #1D2129;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.teacher-detail .head-campus {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #86909C;
+  line-height: 17px;
+}
+
+.teacher-detail .head-campus-txt {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-detail .teacher-detail-section {
+  margin-top: 12px;
+}
+
+/* 信息行样式对齐实物商品详情页（physical/detail）的选择/保障/参数行：16px 行内边距 + 标签列定宽 + 1px 分隔线 */
+.teacher-detail .cell-card .cell-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #F7F8FA;
+}
+
+.teacher-detail .cell-card .cell-item:last-child {
+  border-bottom: none;
+}
+
+.teacher-detail .cell-card .cell-item .cell-label {
+  width: 70px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
+
+.teacher-detail .cell-card .cell-item .cell-value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.teacher-detail .cell-card .cell-item .cell-value .cell-value-text {
+  line-height: 20px;
+}
+
+/* ===== 所属校区卡片已抽为共用组件 components/tz/campus.vue（校区列表页 / 选择校区弹窗 / 套餐详情共用） ===== */
+
+/* ===== 初始化骨架屏 ===== */
+.skeleton-page {
+  padding-bottom: 30px;
+}
+
+.td-sk-head {
+  display: flex;
+  align-items: center;
+}
+
+.td-sk-head .sk-avatar {
+  width: 53px;
+  height: 53px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e5e6eb;
+  margin-right: 14px;
+}
+
+.td-sk-head .sk-head-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.td-sk-head .sk-gap {
+  margin-top: 8px;
+}
+
+.sk-cell {
+  padding: 6px 0;
+}
+
+/* ===== 整页空态 ===== */

@@ -1,0 +1,24 @@
+.info .title {
+    color: #1D2129;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.info .subtitle {
+    color: #86909C;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.activity-box{
+    width: 94%;
+    margin: 10px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0px 20px #0000001a;
+}
+
+.u-input{
+    font-weight: 600;
+}

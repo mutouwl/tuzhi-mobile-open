@@ -1,0 +1,47 @@
+
+
+/* 套餐信息卡为共用组件 package-goods-card（视觉样式在组件内），此处仅控制页面内位置；
+   走通栏口径，故显式关掉组件默认圆角 */
+.goods-card-slot {
+  margin: 12px 0 0;
+}
+
+.school-cell-value-text.cell-placeholder {
+  color: #86909c;
+}
+
+/* 上课学生：内容为共用学生信息组件（头像 36px + 姓名 + 班级标签），行高较高，上下内边距收窄；
+   与右侧箭头的间距由组件宿主节点上的 school-cell-value 提供 */
+.school-cell-item.student-cell {
+  padding: 12px 16px;
+}
+
+.submit-btn {
+  border: none;
+}
+
+/* 初始化骨架屏 */
+.skeleton-page {
+  padding-bottom: 30px;
+}
+
+.sk-goods {
+  display: flex;
+}
+
+.sk-cover {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #e5e6eb;
+}
+
+.sk-lines {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.school-sk-card .sk-cell {
+  padding: 6px 0;
+}

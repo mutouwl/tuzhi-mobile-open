@@ -1,0 +1,24 @@
+{
+  "code": 1,
+  "msg": "",
+  "time": "1786508145",
+  "data": {
+    "id": 38,
+    "username": "13222222222",
+    "nickname": "冯浩森@凸知",
+    "platform": null,
+    "openid": "****",
+    "mobile": "13222222222",
+    "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+    "money": "96471.49",
+    "score": 4342,
+    "token": "****",
+    "user_id": 38,
+    "uniacid": 0,
+    "createtime": 1786508141,
+    "expiretime": 1789100141,
+    "expires_in": 2591996,
+    "coupon_num": 10,
+    "update_info_modal": 0
+  }
+}

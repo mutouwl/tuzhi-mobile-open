@@ -1,0 +1,35 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508122",
+  "data": {
+    "status": 1,
+    "grabList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "luckyKing": "示例",
+    "grabbing": "示例",
+    "detailLoading": "示例内容",
+    "showRecords": true,
+    "myAmount": 99,
+    "amount": 99,
+    "redpacketData": {
+      "nickname": "示例用户",
+      "blessing": "示例",
+      "type_text": "示例内容",
+      "total_num": 99,
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "show": true,
+    "zIndex": "示例"
+  }
+}

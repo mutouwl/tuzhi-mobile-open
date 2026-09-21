@@ -1,0 +1,77 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508197",
+  "data": [
+    {
+      "id": 108,
+      "uniacid": 1,
+      "user_id": 38,
+      "item_id": 214,
+      "type": "course",
+      "createtime": 1763105296,
+      "course": {
+        "id": 214,
+        "name": "小燕子视频1",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20250707/7bc58d0d4f208bfd4459703820a53c4a.jpg",
+        "type": "video"
+      }
+    },
+    {
+      "id": 102,
+      "uniacid": 1,
+      "user_id": 38,
+      "item_id": 68,
+      "type": "course",
+      "createtime": 1752538553,
+      "course": {
+        "id": 68,
+        "name": "[演示]年轻人如何打造个人IP—做120分职场人",
+        "cover": "https://tuzhi.mutouweb.com//uploads/1/20240118/2e2d50d2e882b2bdab7dc8f2efb358d8.jpg",
+        "type": "video"
+      }
+    },
+    {
+      "id": 75,
+      "uniacid": 1,
+      "user_id": 38,
+      "item_id": 139,
+      "type": "course",
+      "createtime": 1740484683,
+      "course": {
+        "id": 139,
+        "name": "本地存储",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20250506/3dee2ed5bd20b0a36dce409cafd5816f.jpg",
+        "type": "video"
+      }
+    },
+    {
+      "id": 58,
+      "uniacid": 1,
+      "user_id": 38,
+      "item_id": 62,
+      "type": "course",
+      "createtime": 1724994449,
+      "course": {
+        "id": 62,
+        "name": "[演示]对谈天虹副总经理谭晓华：怎么做好社群运营？",
+        "cover": "https://tuzhi.mutouweb.com//uploads/1/20240118/47389e8b6a3eec1fc66a720d32f1be3b.png",
+        "type": "live"
+      }
+    },
+    {
+      "id": 55,
+      "uniacid": 1,
+      "user_id": 38,
+      "item_id": 33,
+      "type": "course",
+      "createtime": 1724137314,
+      "course": {
+        "id": 33,
+        "name": "[演示]技术产品的产品经理是如何炼成的",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20250506/57a1f0afb73cf9225ae3ad8ef2bc3af0.png",
+        "type": "audio"
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": [
+    {
+      "id": 9001,
+      "name": "产品运营实战入门课",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "price": 0,
+      "briefing": "零基础快速掌握产品与运营核心方法论，含实战案例分析",
+      "type": "video",
+      "pay_type": "pay",
+      "goods_type": "course"
+    },
+    {
+      "id": 9002,
+      "name": "用户增长案例拆解课",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "price": 99,
+      "briefing": "12 个典型增长案例逐环节拆解，可直接套用到自己的产品",
+      "type": "video",
+      "pay_type": "pay",
+      "goods_type": "course"
+    },
+    {
+      "id": 8001,
+      "name": "运营进阶会员卡",
+      "cover": "",
+      "price": 199,
+      "briefing": "开通会员畅学全部圈子课程与直播回放",
+      "type": "vipcard",
+      "pay_type": "pay",
+      "goods_type": "vipcard"
+    }
+  ]
+}

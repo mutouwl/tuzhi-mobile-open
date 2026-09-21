@@ -1,0 +1,388 @@
+/* 背景与页面背景统一（pages.json globalStyle backgroundColor #F8F8F8） */
+.circle-presale {
+  min-height: 100vh;
+  background: #F8F8F8;
+}
+
+/* 仅正常展示（含底部固定操作栏）时需要底部留白；空状态无固定栏不添加 */
+.circle-presale.has-footer-bar {
+  padding-bottom: 80px;
+}
+
+/* 圈子不存在/已下架等状态异常空状态（对齐动态详情页 post-detail-empty 结构） */
+.presale-empty {
+  min-height: 70vh;
+  background: #F8F8F8;
+}
+
+/* 封面区（参照课程详情页 banner：整图展示 16:9，无文字浮层） */
+.cover-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  overflow: hidden;
+  background: #f2f3f5;
+}
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 信息区（参照课程详情页 course-info：白底卡片，价格/标题/副标题） */
+.info-card {
+  background: #fff;
+  padding: 15px;
+}
+.price-row {
+  display: flex;
+  align-items: baseline;
+}
+.price-symbol {
+  font-size: 14px;
+  font-weight: 600;
+  color: #F53F3F;
+  margin-right: 4px;
+}
+.price-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #F53F3F;
+}
+.price-marking {
+  font-size: 14px;
+  color: #C9CDD4;
+  text-decoration: line-through;
+  margin-left: 10px;
+}
+.free-row {
+  align-items: center;
+}
+.free-tag {
+  font-size: 22px;
+  font-weight: 700;
+  color: #F53F3F;
+}
+.coin-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: #F53F3F;
+  margin-left: 2px;
+}
+.cover-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1D2129;
+  margin-top: 10px;
+}
+.cover-subtitle {
+  font-size: 12px;
+  color: #86909C;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.cover-stat {
+  font-size: 12px;
+  color: #86909C;
+  margin-top: 6px;
+}
+
+/* 封禁状态提示（黑名单/永久封禁，通栏提示条） */
+.ban-banner {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: #fff0f0;
+  color: #f53f3f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 通用卡片 */
+.card {
+  background: #fff;
+  margin: 8px 12px 0;
+  border-radius: 4px;
+  padding: 12px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+  margin-bottom: 10px;
+}
+
+/* 优惠券 */
+.coupon-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.coupon-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.coupon-tag {
+  font-size: 11px;
+  color: #f53f3f;
+  background: #fff0f0;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.coupon-action {
+  font-size: 12px;
+  color: #86909c;
+}
+
+/* 引流 */
+.drain-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #fff7e8, #ffefd0);
+}
+.drain-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.drain-text {
+  font-size: 13px;
+  color: #7a5c1e;
+}
+.drain-action {
+  font-size: 12px;
+  color: #ff7d00;
+}
+
+/* 圈子大咖 */
+.master-scroll {
+  width: 100%;
+}
+.master-list {
+  display: flex;
+  gap: 16px;
+}
+.master-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+}
+.master-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+.master-name {
+  font-size: 12px;
+  color: #1d2129;
+  margin-top: 6px;
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.master-role {
+  font-size: 10px;
+  color: #fff;
+  background: #ff7d00;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 3px;
+}
+
+/* 有效期选择（容器样式参照课程购买页：通栏白块 + 15px 水平内边距，顶部 10px 间隔替代 tz-divider） */
+.cell-card {
+  background: #fff;
+  padding: 15px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cell-label {
+  font-size: 14px;
+  color: #1d2129;
+}
+.cell-right {
+  display: flex;
+  align-items: center;
+  color: #86909c;
+}
+.cell-value {
+  font-size: 13px;
+  margin-right: 4px;
+}
+
+/* Tab（容器样式参照课程购买页：通栏白块 + 0 上内边距（u-tabs 自带）+ 15px 水平/底部内边距） */
+.tab-card {
+  background: #fff;
+  padding: 0 15px 15px;
+  margin-top: 10px;
+}
+.tab-body {
+  padding-top: 8px;
+}
+
+/* 底部栏 */
+.footer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  /* #ifndef MP-WEIXIN */
+  padding: 8px 12px calc(8px + constant(safe-area-inset-bottom));
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  /* #endif */
+  /* 微信小程序端：安全区按设计减半（iPhone X 约 17px），与 tab bar 一致 */
+  /* #ifdef MP-WEIXIN */
+  padding: 8px 12px calc(8px + constant(safe-area-inset-bottom) / 2);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom) / 2);
+  /* #endif */
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  z-index: 95;
+}
+.footer-icons {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.footer-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.footer-icon-text {
+  font-size: 10px;
+  color: #86909c;
+  margin-top: 2px;
+}
+.footer-main {
+  flex: 1;
+}
+.footer-btn-group {
+  display: flex;
+  gap: 10px;
+}
+.footer-btn-group .footer-btn {
+  flex: 1;
+}
+.footer-btn {
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  background: #0968f6;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 4px;
+}
+.footer-btn.renew {
+  background: #ff7d00;
+}
+.footer-btn.full {
+  background: #c9cdd4;
+  color: #fff;
+}
+
+/* 规格弹层（参照实物商品 SKU 弹窗结构：规格区块 + 底部独立按钮区）
+   label 沿用圈子筛选弹窗规范 13px/600/#1d2129，间距逻辑对齐 sku-section-title（标题上、选项下） */
+.spec-popup {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 70vh;
+}
+/* 价格头部（参照实物商品 SKU 弹窗 sku-header：价格 + 已选规格文本，切换规格实时更新） */
+.spec-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 16px;
+  border-bottom: 1px solid #F7F8FA;
+}
+.spec-price {
+  display: flex;
+  align-items: baseline;
+}
+.spec-price-symbol {
+  font-size: 12px;
+  font-weight: 700;
+  color: #F53F3F;
+}
+.spec-price-num {
+  font-size: 24px;
+  font-weight: 700;
+  color: #F53F3F;
+  margin-left: 2px;
+}
+.spec-price-marking {
+  font-size: 12px;
+  color: #86909c;
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+.spec-coin-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #F53F3F;
+  margin-left: 2px;
+}
+.spec-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+.spec-label {
+  color: #1d2129;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.spec-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.spec-item {
+  padding: 7px 18px;
+  background: #f2f3f5;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1d2129;
+  border: 1px solid transparent;
+}
+.spec-item.active {
+  background: #e8f1ff;
+  border-color: #0968f6;
+  color: #0968f6;
+}
+.spec-renew-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ff7d00;
+}
+.spec-footer {
+  padding: 16px;
+  border-top: 1px solid #f2f3f5;
+}
+.spec-confirm {
+  width: 100%;
+  height: 46px;
+  line-height: 46px;
+  text-align: center;
+  background: #0968f6;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 4px;
+}

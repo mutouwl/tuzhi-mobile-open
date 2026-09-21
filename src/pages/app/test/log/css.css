@@ -1,0 +1,73 @@
+page{
+    
+}
+.test-log{
+    padding: 15px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #F2F3F5;
+}
+
+.test-log:last-child{
+    border-bottom: none;
+}
+
+.test-log-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.test-log-name{
+    font-size: 14px;
+    /* font-weight: 600; */
+}
+
+.test-log-count span{
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 5px;
+}
+
+.test-log-count-error{
+    color: #F53F3F;
+}
+
+.test-log-count-success{
+    color: #00B42A;   
+}
+
+.test-log-count-all{
+    color: #1D2129;
+}
+
+.test-log-list{
+    margin-top: 5px;
+    font-size: 12px;
+    color: #86909C;
+    display: flex;
+    justify-content: space-between;
+}
+
+.test-log-value{
+    color: #1D2129;
+    margin: 0 3px;   
+    max-width: 300px;
+}
+
+
+.analyze{
+    font-size: 12px;
+    /* color: #0968f6; */
+}
+
+.ok,.no{
+    font-size: 12px;
+}
+
+.ok{
+    color: #0968f6;
+}
+
+.no{
+    color: #4E5969;
+}

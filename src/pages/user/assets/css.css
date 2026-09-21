@@ -1,0 +1,125 @@
+
+.balance {
+    padding: 20px 15px;
+    background-image: linear-gradient(to bottom right,  #6B6C85,#3A4054);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.balance .balance-left {
+    display: flex;
+    align-items: baseline;
+}
+
+.balance .value{
+    font-weight: 500;
+    font-size: 30px;
+}
+
+.balance .name{
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+/* 首屏余额占位条：与 .value 同字号高度，取渐变卡面上的浅色半透明底 */
+.balance .sk-value {
+    display: inline-block;
+    width: 88px;
+    height: 26px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.balance .withdraw-btn {
+    display: inline-block;
+    padding: 6px 18px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    font-size: 13px;
+    color: #fff;
+}
+
+.balance .withdraw-btn:active {
+    opacity: 0.8;
+}
+
+.filter{
+    padding: 15px 10px;
+    background-color: #F7F8FA;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter div{
+    width: 50%;
+    text-align: center;
+    font-size: 14px;
+    color: #4E5969;
+}
+
+
+.filter div span{
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+
+::v-deep .u-cell__body{
+    padding: 10px 0!important;
+}
+
+
+::v-deep .u-cell__body .u-cell__title-text{
+    font-size:14px!important;
+    font-weight:400!important;
+}
+
+::v-deep .u-cell__body .u-cell__label--large{
+    font-size: 12px!important;
+    
+}
+
+::v-deep .u-cell__body .u-cell__label{
+    margin-top: 0!important;
+}
+
+::v-deep .u-cell__body .u-cell__value{
+    font-size: 14px!important;
+    font-weight: 700!important;
+}
+
+::v-deep .u-line{
+    border-bottom: 1px solid #efefef!important;
+}
+
+/* ===== 首屏骨架屏（仿余额流水列表行：左标题+日期、右金额） ===== */
+/* 本页样式未加 scoped，类名统一带 assets- 前缀，避免外溢到其他页面 */
+.assets-sk-cell {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #efefef;
+}
+
+.assets-sk-cell:last-child {
+    border-bottom: none;
+}
+
+/* u-skeleton 外面套一层撑开剩余宽度：小程序端组件标签本身是块级宿主，直接作为 flex 项不会占满剩余空间 */
+.assets-sk-main {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 金额条：对齐真实流水金额（14px 字号、700 字重）的占位宽度 */
+.assets-sk-amount {
+    flex: none;
+    width: 62px;
+    height: 18px;
+    margin-left: 12px;
+    border-radius: 4px;
+    background: #e5e6eb;
+}

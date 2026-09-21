@@ -1,0 +1,48 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508202",
+  "data": {
+    "id": 1,
+    "name": "123123",
+    "price": "1.00",
+    "stock": 1,
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260616/3cd1f6398ddc48ab334a442e4898f6d1.png",
+    "carousel": [
+      "https://test.tuzhi.ltd/uploads/1/20260419/5cb498f4ea4dce590a0f477c56d68393.jpg",
+      "https://test.tuzhi.ltd/uploads/1/20260419/376bb76bd31aa33ad01836f2348c1ef8.png"
+    ],
+    "spec_type": "single",
+    "detail": "<p><br></p>",
+    "delivery_time": 1,
+    "support_return": 0,
+    "support_exchange": 0,
+    "params": [],
+    "single_limit": 0,
+    "lifetime_limit": 0,
+    "sku_prices": [
+      {
+        "id": 1,
+        "uniacid": 1,
+        "goods_sku_ids": null,
+        "goods_sku_text": null,
+        "goods_id": 1,
+        "image": "",
+        "stock": 1,
+        "stock_warning": null,
+        "sn": "SPJHN10OBWGHVHE",
+        "weight": "0.00",
+        "volume": "0.000",
+        "cost_price": "0.00",
+        "original_price": "0.00",
+        "price": "1.00",
+        "status": 1,
+        "weigh": 0,
+        "createtime": 1776570565,
+        "updatetime": 1782809933,
+        "status_text": "上架"
+      }
+    ],
+    "is_virtual_pay": 0
+  }
+}

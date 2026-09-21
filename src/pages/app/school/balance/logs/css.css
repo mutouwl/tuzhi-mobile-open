@@ -1,0 +1,183 @@
+
+
+/* ===== 课时余额 ===== */
+
+.avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0968f6;
+  color: #fff;
+  font-size: 18px;
+}
+
+.student-name {
+  flex: 1;
+  margin-left: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.arrow {
+  font-size: 14px;
+  color: #86909c;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat .num {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d2129;
+}
+
+.stat .num.orange {
+  color: #ff7d00;
+}
+
+.account {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.acc-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.acc-campus {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #86909c;
+}
+
+.acc-remain {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #4e5969;
+}
+
+.acc-remain .orange {
+  font-weight: 600;
+  color: #ff7d00;
+}
+
+.acc-meta text {
+  display: block;
+}
+
+.link {
+  margin: 0 10px;
+  padding: 14px;
+  text-align: center;
+  background: #fff;
+  border-radius: 10px;
+  color: #0968f6;
+  font-size: 14px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* 卡头值：变动类型 + 变动课时同字号同字重同色（13px 标签 + 14px 值），
+   增减方向靠 +/- 符号区分，不再用橙/绿/红三色，避免一屏流水颜色过杂。
+   类名带 log- 前缀：本页样式非 scoped，裸 .type / .change 会作用到其他页同名元素 */
+.log-type,
+.log-change {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+/* 卡头字段组：标签（变动类型/变动）+ 值成对展示，标签浅灰小字、值深灰一档 */
+.log-field {
+  display: flex;
+  align-items: center;
+}
+
+/* 字段标签：浅灰小字；值前留 6px 间距 */
+.log-label {
+  flex-shrink: 0;
+  margin-right: 6px;
+  font-size: 13px;
+  color: #86909c;
+}
+
+/* 字段行：label 定宽浅灰 + 值深灰（版式对齐「我的预约」卡 .bl-row，字段含义逐项标注）。
+   类名统一 log- 前缀：页面样式非 scoped，H5 下全站生效，避免与其他页重名 */
+.log-row {
+  display: flex;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+.log-row + .log-row {
+  margin-top: 4px;
+}
+
+/* 行内标签定宽：各字段的值左边界对齐成一列 */
+.log-row .log-label {
+  margin-right: 0;
+  min-width: 56px;
+}
+
+.log-value {
+  flex: 1;
+  min-width: 0;
+  color: #4e5969;
+  word-break: break-all;
+}
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距 */
+.logs-loadmore {
+  padding: 8px 0;
+}
+
+/* ===== 课时流水骨架屏（加载中占位，仿流水卡片结构） ===== */
+.sk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* 卡头字段组占位：与真实卡头同结构（标签条 + 值条） */
+.sk-head-item {
+  display: flex;
+  align-items: center;
+}
+
+.sk-bar {
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 标签条：按 13px 四字标签宽度取 52px，与真实标签占位一致 */
+.sk-head-label {
+  width: 52px;
+  height: 13px;
+  margin-right: 6px;
+}
+
+/* 值条：与卡头值的 14px 字号同高 */
+.sk-type {
+  width: 72px;
+  height: 14px;
+}
+
+.sk-change {
+  width: 56px;
+  height: 14px;
+}

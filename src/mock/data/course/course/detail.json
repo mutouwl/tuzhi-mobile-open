@@ -1,0 +1,104 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508201",
+  "data": {
+    "id": 645,
+    "name": "开心",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260810/7631976f7173f433740831e0f426a134.jpg",
+    "type": "live",
+    "detail": "<p>生日晚会</p>",
+    "briefing": "",
+    "warm_up_cover": "",
+    "live_start_time": 1786365037,
+    "live_end_time": 1786365037,
+    "live_type": 1,
+    "live_screen_ratio": 1,
+    "video_patch": "",
+    "video_path": "",
+    "audio_path": "",
+    "sales_type": [
+      "alone"
+    ],
+    "pay_type": "free",
+    "price": "0.00",
+    "price_marking": "0.00",
+    "try_read_status": true,
+    "try_read_content": "<p>生日晚会</p>",
+    "try_listen_status": false,
+    "try_listen_content": "",
+    "try_watch_status": false,
+    "try_watch_content": "",
+    "limit_copy": "0",
+    "bullet_screen": "13222222222",
+    "bind_data": [],
+    "views": 14,
+    "createtime": 1786365122,
+    "subscription": true,
+    "vip_free_access": false,
+    "live_room": {
+      "id": 90,
+      "uniacid": 1,
+      "course_id": 645,
+      "app_name": "live",
+      "stream_name": "jt4hdDovSI",
+      "message_topic": "brOxeETiq9",
+      "live_record_key": "b1l0GJ2qET",
+      "config": {
+        "play_back": "1",
+        "play_back_type": "1",
+        "play_pause": "0",
+        "views": "0",
+        "discuss_public": "0",
+        "like": "0",
+        "comment_audit": 0,
+        "low_latency": "1",
+        "notice": "测试看看",
+        "ban_words": "流量,抖音",
+        "play_back_record": "1",
+        "bullet_screen": "1",
+        "play_back_save_type": "vod",
+        "gift": 1,
+        "gift_max_count": "10000",
+        "goods": 1,
+        "redpacket": 1
+      },
+      "createtime": 1786365122,
+      "push_url": {
+        "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI?auth_key=1786508801-0-0-7b6a7bcb3c0f2a9dfbaaf0d6ed430ca0",
+        "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI?auth_key=1786508801-0-0-7b6a7bcb3c0f2a9dfbaaf0d6ed430ca0",
+        "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI.flv?auth_key=1786508801-0-0-6939df069c5310cbb0df02ba1f7e07fe",
+        "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI.m3u8?auth_key=1786508801-0-0-c1fa1e6c9813c1ffcdbb06861ffd3b54"
+      },
+      "qualities": [
+        {
+          "name": "标清",
+          "template_id": "lsd",
+          "level": 2,
+          "url": {
+            "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI_lsd?auth_key=1786508801-0-0-c1d220e92de69542df9d0bd85941051b",
+            "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI_lsd?auth_key=1786508801-0-0-c1d220e92de69542df9d0bd85941051b",
+            "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI_lsd.flv?auth_key=1786508801-0-0-27b9595034a04560d9215028157fbc06",
+            "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI_lsd.m3u8?auth_key=1786508801-0-0-4fae3b7b0641f08a7e604bd1453eb74f"
+          }
+        },
+        {
+          "name": "流畅",
+          "template_id": "lld",
+          "level": 1,
+          "url": {
+            "rtmp": "rtmp://play.live.mutouweb.com/live/jt4hdDovSI_lld?auth_key=1786508801-0-0-424a757a42905924b09bb4e7218a012d",
+            "artc": "artc://play.live.mutouweb.com/live/jt4hdDovSI_lld?auth_key=1786508801-0-0-424a757a42905924b09bb4e7218a012d",
+            "flv": "https://play.live.mutouweb.com/live/jt4hdDovSI_lld.flv?auth_key=1786508801-0-0-65a6bd2b7641a2df9cda59b8a371f283",
+            "hls": "https://play.live.mutouweb.com/live/jt4hdDovSI_lld.m3u8?auth_key=1786508801-0-0-6e4066d1894880edc1d65233f7bac731"
+          }
+        }
+      ]
+    },
+    "study_num": 2,
+    "study_num_show": "open",
+    "progress_seek": "open",
+    "comment_num": 0,
+    "is_virtual_pay": 0
+  }
+}

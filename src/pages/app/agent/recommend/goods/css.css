@@ -1,0 +1,150 @@
+::v-deep .u-sticky{
+    box-shadow: 0 2px 12px 0 rgb(100 101 102 / 12%)!important;
+}
+
+.filter{
+    padding: 5px 15px 15px;
+    background-color: #fff;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter div{
+    /* width: 50%; */
+    text-align: center;
+    font-size: 14px;
+    color: #4E5969;
+}
+
+
+.filter div span{
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+
+.filter .type{
+    text-align: left;
+    padding: 0 10px 0 15px;
+    margin-right: 10px;
+    background-color: rgb(242, 242, 242);
+    border-radius: 4px;
+    height: 34px;
+    line-height: 34px;
+}
+
+.filter .sort{
+    text-align: right;
+}
+
+.filter .sort span{
+    font-size: 15px;
+    margin-left: 8px;
+    color: #1D2129;
+}
+
+.filter .sort span.active{
+
+    color: #0968f6;
+}
+
+
+.goods-item {
+    height: 120px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    margin-bottom: 10px;
+    overflow: hidden;
+
+    margin: 10px 15px;
+    padding: 10px;
+
+    box-sizing: border-box;
+
+    border-radius: 10px;
+}
+
+
+ .goods-item .goods-item-info {
+    width: calc(100% - 140px);
+    padding: 0 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+
+ .goods-item .goods-item-cover {
+    height: 100%;
+    width: 140px;
+    border-radius: 10px;
+    position: relative;
+}
+
+
+
+.goods-item:last-child {
+    margin-bottom: 0;
+}
+
+
+.goods-item .goods-item-info .goods-item-title{
+    color: #1D2129;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+
+.goods-item .goods-item-cover .goods-item-type {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    height: 20px;
+    border-radius: 0.08rem;
+    padding: 0px 6px;
+    box-sizing: border-box;
+    line-height: 18px;
+    background: rgba(0, 0, 0, .25);
+    border-radius: 4px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.goods-item .goods-item-cover .goods-item-type span {
+    color: #fff;
+    font-size: 10px;
+}
+
+.goods-item-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    width: 96%;
+}
+
+.goods-item-price{
+    color: #F53F3F;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.goods-item-btn{
+    font-size: 12px;
+    background-color: #FF9A2E;
+    padding: 2px 10px;
+    color: #fff;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.goods-item-btn .value{
+    font-size: 14px;
+    margin-left: 4px;
+    font-weight: 600;
+}

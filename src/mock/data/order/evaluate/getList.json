@@ -1,0 +1,78 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508124",
+  "data": {
+    "tabs": [
+      {
+        "id": 1,
+        "name": "示例订单",
+        "type": "示例",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "name": "示例订单",
+        "type": "示例",
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "createtime": "1786508124",
+        "goods": "示例"
+      }
+    ],
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "item_id": 1,
+      "status": 1
+    },
+    "list": [
+      {
+        "id": 1,
+        "content": "示例内容",
+        "rate": "示例",
+        "createtime": "1786508124",
+        "imgs": "示例",
+        "user": {
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "nickname": "示例用户"
+        },
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "goods": "示例"
+      },
+      {
+        "id": 2,
+        "content": "示例内容",
+        "rate": "示例",
+        "createtime": "1786508124",
+        "imgs": "示例",
+        "user": {
+          "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+          "nickname": "示例用户"
+        },
+        "order_no": "示例",
+        "status": 1,
+        "price": 99,
+        "title": "示例订单",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "goods": "示例"
+      }
+    ],
+    "$tools": {
+      "formatDate": "1786508124"
+    }
+  }
+}

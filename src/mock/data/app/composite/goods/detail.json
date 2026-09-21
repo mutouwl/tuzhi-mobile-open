@@ -1,0 +1,62 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1783400947",
+  "data": {
+    "goodsId": 1,
+    "goodsInfo": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "showSpecModal": true,
+    "showSubGoodsPopup": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "goodsSwiper": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "price": 99,
+        "sales": 10,
+        "subtitle": "示例标题",
+        "type": "示例",
+        "is_subscribe": true
+      }
+    ],
+    "selectedSpec": {
+      "price": 99,
+      "name": "示例标题",
+      "image": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "coinName": "示例标题",
+    "loading": "示例",
+    "isVirtualPay": 99
+  }
+}

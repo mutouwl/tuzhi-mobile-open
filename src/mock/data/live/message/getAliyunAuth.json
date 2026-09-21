@@ -1,0 +1,371 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508117",
+  "data": {
+    "modal": {
+      "giftTransition": "示例",
+      "speed": "示例",
+      "mode": "示例",
+      "control": "示例",
+      "preview": "示例",
+      "detail": "示例内容",
+      "interaction": "示例",
+      "goods": "示例",
+      "gift": "示例",
+      "column": "示例",
+      "share": "示例",
+      "courseware": "示例",
+      "bindData": "示例"
+    },
+    "scroller": {
+      "top": "示例",
+      "animation": "示例"
+    },
+    "form": {
+      "page": 1,
+      "limit": 10
+    },
+    "input": {
+      "text": "示例内容",
+      "focus": "示例"
+    },
+    "messageList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "isLoad": "示例",
+    "linkStatus": 1,
+    "tipText": "示例内容",
+    "giftDetail": {
+      "nickname": "示例用户",
+      "message": "示例内容",
+      "user_id": 1
+    },
+    "height": "示例",
+    "includes": "示例",
+    "opacity": "示例",
+    "value": "示例",
+    "speedOption": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "key": "示例",
+        "value": "示例",
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "checked": true,
+    "audio": {
+      "duration": 10
+    },
+    "isplay": "示例",
+    "videoCtx": "示例",
+    "isMuted": "示例",
+    "src": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "singer": "示例",
+    "playState": "示例",
+    "setSinger": "示例",
+    "playerOnPlay": "示例",
+    "playerOnPause": "示例",
+    "playerOnEnded": "示例",
+    "playerOnTimeupdate": "1786508117",
+    "playerOnWaiting": "示例",
+    "playerOnError": "示例",
+    "stop": "示例",
+    "seek": "示例",
+    "play": "示例",
+    "pause": "示例",
+    "playbackRate": "示例",
+    "sliderChange": "示例",
+    "sliderChanging": "示例",
+    "$tools": {
+      "formatMediaTime": "1786508117",
+      "timestamp": "1786508117",
+      "formatDate": "1786508117"
+    },
+    "currentTime": "1786508117",
+    "duration": 10,
+    "patch": "示例",
+    "loading": "示例",
+    "actionlist": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "option": "示例",
+    "pdfLink": "示例",
+    "list": {
+      "test": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        }
+      ],
+      "exercises": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        }
+      ],
+      "activity": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        }
+      ],
+      "form": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "content": "示例内容",
+          "createtime": "1786508117",
+          "is_read": true
+        }
+      ],
+      "length": "示例"
+    },
+    "visible": "示例",
+    "zIndex": "示例",
+    "title": "示例标题",
+    "showMore": true,
+    "subscription": "示例",
+    "show": true,
+    "courseId": 1,
+    "columnId": 1,
+    "course": {
+      "no": "示例",
+      "name": "示例标题",
+      "type": "示例",
+      "updatetime": "1786508117",
+      "views": 10,
+      "id": 1,
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+    },
+    "bordered": "示例",
+    "selected": true,
+    "is_try": true,
+    "checkedDir": true,
+    "countdown": 10,
+    "isShow": true,
+    "coursewareList": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "bind_data": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "data": "示例",
+    "iscollect": true,
+    "bindData": {
+      "length": "示例"
+    },
+    "limit_copy": 10,
+    "liveDetail": "示例内容",
+    "forumModal": {
+      "control": "示例"
+    },
+    "testshow": true,
+    "examshow": true,
+    "formshow": true,
+    "list.exercises": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "list.test": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "list.activity": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "list.form": [
+      {
+        "id": 1,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "length": "示例",
+    "tip": "示例",
+    "backgroundImage": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "endTime": "1786508117",
+    "startTime": "1786508117",
+    "bottomHeight": "示例",
+    "bantalk": "示例",
+    "isMessageEnabled": true,
+    "time": "1786508117",
+    "timeShowInterval": "1786508117",
+    "activeIndex": true,
+    "videoList": [
+      {
+        "id": 1,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      },
+      {
+        "id": 2,
+        "file_name": "示例标题",
+        "file_path": "示例",
+        "title": "示例标题",
+        "content": "示例内容",
+        "createtime": "1786508117",
+        "is_read": true
+      }
+    ],
+    "requestId": 1,
+    "active": true,
+    "text": "示例内容",
+    "name": "示例标题",
+    "path": "示例"
+  }
+}

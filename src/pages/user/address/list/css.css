@@ -1,0 +1,144 @@
+.address-list-page {
+	min-height: 100vh;
+	background-color: #F7F8FA;
+	padding-bottom: 80px;
+}
+
+.address-list {
+}
+
+.address-item {
+	background-color: #fff;
+	padding: 16px;
+	margin-bottom: 12px;
+}
+
+.address-main {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 12px;
+	vertical-align: middle;
+}
+
+.address-info {
+	flex: 1;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.user-info .name {
+	font-size: 16px;
+	font-weight: 500;
+	color: #333;
+	margin-right: 12px;
+}
+
+.user-info .mobile {
+	font-size: 14px;
+	color: #666;
+}
+
+.address-text {
+	font-size: 14px;
+	color: #333;
+	line-height: 1.5;
+}
+
+.address-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 12px;
+	border-top: 1px solid #F7F8FA;
+}
+
+.default-section {
+	display: flex;
+	align-items: center;
+}
+
+.radio {
+	width: 18px;
+	height: 18px;
+	border: 1px solid #ccc;
+	border-radius: 50%;
+	margin-right: 6px;
+	position: relative;
+}
+
+.radio-checked {
+	border-color: #0968f6;
+	background-color: #0968f6;
+}
+
+.radio-checked::after {
+	content: '';
+	position: absolute;
+	width: 8px;
+	height: 4px;
+	border-left: 2px solid #fff;
+	border-bottom: 2px solid #fff;
+	transform: rotate(-45deg);
+	top: 4px;
+	left: 4px;
+}
+
+.default-text {
+	font-size: 13px;
+	color: #666;
+}
+
+.action-btns {
+	display: flex;
+	align-items: center;
+}
+
+.action-btn {
+	font-size: 13px;
+	color: #999;
+	margin-left: 16px;
+}
+
+.empty-tip {
+	text-align: center;
+	padding: 60px 20px;
+	color: #999;
+	font-size: 14px;
+}
+
+.bottom-btn {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 10px 16px;
+	background-color: #fff;
+	border-top: 1px solid #F7F8FA;
+	/* 微信小程序端：底部安全区按设计加半（iPhone X 约 17px），按钮不直贴屏底 */
+	/* #ifdef MP-WEIXIN */
+	padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+	/* #endif */
+}
+
+.add-btn {
+	width: 100%;
+	height: 46px;
+	line-height: 46px;
+	background-color: #0968f6;
+	color: #fff;
+	font-size: 16px;
+	border: none;
+}
+
+.cell-arrow {
+	font-size: 14px;
+	color: #ccc;
+	margin-left: 4px;
+	flex-shrink: 0;
+}

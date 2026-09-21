@@ -1,0 +1,107 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508166",
+  "data": [
+    {
+      "id": 218,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 0,
+      "updatetime": 0,
+      "createtime": 1771728024,
+      "prop": 0
+    },
+    {
+      "id": 215,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 1,
+      "updatetime": 1767336438,
+      "createtime": 1767336413,
+      "prop": 0
+    },
+    {
+      "id": 214,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 0,
+      "updatetime": 0,
+      "createtime": 1766220618,
+      "prop": 0
+    },
+    {
+      "id": 213,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 0,
+      "updatetime": 0,
+      "createtime": 1766220308,
+      "prop": 0
+    },
+    {
+      "id": 212,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 0,
+      "updatetime": 0,
+      "createtime": 1766219781,
+      "prop": 0
+    },
+    {
+      "id": 211,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 3,
+      "updatetime": 1766219778,
+      "createtime": 1766219764,
+      "prop": 0
+    },
+    {
+      "id": 210,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 1,
+      "updatetime": 1766219761,
+      "createtime": 1766219752,
+      "prop": 0
+    },
+    {
+      "id": 209,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 3,
+      "updatetime": 1766219274,
+      "createtime": 1766219247,
+      "prop": 0
+    },
+    {
+      "id": 206,
+      "exercises_id": 1,
+      "question_count": 100,
+      "result_true_count": 0,
+      "result_error_count": 0,
+      "updatetime": 0,
+      "createtime": 1766196546,
+      "prop": 0
+    },
+    {
+      "id": 138,
+      "exercises_id": 1,
+      "question_count": 37,
+      "result_true_count": 2,
+      "result_error_count": 11,
+      "updatetime": 1751966515,
+      "createtime": 1751966491,
+      "prop": 6
+    }
+  ]
+}

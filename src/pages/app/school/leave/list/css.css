@@ -1,0 +1,233 @@
+
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row .label {
+  flex-shrink: 0;
+  margin-right: 16px;
+  color: #4e5969;
+}
+
+.row .link {
+  color: #0968f6;
+}
+
+.block-title {
+  margin-bottom: 6px;
+  padding-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.block-title .tip {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #86909c;
+}
+
+.reason {
+  width: 100%;
+  height: 120px;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.count {
+  padding-bottom: 12px;
+  text-align: right;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+.img {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: #e5e6eb;
+}
+
+.pick-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 14px;
+  color: #1d2129;
+  border-bottom: 1px solid #f7f8fa;
+}
+
+.radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c9cdd4;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.radio.on {
+  border-color: #0968f6;
+  background: #0968f6;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+.popup-cancel {
+  margin-top: 12px;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 14px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status.green {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.red {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+.status.gray {
+  color: #86909c;
+  background: #f2f3f5;
+}
+
+.line {
+  font-size: 13px;
+  color: #4e5969;
+  line-height: 22px;
+}
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距 */
+/* 本文件被请假 list/apply/detail 三页共用，故类名带 leave- 页面前缀，避免全站生效的同名样式互相污染 */
+.leave-loadmore {
+  padding: 8px 0;
+}
+
+.sk-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sk-bar {
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+.sk-title {
+  width: 45%;
+  height: 15px;
+}
+
+.sk-status {
+  width: 48px;
+  height: 15px;
+}
+
+.ops {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+.apply-btn {
+  width: 100%;
+  border: none;
+}
+
+.status.s1 {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.status.s2 {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.s3 {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+.log-item {
+  display: flex;
+  padding: 10px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  margin: 6px 12px 0 0;
+  border-radius: 50%;
+  background: #0968f6;
+}
+
+.log-body {
+  flex: 1;
+}
+
+.log-body view {
+  font-size: 14px;
+  color: #1d2129;
+}
+
+.log-time {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #86909c;
+}

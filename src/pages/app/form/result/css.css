@@ -1,0 +1,55 @@
+page{
+  /* background-color: #fff; */
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  margin: 80px auto 20px;
+  text-align: center;
+}
+
+.icon span {
+  display: block;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.tip {
+  width: 100%;
+  text-align: center;
+  margin: 20px 0 30px;
+}
+
+.tip .title {
+  font-size: 20px;
+  color: #1D2129;
+}
+
+.tip .subtitle {
+  font-size: 13px;
+  color: #86909C;
+
+  margin-top: 6px;
+}
+
+.get-code-btn {
+  color: #0968f6
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  /*  #ifdef MP-TOUTIAO  */
+  width: 100%;
+  /*  #endif  */
+  box-sizing: border-box;
+}
+
+.btn-group>div{
+  width: 100%;
+  margin: 0 10px;
+}

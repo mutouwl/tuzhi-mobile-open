@@ -1,0 +1,167 @@
+
+
+/* 列表区骨架屏：仿"按天分组 + 时间轴课程卡"版式（直角，与真实分组卡一致）
+   （时间列灰块与轨道灰点由共用组件 tz-school-timeline 渲染，本页只写卡内内容骨架） */
+.sk-day {
+  background: #fff;
+  border-radius: 0;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.sk-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.sk-day-title {
+  width: 110px;
+  height: 15px;
+}
+
+.sk-day-count {
+  width: 48px;
+  height: 12px;
+}
+
+.si-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 46px;
+  height: 19px;
+}
+
+.sk-ops {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 骨架屏按钮：按 mid 按钮实际占位（2 字 × 14px + 左右 13px 内边距 ≈ 54×27） */
+.sk-btn {
+  width: 54px;
+  height: 27px;
+}
+
+.sk-btn + .sk-btn {
+  margin-left: 10px;
+}
+
+/* 骨架灰块：与套餐列表 .sk-cover/.sk-price 同色系 */
+.sk-bar {
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 空态/失败态重试按钮行：u-empty 下方居中 */
+.empty-ops {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 60px;
+}
+
+/* 按天分组卡：教务列表页条目卡统一不做圆角（直角） */
+.day-group {
+  background: #fff;
+  border-radius: 0;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.day-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.day-count {
+  font-size: 12px;
+  color: #86909c;
+}
+
+/* 时间轴（左侧时间列 + 轨道圆点 + 卡体）由共用组件 tz-school-timeline 渲染
+   （「我的课表」「预约上课」「我的预约」三页共用，组件内样式 scoped 不外泄），本页只写卡内内容样式 */
+
+/* 状态标签：绝对定位到卡体右上角（卡体由组件渲染且 position:relative），
+   卡内课程名用 padding-right 给它让位；类名加 card-badge 避免与全站通用 .status 串味 */
+.card-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.status {
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #0968f6;
+  background: #eef6ff;
+}
+
+/* 角标三档配色：已完成（已消课/已签到）绿 / 请假、请假中、未到橙 / 未签到蓝（默认，见上 .status） */
+.status.done {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.status.warn {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.card-name {
+  padding-right: 64px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+  line-height: 20px;
+}
+
+.card-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #4e5969;
+  line-height: 18px;
+}
+
+/* 元信息纵向排列：label 浅灰定色，值深灰，逐行展示 */
+.meta-row {
+  display: flex;
+  align-items: flex-start;
+  line-height: 20px;
+}
+
+.meta-label {
+  flex-shrink: 0;
+  color: #86909c;
+}
+
+.meta-value {
+  flex: 1;
+  min-width: 0;
+  color: #4e5969;
+  word-break: break-all;
+}
+
+.ops {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* 签到按钮外壳：接管点击（置灰不可签时也响应提示），间距与请假按钮一致 */
+.si-sign-btn {
+  margin-left: 10px;
+}

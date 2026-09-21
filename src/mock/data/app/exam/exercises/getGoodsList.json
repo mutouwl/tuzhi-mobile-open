@@ -1,0 +1,53 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508165",
+  "data": [
+    {
+      "id": 14,
+      "name": "六道题-全部题型",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20260716/b08b0d48c2998ad62715990db2f808aa.jpg",
+      "sales_type": 1,
+      "pay_price": "0.00",
+      "type": "exercises",
+      "pay_type": "free"
+    },
+    {
+      "id": 8,
+      "name": "章节练习",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20250725/b3d9569b0b7d911e8fca6a6b4ec26698.jpg",
+      "sales_type": 3,
+      "pay_price": "0.00",
+      "type": "exercises",
+      "pay_type": "bind_course"
+    },
+    {
+      "id": 1,
+      "name": "历年真题",
+      "cover": "https://tuzhi.mutouweb.com//uploads/1/20240319/60f5857446a27108d2eb8f15a505ee49.png",
+      "sales_type": 3,
+      "pay_price": "3.10",
+      "type": "exercises",
+      "pay_type": "bind_course"
+    },
+    {
+      "id": 6,
+      "name": "随堂测试练习题，职业测试",
+      "cover": "https://tuzhi.mutouweb.com/uploads/1/20250525/8098118e446e58030af45b99893853b6.jpeg",
+      "sales_type": 1,
+      "pay_price": "0.00",
+      "type": "exercises",
+      "pay_type": "free"
+    },
+    {
+      "id": 5,
+      "name": "未绑定分组的题目",
+      "cover": "https://tuzhi.mutouweb.com//uploads/1/20231228/cab004734f2b40cfeda64e9e88e5f448.png",
+      "sales_type": 2,
+      "pay_price": "20.00",
+      "type": "exercises",
+      "price": "20.00",
+      "pay_type": "pay"
+    }
+  ]
+}

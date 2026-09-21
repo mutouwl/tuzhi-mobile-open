@@ -1,0 +1,198 @@
+
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距。
+   页面样式非 scoped 且本文件与套餐详情页共用，类名必须带本页前缀，禁用通用名 */
+.pkg-loadmore {
+  padding: 8px 0;
+}
+
+/* ===== 列表骨架屏（仿套餐单列卡片；圆角 10 与真实卡一致——本页列表组件恢复圆角） ===== */
+.pl-sk-item {
+  display: flex;
+  height: 124px;
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.pl-sk-cover {
+  width: 124px;
+  height: 100%;
+  flex-shrink: 0;
+  background: #e5e6eb;
+}
+
+.pl-sk-info {
+  flex: 1;
+  padding: 8px;
+  position: relative;
+  min-width: 0;
+}
+
+.pl-sk-price {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+.campus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.campus-item {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 6px;
+}
+
+.campus-item.active {
+  color: #fff;
+  background: #0968f6;
+}
+
+.skus {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sku {
+  padding: 12px 14px;
+  border: 1px solid #f2f3f5;
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.sku.active {
+  border-color: #0968f6;
+  background: #e8f4ff;
+}
+
+.sku-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.sku-price {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f53f3f;
+}
+
+.sku-valid {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.home {
+  width: 44px;
+  margin-right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-icon {
+  font-size: 20px;
+  line-height: 20px;
+  color: #333;
+}
+
+.home-text {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.buy-btn {
+  flex: 1;
+  border: none;
+}
+
+.popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-close {
+  font-size: 22px;
+  line-height: 1;
+  color: #86909c;
+  padding: 0 4px;
+}
+
+.popup-sub {
+  margin: 16px 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.popup-sub .q {
+  font-size: 12px;
+  color: #fff;
+  background: #0968f6;
+  border-radius: 50%;
+  padding: 0 4px;
+  margin-left: 2px;
+}
+
+.popup-course {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: #f7f8fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.course-cover {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #e5e6eb;
+}
+
+.course-name {
+  flex: 1;
+  margin-left: 10px;
+  font-size: 13px;
+  color: #1d2129;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-lessons {
+  font-size: 12px;
+  color: #86909c;
+}
+
+.popup-footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f2f3f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f53f3f;
+}

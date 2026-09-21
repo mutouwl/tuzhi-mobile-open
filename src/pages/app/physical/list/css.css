@@ -1,0 +1,70 @@
+.container{
+    padding: 10px;
+}
+.goods-list-page {
+	min-height: 100vh;
+	background-color: #f6f6f6;
+}
+
+.goods-list-page .search-bar {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background-color: #fff;
+}
+
+.goods-list-page .search-bar .search-input {
+	flex: 1;
+	height: 30px;
+	padding: 0 10px;
+	background-color: #f5f5f5;
+	border-radius: 15px;
+	font-size: 14px;
+}
+
+.goods-list-page .search-bar .search-btn {
+	margin-left: 10px;
+	padding: 0 15px;
+	height: 30px;
+	line-height: 30px;
+	background-color: #0968f6;
+	color: #fff;
+	border-radius: 15px;
+	font-size: 14px;
+}
+
+.goods-list-page .tab-bar {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background-color: #fff;
+}
+
+.goods-list-page .tab-bar .tab-item {
+	flex:1;
+	text-align: center;
+	font-size: 14px;
+	color: #333;
+}
+
+.goods-list-page .tab-bar .tab-item.tab-active {
+	color: #0968f6;
+	font-weight: bold;
+}
+
+.goods-list-page .tab-bar .list-icon {
+	width: 40px;
+	text-align: center;
+	font-size: 20px;
+	color: #666;
+}
+
+.goods-list-page .empty-box {
+	padding: 50px 0;
+	text-align: center;
+}
+
+.goods-list-page .empty-box .empty-text {
+	font-size: 14px;
+	color: #999;
+}

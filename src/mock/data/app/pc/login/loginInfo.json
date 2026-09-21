@@ -1,0 +1,11 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786509554",
+  "data": {
+    "name": "凸知学堂",
+    "can_wechat_login": true,
+    "is_login": true,
+    "mobile_login": "open"
+  }
+}

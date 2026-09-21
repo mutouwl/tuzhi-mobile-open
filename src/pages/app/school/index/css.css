@@ -1,0 +1,102 @@
+/* 教务中心聚合页：页面底色浅灰 + 分组通栏白块（组内入口是宫格，版式照个人中心「常用功能」，
+   见 index.vue 注释），组的圆角与边距口径照校区详情页
+   （pages/app/school/campus/detail/detail）：分组不做圆角、不加左右外边距，组间 12px 灰底间隙 */
+
+/* 页面根容器走全局档 .school-page（App.vue「校务模块统一版式」）：浅灰底 + 底部留白 20px；
+   底部导航条 tz-tab-bar 自带占位，页内不再叠加留白（原先页内 .container 与快递单页同名互相覆盖） */
+
+/* 分组块：通栏白底（白底由组内 tz-title / tz-box 自带，容器本身透明），
+   组间距 12px 用 margin-top 露出页面灰底——逐字照参照页 .campus-detail-section，不做圆角、不加左右外边距 */
+.nav-group {
+  margin-top: 12px;
+}
+
+/* 顶部标题（浅灰底，非大色块）；上下灰距上大于下：
+   上 32px；下 24px = 页头 padding-bottom 12px + 首组 .nav-group 的 margin-top 12px；
+   左右 15px 与分组标题条（tz-title 自带 0 15px）、宫格卡片内缩（tz-box padding="0 15 15"）三线同齐；
+   右侧“选择学生”按钮与标题区垂直居中对齐、贴右 */
+.si-header {
+  padding: 32px 15px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.si-header-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.si-header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d2129;
+}
+
+.si-header-desc {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #86909c;
+}
+
+/* 选择学生按钮（模块内唯一入口，点击弹出选择学生弹窗） */
+.student-pick {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background: #f0f6ff;
+}
+
+.student-pick-name {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0968f6;
+}
+
+/* 学生列表加载中：按钮内骨架块（流光与 u-skeleton 一致；类名带页面前缀，H5 下页面样式全站生效） */
+.student-pick-sk {
+  width: 52px;
+  height: 13px;
+  border-radius: 3px;
+  margin-right: 4px;
+  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
+  background-size: 400% 100%;
+  animation: student-pick-sk-animate 1.8s ease infinite;
+}
+
+@keyframes student-pick-sk-animate {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* 宫格入口名称：逐字照参照页 pages/user/index/css.css 的 .nav-name（12px / #86909C / margin-top 5px）。
+   裸选择器不挂 .nav-group 也是照参照页——小程序端 u-grid-item 开了 virtualHost，页面样式要能命中格内节点，
+   跨组件的祖先选择器不可靠；本页 style 块不带 scoped，H5 下与参照页那份同名同值，不互相覆盖。
+   要调字号/字色就同步改参照页那份，别只改一处让两个宫格走岔 */
+.nav-name {
+  color: #86909c;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* 宫格行距：每行 3 个、换行后行与行的间距由它给（行间实距 = 上下各 16px = 32px），不靠 tz-box 内缩。
+   写法与参照页 pages/user/index/css.css 同形（裸类名 + !important），只把值由 10px 加大到 16px；
+   两份从此不同值，改本页不要再同步参照页。
+   `!important` 是必需的：组件自身的 scoped 规则 `.u-grid-item.data-v-xxx{margin-top:1rpx}`（权重 0,2,0）
+   会盖掉裸类名（0,1,0）的 margin-top，靠 !important 才能压住（参照页那条同理） */
+.u-grid-item {
+  margin: 16px 0 !important;
+}

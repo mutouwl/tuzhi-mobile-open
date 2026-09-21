@@ -1,0 +1,54 @@
+
+
+.exchange-btn{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+
+.exchange-icon,.exchange-icon  img{
+    width: 80px;
+    height: 80px;
+    
+}
+
+.exchange-icon{
+    margin: 20px auto;
+}
+
+
+.bold{
+    font-weight: bold;
+    color: #1D2129;
+    margin: 0 2px;
+}
+
+
+.log-box{
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 40px;
+    color: #0968f6;
+    margin-bottom: 200px;
+}
+
+
+.log-box span{
+    margin: 0 10px;
+}
+
+.exchange-box{
+    background-color: #fff;
+    width: 94%;
+    padding: 15px;
+    box-sizing: border-box;
+    margin: 40px auto 40px;
+}
+.exchange-box span{
+    display: block;
+    margin: 20px auto 30px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+}

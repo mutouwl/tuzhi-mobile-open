@@ -1,0 +1,63 @@
+.user-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.user-header .radio-box{
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.user-header .radio-box radio{
+    vertical-align: middle;
+}
+
+.user-header .info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 50px);
+}
+
+.user-header .info .avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #f6f6f6;
+}
+
+.user-header .info .avatar img{
+    width: 100%;
+    height: 100%;
+}
+
+.user-header .info .content {
+    width: calc( 100% - 55px);
+    padding: 0px 0;
+    
+}
+
+.user-header .info .content .username{
+    color: #4E5969;
+    /* color: #fff; */
+    font-size: 15px;
+    font-weight: 500;
+    /* line-height: 50px; */
+}
+
+.user-header .info .content .platform{
+    font-weight: 600;
+    color: #6AA1FF;
+}
+.user-header .info .content .assets{
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+.user-header .info .content .assets span{
+    margin-right: 10px;
+    color: #86909C;
+}

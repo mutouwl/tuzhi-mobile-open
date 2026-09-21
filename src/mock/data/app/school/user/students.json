@@ -1,0 +1,16 @@
+{
+    "code": 1,
+    "msg": "success",
+    "data": {
+        "list": [
+            {
+                "id": 1,
+                "name": "王小明",
+                "avatar": "",
+                "phone": "13222222222",
+                "gender": 1,
+                "birthday": 1470000000
+            }
+        ]
+    }
+}

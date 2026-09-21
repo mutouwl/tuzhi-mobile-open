@@ -1,0 +1,70 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508095",
+  "data": {
+    "form": {
+      "limit": 10,
+      "page": 1,
+      "time": "1786508095",
+      "mode": "示例"
+    },
+    "list": [
+      {
+        "id": 1,
+        "money": 99,
+        "status": 1,
+        "card_name": "示例标题",
+        "card_no": "示例",
+        "card_address": "示例地址",
+        "createtime": "1786508095",
+        "updatetime": "1786508095",
+        "remark": "示例内容",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "money": 99,
+        "status": 1,
+        "card_name": "示例标题",
+        "card_no": "示例",
+        "card_address": "示例地址",
+        "createtime": "1786508095",
+        "updatetime": "1786508095",
+        "remark": "示例内容",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "modal": {
+      "time": "1786508095",
+      "mode": "示例"
+    },
+    "userInfo": {
+      "value": "示例"
+    },
+    "modeList": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "key": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "key": "示例",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "typeChecked": true,
+    "$tools": {
+      "yearmonth": "示例",
+      "formatDate": "1786508095"
+    },
+    "name": "示例标题"
+  }
+}

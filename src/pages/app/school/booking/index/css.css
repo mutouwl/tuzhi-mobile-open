@@ -1,0 +1,137 @@
+
+
+/* 列表区：与「我的预约」同口径（10px 内边距 + 10px 卡间距） */
+.bk-list {
+  padding: 10px;
+}
+
+/* 时间轴（左侧时间列 + 轨道圆点 + 卡体）由共用组件 tz-school-timeline 渲染
+   （「我的课表」「预约上课」「我的预约」三页共用，组件内样式 scoped 不外泄），本页只写卡内内容样式 */
+
+/* 卡头：课程名称（场次标识）+ 名额标签，与订单卡「订单号 + 状态」同版式 */
+.bk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.bk-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bk-seat {
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 名额配色：与状态圆点同一套口径（blue 可约 / green 已上课 / orange 待确认 / gray 不可约） */
+.bk-seat.blue {
+  color: #0968f6;
+  background: #eef6ff;
+}
+
+.bk-seat.green {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.bk-seat.orange {
+  color: #ff7d00;
+  background: #fff3e8;
+}
+
+.bk-seat.gray {
+  color: #86909c;
+  background: #f2f3f5;
+}
+
+/* 信息行：label 定宽浅灰 + 值深灰（对齐我的课表课程卡） */
+.bk-row {
+  display: flex;
+  align-items: flex-start;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+.bk-label {
+  flex-shrink: 0;
+  min-width: 56px;
+  color: #86909c;
+}
+
+.bk-value {
+  flex: 1;
+  min-width: 0;
+  color: #4e5969;
+  word-break: break-all;
+}
+
+/* 操作行：仅右侧预约按钮（不展示剩余课时） */
+.bk-ops {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 预约按钮外壳：接管点击（置灰不可约时也响应提示） */
+.book-btn {
+  margin-left: 10px;
+}
+
+/* 列表骨架屏：仿「时间轴 + 场次卡」版式（与「我的课表」骨架屏同结构） */
+.bk-sk-bar {
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 卡头灰块：课程名条 + 名额块（名额块按标签实际高度 ~19px） */
+.bk-sk-name {
+  width: 56%;
+  height: 15px;
+}
+
+.bk-sk-seat {
+  width: 62px;
+  height: 19px;
+}
+
+.bk-sk-line {
+  width: 70%;
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.bk-sk-line.short {
+  width: 45%;
+}
+
+/* 骨架屏按钮：按 mid 按钮实际占位（2 字 × 14px + 左右 13px 内边距 ≈ 54×27） */
+.bk-sk-btn {
+  width: 54px;
+  height: 27px;
+}
+
+/* 分页加载行（u-loadmore）：末张卡片下方留出加载提示的间距 */
+.bk-loadmore {
+  padding: 8px 0;
+}
+
+/* 空态/失败态重试按钮行：u-empty 下方居中 */
+.bk-empty-ops {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 60px;
+}

@@ -1,0 +1,52 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508109",
+  "data": {
+    "categoryList": {
+      "children": {
+        "length": "示例"
+      },
+      "style": "示例"
+    },
+    "activeMenu": true,
+    "pagination": {
+      "data": [
+        {
+          "id": 1,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        },
+        {
+          "id": 2,
+          "title": "示例标题",
+          "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+        }
+      ],
+      "current_page": 1,
+      "total": 99,
+      "last_page": 1
+    },
+    "loadStatus": 1,
+    "pageHeight": 1,
+    "categoryId": 1,
+    "categoryList.children": [
+      {
+        "id": 1,
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      },
+      {
+        "id": 2,
+        "name": "示例标题",
+        "title": "示例标题",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg"
+      }
+    ],
+    "loading": "示例",
+    "height": "示例",
+    "image": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+    "contentdown": "示例内容"
+  }
+}

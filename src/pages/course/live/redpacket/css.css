@@ -1,0 +1,296 @@
+.redpacket-modal {
+  width: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-close:active {
+  opacity: 0.7;
+}
+
+.redpacket-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.loading-text {
+  color: #999;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.redpacket-cover {
+  background: linear-gradient(180deg, #e8553a 0%, #c9302c 100%);
+  padding: 30px 20px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.cover-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sender-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 215, 0, 0.6);
+}
+
+.sender-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.sender-name {
+  color: #ffe4b5;
+  font-size: 14px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.redpacket-blessing {
+  color: #ffe4b5;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.redpacket-type {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.cover-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.grab-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffd700 0%, #f5a623 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.5);
+}
+
+.grab-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+.grab-text {
+  color: #c9302c;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.cover-tip {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.cover-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.result-amount {
+  display: flex;
+  align-items: baseline;
+}
+
+.amount-symbol {
+  color: #ffd700;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.amount-value {
+  color: #ffd700;
+  font-size: 36px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.result-tip {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.result-empty {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.lucky-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+}
+
+.lucky-text {
+  color: #ffd700;
+  font-size: 12px;
+}
+
+/* 领取记录入口 */
+.records-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.records-entry:active {
+  background-color: #f8f8f8;
+}
+
+.entry-text {
+  color: #999;
+  font-size: 12px;
+}
+
+.entry-link {
+  color: #e8553a;
+  font-size: 12px;
+}
+
+/* 领取记录弹窗 */
+.records-popup {
+  display: flex;
+  flex-direction: column;
+  min-height: 40vh;
+  max-height: 70vh;
+  padding-top: 16px;
+}
+
+.records-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.records-title {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.records-count {
+  color: #999;
+  font-size: 12px;
+}
+
+.records-scroll {
+  min-height: 30vh;
+  max-height: 50vh;
+}
+
+.records-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30vh;
+}
+
+.records-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.records-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.records-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.records-name {
+  color: #333;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.records-time {
+  color: #999;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.records-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 10px;
+}
+
+.records-amount {
+  color: #e8553a;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.records-lucky {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.records-lucky .lucky-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 2px;
+}
+
+.records-lucky .lucky-text {
+  color: #f5a623;
+  font-size: 10px;
+}

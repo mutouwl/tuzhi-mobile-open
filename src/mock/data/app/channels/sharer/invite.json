@@ -1,0 +1,20 @@
+{
+  "code": 1,
+  "msg": "success",
+  "time": "1786508097",
+  "data": {
+    "store": {
+      "logo": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "name": "示例标题"
+    },
+    "qrcode": "000000",
+    "form": {
+      "username": "示例用户"
+    },
+    "step": "示例",
+    "data": "示例",
+    "loading": "示例",
+    "display": "示例",
+    "width": "示例"
+  }
+}

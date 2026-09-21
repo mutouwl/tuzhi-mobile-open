@@ -1,0 +1,18 @@
+# 开源快照专用忽略规则
+# 注意：这份文件由 tools/oss-publish-mobile.sh 在每次同步后写入，
+# 不要复用 tuzi-mobile/.gitignore —— 开发库里有全局 `*.md` 规则，
+# 会把 README.md / LICENSE / THIRD-PARTY-NOTICES.md 一起忽略掉。
+
+node_modules/
+dist/
+unpackage/
+.hbuilderx/
+*.local
+
+.idea/
+.vscode/
+*.log
+
+.DS_Store
+**/.DS_Store
+Thumbs.db

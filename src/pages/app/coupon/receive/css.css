@@ -1,0 +1,144 @@
+
+page{
+    /* background-color: #fff; */
+}
+.coupon-box {
+    width: 100%;
+    background: linear-gradient(180deg, #EE7112, #F27C10, #F98F0D, #FEAF07, #fff) no-repeat;
+    background-size: 100% 318px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 25px 17px 0;
+    margin-bottom: 40px;
+}
+
+.coupon-box .coupon-container {
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 10px 0 rgba(250, 103, 5, .6);
+    background-repeat: repeat-y;
+    background-size: 111% 100%;
+    background-position-x: -21px;
+    background-position-y: -20px;
+
+    border:5px solid #FFECCD;
+}
+
+.coupon-box .coupon-container .couponTopWrap {
+    padding: 17px 25px 20px;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+.coupon-box .linkCoupon_top {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    font-size: 15px;
+    padding-bottom: 6px;
+    border-bottom: 2px dashed #ffe6cc;
+}
+
+.coupon-box .coupon-container .store-info-box {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.coupon-box .coupon-container .store-logo {
+    width: 29px;
+    height: 29px;
+    margin-right: 8px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+}
+
+.coupon-box .coupon-container .store-name {
+    display: block;
+    color: #353535;
+    font-size: 15px;
+    max-width: 135px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.coupon-box .coupon-container .linkCoupon_arrow {
+    width: 17px;
+    height: 17px;
+}
+
+
+.coupon-box .coupon-container .contrl-box {
+    position: relative;
+    background: linear-gradient(180deg,  #FFAC00, #FF7E16) no-repeat;
+    padding: 0 17px 33px 17px;
+    border-radius: 10px 10px 8px 8px;
+}
+
+
+.coupon-box .coupon-container .poverDailog {
+    font-weight: 600;
+    color: #fff;
+    font-size: 15px;
+    padding-top: 36px;
+}
+
+.coupon-progress-info-box {
+    position: relative;
+    margin-top: 10px;
+    width: 100%;
+    height: 14px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.contrl-btn-box {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding-top: 25px;
+}
+
+
+.contrl-btn-box .contrl-btn {
+    width: 100%;
+    height: 42px;
+    line-height: 42px;
+    background: #fff;
+    border-radius: 4px;
+    font-weight: 500;
+    outline: none;
+    font-size: 16px;
+    border-radius: 23px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: center;
+    color: #666;
+    margin: 0 4px;
+}
+
+.coupon-box .coupon-container span {
+    display: inline-block;
+}
+
+
+.orange{
+    color: #ff781f!important;
+}

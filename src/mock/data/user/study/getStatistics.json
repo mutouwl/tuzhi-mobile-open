@@ -1,0 +1,49 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1786508200",
+  "data": {
+    "log": {
+      "01月": {
+        "time": 1.8,
+        "course": 5
+      },
+      "02月": {
+        "time": 5.9,
+        "course": 2
+      },
+      "03月": {
+        "time": 0,
+        "course": 0
+      },
+      "04月": {
+        "time": 0.3,
+        "course": 1
+      },
+      "05月": {
+        "time": 1.3,
+        "course": 9
+      },
+      "06月": {
+        "time": 0.5,
+        "course": 19
+      },
+      "07月": {
+        "time": 1.1,
+        "course": 16
+      },
+      "08月": {
+        "time": 1.7,
+        "course": 28
+      }
+    },
+    "total": {
+      "time": 59,
+      "course": 140
+    },
+    "time_total": {
+      "time": 1.7,
+      "course": 28
+    }
+  }
+}
