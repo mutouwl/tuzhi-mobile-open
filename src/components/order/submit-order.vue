@@ -1,7 +1,33 @@
 <template>
     <view class="">
-        <tz-loading-page :absolute="true" tip="正在获取订单数据" :loading="loading"></tz-loading-page>
-        
+        <!-- 加载骨架屏：块结构与真实内容逐块对齐（地址卡 / 商品卡 / 小记 / 信息行 / 底部支付栏），替代整页 loading 遮罩 -->
+        <template v-if="loading">
+            <view class="sk-address" v-if="pageParams.type === 'physical'">
+                <view class="sk-address-row"></view>
+                <view class="sk-address-line"></view>
+            </view>
+            <tz-box>
+                <view class="sk-goods" v-for="i in 2" :key="i">
+                    <view class="sk-goods-cover"></view>
+                    <view class="sk-goods-info">
+                        <u-skeleton :loading="true" :animate="true" :title="true" title-width="70%" title-height="16" :rows="2" rows-width="45%" rows-height="12" />
+                    </view>
+                </view>
+                <view class="sk-total"></view>
+            </tz-box>
+            <tz-divider />
+            <tz-box padding="5px 15px">
+                <view class="sk-cell" v-for="i in 2" :key="i">
+                    <view class="sk-cell-label"></view>
+                    <view class="sk-cell-value"></view>
+                </view>
+            </tz-box>
+            <view class="sk-bottom-bar h5-bottom-bar">
+                <view class="sk-price"></view>
+                <view class="sk-btn"></view>
+            </view>
+        </template>
+        <template v-else>
         <!-- 地址选择栏（实物商品，或规格含实物商品的组合商品） -->
         <view class="address-card" v-if="pageParams.type === 'physical' || needAddress" @click="selectAddress">
             <view class="address-content" v-if="address">
@@ -43,7 +69,7 @@
 
         <!-- 购买课程前表单入口 -->
         <tz-divider />
-        <template v-if="formRequirement.hasForm && !loading">
+        <template v-if="formRequirement.hasForm">
         <view class="form-requirement-card" 
               @click="goFillForm">
             <view class="form-requirement-content">
@@ -73,7 +99,7 @@
 
         <tz-divider />
         </template>
-        <tz-box padding="5px 15px" v-if="!loading">
+        <tz-box padding="5px 15px">
             <u-form :labelWidth="labelWidth">
                 <u-form-item label="积分" :border="true" v-if="data.score_amount">
                     <div class="item-val">-{{ data.score_amount }}</div>
@@ -89,10 +115,11 @@
             </u-form>
         </tz-box>
 
-        <tz-bottom-btn v-if="!loading" type="submit" :params="{
+        <tz-bottom-btn type="submit" :params="{
         price: data.real_price ? data.real_price : 0,
         is_virtual_pay: isVirtualPay,
       }" @handle="submitOrder" />
+        </template>
 
         <tz-pay :visible="modal.pay" :order-no="orderNo" :money="data.real_price || 0" :is-virtual-pay="isVirtualPay" @close="cancelPay()" @alipay-guide-close="alipayGuideClose()"></tz-pay>
 
@@ -325,6 +352,9 @@
                             },
                         });
                     }
+                }).catch(() => {
+                    // 接口异常/未登录被拦截时释放骨架屏，避免页面永久停留在占位态
+                    this.loading = false;
                 });
             },
 
@@ -656,5 +686,116 @@
     
     .form-requirement-status.submitted {
         color: #999;
+    }
+
+    /* 加载骨架屏：尺寸与真实内容逐块对齐（商品行 80px 高 / 28% 封面与 course 组件同口径、
+       信息行 40px 行高对齐 u-form-item、底部栏对齐 tz-bottom-btn 固定底栏），
+       灰块颜色取 uview 骨架屏静态块口径 #e5e6eb（与确认报名页 / 订单详情弹层骨架屏一致） */
+    .sk-address {
+        background-color: #fff;
+        padding: 16px;
+        margin-bottom: 10px;
+    }
+
+    .sk-address-row {
+        width: 30%;
+        height: 16px;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-address-line {
+        width: 70%;
+        height: 14px;
+        margin-top: 10px;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-goods {
+        height: 80px;
+        margin: 10px 0;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .sk-goods-cover {
+        width: 28%;
+        height: 100%;
+        flex-shrink: 0;
+        border-radius: 6px;
+        background: #e5e6eb;
+    }
+
+    .sk-goods-info {
+        width: 71%;
+        padding: 5px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .sk-total {
+        width: 40%;
+        height: 18px;
+        margin: 14px 0 0 auto;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-cell {
+        display: flex;
+        align-items: center;
+        height: 40px;
+    }
+
+    .sk-cell-label {
+        width: 42px;
+        height: 14px;
+        flex-shrink: 0;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-cell-value {
+        width: 45%;
+        height: 14px;
+        margin-left: auto;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 8px 0 rgb(0 0 0 / 8%);
+        display: flex;
+        align-items: center;
+        z-index: 10;
+        box-sizing: border-box;
+
+        /* #ifdef MP-WEIXIN */
+        padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+        padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+        /* #endif */
+    }
+
+    .sk-price {
+        width: 110px;
+        height: 22px;
+        flex-shrink: 0;
+        border-radius: 4px;
+        background: #e5e6eb;
+    }
+
+    .sk-btn {
+        flex: 1;
+        height: 40px;
+        margin-left: 12px;
+        border-radius: 4px;
+        background: #e5e6eb;
     }
 </style>

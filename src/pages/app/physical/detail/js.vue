@@ -126,9 +126,14 @@ export default {
       });
     },
     refresh() {
-      uni.showLoading({
-        title: '请稍后'
-      });
+      // 首屏（还没有内容）由骨架屏给反馈，不再叠加原生 loading；已有内容时保持可见，用「请稍后」提示
+      if (that.goodsInfo) {
+        uni.showLoading({
+          title: '请稍后'
+        });
+      } else {
+        that.skeletonLoading = true;
+      }
       that.getGoodsDetail(that.goodsId);
     },
     onSelectSku(skuIndex, option) {
@@ -302,75 +307,80 @@ export default {
       return list;
     },
     async getGoodsDetail(id) {
-      const res = await that.$api('physical.physical.detail', {
-        id: id,
-      });
-      if (res.code === 1) {
-        const cleanedData = {
-          ...res.data,
-          cover: res.data.image || res.data.cover ? (res.data.image || res.data.cover).replace(/^`|`$/g, '').trim() : '',
-          carousel: res.data.carousel ? res.data.carousel.map(item => item.replace(/^`|`$/g, '').trim()) : []
-        };
-        
-        if (res.data.sku_tree && res.data.sku_tree.length > 0) {
-          cleanedData.sku_tree = res.data.sku_tree;
-        } else if (res.data.sku_prices && res.data.sku_prices.length > 0) {
-          cleanedData.sku_tree = that.buildSkuTree(res.data.sku_prices);
-        }
-        
-        if (res.data.sku_prices && res.data.sku_prices.length > 0) {
-          const inStockSku = res.data.sku_prices.find(sku => Number(sku.stock) > 0);
-          that.selectedSkuPrice = inStockSku || res.data.sku_prices[0];
-          
-          if (inStockSku && inStockSku.goods_sku_text) {
-            const skuTexts = inStockSku.goods_sku_text.split(',');
-            skuTexts.forEach((text, index) => {
-              if (cleanedData.sku_tree && cleanedData.sku_tree[index]) {
-                const option = cleanedData.sku_tree[index].children.find(child => child.name === text);
-                if (option) {
-                  that.$set(that.selectedSkus, index, option);
-                }
-              }
-            });
+      try {
+        const res = await that.$api('physical.physical.detail', {
+          id: id,
+        });
+
+        if (res.code === 1) {
+          const cleanedData = {
+            ...res.data,
+            cover: res.data.image || res.data.cover ? (res.data.image || res.data.cover).replace(/^`|`$/g, '').trim() : '',
+            carousel: res.data.carousel ? res.data.carousel.map(item => item.replace(/^`|`$/g, '').trim()) : []
+          };
+
+          if (res.data.sku_tree && res.data.sku_tree.length > 0) {
+            cleanedData.sku_tree = res.data.sku_tree;
+          } else if (res.data.sku_prices && res.data.sku_prices.length > 0) {
+            cleanedData.sku_tree = that.buildSkuTree(res.data.sku_prices);
           }
-        }
-        
-        that.goodsInfo = cleanedData;
-        that.goodsSwiper = cleanedData.carousel && cleanedData.carousel.length > 0 ? cleanedData.carousel : [cleanedData.cover];
-        
-        that.guaranteeList = that.buildGuaranteeList(res.data);
 
-        // 页面标题跟随商品标题（原标题为固定的「商品详情」），
-        // H5 会同步浏览器/微信顶部标题，小程序同步导航栏标题
-        if (res.data.name) {
-          uni.setNavigationBarTitle({ title: res.data.name });
-        }
+          if (res.data.sku_prices && res.data.sku_prices.length > 0) {
+            const inStockSku = res.data.sku_prices.find(sku => Number(sku.stock) > 0);
+            that.selectedSkuPrice = inStockSku || res.data.sku_prices[0];
 
-        // #ifdef H5
-        this.$nav.share(res.data.name, '', that.shareCover);
-        // #endif
-
-        if (res.data.params) {
-          let paramsData = res.data.params;
-          if (typeof paramsData === 'string') {
-            try {
-              paramsData = JSON.parse(paramsData);
-            } catch (e) {
-              paramsData = [];
+            if (inStockSku && inStockSku.goods_sku_text) {
+              const skuTexts = inStockSku.goods_sku_text.split(',');
+              skuTexts.forEach((text, index) => {
+                if (cleanedData.sku_tree && cleanedData.sku_tree[index]) {
+                  const option = cleanedData.sku_tree[index].children.find(child => child.name === text);
+                  if (option) {
+                    that.$set(that.selectedSkus, index, option);
+                  }
+                }
+              });
             }
           }
-          if (Array.isArray(paramsData) && paramsData.length > 0) {
-            that.paramsList = paramsData;
-          } else if (typeof paramsData === 'object' && Object.keys(paramsData).length > 0) {
-            that.paramsList = Object.entries(paramsData).map(([name, value]) => ({ name, value }));
+
+          that.goodsInfo = cleanedData;
+          that.goodsSwiper = cleanedData.carousel && cleanedData.carousel.length > 0 ? cleanedData.carousel : [cleanedData.cover];
+
+          that.guaranteeList = that.buildGuaranteeList(res.data);
+
+          // 页面标题跟随商品标题（原标题为固定的「商品详情」），
+          // H5 会同步浏览器/微信顶部标题，小程序同步导航栏标题
+          if (res.data.name) {
+            uni.setNavigationBarTitle({ title: res.data.name });
           }
+
+          // #ifdef H5
+          this.$nav.share(res.data.name, '', that.shareCover);
+          // #endif
+
+          if (res.data.params) {
+            let paramsData = res.data.params;
+            if (typeof paramsData === 'string') {
+              try {
+                paramsData = JSON.parse(paramsData);
+              } catch (e) {
+                paramsData = [];
+              }
+            }
+            if (Array.isArray(paramsData) && paramsData.length > 0) {
+              that.paramsList = paramsData;
+            } else if (typeof paramsData === 'object' && Object.keys(paramsData).length > 0) {
+              that.paramsList = Object.entries(paramsData).map(([name, value]) => ({ name, value }));
+            }
+          }
+        } else {
+          that.goodsInfo = null;
         }
-        
-        that.skeletonLoading = false;
-        uni.hideLoading();
-        uni.stopPullDownRefresh();
-      } else {
+      } catch (e) {
+        // 网络异常/请求被取消（如未登录）：按「取不到商品」处理，不能停在骨架态
         that.goodsInfo = null;
+      } finally {
+        // 成功/失败/异常都要收起骨架，否则页面永远停在加载态
+        that.skeletonLoading = false;
         uni.hideLoading();
         uni.stopPullDownRefresh();
       }

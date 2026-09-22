@@ -5,7 +5,7 @@
 			<!-- 列表区高度取 tz-popup-list 默认的确定高度（60vh）：只有一两名学生时下方留白，
 			     但整块都是可拖动/可下拉刷新的活动区，且弹层高度不随条数跳动 -->
 			<tz-popup-list padding="4px 16px 8px" :refreshing="refreshing" @refresh="loadStudents(true)" @lower="loadStudents(false)">
-				<!-- 加载中（尚无数据）：骨架屏占位，行结构与真实学生行一致（圆头像 + 姓名/班级两行） -->
+				<!-- 加载中（尚无数据）：骨架屏占位，行结构与真实学生行一致（圆头像 + 姓名一行，列表不展示班级标签） -->
 				<view class="student-skeleton" v-if="showSkeleton">
 					<view class="student-skeleton-item" v-for="i in 3" :key="i">
 						<u-skeleton
@@ -17,15 +17,13 @@
 							:title="true"
 							title-width="40%"
 							title-height="16"
-							:rows="1"
-							rows-width="55%"
-							rows-height="12"
+							:rows="0"
 						/>
 					</view>
 				</view>
 				<view class="student-item" v-for="s in students" :key="s.id" @tap="pickStudent(s)">
 					<view class="radio" :class="{ on: selectedId == s.id }" />
-					<student-info class="student-item-info" :student="s" />
+					<student-info class="student-item-info" :student="s" :show-class="false" />
 					<view class="student-edit-btn" @tap.stop="goEdit(s)">编辑</view>
 				</view>
 				<view class="student-loadmore" v-if="students.length && loading"><u-loadmore status="loading" /></view>
@@ -147,6 +145,10 @@ export default {
 				this.students = refresh ? list : this.students.concat(list);
 				this.page = page;
 				this.hasMore = !!(ret.data && ret.data.has_more);
+				// 打开弹层时带进来的选中学生可能已被机构删除：名单已全部返回却查不到这个学生，就丢掉失效选中态，
+				// 否则不点任何一行直接确认会把已删除的学生再写回页面和缓存。
+				// 还有下一页时不下结论——合法选中的学生可能排在后面的页里（如刚新建的学生 id 最大、按 id 升序落在末页）
+				if (refresh && !this.hasMore && this.selectedId && !list.some((x) => x.id == this.selectedId)) this.selectedId = 0;
 				// 名下学生总数 + 创建上限（0 表示不限制），供新建入口超限提示
 				this.studentTotal = parseInt(ret.data && ret.data.total) || 0;
 				const createLimit = parseInt(ret.data && ret.data.student_limit);
@@ -212,13 +214,13 @@ export default {
 	padding: 8px 0 4px;
 }
 
-/* 加载态骨架屏：行高与真实学生行对齐（72px：头像 + 两行灰条），列表高度不跳动 */
+/* 加载态骨架屏：行高与真实学生行对齐（头像 + 姓名一行），列表高度不跳动 */
 .student-skeleton-item {
 	display: flex;
 	align-items: center;
-	min-height: 72px;
+	min-height: 68px;
 	box-sizing: border-box;
-	padding: 12px 0;
+	padding: 16px 0;
 }
 
 .student-item {

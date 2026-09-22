@@ -43,9 +43,7 @@
 							@tap="selectSku(index)"
 						>
 							<text class="option-name">{{ s.name }}</text>
-							<text class="option-balance" v-if="s.sales_balance_enabled">
-								{{ s.sales_balance > 0 ? '仅剩 ' + s.sales_balance + ' 份' : '已售罄' }}
-							</text>
+							<text class="option-balance" v-if="skuBalanceText(s)">{{ skuBalanceText(s) }}</text>
 						</view>
 					</view>
 				</view>
@@ -126,18 +124,19 @@ export default {
 			const hit = this.campusList.find((c) => c.id == this.campus);
 			return hit ? hit.name : '';
 		},
-		// 套餐绑定校区时校区为必选（详情页已默认选中首个）
+		// 套餐绑定校区时校区为必选（详情页已默认选中首个）；
+		// campusList 为空 = 适用校区全部失效（后台把绑定校区删了或禁用了），订单交付不到任何校区，
+		// 确认按钮一律置灰（后端 OrderService::createOrder 同样会拦「该套餐不支持所选校区」）
 		canConfirm() {
 			if (!this.currentSku.id) return false;
+			if (!this.campusList.length) return false;
 			if (this.isSkuDisabled(this.currentSku)) return false;
-			return !this.campusList.length || !!this.campus;
+			return !!this.campus;
 		},
-		// 商品卡余量文案：规格余量为 0 或 null 时不展示
+		// 商品卡状态文案：套餐级原因（无可上课校区）优先，其次是规格权益失效，最后才是余量文案
 		balanceText() {
-			if (!this.currentSku.sales_balance_enabled) return '';
-			return this.currentSku.sales_balance > 0
-				? '仅剩 ' + this.currentSku.sales_balance + ' 份'
-				: '已售罄';
+			if (!this.campusList.length) return '该套餐暂无可用校区';
+			return this.skuBalanceText(this.currentSku);
 		},
 	},
 	watch: {
@@ -160,9 +159,20 @@ export default {
 		selectCampus(c) {
 			this.$emit('update:campus', c.id);
 		},
-		// 规格余量判定：后台开启销量余量展示且该规格余量为 0 时不可选择
+		// 规格禁用判定：① 课程权益全失效——课程被后台删除或禁用后，套餐详情接口已把这类课程
+		// 从 courses 里过滤掉（后端只下发仍有效的权益），courses 为空说明该规格交付不了课时，
+		// 付了钱也只会「该规格未配置课程权益」；② 后台开启销量余量展示且该规格余量已为 0
 		isSkuDisabled(s) {
-			return !!(s && s.sales_balance_enabled && s.sales_balance <= 0);
+			if (!s) return false;
+			if (!(s.courses || []).length) return true;
+			return !!(s.sales_balance_enabled && s.sales_balance <= 0);
+		},
+		// 规格状态文案（规格选项角标与商品卡共用）：失效原因优先，其次余量文案
+		skuBalanceText(s) {
+			if (!s || !s.id) return '';
+			if (!(s.courses || []).length) return '暂不可购买';
+			if (!s.sales_balance_enabled) return '';
+			return s.sales_balance > 0 ? '仅剩 ' + s.sales_balance + ' 份' : '已售罄';
 		},
 		selectSku(index) {
 			if (this.isSkuDisabled(this.skus[index])) return;
@@ -175,7 +185,8 @@ export default {
 				return;
 			}
 			if (this.isSkuDisabled(this.currentSku)) {
-				uni.showToast({ title: '该套餐已售罄', icon: 'none' });
+				// 原因按实际口径给：权益失效不能报「已售罄」
+				uni.showToast({ title: '该套餐' + (this.skuBalanceText(this.currentSku) || '不可选择'), icon: 'none' });
 				return;
 			}
 			if (!this.canConfirm) {

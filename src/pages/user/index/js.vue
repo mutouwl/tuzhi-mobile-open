@@ -17,6 +17,10 @@ export default {
 
       userInfo: {},
 
+      // 首屏用户信息（头像/用户名）加载中：只做首屏占位，onShow 再次拉取时不重置，
+      // 否则从子页面返回/切回本页会闪一下骨架屏
+      loading: true,
+
       pageParams: {},
 
       assetsNav: {
@@ -138,6 +142,9 @@ export default {
     getData() {
       that.modal.userinfoEdit = false;
       that.$api("user.info.index", {}).then((res) => {
+        // 先收起骨架屏再判断业务码：401（未登录）/500 也走 resolve 分支，
+        // 若只在 code===1 时收起，头像处会一直停在占位块
+        that.loading = false;
         if (res.code === 1) {
           that.userInfo = res.data;
           that.assetsNav.money.value = res.data.money;
@@ -150,6 +157,9 @@ export default {
             that.modal.userinfoEdit = true;
           }
         }
+      }).catch(() => {
+        // 网络异常/非 200 会 reject，同样要收起骨架屏，回落为「-」与空头像
+        that.loading = false;
       });
 
       that.getServiceConfig();

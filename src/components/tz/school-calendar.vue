@@ -17,6 +17,16 @@
           <text class="cd-count" :class="{ zero: !d.count }">{{ d.count }}{{ countUnit }}</text>
         </view>
       </view>
+      <!-- 首屏加载蒙版（loading 由页面按「初始化」口径传入）：盖住整张日历卡，遮罩+居中旋转图标+文案，
+           与下面「选择日期」弹窗的加载蒙版是同一套观感（样式两处共用一份 .cal-mask/.cal-loading 规则）。
+           必须盖住：初始化阶段数量还没回来，角标会先渲染成一排「0 节/0 场」，看着像"这天没课"；
+           而且此时翻周/切天/点年月都要按 student_id 打接口，未就绪时点了也只是空请求 -->
+      <view class="cal-loading" v-if="loading">
+        <view class="cal-loading-inner">
+          <u-loading-icon mode="circle" size="24" />
+          <text class="cal-loading-text">{{ loadingText }}</text>
+        </view>
+      </view>
     </view>
 
     <!-- 选择日期弹窗：自绘单月面板（周一开头，日期下方标注当天数量，点日选中、确认后跳到该天）。
@@ -78,7 +88,7 @@
  * 用法：
  *   <tz-school-calendar v-model="selectedTs" :student-id="studentId" :week-counts="dayCountMap"
  *       counts-api="school.user.scheduleCounts" count-unit="节" loading-text="正在加载课次…"
- *       @change="refresh" />
+ *       :loading="calendarLoading" @change="refresh" />
  *
  * 职责边界：
  *   - 组件只负责「选日期」与「日历角标」，不关心列表内容；选中日期经 v-model 回传，变化时抛 change
@@ -86,6 +96,7 @@
  *   - 月面板角标由组件按 counts-api 自行按月拉取（两页只是接口名与计数单位不同）
  *   - 月面板拉数量时必须带上列表的筛选条件（counts-params），否则会出现
  *     「日历标着有 N 场、点进去列表一条都没有」（如预约页按课程筛选、角标却统计全部课程）
+ *   - 整卡的加载态由父页给（loading）：数据没回来的那段由页面定义，组件不猜
  */
 import { WEEK_MS, fmtDate, mondayOf, todayStart } from '@/common/utils/school-date';
 
@@ -134,6 +145,13 @@ export default {
     loadingText: {
       type: String,
       default: '正在加载…',
+    },
+    // 整卡加载态（页面初始化阶段）：为 true 时在日历卡上盖一层与「选择日期」弹窗同款的加载蒙版。
+    // 由页面按自己的「初始化」口径传入——课表页＝拉学生信息到首个课表落地，预约页＝首屏可约场次回包之前；
+    // 只用于首屏，之后切天/翻周不再置位（那时列表自己有骨架屏，日历盖住反而点不动，快速连点是允许的）
+    loading: {
+      type: Boolean,
+      default: false,
     },
     // 未选择学员时的提示文案
     studentTip: {
@@ -313,8 +331,10 @@ export default {
 </script>
 
 <style scoped>
-/* 周日历卡片：仅显示一周；通栏直角（无外边距 + 无圆角），与教务模块「贴顶通栏白块」口径一致 */
+/* 周日历卡片：仅显示一周；通栏直角（无外边距 + 无圆角），与教务模块「贴顶通栏白块」口径一致。
+   position:relative 是给卡片自己的加载蒙版 .cal-loading 当定位参照（蒙版要盖满整张卡） */
 .cal-card {
+  position: relative;
   margin: 0;
   background: #fff;
   border-radius: 0;
@@ -505,8 +525,10 @@ export default {
   text-align: center;
 }
 
-/* 数量加载蒙版：覆盖在月面板之上，遮罩+居中旋转图标，不改变面板高度 */
-.cal-mask {
+/* 加载蒙版（两处共用一套观感）：① 月面板数量加载 .cal-mask ② 日历卡首屏加载 .cal-loading
+   ——半透明白遮罩 + 背景模糊 + 居中旋转图标 + 文案；绝对定位铺满各自的容器，不改变容器高度 */
+.cal-mask,
+.cal-loading {
   position: absolute;
   left: 0;
   top: 0;
@@ -516,19 +538,25 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(2px);
 }
 
-.cal-mask-inner {
+/* 弹窗容器是 12px 圆角，遮罩要跟着圆；日历卡通栏直角，不需要 */
+.cal-mask {
+  border-radius: 12px;
+}
+
+.cal-mask-inner,
+.cal-loading-inner {
   display: flex;
   align-items: center;
   color: #0968f6;
   font-size: 14px;
 }
 
-.cal-mask-text {
+.cal-mask-text,
+.cal-loading-text {
   margin-left: 8px;
   color: #86909c;
 }

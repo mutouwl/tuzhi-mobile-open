@@ -78,6 +78,38 @@
     height: 100%;
 }
 
+/* 首屏加载骨架屏：头像圆与用户名条复用 u-skeleton 的渐变与节奏（90deg / 1.8s），
+   与全站其余骨架屏（列表页 u-skeleton）观感一致 */
+.user-header .info .skeleton-avatar,
+.user-header .info .skeleton-bar{
+    background: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: user-skeleton 1.8s ease infinite;
+}
+
+@keyframes user-skeleton{
+    0%{
+        background-position: 100% 50%;
+    }
+    100%{
+        background-position: 0 50%;
+    }
+}
+
+/* 用户名占位：沿用 .username 的 35px 行盒高度、条高 18px 居中，
+   保证骨架屏切到真实昵称时行盒高度不变，页面不抖动 */
+.user-header .info .skeleton-username{
+    display: flex;
+    align-items: center;
+    height: 35px;
+}
+
+.user-header .info .skeleton-bar{
+    width: 108px;
+    height: 18px;
+    border-radius: 4px;
+}
+
 .user-header .info .content {
     width: calc(100% - 110px);
     padding: 10px 0;

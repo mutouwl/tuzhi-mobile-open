@@ -2,7 +2,9 @@
 	<!--
 		教务-老师卡片（模块共用）
 		左侧正方形头像（无头像/加载失败走蓝底首字占位）+ 右侧姓名（两行截断）/ 简介（两行截断）。
-		使用方：套餐详情「教师」区与教师列表弹窗、校区详情「教师」区与教师列表弹窗、DIY 自定义页面老师组件。
+		show-role 打开时姓名右侧出身份标签（主讲/助教），仅课次与预约的授课老师名单需要。
+		使用方：套餐详情「教师」区与教师列表弹窗、校区详情「教师」区与教师列表弹窗、
+		课次详情/我的预约的「授课老师」弹窗、DIY 自定义页面老师组件。
 	-->
 	<view class="tz-school-teacher" v-if="list && list.length">
 		<view
@@ -24,7 +26,12 @@
 				<view class="tz-school-teacher-placeholder" v-else>{{ (t.name || '?').slice(0, 1) }}</view>
 			</view>
 			<view class="tz-school-teacher-info">
-				<view class="tz-school-teacher-name">{{ t.name }}</view>
+				<!-- 姓名与身份标签同一行：标签只在调用方 show-role 时出现（课次/预约的授课老师名单要标主讲/助教，
+				     校区/套餐的教师列表无身份语义，默认不传即保持原版式） -->
+				<view class="tz-school-teacher-name-row">
+					<view class="tz-school-teacher-name">{{ t.name }}</view>
+					<text class="tz-school-teacher-role" :class="{ main: t.role == 1 }" v-if="showRole">{{ t.role == 1 ? '主讲' : '助教' }}</text>
+				</view>
 				<view class="tz-school-teacher-intro" v-if="t.intro">{{ t.intro }}</view>
 			</view>
 		</view>
@@ -54,6 +61,12 @@ export default {
 		navigate: {
 			type: Boolean,
 			default: true
+		},
+		// 是否展示姓名右侧的身份标签（取 t.role：1 主讲、2 助教）；默认不展示，
+		// 仅课次/预约的授课老师名单需要区分主讲与助教
+		showRole: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -132,7 +145,15 @@ export default {
 	justify-content: center;
 }
 
+/* 姓名 + 身份标签同一行；showRole 未开时行内只有姓名，纵向两行截断版式与原来一致 */
+.tz-school-teacher-name-row {
+	display: flex;
+	align-items: center;
+}
+
 .tz-school-teacher-name {
+	flex: 1;
+	min-width: 0;
 	font-size: 14px;
 	font-weight: 600;
 	color: #1d2129;
@@ -142,6 +163,23 @@ export default {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+/* 身份标签（主讲/助教）：取色沿用课次详情老师名单原档（主讲为主色浅蓝底） */
+.tz-school-teacher-role {
+	flex-shrink: 0;
+	margin-left: 8px;
+	font-size: 12px;
+	line-height: 17px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	color: #4e5969;
+	background: #f2f3f5;
+}
+
+.tz-school-teacher-role.main {
+	color: #0968f6;
+	background: #eef6ff;
 }
 
 .tz-school-teacher-intro {

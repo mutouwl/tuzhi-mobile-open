@@ -25,7 +25,7 @@ export default {
       //   满幅 1.000 的字形（如 peixun）归一要 21，与缺省差得多，用到时单列一档
       //   0.876 ⇒ 24：daifukuan（已购课程）
       //   0.797/0.781 ⇒ 26：activity（我的课表）、addressbook（学生列表）
-      //   0.758/0.750/0.746/0.735 ⇒ 28：clock（我的预约）、document（上课记录）、commodity（全部套餐）、coordinates（校区列表）
+      //   0.758/0.750/0.746/0.735 ⇒ 28：clock（预约上课）、document（上课记录）、commodity（全部套餐）、coordinates（校区列表）
       //   0.719/0.688 ⇒ 28（已到上限）：flag（我的请假）、createtask（课时流水）
       // activity/document/coordinates 在个人中心「常用功能」网格里也有（表单、考试、收货地址，都走缺省 28），
       // 本页按归一 21px 取值，与那边差在 1~2px 墨迹内，不算分叉；
@@ -35,9 +35,9 @@ export default {
           title: "我的教务",
           items: [
             { name: "我的课表", icon: "activity", size: 26, path: "/pages/app/school/schedule/index/index", needStudent: true },
-            // 预约上课入口放在「我的预约」页底部按钮，本页不重复提供；
-            // 我的预约与课时流水均按 student_id 查询，进入时带上当前选中学生
-            { name: "我的预约", icon: "clock", size: 28, path: "/pages/app/school/booking/list/list", needStudent: true, withStudent: true },
+            // 入口按「预约上课」对外展示，进到的是预约记录列表页，页内底部按钮再进入场次预约页；
+            // 预约记录与课时流水均按 student_id 查询，进入时带上当前选中学生
+            { name: "预约上课", icon: "clock", size: 28, path: "/pages/app/school/booking/list/list", needStudent: true, withStudent: true },
             { name: "已购课程", icon: "daifukuan", size: 24, path: "/pages/app/school/balance/index/index", needStudent: true },
             { name: "课时流水", icon: "createtask", size: 28, path: "/pages/app/school/balance/logs/logs", needStudent: true, withStudent: true },
             { name: "上课记录", icon: "document", size: 28, path: "/pages/app/school/records/index/index", needStudent: true },

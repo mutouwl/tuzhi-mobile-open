@@ -13,6 +13,7 @@
                 counts-api="school.user.scheduleCounts"
                 count-unit="节"
                 loading-text="正在加载课次…"
+                :loading="calendarLoading"
                 @change="refresh"
             />
         </u-sticky>

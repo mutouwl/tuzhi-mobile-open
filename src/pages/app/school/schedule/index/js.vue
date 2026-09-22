@@ -13,6 +13,12 @@ export default {
                 groups: [],
                 pageLoading: true,
                 listLoading: false,
+                // 日历卡首屏加载态（传给 tz-school-calendar 的 loading）：从进页到「首个课表数据落地」
+                // （含前面拉学生信息那段）为 true，日历上盖一层与「选择日期」弹窗同款的加载蒙版。
+                // 此前这段只有列表区是骨架屏，日历角标却先渲染成一排「0节」，看着像这天没课；
+                // 只用于首屏不用于切天/翻周：那时列表自己有骨架屏，日历盖住反而点不动（快速连点是允许的，
+                // refreshSeq 就是为它准备的）
+                calendarLoading: true,
                 // 学生列表首次加载状态：loaded=成功过一次；error=最近一次加载失败且当前无学生。
                 // 此前学生为空/加载失败时页面渲染成"看似正常"的死页面（日历打开/刷新均静默 return），
                 // 表现为点年月弹窗不显示、切日期不触发加载，故这里显式记录状态供页面给出空态与重试
@@ -90,12 +96,16 @@ export default {
                     this.pageLoading = false;
                     // 无学生数据时标记失败：列表区显示"学生加载失败"+重试，不再静默
                     if (!this.students.length) this.studentsError = true;
+                    // 学生列表失败不会触发课表请求（只有成功分支才 refresh），日历的蒙版必须在这里撤掉，
+                    // 否则会一直盖着（日历卡是首屏的固定结构，蒙版撤不掉比空白角标更糟）
+                    this.calendarLoading = false;
                 });
             },
             // 拉取当前周（周一至周日）数据并按天分组；列表展示选中日期当天。
             // 周范围由选中日期派生（日历组件 v-model 回传选中日），翻周/切天都由 @change 触发本方法
             refresh() {
-                if (!this.studentId) return;
+                // 学生未就绪（无学生/选择失败）：本次不会打课表接口，日历的蒙版不能一直盖着
+                if (!this.studentId) { this.calendarLoading = false; return; }
                 const weekStart = mondayOf(this.selectedTs);
                 const startDate = fmtDate(weekStart);
                 const endDate = fmtDate(weekStart.getTime() + 6 * 86400000);
@@ -108,6 +118,8 @@ export default {
                 }).then((ret) => {
                     // 过期响应丢弃：快速切天/翻周时后发的请求先回，旧响应不得覆盖新数据
                     if (seq !== this.refreshSeq) return;
+                    // 首个课表数据已落地（成功或失败都算「初始化结束」），撤掉日历卡的加载蒙版
+                    this.calendarLoading = false;
                     this.allowLeave = ret.data.allow_leave !== false;
                     this.studentSign = ret.data.student_sign !== false;
                     this.refreshError = false;
@@ -130,6 +142,7 @@ export default {
                     // 拉取失败且当前无任何数据：标记失败态，列表区显示"课表加载失败"+重试（不再静默）
                     if (seq === this.refreshSeq) {
                         this.listLoading = false;
+                        this.calendarLoading = false;
                         if (!this.groups.length) this.refreshError = true;
                     }
                 });

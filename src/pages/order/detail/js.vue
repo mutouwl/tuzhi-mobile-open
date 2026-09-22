@@ -127,7 +127,10 @@ export default {
     getData() {
       that.getRefundLog();
       this.loading = true;
-      this.error = true;
+      // 首次加载（还没有订单数据）才回到骨架/空态；onShow、支付回调后的刷新静默更新已有内容，不再闪骨架
+      if (!that.data || !that.data.order_no) {
+        this.error = true;
+      }
       that.$api('order.detail', {
         order_no: that.pageParams.order_no
       }).then(res => {
@@ -148,6 +151,9 @@ export default {
           });
         }
 
+      }).catch(() => {
+        // 接口异常/未登录被拦截时释放骨架屏，避免首次进入永久停在占位态
+        this.loading = false;
       });
       uni.stopPullDownRefresh();
     },

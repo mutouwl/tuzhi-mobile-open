@@ -138,7 +138,10 @@ export default {
         if (res.code === 1) {
           var list = that.list;
           for (var i in res.data) {
-            list.push(res.data[i])
+            var item = res.data[i];
+            // 课程套餐的佣金按售卖规格配置，推广落地页是套餐详情，跳转与分享取套餐 ID
+            item.link_id = item.type == 'school_package' ? (item.package_id || item.id) : item.id;
+            list.push(item)
           }
           that.list = list
         }
@@ -173,6 +176,15 @@ export default {
       that.type.push({
         name: '圈子',
         type: 'circle',
+        key: that.type.length
+      });
+    }
+
+    // 仅当 school（教务）付费插件已安装时，添加“课程套餐”筛选项
+    if (that.$tools.systemConfig('app_isinstall_school')) {
+      that.type.push({
+        name: '课程套餐',
+        type: 'school_package',
         key: that.type.length
       });
     }

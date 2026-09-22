@@ -61,6 +61,16 @@ export default {
                 const n = parseFloat(v);
                 return isNaN(n) ? 0 : Math.round(n * 100) / 100;
             },
+            // 变动方向配色：增加（>0）绿 / 减少（<0）红 / 0 或缺失中性灰。
+            // 不按变动类型分色——类型文案本身已说明是什么变动（后台开通/购买增加/消课扣减/手动调整），
+            // 颜色只承担「一眼扫出增减」这一个职责。
+            // 口径：web 端课时流水「变动」列（change_lessons >= 0 ? green : red）与本模块课时余额页
+            // .change / .change.down（#00b42a / #f53f3f）同一套，两端同一方向同色
+            changeColor(change) {
+                const n = parseFloat(change);
+                if (!n) return 'gray'; // 0 与 NaN（字段缺失）同走中性灰，不给方向色
+                return n > 0 ? 'up' : 'down';
+            },
             // 搜索栏输入变化：组件在 Vue2 下不支持 v-model，显式同步 value
             onKeywordChange(e) {
                 this.keyword = (e && e.value) || '';

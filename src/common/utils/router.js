@@ -110,6 +110,9 @@ export default {
                     case 'package':
                         url = '/pages/app/school/package/detail/detail?id=' + src;
                         break;
+                    case 'school_package':
+                        url = '/pages/app/school/package/detail/detail?id=' + src;
+                        break;
                     case 'circle':
                         url = '/pages/app/circle/presale/presale?id=' + src;
                         break;

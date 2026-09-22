@@ -48,7 +48,7 @@ export default {
                 }, 800);
                 return;
             }
-            this.id = options.id;
+            this.id = this.$nav.parsePageParams(options).id;
         },
         onShow() { if (this.installed) this.getData(); },
         onPullDownRefresh() { this.getData(); uni.stopPullDownRefresh(); },

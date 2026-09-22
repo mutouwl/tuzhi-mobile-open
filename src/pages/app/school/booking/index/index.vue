@@ -15,6 +15,7 @@
                 :counts-params="{ course_id: courseId || 0 }"
                 count-unit="场"
                 loading-text="正在加载可约场次…"
+                :loading="calendarLoading"
                 @change="onDateChange"
             />
         </u-sticky>

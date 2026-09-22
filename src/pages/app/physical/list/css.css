@@ -68,3 +68,124 @@
 	font-size: 14px;
 	color: #999;
 }
+
+/* ===== 首屏骨架屏（仿商品卡：grid 双列 / list 单行） ===== */
+/* 本页样式未加 scoped，类名统一带 goods-sk- 前缀，避免外溢到其他页面；
+   尺寸对齐 components/tz/physical-goods.vue 的 .goods-item-box，骨架切真实卡片时不抖动 */
+.goods-sk-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.goods-sk-item {
+	background-color: #fff;
+	border-radius: 10px;
+	overflow: hidden;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+/* 灰块：复用 u-skeleton 的渐变与节奏（90deg / 1.8s），与全站骨架屏观感一致 */
+.goods-sk-block {
+	background: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+	background-size: 400% 100%;
+	animation: goods-skeleton 1.8s ease infinite;
+	border-radius: 3px;
+}
+
+@keyframes goods-skeleton {
+	0% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0 50%;
+	}
+}
+
+/* ---- grid：双列（封面 140px + 一行标题 + 价格行） ---- */
+.goods-sk-grid .goods-sk-item {
+	width: 49%;
+}
+
+.goods-sk-grid .goods-sk-cover {
+	width: 100%;
+	height: 140px;
+}
+
+.goods-sk-grid .goods-sk-info {
+	padding: 8px;
+}
+
+/* 标题条高度对齐真实标题 14px 字号的行盒 */
+.goods-sk-grid .goods-sk-title {
+	width: 76%;
+	height: 19px;
+}
+
+.goods-sk-grid .goods-sk-title2 {
+	display: none;
+}
+
+/* ---- list：单行（左封面 170px + 右信息，卡高 124px） ---- */
+.goods-sk-list {
+	flex-direction: column;
+}
+
+.goods-sk-list .goods-sk-item {
+	width: 100%;
+	height: 124px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.goods-sk-list .goods-sk-cover {
+	width: 170px;
+	height: 100%;
+}
+
+.goods-sk-list .goods-sk-info {
+	width: calc(100% - 170px);
+	padding: 8px;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.goods-sk-list .goods-sk-title {
+	width: 100%;
+	height: 14px;
+	margin-bottom: 8px;
+}
+
+.goods-sk-list .goods-sk-title2 {
+	width: 62%;
+	height: 14px;
+}
+
+/* 价格行：grid 紧跟标题，list 贴卡片底部（与真实卡片一致） */
+.goods-sk-price-row {
+	margin-top: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.goods-sk-list .goods-sk-price-row {
+	position: absolute;
+	left: 8px;
+	right: 8px;
+	bottom: 4px;
+	margin-top: 0;
+}
+
+/* 价格条对齐真实价签 16px 字号，销量条对齐 12px 字号 */
+.goods-sk-price {
+	width: 52px;
+	height: 22px;
+}
+
+.goods-sk-sales {
+	width: 44px;
+	height: 17px;
+}
+

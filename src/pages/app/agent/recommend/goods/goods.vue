@@ -27,7 +27,7 @@
 
 
 		<div class="goods-list" v-if="list.length > 0">
-			<div class="goods-item" v-if="item.prop" v-for="(item, index) in list" @click="$nav.to(item.id, item.type)">
+			<div class="goods-item" v-if="item.prop" v-for="(item, index) in list" @click="$nav.to(item.link_id, item.type)">
 				<div class="goods-item-cover" :style="{
 					'background-image': 'url(' + item.cover + ')',
 					'background-size': '100% 100%'
@@ -48,7 +48,7 @@
 							{{ parseFloat(item.price) > 0 ? item.price : '-' }}
 						</div>
 
-						<div class="goods-item-btn" @click.stop="shareGoods(item.id,item.type)">
+						<div class="goods-item-btn" @click.stop="shareGoods(item.link_id,item.type)">
 							<span>预计得</span><span class="value">{{ parseFloat(item.prop.price.goods) > 0 ? ' ¥' + item.prop.price.goods : item.prop.prop.goods + '%'}}</span>
 						</div>
 					</div>

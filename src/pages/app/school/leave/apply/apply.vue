@@ -82,7 +82,7 @@
                         icon="/static/image/empty.png"
                         width="70"
                         height="70"
-                        text="暂无可请假的课次"
+                        :text="sessionEmptyText"
                     />
                 </tz-popup-list>
                 <view class="popup-confirm"><u-button type="primary" text="确定" @click="confirmSessions"></u-button></view>

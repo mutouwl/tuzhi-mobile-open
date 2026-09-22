@@ -20,6 +20,12 @@ export default {
 		if (!stu || !stu.id) return;
 		uni.setStorageSync(KEY, { id: stu.id, name: stu.name || '', avatar: stu.avatar || '', phone: stu.phone || '', class_names: stu.class_names || '' });
 	},
+	// 丢掉失效记录（缓存的学生已被机构删除/解绑时调用），否则会一直把失效 id 恢复成默认选中
+	clear() {
+		try {
+			uni.removeStorageSync(KEY);
+		} catch (e) {}
+	},
 	// 从学生列表中恢复默认选中：缓存学生在列表中则返回其 id，否则返回列表第一个
 	resolve(students) {
 		if (!students || !students.length) return 0;

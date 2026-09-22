@@ -44,7 +44,7 @@
             <view class="school-block">
                 <tz-title title="课程介绍" :more="false" />
                 <tz-box padding="0 15px 15px">
-                    <rich-text v-if="courseIntroduction" :nodes="courseIntroduction" />
+                    <tz-parse v-if="courseIntroduction" :content="courseIntroduction" />
                     <u-empty v-else icon="/static/image/empty.png" width="70" height="70" text="暂无课程介绍" />
                 </tz-box>
             </view>

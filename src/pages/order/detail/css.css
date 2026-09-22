@@ -319,3 +319,108 @@
 .enroll-popup-ops {
     margin-top: 16px;
 }
+
+/* 订单详情首屏骨架屏：尺寸与真实内容逐块对齐（状态行 36px 圆图标 + 标题/描述两行、
+   商品行 80px 高 / 28% 封面与 course 组件同口径、信息行对齐 u-cell large 5px 上下内边距 + 14px 字号行）；
+   灰块颜色取 uview 骨架屏静态块口径 #e5e6eb（与提交订单页 / 报名信息弹层骨架屏一致）。
+   本页 css 未加 scoped，类名统一 detail-sk- 前缀防外溢 */
+.detail-sk-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.detail-sk-card + .detail-sk-card {
+    margin-top: 10px;
+}
+
+.detail-sk-status {
+    display: flex;
+    align-items: center;
+}
+
+.detail-sk-status-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #e5e6eb;
+}
+
+.detail-sk-status-info {
+    flex: 1;
+    min-width: 0;
+    margin-left: 8px;
+}
+
+.detail-sk-status-title {
+    width: 40%;
+    height: 16px;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.detail-sk-status-label {
+    width: 60%;
+    height: 12px;
+    margin-top: 7px;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.detail-sk-goods {
+    height: 80px;
+    margin: 10px 0;
+    display: flex;
+    overflow: hidden;
+}
+
+.detail-sk-goods-cover {
+    width: 28%;
+    height: 100%;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background: #e5e6eb;
+}
+
+.detail-sk-goods-info {
+    width: 71%;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.detail-sk-total {
+    width: 40%;
+    height: 18px;
+    margin: 14px 0 0 auto;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.detail-sk-cell {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+.detail-sk-cell + .detail-sk-cell {
+    border-top: 1px solid #f7f8fa;
+}
+
+.detail-sk-cell-label {
+    width: 50px;
+    height: 14px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.detail-sk-cell-value {
+    width: 40%;
+    height: 14px;
+    margin-left: auto;
+    border-radius: 4px;
+    background: #e5e6eb;
+}

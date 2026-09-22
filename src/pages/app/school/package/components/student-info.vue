@@ -1,10 +1,10 @@
 <template>
 	<view class="student-info">
-		<image class="student-avatar" :src="student.avatar" mode="aspectFill" v-if="student.avatar" />
-		<view class="student-avatar placeholder" v-else>{{ (student.name || '?').slice(0, 1) }}</view>
+		<!-- 头像（含空头像/图片加载失败）统一走 u-avatar，与学生编辑页同一组件同一默认图，不再用姓名首字占位 -->
+		<u-avatar class="student-avatar" :src="student.avatar" :size="36" mode="aspectFill" />
 		<view class="student-info-main">
 			<view class="student-name">{{ student.name }}</view>
-			<view class="student-classes" v-if="student.class_names">
+			<view class="student-classes" v-if="showClass && student.class_names">
 				<text class="student-class-tag" v-for="(name, i) in classList" :key="i">{{ name }}</text>
 			</view>
 		</view>
@@ -19,6 +19,11 @@ export default {
 		student: {
 			type: Object,
 			default: () => ({})
+		},
+		// 是否展示班级标签：选择上课学生弹窗列表不展示
+		showClass: {
+			type: Boolean,
+			default: true
 		}
 	},
 	computed: {
@@ -38,22 +43,12 @@ export default {
 	min-width: 0;
 }
 
+/* 头像盒只留布局（尺寸/不压缩/与文字间距），圆形与默认图由 u-avatar 自己出 */
 .student-avatar {
 	width: 36px;
 	height: 36px;
 	flex-shrink: 0;
-	border-radius: 50%;
-	background: #e5e6eb;
 	margin-right: 12px;
-}
-
-.student-avatar.placeholder {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: #0968f6;
-	color: #fff;
-	font-size: 16px;
 }
 
 .student-info-main {

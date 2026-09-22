@@ -84,7 +84,7 @@
 }
 
 .channel-item{
-    width: calc(50% - 25px);
+    width: calc(50% - 5px);
     margin: 5px 0;
     padding: 10px;
     display: flex;
@@ -205,4 +205,96 @@
     font-size: 12px;
     margin-top: 8px;
     opacity: .7;
+}
+
+/* ===== 分销中心首屏骨架屏 =====
+   占位块复用页面真实容器类（.user-box/.level-box/.data-total-box/.data-box/.channel-box），
+   只补占位条自身的尺寸；本页样式非 scoped，新增类统一 agent-sk 前缀并限定在 .agent-sk 内，避免污染其它页面 */
+
+/* 流光底：与全站骨架屏同色系同节奏（u-skeleton / 我的页 / 课程详情） */
+.agent-sk .agent-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: agent-sk-animate 1.8s ease infinite;
+}
+
+/* 深色会员卡、橙色收益卡上用半透明白；浅橙的等级条上用半透明品牌橙；#F7F8FA 推广卡上灰色太浅，加深一档 */
+.agent-sk .agent-sk-light{
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, .18) 25%, rgba(255, 255, 255, .34) 37%, rgba(255, 255, 255, .18) 50%);
+}
+
+.agent-sk .agent-sk-brand{
+    background-image: linear-gradient(90deg, rgba(250, 120, 31, .22) 25%, rgba(250, 120, 31, .42) 37%, rgba(250, 120, 31, .22) 50%);
+}
+
+.agent-sk .agent-sk-deep{
+    background-image: linear-gradient(90deg, #E5E6EB 25%, #D6D8DE 37%, #E5E6EB 50%);
+}
+
+/* 占位条：默认按 12px 标签行高，标题/数值用 sk-h-* 抬高一档，与真实字号对齐 */
+.agent-sk .agent-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.agent-sk .agent-sk-line + .agent-sk-line{
+    margin-top: 8px;
+}
+
+.agent-sk .sk-h-12{ height: 12px; }
+.agent-sk .sk-h-14{ height: 14px; }
+.agent-sk .sk-h-20{ height: 20px; }
+
+.agent-sk .sk-w-15{ width: 15%; }
+.agent-sk .sk-w-25{ width: 25%; }
+.agent-sk .sk-w-30{ width: 30%; }
+.agent-sk .sk-w-35{ width: 35%; }
+.agent-sk .sk-w-50{ width: 50%; }
+.agent-sk .sk-w-60{ width: 60%; }
+.agent-sk .sk-w-70{ width: 70%; }
+.agent-sk .sk-w-75{ width: 75%; }
+.agent-sk .sk-w-100{ width: 100%; }
+
+/* 等级卡与推广卡内的条是百分比宽，真实页面靠文字撑开容器，占位时要显式给容器定宽 */
+.agent-sk .level-info,
+.agent-sk .channel-item-info{
+    flex: 1;
+    min-width: 0;
+    margin-right: 10px;
+}
+
+/* 等级卡右侧 vip 图标、推广卡右侧功能图标的位置占位 */
+.agent-sk .agent-sk-badge{
+    width: 30px;
+    height: 25px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.agent-sk .agent-sk-icon{
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    flex: none;
+}
+
+/* 「可提现金额」行：对齐 u-cell 的分割线与上下留白（::v-deep .u-cell__body 为 margin-top/padding-top 10px） */
+.agent-sk .agent-sk-cell{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #F2F3F5;
+}
+
+/* 同一行的两条占位条（居中对齐），去掉竖排时的行间距 */
+.agent-sk .agent-sk-cell .agent-sk-line{
+    margin-top: 0;
+}
+
+@keyframes agent-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
 }

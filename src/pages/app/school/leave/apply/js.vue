@@ -51,6 +51,11 @@ export default {
                 return '已选' + this.selectedSessions.length + '个课次';
             },
             typeName() { return this.types[this.type]; },
+            // 课次空态文案：选了具体课程时说清是「这门课没有可请假的课次」——课程选项含只买了课时、
+            // 还没排课的课程，一律显示「暂无可请假的课次」会被当成筛选没生效或列表坏了（与后台请假弹窗同口径）
+            sessionEmptyText() {
+                return this.courseId > 0 ? '该课程下暂无可请假的课次' : '暂无可请假的课次';
+            },
             // 课程筛选回显：选项由后端随课次列表下发（首项 id=0 为「全部课程」），未取到选项时兜底「全部课程」
             courseName() {
                 const o = this.courseOptions.find((x) => x.id == this.courseId);

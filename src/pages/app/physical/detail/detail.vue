@@ -1,6 +1,38 @@
 <template>
   <view class="goods-detail">
-    <u-loading-page :loading="skeletonLoading" bg-color="#F7F8FA"></u-loading-page>
+    <!-- 首屏骨架屏：仿详情页真实结构（轮播 / 价格标题 / 信息行 / 详情正文），底部操作栏同步占位，
+         数据落地后整块换成真实内容，页面不跳位 -->
+    <view class="detail-sk-page" v-if="skeletonLoading">
+      <view class="detail-sk-swiper"></view>
+
+      <view class="detail-sk-card">
+        <view class="detail-sk-price-row">
+          <view class="detail-sk-block detail-sk-price"></view>
+          <view class="detail-sk-block detail-sk-sales"></view>
+        </view>
+        <view class="detail-sk-block detail-sk-title"></view>
+      </view>
+
+      <view class="detail-sk-cells">
+        <view class="detail-sk-cell" v-for="i in 3" :key="i">
+          <view class="detail-sk-block detail-sk-label"></view>
+          <view class="detail-sk-block detail-sk-value"></view>
+        </view>
+      </view>
+
+      <view class="detail-sk-card detail-sk-detail-card">
+        <view class="detail-sk-section-head">
+          <view class="detail-sk-block detail-sk-section-title"></view>
+        </view>
+        <view class="detail-sk-block detail-sk-line detail-sk-line-first"></view>
+        <view class="detail-sk-block detail-sk-line detail-sk-line-short"></view>
+      </view>
+
+      <view class="detail-sk-tabbar">
+        <view class="detail-sk-button"></view>
+      </view>
+    </view>
+
     <view class="detail-swiper-selector" v-if="!skeletonLoading && goodsInfo">
       <swiper
         class="goods-swiper"
@@ -98,6 +130,15 @@
     <view class="detail-tabbar h5-bottom-bar" v-else-if="!skeletonLoading && goodsInfo">
       <button class="buy-btn-full" @tap="showSelectSku = true">立即购买</button>
     </view>
+
+    <!-- 商品不存在或已下架（含缺少 id、接口返回失败）：给一处出口，避免只留一张空白页 -->
+    <u-empty
+      v-if="!skeletonLoading && !goodsInfo"
+      icon="/static/image/empty.png"
+      width="70"
+      height="70"
+      text="商品不存在或已下架"
+    />
 
     <!-- SKU选择弹窗 -->
     <sku-select-modal

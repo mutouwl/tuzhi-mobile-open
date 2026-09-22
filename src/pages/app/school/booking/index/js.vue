@@ -24,6 +24,12 @@ export default {
             weekCounts: {},
             pageLoading: true,
             listLoading: false,
+            // 日历卡首屏加载态（传给 tz-school-calendar 的 loading）：从进页到「首屏可约场次回包」为 true
+            // （学生由 URL 带入、无需拉取，所以初始化的等待就在这一次请求上），日历上盖一层与
+            // 「选择日期」弹窗同款的加载蒙版。此前这段只有列表区是骨架屏，日历角标却先渲染成一排「0场」；
+            // 只用于首屏不用于切天/翻周：那时列表自己有骨架屏，日历盖住反而点不动（快速连点是允许的，
+            // refreshSeq 就是为它准备的）
+            calendarLoading: true,
             // 分页状态：page 已加载到第几页、hasMore 是否还有下一页、loadStatus 供 u-loadmore 展示
             page: 1,
             hasMore: false,
@@ -133,6 +139,8 @@ export default {
         loadList(refresh) {
             if (!this.studentId) {
                 this.pageLoading = false;
+                // 没带学生进来就一个接口都不会发：日历的蒙版必须撤掉，否则一直盖着
+                this.calendarLoading = false;
                 return;
             }
             // 翻页请求进行中忽略重复触发；首屏刷新不设此限制，切天要能立即生效（过期响应由 refreshSeq 丢弃）
@@ -154,6 +162,9 @@ export default {
                 // 否则它的在途分页会与预约后的就地重拉（reloadInPlace）各拉各的
                 if (seq !== this.refreshSeq) return;
                 this.fetching = false;
+                // 首屏场次已回包（成功或失败都算「初始化结束」）：撤掉日历卡的加载蒙版。
+                // fetchPage 内部已吞掉异常并回 null，这里没有第二条出口，一处即可覆盖成功/失败两态
+                this.calendarLoading = false;
                 if (!data) {
                     this.listLoading = false;
                     this.loadStatus = 'loadmore';

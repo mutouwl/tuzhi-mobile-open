@@ -83,6 +83,7 @@
   font-size: 14px;
 }
 
+/* 卡头：整卡只有左上角一枚标签，space-between 下单项即靠左 */
 .card-head {
   display: flex;
   align-items: center;
@@ -90,20 +91,45 @@
   margin-bottom: 8px;
 }
 
-/* 卡头值：变动类型 + 变动课时同字号同字重同色（13px 标签 + 14px 值），
-   增减方向靠 +/- 符号区分，不再用橙/绿/红三色，避免一屏流水颜色过杂。
-   类名带 log- 前缀：本页样式非 scoped，裸 .type / .change 会作用到其他页同名元素 */
-.log-type,
-.log-change {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1d2129;
-}
-
-/* 卡头字段组：标签（变动类型/变动）+ 值成对展示，标签浅灰小字、值深灰一档 */
-.log-field {
+/* 卡头标签：变动类型 + 本次变动课时合并成一枚 Tag，置于卡片左上角（口径对齐 web 课时流水的变动类型 Tag，
+   原先拆成「变动类型 xx / 变动 +N课时」两组「标签+值」占满整行、信息重复）。
+   底色按变动方向区分（见下方 .log-tag-up/down），不看变动类型；增减另由值前 +/- 符号直读。
+   类名带 log- 前缀：本页样式非 scoped，裸 .tag 会作用到其他页同名元素 */
+.log-tag {
   display: flex;
   align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* 标签内变动课时：比类型文案重一档，一眼分出「是什么变动」与「变了多少」 */
+.log-tag-change {
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* 标签配色：只区分变动方向——增加=绿、减少=红。
+   口径来自本模块既有实现：课时余额页 .change{color:#00b42a} / .change.down{color:#f53f3f}，
+   web 端课时流水「变动」列也是 change_lessons >= 0 ? green : red ⇒ 两端同一方向同色。
+   不按变动类型分色：类型文案（后台开通/购买增加/消课扣减/手动调整）本身已说明是什么变动，
+   颜色只承担「一眼扫出增减」一个职责，四类各自一色反而让方向淹没在配色里。
+   浅底 + 同色深字，一屏流水清爽且方向可辨 */
+.log-tag-up {
+  color: #00b42a;
+  background: #e8ffea;
+}
+
+.log-tag-down {
+  color: #f53f3f;
+  background: #ffece8;
+}
+
+/* 兜底：变动为 0 或字段缺失（既不增加也不减少）走中性灰，不给方向色 */
+.log-tag-gray {
+  color: #86909c;
+  background: #f2f3f5;
 }
 
 /* 字段标签：浅灰小字；值前留 6px 间距 */
@@ -145,39 +171,61 @@
   padding: 8px 0;
 }
 
-/* ===== 课时流水骨架屏（加载中占位，仿流水卡片结构） ===== */
-.sk-head {
+/* ===== 课时流水骨架屏（加载中占位，仿流水卡片结构，与真实卡逐行对齐） ===== */
+/* 骨架类名统一 log-sk- 前缀：本页样式非 scoped，裸 .sk-head 会与圈子动态详情页骨架的 .sk-head 同名互串 */
+.log-sk-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 8px;
 }
 
-/* 卡头字段组占位：与真实卡头同结构（标签条 + 值条） */
-.sk-head-item {
-  display: flex;
-  align-items: center;
-}
-
-.sk-bar {
+.log-sk-bar {
   background: #e5e6eb;
   border-radius: 4px;
 }
 
-/* 标签条：按 13px 四字标签宽度取 52px，与真实标签占位一致 */
-.sk-head-label {
-  width: 52px;
+/* 标签条：与真实卡头标签同形（12px 字 × 18px 行高 + 上下各 2px 内边距 = 22px 高；
+   宽度按最长组合「后台开通 + +20课时」约 114px） */
+.log-sk-tag {
+  width: 114px;
+  height: 22px;
+}
+
+/* 字段行：行高 22px + 行距 4px，与真实 .log-row 逐行同高 ⇒ 骨架卡与真实卡等高 */
+.log-sk-row {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+
+.log-sk-row + .log-sk-row {
+  margin-top: 4px;
+}
+
+/* 行内标签条：真实标签列定宽 56px，条宽取 48px 留 8px 视觉间隙（否则与值条连成一条看不出两列） */
+.log-sk-label {
+  width: 48px;
   height: 13px;
-  margin-right: 6px;
 }
 
-/* 值条：与卡头值的 14px 字号同高 */
-.sk-type {
-  width: 72px;
-  height: 14px;
+/* 值条高度与真实值文字 13px 同档 */
+.log-sk-value {
+  height: 13px;
 }
 
-.sk-change {
-  width: 56px;
-  height: 14px;
+/* 值条宽度按各行文案长度取：课程名最长、时间次之 */
+.log-sk-value.w-course {
+  width: 46%;
+}
+
+.log-sk-value.w-before {
+  width: 26%;
+}
+
+.log-sk-value.w-after {
+  width: 26%;
+}
+
+.log-sk-value.w-time {
+  width: 48%;
 }

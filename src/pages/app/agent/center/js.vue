@@ -48,6 +48,9 @@ export default {
           that.statistics = res.data;
         }
 
+      }).catch(() => {
+        // 请求失败也要撤掉首屏骨架屏，否则页面一直停在占位态
+        that.loading = false;
       });
       
     },
@@ -83,16 +86,19 @@ export default {
       });
     },
     getStatus() {
-      that.loading = true;
+      // loading 只驱动首屏骨架屏：统一由 getData 的统计接口关闭（早关会露出 0 值），且此处不置 true，
+      // 免得 onShow / 下拉刷新重拉时闪骨架屏挡住已渲染内容
       that.$api('app.agent.recruit.getStatus', that.form).then(res => {
-        that.loading = false;
-        if (res.code === 1) {
-          if(res.data != 1){
+        if (res.code === 1 && res.data == 1) {
+          that.getData();
+        } else {
+          that.loading = false;
+          if (res.code === 1) {
             that.$nav.to('/pages/app/agent/member/recruit/recruit','local','redirectTo');
-          }else{
-            that.getData();
           }
         }
+      }).catch(() => {
+        that.loading = false;
       });
     },
     channels(){

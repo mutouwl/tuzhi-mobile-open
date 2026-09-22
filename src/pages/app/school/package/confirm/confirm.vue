@@ -38,9 +38,9 @@
                 </view>
                 <view class="school-cell-item student-cell" @click="studentPopup = true">
                     <view class="school-cell-label">上课学生</view>
-                    <!-- 已选学生复用「选择上课学生」弹层的列表样式（头像 + 姓名 + 班级标签）；
+                    <!-- 已选学生复用「选择上课学生」弹层的列表样式（头像 + 姓名）；
                          school-cell-value 挂到小程序的组件宿主节点上撑满剩余宽度，箭头才会贴右（组件内部的 flex:1 只作用在 H5 端） -->
-                    <student-info class="school-cell-value" :student="student" v-if="student.id" />
+                    <student-info class="school-cell-value" :student="student" :show-class="false" v-if="student.id" />
                     <view class="school-cell-value" v-else>
                         <text class="school-cell-value-text cell-placeholder">请选择上课学生</text>
                     </view>

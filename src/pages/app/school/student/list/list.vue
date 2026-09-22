@@ -18,8 +18,8 @@
                 </view>
             </block>
             <view class="sl-card" v-for="s in students" :key="s.id">
-                <image class="avatar" :src="s.avatar" mode="aspectFill" v-if="s.avatar" />
-                <view class="avatar placeholder" v-else>{{ (s.name || '?').slice(0, 1) }}</view>
+                <!-- 头像（含空头像/图片加载失败）统一走 u-avatar，与学生编辑页同一组件同一默认图，不再用姓名首字占位 -->
+                <u-avatar class="avatar" :src="s.avatar" :size="44" mode="aspectFill" />
                 <view class="sl-info">
                     <view class="name">{{ s.name }}</view>
                     <view class="phone" v-if="s.phone">{{ s.phone }}</view>

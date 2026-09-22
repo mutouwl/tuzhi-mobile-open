@@ -6,7 +6,7 @@ import PackageGoodsCard from '@/components/tz/package-goods-card.vue';
 export default {
     components: { StudentSelectPopup, StudentInfo, PackageGoodsCard },
     data() {
-        // 预填上次选中的学生（教务中心/确认页切换后缓存），进页后拉列表刷新姓名/班级并兜底解析
+        // 预填上次选中的学生（教务中心/确认页切换后缓存），进页后拉名单按接口数据校正（见 resolveStudent）
         return { id: 0, skuIndex: 0, campusId: 0, form: {}, student: schoolStudent.get() || { id: 0, name: '' }, studentPopup: false, skeletonLoading: true, installed: true };
     },
     computed: {
@@ -51,16 +51,15 @@ export default {
                 this.skeletonLoading = false;
             });
         },
-        // 拉取绑定学生列表：缓存学生仍存在时用接口数据刷新展示字段，否则按统一规则兜底解析
+        // 拉取绑定学生列表：本页学生以接口下发的名单为准（接口只含未删除的学生），缓存只作首帧占位。
+        // 缓存学生不在名单中＝已被机构删除或已解绑：先丢掉失效缓存再按统一规则回落，
+        // 否则本页会一直回显已删除的学生，教务中心也会继续拿这个失效 id 拼学生页链接
         resolveStudent() {
             this.$api('school.user.students').then((ret) => {
                 const list = (ret.data && ret.data.list) || [];
-                if (!list.length) return;
-                if (this.student.id) {
-                    const hit = list.find((x) => x.id == this.student.id);
-                    if (hit) this.student = hit;
-                    return;
-                }
+                const hit = this.student.id ? list.find((x) => x.id == this.student.id) : null;
+                if (hit) { this.student = hit; return; }
+                if (this.student.id) schoolStudent.clear();
                 this.student = list.find((x) => x.id == schoolStudent.resolve(list)) || { id: 0, name: '' };
             }).catch(() => {});
         },

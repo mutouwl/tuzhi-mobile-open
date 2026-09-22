@@ -1,12 +1,65 @@
 <template>
 	<div class="container">
-		<tz-loading-page :loading="loading"/>
 		<!-- #ifdef MP-TOUTIAO -->
 		<u-empty icon="/static/image/empty.png" width="70" height="70" text="分销功能禁止抖音小程序端使用" />
 		<!-- #endif -->
 		<!-- #ifndef MP-TOUTIAO -->
-		<u-empty v-if="config.status == 0" icon="/static/image/empty.png" width="70" height="70" text="分销功能已关闭" />
-		<template v-if="config.status == 1">
+		<!-- 首屏骨架屏：原位复用真实卡片结构（深色会员卡/收益栏/数据格/推广入口）占位，撤掉骨架屏后不跳版；
+		     仅首次进入显示，onShow 与下拉刷新重拉保留已渲染内容 -->
+		<div class="agent-sk" v-if="loading">
+			<tz-box bgColor="#242531" padding="20px 15px">
+				<div class="user-box">
+					<div class="user-avatar agent-sk-block agent-sk-light"></div>
+					<div class="user-info">
+						<div class="agent-sk-line agent-sk-block agent-sk-light sk-h-14 sk-w-35"></div>
+					</div>
+					<!-- 右侧箭头留位，否则 space-between 会把信息列顶偏 -->
+					<div class="user-more"></div>
+				</div>
+				<div class="level-box">
+					<div class="level-info">
+						<div class="agent-sk-line agent-sk-block agent-sk-brand sk-h-14 sk-w-30"></div>
+						<div class="agent-sk-line agent-sk-block agent-sk-brand sk-h-12 sk-w-100"></div>
+					</div>
+					<div class="agent-sk-badge agent-sk-block agent-sk-brand"></div>
+				</div>
+			</tz-box>
+
+			<tz-box bgColor="none">
+				<div class="data-total-box" style="border-radius: 6px 6px 0 0 ;">
+					<div class="data-total-item" v-for="i in 2" :key="i">
+						<div class="agent-sk-line agent-sk-block agent-sk-light sk-w-100"></div>
+						<div class="agent-sk-line agent-sk-block agent-sk-light sk-h-20 sk-w-60"></div>
+					</div>
+				</div>
+				<tz-box>
+					<div class="data-box">
+						<div class="data-item" v-for="i in 4" :key="i">
+							<div class="agent-sk-line agent-sk-block sk-w-60"></div>
+							<div class="agent-sk-line agent-sk-block sk-h-20 sk-w-35"></div>
+						</div>
+					</div>
+					<div class="agent-sk-cell">
+						<div class="agent-sk-line agent-sk-block sk-h-14 sk-w-25"></div>
+						<div class="agent-sk-line agent-sk-block sk-h-14 sk-w-15"></div>
+					</div>
+				</tz-box>
+				<tz-divider bgColor="none" />
+				<tz-box padding="10px 15px">
+					<div class="channel-box">
+						<div class="channel-item" v-for="i in 2" :key="i">
+							<div class="channel-item-info">
+								<div class="agent-sk-line agent-sk-block agent-sk-deep sk-h-14 sk-w-70"></div>
+								<div class="agent-sk-line agent-sk-block agent-sk-deep sk-w-75"></div>
+							</div>
+							<div class="agent-sk-icon agent-sk-block agent-sk-deep"></div>
+						</div>
+					</div>
+				</tz-box>
+			</tz-box>
+		</div>
+		<u-empty v-if="!loading && config.status == 0" icon="/static/image/empty.png" width="70" height="70" text="分销功能已关闭" />
+		<template v-if="!loading && config.status == 1">
 			<tz-box bgColor="#242531" padding="20px 15px">
 
 				<div class="user-box" @click="$nav.to('/pages/app/agent/member/level/level')">

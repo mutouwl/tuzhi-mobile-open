@@ -1,7 +1,34 @@
 <template>
 	<view class="container">
-		<tz-loading-page tip="订单数据加载中" :loading="loading" />
-		<template v-if="!error">
+		<!-- 加载骨架屏：块结构与真实内容逐块对齐（状态卡 / 商品卡 / 订单信息卡），替代整页 loading 遮罩；
+		     仅首次加载展示，onShow 等已有内容刷新静默更新不闪骨架 -->
+		<template v-if="loading && error">
+			<view class="detail-sk-card">
+				<view class="detail-sk-status">
+					<view class="detail-sk-status-icon"></view>
+					<view class="detail-sk-status-info">
+						<view class="detail-sk-status-title"></view>
+						<view class="detail-sk-status-label"></view>
+					</view>
+				</view>
+			</view>
+			<view class="detail-sk-card">
+				<view class="detail-sk-goods" v-for="i in 2" :key="i">
+					<view class="detail-sk-goods-cover"></view>
+					<view class="detail-sk-goods-info">
+						<u-skeleton :loading="true" :animate="true" :title="true" title-width="70%" title-height="16" :rows="2" rows-width="45%" rows-height="12" />
+					</view>
+				</view>
+				<view class="detail-sk-total"></view>
+			</view>
+			<view class="detail-sk-card">
+				<view class="detail-sk-cell" v-for="i in 4" :key="i">
+					<view class="detail-sk-cell-label"></view>
+					<view class="detail-sk-cell-value"></view>
+				</view>
+			</view>
+		</template>
+		<template v-else-if="!error">
 			<tz-box round>
 				<status-bar :status="data.status" :describe="data.describe" />
 			</tz-box>
@@ -199,7 +226,7 @@
 					</view>
 				</u-popup>
 		</template>
-		<u-empty mode="order" text="加载中" v-if="error"></u-empty>
+		<u-empty mode="order" text="加载中" v-else></u-empty>
 
 		<tz-footer />
 	</view>

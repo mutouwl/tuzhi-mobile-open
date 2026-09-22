@@ -2,14 +2,27 @@
 	<view class="container">
 		<div class="user-header">
 			<div class="info">
-				<div @click="$nav.to('/pages/user/setting/setting')" class="avatar" v-if="userInfo && userInfo.avatar">
-					<img :src="userInfo.avatar">
-				</div>
-				<div class="content" @click="$nav.to('/pages/user/setting/setting')">
-					<div class="username">
-						{{ userInfo && userInfo.nickname ? userInfo.nickname : '-'}}
+				<!-- 首屏用户信息加载中：头像与用户名按真实结构占位（.avatar 的 60px 圆、.username 的 35px 行盒），
+				     数据到达后尺寸不变，避免头像瞬间出现把用户名挤到左边 -->
+				<template v-if="loading">
+					<div class="avatar skeleton-avatar"></div>
+					<div class="content">
+						<div class="username skeleton-username">
+							<div class="skeleton-bar"></div>
+						</div>
 					</div>
-				</div>
+				</template>
+
+				<template v-else>
+					<div @click="$nav.to('/pages/user/setting/setting')" class="avatar" v-if="userInfo && userInfo.avatar">
+						<img :src="userInfo.avatar">
+					</div>
+					<div class="content" @click="$nav.to('/pages/user/setting/setting')">
+						<div class="username">
+							{{ userInfo && userInfo.nickname ? userInfo.nickname : '-'}}
+						</div>
+					</div>
+				</template>
 				<div class="message" @click="$nav.to('/pages/public/message/message')">
 					<tz-icon name="message" />
 				</div>
