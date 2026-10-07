@@ -10,10 +10,26 @@
       :overlayStyle="{ zIndex: 12000 }"
       :zIndex="12010"
     >
+      <!-- 加载态：按真实版式逐块铺灰（八格礼物 + 底栏合计与赠送两段），不再用「转圈 + 加载中」。
+           骨架外壳复用真实类（.gift-options-box / .gift-item / .gift-footer），礼物到手时不跳版（M16） -->
       <tz-box bgColor="none" v-if="loading">
-        <div class="gift-options-box gift-loading">
-          <u-loading-icon size="40" color="#ff7d00"></u-loading-icon>
-          <div class="loading-text">加载中…</div>
+        <div class="gift-options-box">
+          <u-grid :col="4" :border="false" align="left">
+            <u-grid-item v-for="i in 8" :key="'gft-sk-' + i">
+              <div class="gift-item">
+                <div class="gft-sk-icon"></div>
+                <div class="gft-sk-name"></div>
+                <div class="gft-sk-price"></div>
+              </div>
+            </u-grid-item>
+          </u-grid>
+        </div>
+        <div class="gift-footer">
+          <div class="gft-sk-total"></div>
+          <div class="gft-sk-acts">
+            <div class="gft-sk-count"></div>
+            <div class="gft-sk-send"></div>
+          </div>
         </div>
       </tz-box>
 
@@ -64,7 +80,7 @@
           icon="/static/image/empty.png"
           width="50"
           height="50"
-          text="暂无礼物"
+          :text="error || '暂无礼物'"
         />
       </tz-box>
 
@@ -93,6 +109,8 @@ export default {
       show: false,
       loading: false,
       list: [],
+      // 取列表失败那一句（接口 msg）：空态吃它，不把接口故障说成「暂无礼物」（M13）
+      error: '',
       giftCount: 1,
       checkedOptionsIndex:0,
       orderNo:''
@@ -153,11 +171,21 @@ export default {
       }
       that.loading = true;
       that.checkedOptionsIndex = 0;
+      that.error = '';
+      // 退出分支一次写全：成功 / 业务失败 / 网络异常，三条都要把 loading 收回去
+      // （原先只有 .then 一条，请求被拒时骨架停在界面上不下来）
       that.$api("live.gift.options", {}).then((res) => {
-        if (res.code === 1) {
-          that.list = res.data;
-        }
         that.loading = false;
+        if (res && res.code === 1) {
+          that.list = res.data || [];
+          return;
+        }
+        that.list = [];
+        that.error = (res && res.msg) || '礼物列表获取失败，请稍后重试';
+      }).catch(() => {
+        that.loading = false;
+        that.list = [];
+        that.error = '礼物列表获取失败，请稍后重试';
       });
     },
     close() {
@@ -233,17 +261,60 @@ export default {
   overflow-x: auto;
 }
 
-.gift-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* 加载态灰块：格子 = 真实格 .gift-item（图标 40 方、名称 12 高、价格 12 高），
+   底栏 = 真实底栏 .gift-footer（合计 62 宽、数量框 26 高、赠送 80×36），M16 */
+.gft-sk-icon,
+.gft-sk-name,
+.gft-sk-price,
+.gft-sk-total,
+.gft-sk-count,
+.gft-sk-send {
+  background: #e5e6eb;
 }
 
-.loading-text {
-  color: #999;
-  font-size: 14px;
-  margin-top: 10px;
+.gft-sk-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  margin: 0 auto;
+}
+
+.gft-sk-name {
+  width: 60%;
+  height: 12px;
+  border-radius: 4px;
+  margin: 4px auto 0;
+}
+
+.gft-sk-price {
+  width: 38%;
+  height: 12px;
+  border-radius: 4px;
+  margin: 2px auto 0;
+}
+
+.gft-sk-total {
+  width: 62px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.gft-sk-acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gft-sk-count {
+  width: 120px;
+  height: 26px;
+  border-radius: 4px;
+}
+
+.gft-sk-send {
+  width: 80px;
+  height: 36px;
+  border-radius: 4px;
 }
 
 .gift-item {

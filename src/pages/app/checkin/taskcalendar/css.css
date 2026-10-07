@@ -1,0 +1,140 @@
+/* 打卡闯关日历页（我的闯关）：版式一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page → 内容区 .school-cards（左右留边 10）→ 区块卡一律 .school-card
+   （白底、直角不做圆角、内衬 14、卡间距 10、无阴影），与打卡记录页 .cr-* 逐块同口径；
+   任务卡由 tz-checkin-task-card 按同口径渲染；头像圆角 50%、骨架条 4px 与教务同档，
+   本页不再自定义卡片圆角/阴影/内衬 */
+
+/* ===== 首屏骨架屏：外壳直接用真实卡的 .school-card（直角、内衬 14、卡间距 10、无阴影），
+   静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（与教务列表/详情页骨架屏同口径），
+   块尺寸与真实版式对应（头像 44、统计三格、日历卡高、任务卡按钮块 72x30） ===== */
+.ctc-sk-card {
+  display: block;
+}
+/* 用户卡骨架行：与真实 .ctc-head 同排列 */
+.ctc-sk-head {
+  display: flex;
+  align-items: center;
+}
+.ctc-sk-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.ctc-sk-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+.ctc-sk-stats {
+  display: flex;
+  align-items: stretch;
+}
+.ctc-sk-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ctc-sk-line {
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.ctc-sk-line.w40 {
+  width: 40%;
+}
+.ctc-sk-line.w24 {
+  width: 24%;
+  height: 18px;
+  margin-top: 6px;
+}
+.ctc-sk-cal {
+  height: 260px;
+}
+.ctc-sk-btn {
+  width: 72px;
+  height: 30px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-top: 10px;
+}
+
+/* 用户卡与统计卡：白底直角卡由 .school-card 给（与打卡记录页 .cr-* 同口径，不做渐变色底、不加阴影），
+   这里只管卡内排列 */
+.ctc-head {
+  display: flex;
+  align-items: center;
+}
+.ctc-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f2f3f5;
+  flex-shrink: 0;
+}
+.ctc-user {
+  margin-left: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.ctc-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1d2129;
+}
+.ctc-join {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 4px;
+}
+/* 昵称右侧的编辑入口：四周补 8px 热区、再负 8px 外边距收回原线，
+   图标右缘仍与卡片 14px 内衬同线（与打卡记录页 .cr-user-edit 同一档）。
+   display:flex 与 .cr-user-edit 同因：不给容器 flex 居中，图标按内联排版坐在容器基线上，
+   墨迹中心比容器（因而比左侧昵称文字）高约 1px */
+.ctc-user-edit {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  margin-right: -8px;
+}
+/* 用户卡（含「已加入」那行）与统计卡连成一块：去掉 .school-card 的 10px 卡间距，
+   中间按 M21 信息行档补一条分隔线；骨架屏同口径，加载完不跳版。
+   盖 .school-card 的 margin 用双类选择器（0,2,0 > 0,1,0），与打卡记录页 .cr-* 同一写法 */
+.school-card.ctc-head,
+.school-card.ctc-sk-head {
+  margin-bottom: 0;
+}
+.ctc-stats,
+.ctc-sk-stats {
+  border-top: 1px solid #f7f8fa;
+}
+.ctc-stats {
+  display: flex;
+}
+.ctc-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ctc-stat-label {
+  font-size: 12px;
+  color: #86909c;
+}
+.ctc-stat-num {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1d2129;
+  margin-top: 4px;
+}
+/* 分组小标题：左边线与卡片同线（不再另加 2px 位移） */
+.ctc-day-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1d2129;
+  margin: 4px 0 8px;
+}

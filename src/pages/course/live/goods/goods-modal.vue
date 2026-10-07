@@ -11,12 +11,24 @@
       :zIndex="12010"
     >
       <tz-box bgColor="none" class="goods-box">
-        <!-- 列表加载状态：与红包/礼物弹窗一致的流内块（标题常驻可见）。
-             不再用 tz-loading-page 绝对定位整层覆盖——其直角背景会越出弹窗 border-radius 圆角范围，
+        <!-- 列表加载状态：按真实行 .course-item-box 逐块铺灰（封面 / 标题两行 / 价格 / 抢购），
+             骨架壳复用真实行类，数据到手时不跳版（M16）。
+             不用 tz-loading-page 绝对定位整层覆盖——其直角背景会越出弹窗 border-radius 圆角范围，
              视觉上加载时弹窗变成直角方框 -->
-        <div class="course-list-loading" v-if="loading">
-          <u-loading-icon mode="circle" size="36" color="#0968f6"></u-loading-icon>
-          <text class="course-list-loading-text">页面加载中…</text>
+        <div class="course-list" v-if="loading">
+          <div class="course-item-box" v-for="i in 4" :key="'gdm-sk-' + i">
+            <div class="course-containner">
+              <div class="cover gdm-sk-cover"></div>
+              <div class="info">
+                <div class="gdm-sk-title"></div>
+                <div class="gdm-sk-title gdm-sk-title--sub"></div>
+                <div class="footer">
+                  <div class="gdm-sk-price"></div>
+                  <div class="gdm-sk-buy"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <template v-else>
         <div class="course-list" v-if="list && list.length > 0">
@@ -322,19 +334,36 @@ export default {
   overflow-y: auto;
 }
 
-/* 列表加载状态：流内居中，写法对齐 gift-modal / redpacket-modal，不在弹窗内做整页遮罩 */
-.course-list-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+/* 列表加载态：灰块与真实行逐块对齐——封面 130×100、标题 16 高 ×2 行、价格 18 高、抢购 60×28（M16） */
+.gdm-sk-cover {
+  background: #e5e6eb;
 }
 
-.course-list-loading-text {
-  color: #86909c;
-  font-size: 13px;
-  margin-top: 12px;
+.gdm-sk-title {
+  width: 82%;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-top: 4px;
+}
+
+.gdm-sk-title--sub {
+  width: 58%;
+  margin-top: 8px;
+}
+
+.gdm-sk-price {
+  width: 56px;
+  height: 18px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+.gdm-sk-buy {
+  width: 60px;
+  height: 28px;
+  border-radius: 6px;
+  background: #e5e6eb;
 }
 
 .course-item-box .info {

@@ -22,12 +22,12 @@ export default {
             // 当前周每日场次数 { 'YYYY-MM-DD': n }（= 当天列表条数，含置灰的不可约行），供日历周条角标。
             // 列表改为按天分页后前端已拿不到整周场次，改由可约列表接口按同一套筛选条件下发
             weekCounts: {},
-            pageLoading: true,
-            listLoading: false,
+            // 列表骨架屏（初始为 true：首屏从渲染第一帧就是骨架屏，不再叠整页 u-loading-page 遮罩）
+            listLoading: true,
             // 日历卡首屏加载态（传给 tz-school-calendar 的 loading）：从进页到「首屏可约场次回包」为 true
-            // （学生由 URL 带入、无需拉取，所以初始化的等待就在这一次请求上），日历上盖一层与
-            // 「选择日期」弹窗同款的加载蒙版。此前这段只有列表区是骨架屏，日历角标却先渲染成一排「0场」；
-            // 只用于首屏不用于切天/翻周：那时列表自己有骨架屏，日历盖住反而点不动（快速连点是允许的，
+            // （学生由 URL 带入、无需拉取，所以初始化的等待就在这一次请求上），日历角标行铺骨架灰块。
+            // 此前这段日历先渲染成一排「0场」，看着像"这天没课"；
+            // 只用于首屏不用于切天/翻周：那时列表自己有骨架屏（快速连点是允许的，
             // refreshSeq 就是为它准备的）
             calendarLoading: true,
             // 分页状态：page 已加载到第几页、hasMore 是否还有下一页、loadStatus 供 u-loadmore 展示
@@ -78,7 +78,6 @@ export default {
     },
     onShow() {
         if (!this.installed) return;
-        this.pageLoading = false;
         this.refresh();
     },
     onPullDownRefresh() {
@@ -138,8 +137,9 @@ export default {
         // 否则续拉下一页
         loadList(refresh) {
             if (!this.studentId) {
-                this.pageLoading = false;
-                // 没带学生进来就一个接口都不会发：日历的蒙版必须撤掉，否则一直盖着
+                // 没带学生进来：不发请求，也不能让骨架屏常驻——列表区要出「请先在教务中心选择学生」空态
+                this.listLoading = false;
+                // 日历的加载态同样要撤掉，否则角标一直停在灰块
                 this.calendarLoading = false;
                 return;
             }
@@ -160,7 +160,7 @@ export default {
                 // 过期响应丢弃：快速切天/翻周时后发的请求先回，旧响应不得覆盖新数据。
                 // 序号判定要在改状态之前——被丢弃的旧响应不能把「请求进行中」标记清掉，
                 // 否则它的在途分页会与预约后的就地重拉（reloadInPlace）各拉各的
-                if (seq !== this.refreshSeq) return;
+                if (seq !== this.refreshSeq) { this.fetching = false; return; } // 过期响应只丢数据，撤骨架的出口不能省
                 this.fetching = false;
                 // 首屏场次已回包（成功或失败都算「初始化结束」）：撤掉日历卡的加载蒙版。
                 // fetchPage 内部已吞掉异常并回 null，这里没有第二条出口，一处即可覆盖成功/失败两态
@@ -197,7 +197,7 @@ export default {
             const step = (p) => {
                 this.fetchPage(p).then((data) => {
                     // 期间切天/翻周/下拉刷新：整轮丢弃，新请求已接管列表
-                    if (seq !== this.refreshSeq) return;
+                    if (seq !== this.refreshSeq) { this.fetching = false; return; } // 过期响应只丢数据，不留着「刷新中」不放
                     if (!data) {
                         // 重拉失败：保留当前列表（旧数据也比重建成空列表好），仅提示，不打断继续预约
                         this.fetching = false;

@@ -1,8 +1,6 @@
 <script>
 var that;
-import shareModal from "@/components/modal/share-modal.vue";
 export default {
-  components: { shareModal },
   data() {
     return {
       detail: [],

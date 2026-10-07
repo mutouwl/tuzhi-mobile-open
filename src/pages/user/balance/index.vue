@@ -6,23 +6,43 @@
         <div class="balance-label-row">
           <text class="balance-label">余额（元）</text>
         </div>
-        <text class="balance-value">{{ balance }}</text>
+        <div v-if="showSkeleton" class="bl-sk-value"></div>
+        <text v-else class="balance-value">{{ balance }}</text>
       </div>
       <div class="balance-stats">
         <div class="stat-item">
-          <text class="stat-value">{{ totalIncome }}</text>
+          <div v-if="showSkeleton" class="bl-sk-stat"></div>
+          <text v-else class="stat-value">{{ totalIncome }}</text>
           <text class="stat-label">总收入</text>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <text class="stat-value">{{ totalWithdraw }}</text>
+          <div v-if="showSkeleton" class="bl-sk-stat"></div>
+          <text v-else class="stat-value">{{ totalWithdraw }}</text>
           <text class="stat-label">已提现</text>
         </div>
       </div>
     </div>
 
-    <!-- 提现 -->
-    <tz-box margin="10" padding="16px 16px" v-if="isWithdrawEnabled">
+    <!-- 提现（骨架屏：外壳复用真实区块，静态标签保持真文字，只把会变的三格盖灰） -->
+    <tz-box margin="10" padding="16px 16px" v-if="showSkeleton">
+      <div class="form-item">
+        <text class="form-label">提现金额</text>
+        <div class="amount-input-wrap">
+          <text class="amount-symbol">¥</text>
+          <div class="bl-sk-amount"></div>
+        </div>
+      </div>
+      <div class="form-item">
+        <text class="form-label">提现方式</text>
+        <div class="pay-type-list">
+          <div class="bl-sk-pay"></div>
+          <div class="bl-sk-pay"></div>
+        </div>
+      </div>
+      <div class="bl-sk-btn"></div>
+    </tz-box>
+    <tz-box margin="10" padding="16px 16px" v-else-if="isWithdrawEnabled">
       <u-alert v-if="withdrawTip" type="warning" :title="withdrawTip" :showIcon="true" effect="light" customStyle="margin-bottom: 12px;" />
       <div class="form-item">
         <text class="form-label">提现金额</text>

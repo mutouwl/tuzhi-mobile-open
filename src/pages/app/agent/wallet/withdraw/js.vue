@@ -10,6 +10,8 @@ export default {
       },
       bank: {},
       config: {},
+      // 首屏即为加载态：账户 / 余额 / 提现说明都到齐前整块铺骨架屏（M16）
+      loading: true,
       withdrawChannel: [
         {
           name: '微信',
@@ -31,16 +33,15 @@ export default {
   },
   methods: {
     getMember() {
-      that.$api('app.agent.member.getMember', {}).then(res => {
+      return that.$api('app.agent.member.getMember', {}).then(res => {
         if (res.code === 1) {
           that.member = res.data;
         }
       });
-      uni.stopPullDownRefresh();
     },
 
     getCard() {
-      that.$api('app.agent.wallet.getCard', {}).then(res => {
+      return that.$api('app.agent.wallet.getCard', {}).then(res => {
         if (res.code === 1) {
           if (res.data) {
             that.bank = res.data;
@@ -52,12 +53,11 @@ export default {
     },
 
     getConfig() {
-      that.$api('app.agent.config.getConfig', {}).then(res => {
+      return that.$api('app.agent.config.getConfig', {}).then(res => {
         if (res.code === 1) {
           that.config = res.data;
         }
       });
-      uni.stopPullDownRefresh();
     },
 
     //提交提现
@@ -111,14 +111,19 @@ export default {
 
   },
   onShow() {
-    this.getCard();
+    // 从「提现账户」页退回来由本页自己重取账户那一格，不再动 loading ⇒ 已渲染的余额不闪骨架（M23）
+    this.getCard().catch(() => {});
   },
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
-    this.getCard()
-    this.getMember();
-    this.getConfig();
+    // 骨架屏收口：账户 / 余额 / 提现开关三个请求全部回音才撤，早撤会摆出没依据的账户态与空余额（M16）；
+    // 单路失败不拖住其余，失败同样要撤
+    Promise.all([this.getCard(), this.getMember(), this.getConfig()].map(job => job.catch(() => null)))
+      .then(() => {
+        that.loading = false;
+        uni.stopPullDownRefresh();
+      });
   }
 }
 </script>

@@ -92,3 +92,57 @@
     line-height: 50px!important;
 } 
 /*  #endif  */
+
+/* ===== 订单收益记录首屏骨架屏（M16）=====
+   占位块复用本页真实容器类（.total-box / .order-list / .order-item / .order-item-header），
+   只补占位条自身的尺寸；本页样式非 scoped，新增类统一 ern-sk 前缀并限定在 .ern-sk 内。
+   流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.ern-sk .ern-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: ern-sk-animate 1.8s ease infinite;
+}
+
+/* 汇总三格与吸顶那一行压在灰底 #F7F8FA 上，浅灰渐变几乎看不出边界，取深一档（同分销中心页那档） */
+.ern-sk .ern-sk-deep{
+    background-image: linear-gradient(90deg, #E5E6EB 25%, #D6D8DE 37%, #E5E6EB 50%);
+    background-size: 400% 100%;
+    animation: ern-sk-animate 1.8s ease infinite;
+}
+
+/* 占位条：高度按该行字号取档，行距 5px 与真实 .order-item-list 的 margin-top 一致 */
+.ern-sk .ern-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.ern-sk .ern-sk-line + .ern-sk-line{
+    margin-top: 5px;
+}
+
+/* 卡头那一排是横排两端对齐（商品名 / 收益额），行内不叠竖排行距 */
+.ern-sk .order-item-header .ern-sk-line{
+    margin-top: 0;
+}
+
+/* 昵称在取时那一格：真实文字随 .filter div 居中，占位条一起居中才不偏 */
+.ern-sk .user-name .ern-sk-line{
+    margin: 0 auto;
+}
+
+.ern-sk .sk-h-12{ height: 12px; }
+.ern-sk .sk-h-14{ height: 14px; }
+.ern-sk .sk-h-16{ height: 16px; }
+
+.ern-sk .sk-w-20{ width: 20%; }
+.ern-sk .sk-w-35{ width: 35%; }
+.ern-sk .sk-w-40{ width: 40%; }
+.ern-sk .sk-w-45{ width: 45%; }
+.ern-sk .sk-w-60{ width: 60%; }
+.ern-sk .sk-w-75{ width: 75%; }
+
+@keyframes ern-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

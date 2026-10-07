@@ -113,7 +113,4 @@ export default {
     width: 100%;
 }
 
-.video video {
-    width: 100%;
-}
 </style>

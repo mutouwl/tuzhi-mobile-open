@@ -14,17 +14,9 @@
         <view class="cal-day" v-for="d in weekDays" :key="d.ts" :class="{ on: selectedTs == d.ts }" @click="onStripPick(d)">
           <text class="cd-name">{{ d.name }}</text>
           <text class="cd-num">{{ d.num }}</text>
-          <text class="cd-count" :class="{ zero: !d.count }">{{ d.count }}{{ countUnit }}</text>
-        </view>
-      </view>
-      <!-- 首屏加载蒙版（loading 由页面按「初始化」口径传入）：盖住整张日历卡，遮罩+居中旋转图标+文案，
-           与下面「选择日期」弹窗的加载蒙版是同一套观感（样式两处共用一份 .cal-mask/.cal-loading 规则）。
-           必须盖住：初始化阶段数量还没回来，角标会先渲染成一排「0 节/0 场」，看着像"这天没课"；
-           而且此时翻周/切天/点年月都要按 student_id 打接口，未就绪时点了也只是空请求 -->
-      <view class="cal-loading" v-if="loading">
-        <view class="cal-loading-inner">
-          <u-loading-icon mode="circle" size="24" />
-          <text class="cal-loading-text">{{ loadingText }}</text>
+          <!-- 加载态：角标位置铺灰块（不显示旋转图标，也不能先渲染成一排「0 节/0 场」——那会被读成"这天没课"） -->
+          <view class="cd-count-sk" v-if="loading"></view>
+          <text class="cd-count" v-else :class="{ zero: !d.count }">{{ d.count }}{{ countUnit }}</text>
         </view>
       </view>
     </view>
@@ -65,17 +57,12 @@
         <view class="cal-panel-grid">
           <view class="cal-panel-cell" v-for="(d, i) in calDays" :key="i" @click="onCalPick(d)">
             <view class="cal-panel-day" :class="{ selected: d.selected, disabled: d.disabled, today: d.today && !d.selected }">{{ d.day || '' }}</view>
-            <text class="cal-panel-count" v-if="d.day" :class="{ zero: !d.count }">{{ d.count }}{{ countUnit }}</text>
+            <!-- 加载态同样用灰块占住角标行（面板高度不随条数变化），不铺旋转图标蒙版 -->
+            <view class="cal-panel-count-sk" v-if="calLoading && d.day"></view>
+            <text class="cal-panel-count" v-else-if="d.day" :class="{ zero: !d.count }">{{ d.count }}{{ countUnit }}</text>
           </view>
         </view>
         <view class="cal-panel-confirm" @click="onCalConfirmTap">确认</view>
-        <!-- 加载蒙版：覆盖面板之上，遮罩+居中旋转图标，不改变面板高度 -->
-        <view class="cal-mask" v-if="calLoading">
-          <view class="cal-mask-inner">
-            <u-loading-icon mode="circle" size="24" />
-            <text class="cal-mask-text">{{ loadingText }}</text>
-          </view>
-        </view>
       </view>
     </u-popup>
   </view>
@@ -141,14 +128,9 @@ export default {
       type: String,
       default: '节',
     },
-    // 月面板加载蒙版文案
-    loadingText: {
-      type: String,
-      default: '正在加载…',
-    },
-    // 整卡加载态（页面初始化阶段）：为 true 时在日历卡上盖一层与「选择日期」弹窗同款的加载蒙版。
-    // 由页面按自己的「初始化」口径传入——课表页＝拉学生信息到首个课表落地，预约页＝首屏可约场次回包之前；
-    // 只用于首屏，之后切天/翻周不再置位（那时列表自己有骨架屏，日历盖住反而点不动，快速连点是允许的）
+    // 整卡加载态（页面初始化阶段）：为 true 时周日历条的角标行铺灰块（M16），不先渲染成一排「0 节/0 场」
+    // ——那会被读成"这天没课"。由页面按自己的「初始化」口径传入：课表页＝拉学生信息到首个课表落地，
+    // 预约页＝首屏可约场次回包之前；只用于首屏，之后切天/翻周不再置位（那时列表自己有骨架屏）
     loading: {
       type: Boolean,
       default: false,
@@ -525,39 +507,19 @@ export default {
   text-align: center;
 }
 
-/* 加载蒙版（两处共用一套观感）：① 月面板数量加载 .cal-mask ② 日历卡首屏加载 .cal-loading
-   ——半透明白遮罩 + 背景模糊 + 居中旋转图标 + 文案；绝对定位铺满各自的容器，不改变容器高度 */
-.cal-mask,
-.cal-loading {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(2px);
+/* 加载态角标灰块（两处同一口径）：占住真实角标的行高（10px 字号 / 12px 行高），
+   颜色取 uview 骨架屏灰 #e5e6eb（与 M16 骨架屏全站同色），加载中与加载完的卡片高度一致 */
+.cd-count-sk,
+.cal-panel-count-sk {
+  margin-top: 3px;
+  width: 24px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
 }
 
-/* 弹窗容器是 12px 圆角，遮罩要跟着圆；日历卡通栏直角，不需要 */
-.cal-mask {
-  border-radius: 12px;
-}
-
-.cal-mask-inner,
-.cal-loading-inner {
-  display: flex;
-  align-items: center;
-  color: #0968f6;
-  font-size: 14px;
-}
-
-.cal-mask-text,
-.cal-loading-text {
-  margin-left: 8px;
-  color: #86909c;
+.cal-panel-count-sk {
+  margin: 2px auto 0;
+  width: 20px;
 }
 </style>

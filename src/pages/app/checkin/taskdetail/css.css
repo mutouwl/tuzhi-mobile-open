@@ -1,0 +1,210 @@
+/* 打卡任务详情页：圆角/边距/阴影/边框一律走教务模块全局档（App.vue「校务/打卡模块统一版式」，M21）——
+   详情页区块 = .school-block（白底通栏、margin 12px 0 0、无圆角、无阴影）+ .school-head（内衬 14px 16px，
+   参照活动主页 .cd-head 的标题卡）；动态列表区 = .school-cards（左右留边 10）+ .school-card 直角条目卡；
+   区块标题走 tz-title（与打卡介绍页同一份 50px 标题条），不在本页另起一套标题字号；
+   筛选 chip 按教务 .status 档走 13px + 灰底 #f2f3f5 + 圆角 4（不做胶囊）；分隔线按 .school-cell-item 档
+   走 1px #f7f8fa；吸底栏用全局 .school-footer + .h5-bottom-bar，本页只补主按钮与「分享」入口 */
+
+/* ===== 首屏骨架屏：外壳复用真实区块的 .school-block .school-head / .school-card，
+   静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（M16） ===== */
+.ctd-sk-row {
+  display: flex;
+  align-items: center;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.ctd-sk-text {
+  flex: 1;
+  min-width: 0;
+}
+.ctd-sk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+.ctd-sk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.ctd-sk-foot-time {
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.ctd-sk-foot-act {
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* ===== 任务头卡 ===== */
+/* 头卡是本页第一块，紧贴导航栏铺满，去掉 .school-block 的 12px 上边距（真实卡与首屏骨架同一份，
+   骨架外壳也挂 .ctd-head）；选择器带上 .school-block 是为了压过全局档 ——
+   两个类同优先级时谁生效取决于打包顺序，页面 css 与 App.vue 全局 css 不同 chunk */
+.school-block.ctd-head {
+  margin-top: 0;
+}
+.ctd-title-row {
+  display: flex;
+  align-items: center;
+}
+/* 「第 N 关」与右上角状态标签：与任务卡 .ck-task-level / .ck-task-state 同一档
+   （12px / 圆角 4 / 内衬 2×6），蓝底给关卡序号、灰底给「未开始 / 已结束」这类非可操作状态 */
+.ctd-level {
+  flex: none;
+  font-size: 12px;
+  color: #0968f6;
+  background: #eaf1fe;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-right: 6px;
+}
+.ctd-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: bold;
+  color: #1d2129;
+}
+.ctd-state {
+  flex: none;
+  font-size: 12px;
+  color: #86909c;
+  background: #f2f3f5;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: 6px;
+}
+/* 打卡时间区间「开始 至 截止」：与提交页 .cs-task-date 同一写法，一行给完整区间，
+   不拆成「几点开始 / 几点截止」两行 */
+.ctd-time {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 6px;
+}
+.ctd-count {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 4px;
+}
+/* 所属活动行：分享链接/小程序码直达本页时，这是回活动主页的唯一入口（列表进来时它是返回之外的第二条路）。
+   分隔线与内衬档位照活动主页头卡下方的工具行 .cd-tools，图标与文字档照记录页的活动卡 .cr-act-card */
+.ctd-act {
+  display: flex;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f7f8fa;
+}
+.ctd-act-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #1d2129;
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== 动态栏控件行（吸顶带内唯一一行，见模板的 u-sticky） ===== */
+/* 与活动主页 .cd-chips / .cd-chip 同一份数值档（页面 css 在小程序端互相隔离，跨页只能同值不能同类名，M11）。
+   本行从 .school-cards 里搬进吸顶带后，左右 10px 与上下留边由本行自己给同一份值：
+   上 10 = 原来列表容器的 padding-top，下 8 = 原来的 margin-bottom，吸顶前后行与上下的距离不变；
+   行本身不写 background —— 带底由 u-sticky 的 bgColor 给（与列表灰底同一个值 #f7f8fa） */
+.ctd-chips {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px 8px;
+}
+/* 行搬出列表容器后，容器的 top 内衬收掉（双类选择器提高权重，压过 App.vue 的 .school-cards，M21） */
+.school-cards.ctd-feed-list {
+  padding-top: 0;
+}
+.ctd-chip {
+  font-size: 13px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+  padding: 5px 14px;
+  margin-right: 8px;
+}
+.ctd-chip-active {
+  color: #0968f6;
+  background: #eaf1fe;
+  font-weight: bold;
+}
+/* 左组「全部 / 精选」的末项吃掉剩余宽度，把排序与时间筛选推到行右侧 */
+.ctd-chip-featured {
+  margin-right: auto;
+}
+.ctd-feed-sort,
+.ctd-feed-filter {
+  display: flex;
+  align-items: center;
+  color: #86909c;
+}
+.ctd-feed-filter {
+  margin-right: 0;
+}
+/* 图标与文字 3px 间距：排序与时间筛选两枚按钮同一份，不写就会贴死 */
+.ctd-feed-sort text,
+.ctd-feed-filter text {
+  margin-left: 3px;
+}
+/* 与文字配对的行内图标：光学垂直居中。flex 居中对齐的是「行盒」，而 tz zhengxu2 / daoxu /
+   shijianfanwei2 实测墨迹中心恰在其行盒中心，12–14px 中文的墨迹中心却低约 0.44–0.51px
+   ⇒ 图标看着偏上，补 0.5px 下沉；同排的 calendar / share 字形本就与中文同高，不补（补了反向偏下）。
+   判法见 .trae/rules/ui-baseline-mobile.md §1 行内图标。
+   这一档**只给下面那一排 chip 里的排序/筛选图标**：行尾那枚 arrow-right 2026-09-26 起不再挂它
+   （用户在动态卡任务标签上点名「箭头要和文字垂直居中间」实测偏下——0.5px 是亚像素位移，
+   DPR1 的桌面浏览器会把它栅格化成整像素，读出来就是往下偏；箭头墨迹中心本就压在行盒中心，
+   居中交给 flex 即可），同档一并改掉的还有打卡记录页活动卡与两处 chip 行尾箭头 */
+.ctd-ic-mid {
+  transform: translateY(0.5px);
+}
+
+/* ===== 吸底栏 ===== */
+/* 打不了卡时这一栏折成两行：上面一行是 u-alert 那句原因（内容取后端 check_msg，M22），下面一行才是
+   「分享 + 主按钮」。原先那句原因等点击弹 uni.showModal，2026-09-27 用户口径改成常驻写在操作栏上方。
+   改的是全局 .school-footer 那一档的排布方向，必须用双类选择器压过它（单类同权重，谁生效看打包顺序，M21）；
+   容器内衬/阴影/安全区仍由全局档给，这里只换 flex 方向 */
+.school-footer.ctd-footer {
+  flex-direction: column;
+  align-items: stretch;
+}
+/* 动作那一行本身仍是全局档的那一行（左「分享」右主按钮），没有原因那一行时整栏与改版前逐字一致 */
+.ctd-bar-row {
+  display: flex;
+  align-items: center;
+}
+/* 栏里多一行原因，页面根的底部留白跟着加一档（90 + 那一行的 ≈48），否则滚到页底版权行会被吸底栏压住。
+   三类选择器：全局那一档是 .school-page.school-page--bar（两个类），只写两个类就成了同权重、看打包顺序 */
+.school-page.school-page--bar.ctd-page-guard {
+  padding-bottom: 138px;
+}
+/* 「分享」是横排「图标+文字」型入口，档位照活动主页头卡工具行 .cd-tool：
+   文字取正文档 14px，图标墨迹归一 12px（:size 14 由 tools/icon-ink-normalize.py 反算），
+   不自造胶囊按钮（M17 圆角只有 4px，这一档压根不做边框底色） */
+.ctd-share {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+  flex: none;
+}
+.ctd-share-text {
+  font-size: 14px;
+  color: #4e5969;
+  margin-left: 4px;
+}
+/* 按钮宿主节点给占比（组件宿主 class 在小程序端与 H5 都生效，内部节点不生效） */
+.ctd-main-btn {
+  flex: 1;
+  border: none;
+}

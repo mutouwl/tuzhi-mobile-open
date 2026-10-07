@@ -24,7 +24,7 @@
 						<tz-icon name="send" color="#86909C" :size="16" />
 					</template>
 				</u-cell>
-				<u-cell :border="false" :titleStyle="{ 'font-size': '14px' }" @click="changeModalShow('nickname')"
+				<u-cell :border="false" :titleStyle="{ 'font-size': '14px' }" @click="openNicknameEdit"
 					:value="userInfo.nickname" title="昵称">
 					<template #right-icon>
 						<tz-icon name="enter" color="#86909C" :size="13" />
@@ -91,13 +91,8 @@
 		</div>
 
 
-		<u-modal :show="modal.nickname" title="修改昵称" :showCancelButton="true" :closeOnClickOverlay="true"
-			@close="changeModalShow('nickname')" @confirm="nicknameConfirm" @cancel="changeModalShow('nickname')">
-			<input type="nickname" placeholder="请输入要修改的昵称" @change="nicknameInputChange" v-model="nickname"
-				class="nickname-input" style="background-color: #fff;"/>
-			<!-- <u-input placeholder="请输入要修改的昵称" @change="nicknameInputChange" type="nickname"></u-input> -->
-
-		</u-modal>
+		<!-- 修改昵称弹窗：与打卡记录页用户卡同一份实现（tz-nickname-modal），字段口径只存组件里 -->
+		<tz-nickname-modal ref="nicknameModal" :nickname="userInfo.nickname" @saved="getData()" />
 
 		<tz-footer />
 

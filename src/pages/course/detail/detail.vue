@@ -281,7 +281,10 @@
 		</u-action-sheet>
 
 
-		<share-modal :val="data.id" :circle-id="pageParams.circle_id" :visible="modal.share" @close="modal.share = false" />
+		<!-- 海报画这一条课程的封面与名称，取本页 course.detail 已加载的数据；
+		     内容卡只有「封面 + 标题」两样（2026-09-26 用户点名简化），价格/类型不再抄给海报 -->
+		<share-modal :val="data.id" :circle-id="pageParams.circle_id" :visible="modal.share" @close="modal.share = false"
+			:title="data.name" :cover="data.cover" />
 
 
 		<!-- 学习前表单拦截层：绑定"加入学习前"表单未填写时阻止学习（填写弹窗关闭后的兜底层） -->
@@ -328,14 +331,21 @@
 			'course': data.id,
 			'iscollect': iscollect,
 			'is_virtual_pay': isVirtualPay(data),
-		}" :btnTitle="isLogin ? (pageParams.type && pageParams.type == 'score' ? '立即兑换' : (data.pay_type == 'student' ? '仅指定学员可用' : ((isFreeCourse(data) || data.vip_free_access) ? '加入学习' : '立即订阅'))) : '立即登录查看'"
-			@handle="buyCheck" @share="share" @collect="collect" />
+		}" :btnTitle="joinBtnText()" @handle="buyCheck" @share="share" @collect="collect" />
 
+		<!-- 已订阅态底栏：打卡那一枚只在「这门课（或其所属专栏）关联了上架打卡活动」时出，
+		     判据是 loadCheckin 取回来的列表非空（未安装打卡插件时那条请求根本不发，自然也是空） -->
 		<tz-bottom-btn v-if="data.subscription && !circleCourseContext" type="control" :params="{
 			'iscollect': iscollect,
-			'column_id': pageParams.column_id
+			'column_id': pageParams.column_id,
+			'checkin': checkinList.length > 0
 		}" @collect="collect" @share="share" @comment="modal.comment = true; commentReplyId = 0;"
-			@dir="modal.columnCourse = true" />
+			@dir="modal.columnCourse = true" @checkin="modal.checkin = true" />
+
+		<!-- 底栏「打卡」弹窗：本课程关联的打卡活动列表，数据与上面那枚按钮同一份（不再让弹窗自己取一次） -->
+		<checkin-course-modal :show="modal.checkin" :list="checkinList" :attr="checkinAttr"
+			:load-status="checkinLoadStatus" @close="modal.checkin = false"
+			@lower="loadMoreCheckin" @open="goCheckin" />
 
 	</view>
 </template>

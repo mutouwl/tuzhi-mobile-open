@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <tz-title title="可加入的视频号小店" bgColor="none" :link="{
+    <tz-title title="可加入的微信小店" bgColor="none" :link="{
         type: 'local',
         src: '/pages/app/channels/sharer/bind/bind',
       }" subtitle="查看已加入的小店" :more="true" />

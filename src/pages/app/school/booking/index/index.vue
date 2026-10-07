@@ -14,14 +14,14 @@
                 counts-api="school.user.bookableCounts"
                 :counts-params="{ course_id: courseId || 0 }"
                 count-unit="场"
-                loading-text="正在加载可约场次…"
                 :loading="calendarLoading"
                 @change="onDateChange"
             />
         </u-sticky>
 
         <view class="bk-list">
-            <!-- 列表骨架屏：仿「左侧时间轴 + 场次卡」版式（时间列灰块与轨道灰点由 tz-school-timeline 渲染） -->
+            <!-- 列表骨架屏：仿「左侧时间轴 + 场次卡」版式（时间列灰块与轨道灰点由 tz-school-timeline 渲染）；
+                 首屏（listLoading 初始为 true）与切天重拉都走这里，不再叠整页 u-loading-page 遮罩 -->
             <block v-if="listLoading">
                 <tz-school-timeline v-for="i in 3" :key="i" skeleton>
                     <view class="bk-head">
@@ -103,7 +103,6 @@
                 </block>
             </template>
         </view>
-        <u-loading-page :loading="pageLoading" bg-color="#F7F8FA"></u-loading-page>
 
         <tz-tab-bar />
         <tz-footer />

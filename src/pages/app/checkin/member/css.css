@@ -1,0 +1,67 @@
+/* 打卡成员列表页：版式一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page → 吸顶搜索栏 .school-search-box（白底通栏）→ 列表容器 .school-cards（左右留边 10）
+   → 条目卡 .school-card（白底、直角不做圆角、内衬 14、无阴影）；
+   本页只补卡内文字，头像圆角 50% 与教务学员列表同档。
+   下面两条用 .cmm-page 收作用域（全覆盖在全局档上，不动教务列表页）：
+   ① 搜索栏内芯 tz-search-filter-bar 自带 8/12 内衬，再叠 .school-search-box 的 6/10/8，
+      整条就比教务列表高一截；本页把外壳内衬清零，只留搜索栏自身那档；
+   ② 成员是同一条名单的连续条目，卡与卡之间不留 10px 缝（.school-card 的 margin-bottom），改用浅灰细线分隔。 */
+.cmm-page .school-search-box {
+  padding: 0;
+}
+.cmm-page .cmm-card,
+.cmm-page .cmm-sk-card {
+  margin-bottom: 0;
+}
+.cmm-page .cmm-card + .cmm-card,
+.cmm-page .cmm-sk-card + .cmm-sk-card {
+  border-top: 1px solid #f2f3f5;
+}
+
+/* 卡壳（白底/直角/内衬 14）由 .school-card 提供，这里只管卡内排列 */
+.cmm-card {
+  display: flex;
+  align-items: center;
+}
+.cmm-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f2f3f5;
+}
+.cmm-info {
+  margin-left: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.cmm-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1d2129;
+}
+.cmm-streak {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 2px;
+}
+
+/* ===== 首屏骨架屏：外壳直接用真实卡的 .school-card（直角、内衬 14、无阴影、条间同款浅灰细线，
+   见上方 .cmm-sk-card 的两条覆盖），静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（与教务列表页骨架屏同口径），
+   尺寸与真实成员卡一致（头像 44）；搜索栏留在骨架屏之外保持可点 ===== */
+.cmm-sk-card {
+  display: flex;
+  align-items: center;
+}
+.cmm-sk-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.cmm-sk-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}

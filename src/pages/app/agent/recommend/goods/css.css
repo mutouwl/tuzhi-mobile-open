@@ -148,3 +148,37 @@
     margin-left: 4px;
     font-weight: 600;
 }
+/* ===== 推广商品列表首屏骨架屏（M16）=====
+   占位块复用真实商品卡的容器类（.goods-item 120 定高 / .goods-item-cover 140 宽 / .goods-item-footer 吸底），
+   只补占位条自身的尺寸；本页样式非 scoped，新增类统一 gd-sk 前缀并限定在 .gd-sk 内。
+   流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.gd-sk .gd-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: gd-sk-animate 1.8s ease infinite;
+}
+
+/* 占位条：高度按该行字号取档，行距 5px 与真实两行标题的行盒差一致 */
+.gd-sk .gd-sk-line{
+    display: block;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.gd-sk .gd-sk-line + .gd-sk-line{
+    margin-top: 5px;
+}
+
+.gd-sk .sk-h-14{ height: 14px; }
+.gd-sk .sk-h-16{ height: 16px; }
+.gd-sk .sk-h-20{ height: 20px; }
+
+.gd-sk .sk-w-30{ width: 30%; }
+.gd-sk .sk-w-45{ width: 45%; }
+.gd-sk .sk-w-75{ width: 75%; }
+.gd-sk .sk-w-100{ width: 100%; }
+
+@keyframes gd-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

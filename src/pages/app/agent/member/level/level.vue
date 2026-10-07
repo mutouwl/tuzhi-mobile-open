@@ -1,7 +1,36 @@
 <template>
 	<div class="container">
-		<tz-loading-page :loading="loading"/>
-		<view class="uni-margin-wrap">
+		<!-- 首屏骨架屏：占位块逐块对齐本页真实版式（深色头区的头像圆 + 昵称 / 那张 100px 高的等级卡 /
+		     下方权益标题与两格佣金），撤掉骨架屏后各块位置不跳（M16）；
+		     深色与橙色底上各取半透明白、半透明品牌橙那一档，同分销中心页 -->
+		<div class="lvl-sk" v-if="loading">
+			<view class="uni-margin-wrap">
+				<div class="user-box">
+					<div class="user-avatar lvl-sk-block lvl-sk-light"></div>
+					<div class="user-info">
+						<div class="lvl-sk-line lvl-sk-block lvl-sk-light sk-h-14 sk-w-35"></div>
+					</div>
+				</div>
+				<div class="level-item-box">
+					<div class="name-level">
+						<div class="lvl-sk-line lvl-sk-block lvl-sk-brand sk-h-22 sk-w-30"></div>
+						<div class="lvl-sk-line lvl-sk-block lvl-sk-brand sk-h-30 sk-w-15"></div>
+					</div>
+				</div>
+			</view>
+			<tz-box padding="0px 15px 15px">
+				<div class="level-equity-header">
+					<div class="lvl-sk-line lvl-sk-block sk-h-16 sk-w-45"></div>
+				</div>
+				<div class="data-box">
+					<div class="data-item" v-for="i in 2" :key="i">
+						<div class="lvl-sk-line lvl-sk-block sk-h-22 sk-w-50"></div>
+						<div class="lvl-sk-line lvl-sk-block sk-h-12 sk-w-75"></div>
+					</div>
+				</div>
+			</tz-box>
+		</div>
+		<view class="uni-margin-wrap" v-else>
 			<div class="user-box" v-if="userInfo">
 				<div class="user-avatar" v-if="userInfo.avatar">
 					<img :src="userInfo.avatar" />
@@ -37,7 +66,7 @@
 		<!-- #ifndef MP-TOUTIAO -->
 
 
-		<tz-box padding="0px 15px 15px">
+		<tz-box padding="0px 15px 15px" v-if="!loading">
 
 			<div class="level-equity-header">
 				<span class="level-name">

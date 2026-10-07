@@ -79,6 +79,16 @@ class FixTdesignMpPlugin {
         }
       }
 
+      // config.js 在 getExtConfigSync() 拿不到值时要回落 src/siteinfo.js，它读的是产物根的
+      // ../siteinfo.js —— app.json 里那条 copy 在 mp 构建并不落盘，这里自己补一份，
+      // 少了它回落分支就 require 失败，apiUrl 又变回 "undefined?..."
+      const siteinfoSrc = path.resolve(__dirname, 'src', 'siteinfo.js')
+      if (fs.existsSync(siteinfoSrc)) {
+        try { fs.copyFileSync(siteinfoSrc, path.join(outputDir, 'siteinfo.js')) } catch (e) {
+          console.warn('[FixTdesignMpPlugin] copy siteinfo.js failed:', e.message)
+        }
+      }
+
       const tdRoot = path.join(outputDir, TD_REL)
       const distDir = path.join(tdRoot, 'dist')
 

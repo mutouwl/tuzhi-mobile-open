@@ -1,0 +1,182 @@
+/* 打卡排行榜页：版式一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page；区块用 .school-block（白底通栏、margin 12px 0 0、无圆角、无阴影，
+   参照 pages/app/school/campus/detail 的分组块）；榜单行用 .school-cell-item
+   （内衬 14px 16px + 1px #f7f8fa 分隔线、末行无线，参照 school/confirm 的表单行）；
+   头像圆角 50%、骨架条 4px 与教务同档，本页不再自定义卡片圆角/阴影/行内衬 */
+/* 吸顶页签由 u-sticky 给白底，本页不再补背景；「我的成绩」卡（含骨架）在页签上方，
+   作为页面第一块用双类选择器清掉 .school-block 的 12px 顶边距（单类与全局档同权重，
+   谁生效看打包顺序，见 ui-baseline-mobile M21） */
+.school-block.crk-my,
+.school-block.crk-sk-my {
+  margin-top: 0;
+}
+
+/* ===== 首屏骨架屏：外壳直接用真实区块的 .school-block / .school-sk-card / .school-cell-item
+   （通栏、直角、无阴影、内衬一致），静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px ===== */
+.crk-sk-my {
+  padding: 14px 16px;
+}
+/* 身份行骨架：头像 44 + 昵称条，与真实行逐块同尺寸（M16） */
+.crk-sk-user {
+  display: flex;
+  align-items: center;
+}
+.crk-sk-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex: none;
+}
+.crk-sk-nick {
+  width: 96px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-left: 10px;
+}
+/* 四格数据行骨架与真实行同一份留白档（上间距 + 分隔线），加载完不跳版 */
+.crk-sk-stats {
+  display: flex;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f7f8fa;
+}
+.crk-sk-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.crk-sk-line {
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.crk-sk-line.w40 {
+  width: 40%;
+}
+.crk-sk-line.w24 {
+  width: 24%;
+  height: 18px;
+  margin-top: 6px;
+}
+/* 榜单骨架外壳 = 真实卡 .school-block（无圆角/无阴影），行壳 = 真实行 .school-cell-item */
+.crk-sk-row {
+  display: flex;
+  align-items: center;
+}
+.crk-sk-no {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+/* 榜单行的头像骨架（与「我的成绩」身份行的头像不同尺寸，类名分开才不互相覆盖，M11） */
+.crk-sk-row-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  margin: 0 10px;
+}
+.crk-sk-name {
+  flex: 1;
+  height: 14px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.crk-sk-num {
+  width: 36px;
+  height: 13px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 「我的成绩」卡：白底/通栏/直角/无阴影由 .school-block 给，这里只管内衬与排列。
+   身份行（头像 + 昵称）与打卡记录页的用户卡同一档（头像 44、昵称 16/700），
+   下面四格数据行与该行走一条 #f7f8fa 分隔线（同记录页「活动卡 + 统计卡」那一档） */
+.crk-my {
+  padding: 14px 16px;
+}
+.crk-my-user {
+  display: flex;
+  align-items: center;
+}
+.crk-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f2f3f5;
+}
+.crk-my-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1d2129;
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crk-my-stats {
+  display: flex;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f7f8fa;
+}
+.crk-my-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.crk-my-num {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1d2129;
+}
+/* 标签取 11px 而非 12px 档：四格均分后每格约 86px，「所有人打卡次数」七字按 12px 会顶满格子
+   （宁可 11px 留左右空档，也不让最长那格贴到相邻格） */
+.crk-my-label {
+  font-size: 11px;
+  color: #86909c;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+/* 榜单行：内衬 14px 16px 与分隔线（1px #f7f8fa、末行无线）由 .school-cell-item 给 */
+.crk-row {
+  display: flex;
+  align-items: center;
+}
+.crk-no {
+  width: 28px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #86909c;
+}
+.crk-no-top {
+  color: #ff7d00;
+}
+.crk-row-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f2f3f5;
+  margin: 0 10px;
+}
+.crk-row-name {
+  flex: 1;
+  font-size: 14px;
+  color: #1d2129;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crk-row-num {
+  font-size: 13px;
+  color: #4e5969;
+}

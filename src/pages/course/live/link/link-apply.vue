@@ -111,9 +111,17 @@
 
         <!-- 连麦记录（连麦申请弹窗）：仅展示最近一条记录（最新状态即可操作），申请中可取消、讲师邀请可接听/拒绝 -->
         <template v-if="mode == 'record'">
-          <div class="record-loading" v-if="recordLoading">
-            <u-loading-icon mode="circle" size="36" color="#0968f6"></u-loading-icon>
-            <text class="record-loading-text">加载中...</text>
+          <!-- 连麦记录加载态：按真实行 .record-item 逐块铺灰（32 圆图标 / 类型 / 元信息 / 行尾动作块），
+             记录到手时不跳版（M16）。原来是「转圈 + 加载中...」文字块 -->
+<div class="lka-sk" v-if="recordLoading">
+            <div class="record-item lka-sk-item">
+              <div class="record-item-icon lka-sk-icon"></div>
+              <div class="record-info">
+                <div class="lka-sk-line lka-sk-line-type"></div>
+                <div class="lka-sk-line lka-sk-line-meta"></div>
+              </div>
+              <div class="lka-sk-act"></div>
+            </div>
           </div>
           <scroll-view scroll-y class="record-scroll" v-else>
             <template v-if="visibleRecords.length > 0">

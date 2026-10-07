@@ -2,9 +2,40 @@
 	<view class="container">
 
 
-		<u-loading-page :loading="loading || !data.user"></u-loading-page>
+		<!-- 首屏骨架屏：占位块逐块对齐本页真实版式（45px 头像圆 + 昵称行 + 最近下单 / 四格订单汇总 /
+		     收益记录入口 / 绑定时间行），撤掉骨架屏后各块位置不跳（M16） -->
+		<tz-box bgColor="none" v-if="loading">
+			<div class="cud-sk">
+				<div class="customer-item">
+					<div class="customer-item-cover cud-sk-block"></div>
+					<div class="customer-item-info">
+						<div class="customer-item-header">
+							<div class="cud-sk-line cud-sk-block sk-h-14 sk-w-35"></div>
+							<div class="cud-sk-line cud-sk-block sk-h-12 sk-w-50"></div>
+						</div>
+					</div>
+				</div>
+				<div class="total-box">
+					<div class="total-item" v-for="i in 4" :key="i">
+						<div class="cud-sk-line cud-sk-block sk-h-12 sk-w-75"></div>
+						<div class="cud-sk-line cud-sk-block sk-h-16 sk-w-40"></div>
+					</div>
+				</div>
+				<div class="order-log"><span class="cud-sk-line cud-sk-block sk-h-12 sk-w-30"></span></div>
+			</div>
+		</tz-box>
+		<tz-box bgColor="none" padding="0 15px 15px" v-if="loading">
+			<div class="cud-sk">
+				<div class="detail-list">
+					<div class="cud-sk-row">
+						<div class="cud-sk-line cud-sk-block sk-h-14 sk-w-25"></div>
+						<div class="cud-sk-line cud-sk-block sk-h-14 sk-w-35"></div>
+					</div>
+				</div>
+			</div>
+		</tz-box>
 
-		<template v-if="data.user && !loading">
+		<template v-else>
 			<tz-box bgColor="none">
 				<div class="customer-item">
 					<div class="customer-item-cover">

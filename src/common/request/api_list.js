@@ -71,6 +71,18 @@ export default {
 			auth: true,
 			method: 'POST',
 		},
+		/**
+		 * OSS 直传成功后的客户端补记（服务端幂等）：OSS 回调不可达的部署场景由它兜底，
+		 * 与 vodNotify 同一档。调用点在 common/utils/tools.js 的 OSS 上传 success 回调里。
+		 * 这一条曾经漏登记——getApiObj 取不到键会**同步抛错**，于是上传明明成功，
+		 * 后面的 hideLoading / toast / resolve 全不执行，调用方的上传 Promise 永不 settle
+		 * （症状＝文件传完了页面还在转圈）。由 scripts/check-api-keys.js 补回。
+		 */
+		ossNotify: {
+			url: 'upload/ossNotify',
+			auth: true,
+			method: 'POST',
+		},
 	},
 	/** 微信Jssdk ↓ **/
 	wechat: {
@@ -119,6 +131,14 @@ export default {
 				auth: false,
 				method: 'POST',
 				// desc: '获取页面',
+			}
+		},
+		userCenter: {
+			getConfig: {
+				url: 'page/user_center/getConfig',
+				auth: false,
+				method: 'POST'
+				// desc: '个人中心装修配置，未装修时 data.config 为 null'
 			}
 		}
 
@@ -556,6 +576,12 @@ export default {
 			method: 'POST',
 			// desc: '学习统计',
 		},
+		getStudyTime: {
+			url: 'user/study/getStudyTime',
+			auth: false,
+			method: 'POST',
+			// desc: '累计学习时长（分钟）',
+		},
 		getContinuousStudyDays: {
 			url: 'user/study/getContinuousStudyDays',
 			auth: false,
@@ -808,6 +834,256 @@ export default {
 		}
 	},
 
+	/** 打卡 ↓ **/
+	checkin: {
+		checkin: {
+			myList: {
+				url: 'app/checkin/checkin/myList',
+				auth: true,
+				method: 'POST',
+			},
+			// 可参与的打卡分页列表（myList 的 discover 段只给首屏预览条数，全量走这个接口）
+			discoverList: {
+				url: 'app/checkin/checkin/discoverList',
+				auth: true,
+				method: 'POST',
+			},
+			detail: {
+				url: 'app/checkin/checkin/detail',
+				auth: true,
+				method: 'POST',
+			},
+			// 任务详情（任务正文 + 打卡态）：只带 task_id 也能取，分享链接落这一页
+			taskDetail: {
+				url: 'app/checkin/checkin/taskDetail',
+				auth: true,
+				method: 'POST',
+			},
+			// 发表动态页的媒体上限（图片/视频/语音/附件数量与大小）；此前只在控制器有动作、
+			// 这里没登记，$api 解析不到键名，提交页取上限的请求实际是发不出去的
+			publishConfig: {
+				url: 'app/checkin/checkin/publishConfig',
+				auth: true,
+				method: 'POST',
+			},
+			feed: {
+				url: 'app/checkin/checkin/feed',
+				auth: true,
+				method: 'POST',
+			},
+			join: {
+				url: 'app/checkin/checkin/join',
+				auth: true,
+				method: 'POST',
+			},
+			passwordPay: {
+				url: 'app/checkin/checkin/passwordPay',
+				auth: true,
+				method: 'POST',
+			},
+			calendar: {
+				url: 'app/checkin/checkin/calendar',
+				auth: true,
+				method: 'POST',
+			},
+			setNickname: {
+				url: 'app/checkin/checkin/setNickname',
+				auth: true,
+				method: 'POST',
+			},
+			taskCalendar: {
+				url: 'app/checkin/checkin/taskCalendar',
+				auth: true,
+				method: 'POST',
+			},
+			rank: {
+				url: 'app/checkin/checkin/rank',
+				auth: true,
+				method: 'POST',
+			},
+			memberList: {
+				url: 'app/checkin/checkin/memberList',
+				auth: true,
+				method: 'POST',
+			},
+			dayDetail: {
+				url: 'app/checkin/checkin/dayDetail',
+				auth: true,
+				method: 'POST',
+			},
+			submit: {
+				url: 'app/checkin/checkin/submit',
+				auth: true,
+				method: 'POST',
+			},
+			diaryDetail: {
+				url: 'app/checkin/checkin/diaryDetail',
+				auth: true,
+				method: 'POST',
+			},
+			like: {
+				url: 'app/checkin/checkin/like',
+				auth: true,
+				method: 'POST',
+			},
+			comment: {
+				url: 'app/checkin/checkin/comment',
+				auth: true,
+				method: 'POST',
+			},
+			commentList: {
+				url: 'app/checkin/checkin/commentList',
+				auth: true,
+				method: 'POST',
+			},
+			// 评论点赞（幂等切换）：共用评论组件的点赞入口用，接口名由调用页下发给 tz-circle-comment
+			commentLike: {
+				url: 'app/checkin/checkin/commentLike',
+				auth: true,
+				method: 'POST',
+			},
+			deleteOwn: {
+				url: 'app/checkin/checkin/deleteOwn',
+				auth: true,
+				method: 'POST',
+			},
+			// 编辑自己已发的打卡日记（正文/媒体/可见范围），提交页编辑态用
+			editOwn: {
+				url: 'app/checkin/checkin/editOwn',
+				auth: true,
+				method: 'POST',
+			},
+			shareInfo: {
+				url: 'app/checkin/checkin/shareInfo',
+				auth: true,
+				method: 'POST',
+			},
+		},
+		// 按课程反查打卡活动（课程详情页底栏「打卡」入口）：未登录也要能判断这门课有没有关联活动，
+		// 故 auth=false，与同形状的 app.form.checkBeforeLearn 一样收 course_id + 可选 column_id
+		course: {
+			courseCheckin: {
+				url: 'app/checkin/course/courseCheckin',
+				auth: false,
+				method: 'POST',
+			},
+		},
+		// 我的日记列表（「我的打卡」页第二个页签）：跨活动按发布时间倒序，
+		// 每行带 checkin_id/checkin_title（打卡 Tag）与 task_id/task_title（任务 Tag），
+		// 详情进打卡日记页（pages/app/checkin/diary，复用现有日记组件）
+		diary: {
+			myList: {
+				url: 'app/checkin/diary/myList',
+				auth: true,
+				method: 'POST',
+			},
+		},
+		// 打卡介绍页（pages/app/checkin/intro）：分享出去的落地页，未登录也要看得清「这是什么活动、
+		// 多少钱、怎么参与」，故 auth=false，与 course.courseCheckin 同一档。
+		// 只出活动段（封面/名称/统计/打卡信息/活动介绍/关联课程 + is_member/is_black/has_course），
+		// 任务栏与动态流仍在 checkin.checkin.detail（主页用，auth=true）；
+		// 参与/购买/密码兑换那几个按钮都留 auth=true，未登录点它们由请求层统一弹「请登录后继续操作」
+		intro: {
+			detail: {
+				url: 'app/checkin/intro/detail',
+				auth: false,
+				method: 'POST',
+			},
+		},
+	},
+	/** 分享有礼（直播拉新付费插件）↓
+	 *  入口与列表免登录（右侧悬浮图标、活动列表要出得来看，判据同 api Gift::$noNeedLogin）；
+	 *  助力/参与/领奖/我的奖品/地址簿都要登录态。状态文案与选项表由接口 attr 下发，前端不写死。 **/
+	share_gift: {
+		gift: {
+			list: {
+				url: 'app/share_gift/gift/list',
+				auth: false,
+				method: 'POST',
+			},
+			detail: {
+				url: 'app/share_gift/gift/detail',
+				auth: false,
+				method: 'POST',
+			},
+			assist: {
+				url: 'app/share_gift/gift/assist',
+				auth: true,
+				method: 'POST',
+			},
+			join: {
+				url: 'app/share_gift/gift/join',
+				auth: true,
+				method: 'POST',
+			},
+		},
+	},
+	/**
+	 * 奖品（标准版核心）↓
+	 *  2026-10-03 自 share_gift.prize 升上来：奖品能力不再只属于分享有礼，任何业务发的奖
+	 *  都走这一组口，不按来源分家。四口全部要登录（奖品列表与地址簿都是本人的东西）。
+	 *  枚举与文案一律由 attr 下发，前端不写死。
+	 *
+	 *  老路径 app/share_gift/prize/* 与 app/share_gift/gift/claim 在**后端**仍保留为转发壳
+	 *  （api/controller/app/share_gift/Prize.php 与 Gift::claim），让已发布的老版本还能开页领奖。
+	 *  本文件里**不再**给它们留条目：api_list 是编进安装包的，老包自带一份，
+	 *  在新代码里挂一组没人调的条目只是给自己添乱（真正要删的是老包，最低支持版本越线后随包一起走）。
+	 **/
+	prize: {
+		prize: {
+			// 我的奖品分页：跨所有发奖业务的一枚奖一行，page/limit + total/has_more
+			myPrizes: {
+				url: 'prize/prize/myPrizes',
+				auth: true,
+				method: 'POST',
+			},
+			// 收货地址簿（实物奖品领取前选那一张）：只回本人已有地址，新增走既有的地址编辑页
+			addresses: {
+				url: 'prize/prize/addresses',
+				auth: true,
+				method: 'POST',
+			},
+			// 个人中心「资产管理 - 我的奖品」那一格：还有多少**未领取且未过期**的奖。
+			// 单独一个出口而不是并进 user/info：奖品走自己的取数口径（要跨业务聚合 + 读出口收敛过期），
+			// 硬塞进 user/info 会让那个口变成一个什么都干的聚合口
+			count: {
+				url: 'prize/prize/prizeCount',
+				auth: true,
+				method: 'POST',
+			},
+			// 领取一枚：六型分流在后端 Grant，跨业务的「这一批算不算领完」由各业务自己收尾
+			claim: {
+				url: 'prize/prize/claim',
+				auth: true,
+				method: 'POST',
+			},
+		},
+	},
+	/** 直播邀请达人榜 ↓（付费插件：未安装时后端这三条路由根本不存在，调用点先按 app_isinstall_invite_rank 收起入口） **/
+	invite_rank: {
+		rank: {
+			// 榜单：TOP3 + 分页列表 + 我的名次 + 活动展示段，入口显隐也吃这一条下发的 show_entry。
+			// auth:false 与后端 $noNeedLogin 成对：商家把开关打开就是要给进店的人看这张榜，
+			// 未登录（游客）也要能出入口与榜单，判「我的名次」那一段后端按 user_id=0 自然给未上榜
+			board: {
+				url: 'app/invite_rank/rank/board',
+				auth: false,
+				method: 'POST',
+			},
+			// 我的邀请：只按当前登录用户过滤，不接受前端传 user_id
+			my: {
+				url: 'app/invite_rank/rank/my',
+				auth: true,
+				method: 'POST',
+			},
+			// 归因上报：允许未登录到达（后端不记录也不报错），不能让 401 把 storage 里的 share 参数白丢
+			report: {
+				url: 'app/invite_rank/rank/report',
+				auth: false,
+				method: 'POST',
+			},
+		},
+	},
 	/** 圈子 ↓ **/
 	circle: {
 		circle: {
@@ -1188,7 +1464,13 @@ export default {
 				url: 'app/cert/log/preview',
 				auth: false,
 				method: 'POST',
-				// desc: '获取我的证书',
+				// desc: '获取我的证书（后端渲染 PNG，旧包兼容）',
+			},
+			layout:{
+				url: 'app/cert/log/layout',
+				auth: false,
+				method: 'POST',
+				// desc: '获取证书元素清单（前端 canvas 照单出图）',
 			}
 		},
 		/** 优惠券 ↓ **/
@@ -1224,7 +1506,7 @@ export default {
 				// desc: '我的优惠券',
 			}
 		},
-		/** 视频号小店 ↓ **/
+		/** 微信小店 ↓ **/
 		channels: {
 			delivery: {
 				detail:{

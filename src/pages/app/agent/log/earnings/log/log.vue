@@ -7,7 +7,11 @@
 					<span>{{ $tools.yearmonth(form.time / 1000) }}</span>
 					<span><tz-icon name="unfold" :size="16" color="#4E5969" /></span>
 				</div>
-				<div class="user-name">{{customerDetail.user.nickname}}的订单收益记录</div>
+				<!-- 昵称随详情接口一起到：在取的那一格按到手那一档占位并盖骨架块，不摆「的订单收益记录」这句半截话（M16） -->
+				<div class="user-name ern-sk">
+					<span class="ern-sk-line ern-sk-deep sk-h-14 sk-w-60" v-if="loading"></span>
+					<template v-else>{{customerDetail.user.nickname}}的订单收益记录</template>
+				</div>
 			</div>
 		</u-sticky>
 
@@ -19,7 +23,17 @@
 			</u-sticky>
 
 			<tz-box padding="15px 15px 0">
-				<div class="total-box">
+				<!-- 首屏骨架屏：三格汇总条与真实 .total-box 同一容器（灰底 #F7F8FA 上取深一档占位色），
+				     撤掉后换成订单数 / 已结算 / 待结算三格，列位置不跳 -->
+				<div class="ern-sk" v-if="loading">
+					<div class="total-box">
+						<div class="total-item" v-for="i in 3" :key="i">
+							<div class="ern-sk-line ern-sk-deep sk-h-12 sk-w-60"></div>
+							<div class="ern-sk-line ern-sk-deep sk-h-16 sk-w-40"></div>
+						</div>
+					</div>
+				</div>
+				<div class="total-box" v-else>
 					<div class="total-item">
 						<div class="total-item-name">订单数</div>
 						<div class="total-item-value">
@@ -47,7 +61,24 @@
 			<u-subsection :list="statusList" :current="form.status" @change="statusChange" v-if="!pageParams.uid"></u-subsection>
 
 
-			<template v-if="list.length > 0">
+			<!-- 订单行骨架屏：逐块对齐真实 .order-item（标题行 + 四条灰字信息行），
+			     状态页签 u-subsection 留在骨架屏上方保持可点 -->
+			<div class="ern-sk" v-if="loading">
+				<div class="order-list">
+					<div class="order-item" v-for="i in 4" :key="i">
+						<div class="order-item-header">
+							<div class="ern-sk-line ern-sk-block sk-h-14 sk-w-45"></div>
+							<div class="ern-sk-line ern-sk-block sk-h-14 sk-w-20"></div>
+						</div>
+						<div class="ern-sk-line ern-sk-block sk-h-12 sk-w-75"></div>
+						<div class="ern-sk-line ern-sk-block sk-h-12 sk-w-60"></div>
+						<div class="ern-sk-line ern-sk-block sk-h-12 sk-w-40"></div>
+						<div class="ern-sk-line ern-sk-block sk-h-12 sk-w-35"></div>
+					</div>
+				</div>
+			</div>
+
+			<template v-else-if="list.length > 0">
 				<div class="order-list">
 					<div class="order-item" v-for="(item, index) in list">
 						<div class="order-item-header">

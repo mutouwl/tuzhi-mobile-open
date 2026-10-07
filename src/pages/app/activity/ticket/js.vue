@@ -1,10 +1,9 @@
 <script>
 var that;
-import shareModal from "@/components/modal/share-modal.vue";
 import banner from '@/components/course/banner.vue';
 import liveStartTimeBar from "@/components/course/live-start-time-bar.vue";
 export default {
-  components: { shareModal, banner, liveStartTimeBar },
+  components: { banner, liveStartTimeBar },
   data() {
     return {
       loading: true,

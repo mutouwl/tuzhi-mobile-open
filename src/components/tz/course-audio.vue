@@ -93,7 +93,7 @@
 					<!-- 左侧：倍速 -->
 					<div class="btn-item speed-btn" @click="showModel('speed')" v-if="!isMini">
 						<div class="icon-wrap"><tz-icon name="flashlight_fill" color="#fff" :size="22" /></div>
-						<div class="tip">{{ speedOption[checked.speed].name }}</div>
+						<div class="tip">{{ currentSpeed.name }}</div>
 					</div>
 
 					<!-- 上一曲 -->
@@ -135,16 +135,27 @@
 			</view>
 		</view>
 
-		<!-- speed 弹窗 -->
-		<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.speed" :actions="speedOption"
-			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('speed')" @select="speedSelect">
+		<!-- speed 弹窗：弹层壳/标题/底部「关闭」行仍由 u-action-sheet 自带（M18 不自造弹层与关闭行），
+		     只把默认的那一列按钮换成横排的倍率选择条；倍率清单沿用下方 speedOption，不另起一套 -->
+		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="关闭" title="请选择倍速"
+			:show="modal.speed" :closeOnClickOverlay="true" @close="showModel('speed')">
+			<view class="ca-speed-panel">
+				<view class="ca-speed-track">
+					<view v-for="opt in speedOption" :key="opt.key" class="ca-speed-opt"
+						:class="{ 'ca-speed-opt--on': checked.speed === opt.key }" @click="speedSelect(opt)">{{ opt.name }}</view>
+				</view>
+			</view>
 		</u-action-sheet>
 
-        <!-- 播放器内核 -->
-		<!--  #ifdef H5 --> 
-		<div style="height: 1px;width:1px;overflow:hidden">
+        <!-- 播放器内核：Aliplayer 是视频播放器，音频这一档只借它解码，它的皮肤（64px 大播放键 /
+		     控制栏 / 倍速浮层）一概不能露面。先前内核的 inline 是 position:fixed + 1px，
+		     而 fixed 元素不吃祖先的 overflow:hidden 裁剪 ⇒ 那颗按 1px 框居中的大播放键从框里溢出去，
+		     贴在页面中部左缘（2026-09-27 用户点名「音频课程会在页面中部左侧出现一个播放器按钮」）。
+		     内核改 absolute，并由下面这一格 1px 的 relative + overflow:hidden 壳包死，皮肤怎么算都出不了这 1px -->
+		<!--  #ifdef H5 -->
+		<div class="ca-kernel">
 			<video-h5 ref="audioPlayer" :domId="domId" :height="1" :mute="isMuted" :source="path" :isLive="false" :styles="{
-                opacity: opacity, transition: 'opacity 0.5s ease-in-out', width: '1px', height: '1px', position: 'fixed', left: 0,
+                opacity: opacity, transition: 'opacity 0.5s ease-in-out', width: '1px', height: '1px', position: 'absolute', left: 0, top: 0,
             }" @play="playerOnPlay" @pause="playerOnPause" @ended="playerOnEnded" @timeupdate="playerOnTimeupdate"
 				@waiting="playerOnWaiting" @playing="playerOnPlaying" @error="playerOnError" @loadedmetadata="audioLoaded" />
 		</div>
@@ -164,6 +175,25 @@
 // #ifdef H5
 import videoH5 from "@/components/video/video-h5.vue";
 // #endif
+// 微信 BackgroundAudioManager 的事件表：[on*/off* 的后半段, 本组件 handlers 的键名]。
+// 收成一份表、bind/unbind 各一次循环，而不是照抄十行 onXxx() / offXxx()：
+// **off* 那一半并不是全都有** —— 基础库 3.17 的 BackgroundAudioManager 就没有 offCanplay，
+// 逐行 unbind 会在 beforeDestroy 抛 `TypeError: t.offCanplay is not a function`。
+// 这一抛断在卸载链路上：本组件与它所在页面的 $destroy 没跑完，之后那一次在途 setData 的回调
+// 就永远不会回来（控制台紧跟着那条「[setData-guard] 在途推送标志卡死」是它的后继现象，不是另一件事）。
+const BG_AUDIO_EVENTS = [
+    ['Canplay', 'canplay'],
+    ['Play', 'play'],
+    ['Pause', 'pause'],
+    ['Stop', 'stop'],
+    ['Ended', 'ended'],
+    ['Waiting', 'waiting'],
+    ['TimeUpdate', 'timeupdate'],
+    ['Prev', 'prev'],
+    ['Next', 'next'],
+    ['Error', 'error'],
+];
+
 var that;
 export default {
     // #ifdef H5
@@ -187,10 +217,13 @@ export default {
         return {
             opacity: 0,
             modal: { speed: false },
+            // 档位按倍率从小到大排，「正常」(value=1) 落在 0.8 与 1.25 之间（2026-09-27 用户点名：
+            // 原先「正常」摆在整排最前，读起来像比 0.5 还慢）。key 是这一档的稳定身份（0＝正常，
+            // checked.speed 存的就是它）而不是数组下标 ⇒ 换顺序不用跟着改默认值与选中态
             speedOption: [
-                { name: "正常", key: 0, value: 1 },
                 { name: "0.5倍", key: 1, value: 0.5 },
                 { name: "0.8倍", key: 2, value: 0.8 },
+                { name: "正常", key: 0, value: 1 },
                 { name: "1.25倍", key: 3, value: 1.25 },
                 { name: "1.5倍", key: 4, value: 1.5 },
             ],
@@ -200,12 +233,14 @@ export default {
             // 是否已完成初始化（音频数据加载并开始播放过）；完成后再触发 waiting（切进度/缓冲）不再显示加载态
             hasStarted: false,
             videoCtx: null,
-            backgroundAudioManager: null,
+            // backgroundAudioManager / backgroundAudioHandlers 不放 data：前者是微信的全局原生对象、
+            // 后者是一包闭包，两个都不进模板，却会被 uni 当成渲染数据序列化推给视图层
+            // （见 ui-baseline-mobile.md M27 同一族的「data 里只放要渲染的东西」）；
+            // 它们在 mounted 里赋一次，当普通实例字段用
             backgroundAudioPath: '',
             // 本组件挂载时接管了同一条后台音频；课程页据此保留后台实时进度，
             // 不再用服务端稍旧的学习进度反向覆盖。
             restoredFromBackground: false,
-            backgroundAudioHandlers: null,
             readyPath: '',
             isMuted: false,
             duration: 0,
@@ -218,6 +253,11 @@ export default {
     computed: {
         isMini() {
             return this.scrollTop > 400;
+        },
+        // 当前倍速那一档：按 key（身份）找，不按数组下标取——上一版 speedOption[checked.speed] 把
+        // key 当下标用，档位一改顺序（「正常」挪到 0.8 与 1.25 之间）就会指到错的行
+        currentSpeed() {
+            return this.speedOption.find((item) => item.key === this.checked.speed) || this.speedOption[0];
         },
         // 封面地址：加载失败或为空时回退默认占位图
         safePatch() {
@@ -309,7 +349,10 @@ export default {
             // #ifdef MP-WEIXIN
             const manager = this.backgroundAudioManager;
             if (!manager) return;
-            const owns = () => this.managerMatchesPath();
+            // 除「这条音频还是不是我这条」之外还要判「我还在不在」：没有 off* 的那几档摘不掉，
+            // 销毁后回调照样进来（M26 那一族）
+            const owns = () => this._isDestroyed !== true && this._isBeingDestroyed !== true
+                && this.managerMatchesPath();
             const handlers = {
                 canplay: () => {
                     if (!owns()) return;
@@ -336,34 +379,23 @@ export default {
                 error: error => { if (owns()) this.playerOnError(error); },
             };
             this.backgroundAudioHandlers = handlers;
-            manager.onCanplay(handlers.canplay);
-            manager.onPlay(handlers.play);
-            manager.onPause(handlers.pause);
-            manager.onStop(handlers.stop);
-            manager.onEnded(handlers.ended);
-            manager.onWaiting(handlers.waiting);
-            manager.onTimeUpdate(handlers.timeupdate);
-            manager.onPrev(handlers.prev);
-            manager.onNext(handlers.next);
-            manager.onError(handlers.error);
+            BG_AUDIO_EVENTS.forEach((pair) => {
+                const on = manager['on' + pair[0]];
+                if (typeof on === 'function') on.call(manager, handlers[pair[1]]);
+            });
             // #endif
         },
         unbindBackgroundAudioEvents() {
             // #ifdef MP-WEIXIN
             const manager = this.backgroundAudioManager;
             const handlers = this.backgroundAudioHandlers;
-            if (!manager || !handlers) return;
-            manager.offCanplay(handlers.canplay);
-            manager.offPlay(handlers.play);
-            manager.offPause(handlers.pause);
-            manager.offStop(handlers.stop);
-            manager.offEnded(handlers.ended);
-            manager.offWaiting(handlers.waiting);
-            manager.offTimeUpdate(handlers.timeupdate);
-            manager.offPrev(handlers.prev);
-            manager.offNext(handlers.next);
-            manager.offError(handlers.error);
+            // 先把表收走再摘：这一句之后无论摘没摘全，本组件都不会再有「算我的」的回调
             this.backgroundAudioHandlers = null;
+            if (!manager || !handlers) return;
+            BG_AUDIO_EVENTS.forEach((pair) => {
+                const off = manager['off' + pair[0]];
+                if (typeof off === 'function') off.call(manager, handlers[pair[1]]);
+            });
             // #endif
         },
         getCurrentTime(){
@@ -463,7 +495,7 @@ export default {
                 manager.epname = this.name || '音频课程';
                 manager.singer = '课程音频';
                 manager.coverImgUrl = this.safePatch || '';
-                manager.playbackRate = this.speedOption[this.checked.speed].value;
+                manager.playbackRate = this.currentSpeed.value;
                 this.backgroundAudioPath = this.path;
                 this.restoredFromBackground = false;
                 manager.src = this.path;
@@ -584,7 +616,7 @@ export default {
         // BackgroundAudioManager 是全局播放器：页面销毁只解绑本组件监听，
         // 不停止音频，才能在锁屏、切后台和页面跳转后继续播放。
         // 动态预览属于临时播放，关闭弹窗时仍应停止。
-        if (!this.allowBackgroundPlay && this.managerMatchesPath()) {
+        if (!this.allowBackgroundPlay && this.backgroundAudioManager && this.managerMatchesPath()) {
             this.backgroundAudioManager.stop();
         }
         this.unbindBackgroundAudioEvents();
@@ -625,6 +657,16 @@ export default {
     padding: 20px 25px 10px;
     height: 100%;
     display: flex; flex-direction: column; 
+}
+
+/* 播放器内核那一格：1px 的 relative + overflow:hidden 壳，把 Aliplayer 的皮肤全部关在里面
+   （内核自己是 absolute，见模板那段注释）。只写宽高不写 relative 的话 absolute 的内核会
+   往上找别的定位祖先（.box），这一格就裁不到它 */
+.ca-kernel {
+    position: relative;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
 }
 
 /* 吸顶模式 */
@@ -775,6 +817,37 @@ export default {
     height: 5px;
 }
 
+/* ================== 4. 倍速选择条（u-action-sheet 的插槽内容） ================== */
+/* 灰底圆角条 + 选中项主题色圆底：整条是一排等宽档位，选中那一档换成 #0968f6 圆底白字，
+   未选中走辅助灰 #86909c（§1 主色 / 辅助灰档）。圆角一律 999px（胶囊由高度决定实际半径），
+   不写 12~39px 的单值圆角（M21 卡片圆角档、M17 按钮圆角档都不适用于这一档选择控件）。
+   弹层外壳与底部「关闭」行是 u-action-sheet 自带的，这里只画选择条本身。 */
+.ca-speed-panel {
+    padding: 20px 15px 24px;
+}
+.ca-speed-track {
+    display: flex;
+    align-items: center;
+    background-color: #f2f3f5;
+    border-radius: 999px;
+    padding: 5px;
+}
+.ca-speed-opt {
+    flex: 1;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #86909c;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.ca-speed-opt--on {
+    background-color: #0968f6;
+    color: #fff;
+    font-weight: 600;
+}
 .box.box-mini .audio-bg-mask{
     background-color: #0968f6;
 }

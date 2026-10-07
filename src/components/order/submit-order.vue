@@ -51,7 +51,9 @@
         </view>
         
         <tz-box>
-            <course v-for="(item, index) in data.orderGoodsList" :key="index" :name="item.detail.name"
+            <!-- itemId 取后端 calcAmount 回写的 item_id（= detail.id，physical/vipcard 已在下单前剥掉 sku 后缀），
+                 与订单详情页同一口径：不传这一项时卡片里的 courseHandle 拿不到 id，整卡在确认页点了没反应（打卡即此症状） -->
+            <course v-for="(item, index) in data.orderGoodsList" :key="index" :itemId="item.item_id" :name="item.detail.name"
                 :cover="item.detail.cover" :type="item.detail.type" :price="item.detail.price" :count="item.count"
                 :is-virtual-pay="isVirtualPay" />
             <tz-divider bgColor="#fff" />

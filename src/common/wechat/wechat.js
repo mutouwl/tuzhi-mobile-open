@@ -78,7 +78,11 @@ export default class Wechat {
 							success: function (infoRes) {
 								if (infoRes.errMsg === "getUserInfo:ok") {
 									let userInfo = infoRes.userInfo;
-									api('user.wxAccountLogin', {
+									// 键名是 user.info.wxAccountLogin：api_list 里这一组挂在 user.info 之下（user/merge、
+									// user/info 各自一层）。原先写成两段的 user.wxAccountLogin，getApiObj
+									// 取不到键会同步抛错，公众号 H5 登录这一支永远走不到 resolve。
+									// 由 scripts/check-api-keys.js 揪出。
+									api('user.info.wxAccountLogin', {
 										authResult: authResult,
 										userInfo: userInfo
 									}).then(res => {

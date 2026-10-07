@@ -43,6 +43,23 @@
 								:inverted="item.badge && item.badge.inverted || propsBadge.inverted"
 								customStyle="margin-left: 4px;"
 							></u-badge>
+							<!-- #ifndef APP-NVUE -->
+							<!-- 选中条就画在「当前选中项」内部、用 CSS 居中（见样式里 &__line-inline 的说明）：
+							     不依赖任何量宽。为什么不能靠 lineOffsetLeft —— uView 组件都带 options.virtualHost=true，
+							     组件内 `createSelectorQuery().in(this)` 量不到自己的节点（实测 listRects 恒为空、
+							     连补量都没跑起来），lineOffsetLeft 因此恒为 0；旧版把蓝条画在整排最左缘，
+							     正是用户点名的「Tabs 选中条不在文字下方居中，一直靠在页面最左侧」（2026-09-28 修） -->
+							<view
+								v-if="index === innerCurrent"
+								class="u-tabs__wrapper__nav__line-inline"
+								:style="{
+										width: $u.addUnit(lineWidth),
+										height: $u.addUnit(lineHeight),
+										background: lineColor,
+										backgroundSize: lineBgSize,
+									}"
+							></view>
+							<!-- #endif -->
 						</view>
 						<!-- #ifdef APP-NVUE -->
 						<view
@@ -54,24 +71,9 @@
 									background: lineColor,
 									backgroundSize: lineBgSize,
 								}]"
-						>
-							<!-- #endif -->
-							<!-- #ifndef APP-NVUE -->
-							<view
-								class="u-tabs__wrapper__nav__line"
-								ref="u-tabs__wrapper__nav__line"
-								:style="[{
-										width: $u.addUnit(lineWidth),
-										transform: `translate(${lineOffsetLeft}px)`,
-										transitionDuration: `${firstTime ? 0 : duration}ms`,
-										height: $u.addUnit(lineHeight),
-										background: lineColor,
-										backgroundSize: lineBgSize,
-									}]"
-							>
-								<!-- #endif -->
-							</view>
-						</view>
+						></view>
+						<!-- #endif -->
+					</view>
 				</scroll-view>
 			</view>
 			<slot name="right" />
@@ -110,6 +112,10 @@
 				},
 				innerCurrent: 0,
 				moving: false,
+				// 选中条是否已经量到真实尺寸：false 时条子先不显示。
+				// 首帧量不到（渲染层还没落定）时 lineOffsetLeft 恒为 0，条子会贴在整排最左缘
+				// —— 与其画一根错位的蓝条，不如先不出（2026-09-27 用户点名「蓝条一直靠在页面最左侧」）
+				lineReady: false,
 			}
 		},
 		watch: {
@@ -154,6 +160,11 @@
 		async mounted() {
 			this.init()
 		},
+		// 补量链条可以长达十几秒（见 retryResize）：组件销毁必须先把待补的那一发掐掉，
+		// 否则页面退出后还在跑一次注定查不到节点的 selector 查询（与「泄漏的定时器」同一族）
+		beforeDestroy() {
+			this.clearResizeRetry()
+		},
 		methods: {
 			setLineLeft() {
 				const tabItem = this.list[this.innerCurrent];
@@ -167,6 +178,8 @@
                 // 获取下划线的数值px表示法
 				const lineWidth = uni.$u.getPx(this.lineWidth);
 				this.lineOffsetLeft = lineOffsetLeft + (tabItem.rect.width - lineWidth) / 2
+				// 量到真实宽度、算出了居中偏移之后才让条子显形（见 data 里 lineReady 的说明）
+				this.lineReady = true
 				// #ifdef APP-NVUE
 				// 第一次移动滑块，无需过渡时间
 				this.animation(this.lineOffsetLeft, this.firstTime ? 0 : parseInt(this.duration))
@@ -231,13 +244,32 @@
 				scrollLeft = Math.min(scrollLeft, this.scrollViewWidth - this.tabsRect.width)
 				this.scrollLeft = Math.max(0, scrollLeft)
 			},
+			/**
+			 * 组件/所在页面是否已销毁：补量链上迟到的回调（量宽/观察器）写响应式数据之前必须先问这一句。
+			 * 往一个已销毁的页面写数据 ⇒ Vue patch ⇒ setData 打到空页面上 ⇒ WeChat 运行时抛
+			 * `TypeError: Cannot read properties of null` 并**从此废掉整个 setData 通道**
+			 * （所有页面停在首屏、点击全像失灵，接口却全是 200）。详见 tz-share-poster-body 的 gone()。
+			 */
+			gone() {
+				return this._isDestroyed === true || this._isBeingDestroyed === true
+			},
 			// 获取所有标签的尺寸
 			resize() {
+				// 组件已销毁：这一发是补量链上迟到的回调，此刻写数据会对已销毁的页面 setData（见 gone 的说明）
+				if (this.gone()) return
 				// 如果不存在list，则不处理
 				if(this.list.length === 0) {
 					return
 				}
 				Promise.all([this.getTabsRect(), this.getAllItemRect()]).then(([tabsRect, itemRect = []]) => {
+					// 小程序端首帧节点还没进渲染层，量到的是一排 0（与 u-sticky 同一坑）：当没量到，隔帧重试。
+					// 不重试就直接 setLineLeft，选中条会按 width=0 算到整排最左边（贴在屏幕左缘）
+					if (!itemRect.length || !itemRect.every(rect => rect && rect.width)) {
+						this.retryResize()
+						return
+					}
+					this.clearResizeRetry()
+					this.resizeTried = 0
 					this.tabsRect = tabsRect
 					this.scrollViewWidth = 0
 					itemRect.map((item, index) => {
@@ -250,6 +282,30 @@
 					this.setLineLeft()
 					this.setScrollLeft()
 				})
+				// 另一支也要走：$uGetRect 查不到节点时既不 resolve 也不 reject，上面那条链会一直挂着，
+				// 只挂 0 那一支等于把「永不回值」那支留成下次故障（规则22）
+				this.clearResizeRetry()
+				this.resizeRetryTimer = setTimeout(() => this.retryResize(), 300)
+			},
+			// 补量：量到为止，不是「补几次就算了」。
+			// 原先只补 6 次、每次 40ms（约 240ms）就永久放弃，放弃后 lineOffsetLeft 停在 0 ⇒
+			// 选中条贴整排最左缘且再也不会自己回来（2026-09-27 用户点名）。
+			// 小程序首帧渲染层落定 + 页面本身较慢时，240ms 这个窗口远远不够；
+			// 分两档：前 20 次每 50ms（约 1s，常规首帧），之后每 500ms 再补 28 次（约 14s，
+			// 盖住慢首帧与「回前台/退回本页后渲染层才落定」），量到就复位计数并不再补。
+			// 补量链拉长后，每一发都要先过 resize() 里的 gone() 闸门：晚到的回调绝不能在销毁后再写数据。
+			retryResize() {
+				this.clearResizeRetry()
+				this.resizeTried = (this.resizeTried || 0) + 1
+				if (this.resizeTried > 48) return
+				const delay = this.resizeTried <= 20 ? 50 : 500
+				uni.$u.sleep(delay).then(() => this.resize())
+			},
+			clearResizeRetry() {
+				if (this.resizeRetryTimer) {
+					clearTimeout(this.resizeRetryTimer)
+					this.resizeRetryTimer = null
+				}
 			},
 			// 获取导航菜单的尺寸
 			getTabsRect() {
@@ -317,6 +373,10 @@
 				position: relative;
 
 				&__item {
+					/* 选中条（非 nvue 那一档）就画在项内部并靠 CSS 居中，所以项必须是定位祖先 */
+					/* #ifndef APP-NVUE */
+					position: relative;
+					/* #endif */
 					/*  #ifdef H5  */
 					padding: 10px 11px;
 					/*  #endif  */
@@ -354,6 +414,20 @@
 					border-radius: 100px;
 					transition-property: transform;
 					transition-duration: 300ms;
+				}
+
+				/* 非 nvue 的选中条：放进选中项内部、左右各 50% + translateX(-50%) 居中。
+				   为什么不用量宽那一套：uView 组件都带 options.virtualHost=true，组件内
+				   `createSelectorQuery().in(this)` 量不到自己的节点（实测 listRects 恒为空、resizeTried 都没跑起来），
+				   于是 lineOffsetLeft 恒为 0 —— 旧版把蓝条画在整排最左缘，正是用户点名的那条
+				   「Tabs 选中条不在文字下方居中，一直靠在页面最左侧」（2026-09-28 修，M5/M26 同批）。
+				   放进项里就不再依赖任何量宽：条永远跟着这一项走，滚动也是。 */
+				&__line-inline {
+					position: absolute;
+					bottom: 2px;
+					left: 50%;
+					transform: translateX(-50%);
+					border-radius: 100px;
 				}
 			}
 		}

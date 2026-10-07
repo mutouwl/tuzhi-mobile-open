@@ -129,6 +129,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 点播模式下是否显示进度条与时长（直播间伪直播传 false：按点播模式播放录制视频是为了
+    // 能 seek 对齐进度，但露出进度条等于告诉观众「这是录播」且允许跳到未播内容）。
+    // 小程序端直播间不渲染播放器（platform-limit 占位），故仅 H5 分支消费该开关
+    showProgress: {
+      type: Boolean,
+      default: true,
+    },
     // 画面垂直位置上移比例（整数百分比，按播放区高度）：0 = 默认垂直居中；
     // 横屏直播画面按 contain 等比缩放后居中、下半部分会被底部消息区遮挡，
     // 直播间按该比例上移（基础 10% + 按播放区高度换算的 50px，即画面中心由 1/2 上移该比例）
@@ -286,6 +293,18 @@ export default {
         ? playerElement.querySelector("video") ||
             playerElement.querySelector("audio")
         : null;
+    },
+    /**
+     * 播放器是否停在「等用户手势」那一态（大播放按钮挂着、什么都没在拉）。
+     * 页面据此决定起播加载态要不要显示：桌面浏览器（电脑端开 H5）会拦有声自动播放，
+     * play() 被拒后播放器就停在这里，此刻加载遮罩盖在播放按钮上，读起来是
+     * 「加载中不消失、还能透过它点播放」（2026-09-28 用户点名）。
+     * 媒体元素还没建好时同样算「没在加载」——那一段该由 ready/play 事件重新给加载态。
+     * @return {Boolean} true=没有在加载
+     */
+    isAwaitingPlay() {
+      const media = this.getMediaElement();
+      return !media || !!media.paused;
     },
     syncFullScreenState() {
       const fullscreenElement =
@@ -793,10 +812,21 @@ export default {
      */
     setCurrentTime(time) {
 
-      var videoDuration =this.getDuration();
-      
-      if(time > videoDuration){
+      var videoDuration = this.getDuration();
+
+      // 时长未知（直播模式/元数据未就绪时 getDuration 返回 0 或 NaN）时不跳转：
+      // 原写法会把它折算成 -2 传给 seek，播放器按非法位置直接报错（伪直播进房首轮
+      // 「视频加载失败」的落点）；元数据就绪后 onPlay/ready 会再对齐一次
+      if (!(videoDuration > 0)) {
+        console.log("setCurrentTime skipped: duration not ready", time, videoDuration);
+        return;
+      }
+
+      if (time > videoDuration - 2) {
         time = videoDuration - 2;
+      }
+      if (time < 0) {
+        time = 0;
       }
 
       console.log("videoDuration",time,videoDuration);
@@ -984,9 +1014,11 @@ export default {
             x: 0,
             y: 0,
             children: [
-              { name: "progress", align: "blabs", x: 0, y: 44 },
+              // 进度条与时长随 showProgress 收放：关掉后控制栏退化为「播放/音量/全屏」，
+              // 与直播形态一致（伪直播按点播模式播放但不允许被看出是点播）
+              ...(this.showProgress ? [{ name: "progress", align: "blabs", x: 0, y: 44 }] : []),
               { name: "playButton", align: "tl", x: 15, y: 12 },
-              { name: "timeDisplay", align: "tl", x: 10, y: 7 },
+              ...(this.showProgress ? [{ name: "timeDisplay", align: "tl", x: 10, y: 7 }] : []),
               { name: "volume", align: "tr", x: 5, y: 10 },
               //全屏按钮（根据props控制显示）。
               ...(this.showFullscreenButton ? [{ name: "fullScreenButton", align: "tr", x: 10, y: 12 }] : [])
@@ -1310,9 +1342,14 @@ export default {
   background-position: center center;
   background-attachment: fixed;
   background-size: cover;
-  /* 注意：原复合属性中未包含size，但通常需要添加 */
-  filter: blur(10px);
-  /* 调整模糊程度 */
+  /* 模糊半径 10 → 20 → 30：封面态几乎读不出原图细节，白色控件/文案压得住 */
+  filter: blur(30px);
+  /* 灰色遮罩：inset 阴影画在本元素背景之上、内容之下，正好压住封面又不会盖到播放画面；
+     半径越大边缘透明带越宽，遮罩的边缘同样会被 filter 一起模糊掉，
+     故 scale 与半径同步放大（30px ↔ 1.15），把两条透明带一并推出可视区防白边
+     （参照 tz/course-audio.vue .audio-bg-image、web studio.vue .studio-bg 同款 scale 写法） */
+  transform: scale(1.15);
+  box-shadow: inset 0 0 0 999px rgba(120, 120, 120, 0.3); /* 遮罩：中性灰纱，把封面色彩压灰一档 */
   z-index: 0;
   /* 确保内容在模糊层之上 */
 }

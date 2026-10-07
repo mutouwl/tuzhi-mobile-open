@@ -40,3 +40,61 @@
     font-size: 12px;
     color: #4E5969;
 }
+/* ===== 提现页首屏骨架屏（M16）=====
+   占位块复用本页真实容器类（提现账户那一行按 u-cell 的 12px 15px 内衬 / .withdraw-tip 14px /
+   .withdraw-input 34 高 / .withdraw-banalce-tip 12px 且上留 10 / .withdraw-btn 上留 20），
+   留白由这些真实类给 ⇒ 撤骨架屏后表单落位不跳；本页样式非 scoped，新增类统一 wtd-sk 前缀
+   并限定在 .wtd-sk 内。流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.wtd-sk .wtd-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: wtd-sk-animate 1.8s ease infinite;
+}
+
+/* 提现账户那一行：标题与值两端对齐，与真实 u-cell 同一内衬 */
+.wtd-sk .wtd-sk-cell{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+}
+
+.wtd-sk .wtd-sk-line{
+    display: inline-block;
+    height: 14px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+/* 提现金额输入框：真实是 font-size 20 的下划线输入框，占位按同一高度给 */
+.wtd-sk .wtd-sk-input{
+    display: block;
+    height: 34px;
+    border-radius: 4px;
+}
+
+/* 提现按钮：与本页 u-button 默认档同尺寸（normal 高 40、宽 184 居中） */
+.wtd-sk .wtd-sk-btn{
+    display: block;
+    width: 184px;
+    height: 40px;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+.wtd-sk .sk-h-12{ height: 12px; }
+.wtd-sk .sk-h-14{ height: 14px; }
+
+.wtd-sk .withdraw-banalce-tip .wtd-sk-line{
+    height: 12px;
+}
+
+.wtd-sk .sk-w-25{ width: 25%; }
+.wtd-sk .sk-w-30{ width: 30%; }
+.wtd-sk .sk-w-50{ width: 50%; }
+.wtd-sk .sk-w-100{ width: 100%; }
+
+@keyframes wtd-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

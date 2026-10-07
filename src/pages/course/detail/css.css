@@ -292,14 +292,18 @@
     100% { background-position: 0 50%; }
 }
 
-/* 学习前表单拦截层：绑定 before_learn 表单未填写时全屏拦截学习 */
+/* 学习前表单拦截层：绑定 before_learn 表单未填写时全屏拦截学习。
+   层级走 App.vue 登记的全站档「页面自定义浮层 10000+」，原先写 200 打不过音频播放器卡
+   （components/tz/course-audio.vue 的 .box 是 999），音频课详情页那层黑色拦截卡被播放器整块
+   压在下面，用户只看见播放器动了一下（2026-09-27 用户点名「表单填写提示框会被音频播放器遮挡」）。
+   仍低于 uview 弹层（u-popup / u-modal 10075），点「去填写」弹出的底部表单照旧盖在它上面 */
 .learn-form-mask {
     position: fixed;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 200;
+    z-index: 10000;
     background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;

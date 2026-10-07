@@ -55,6 +55,7 @@ export default {
     if (!that.$tools.systemConfig("app_isinstall_circle")) {
       uni.showToast({ title: "圈子功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     that.load();
@@ -86,12 +87,10 @@ export default {
       this.isVirtualPay = Number(info.is_virtual_pay) === 1 && uni.getStorageSync('platform') === 'wxMiniProgram';
     },
     async load() {
-      uni.showLoading({ title: '加载中…' });
       try {
         const res = await that.$api('circle.circle.presale', { id: that.id });
-        uni.hideLoading();
         uni.stopPullDownRefresh();
-        if (res.code === 1) {
+        if (res && res.code === 1) {
           that.info = res.data;
           that.applyInfo(res.data);
           if (that.info.specs && that.info.specs.length) {
@@ -100,19 +99,19 @@ export default {
           // #ifdef H5
           this.$nav.share(that.info.name, '', that.info.cover);
           // #endif
+          that.loadMsg = '';
           that.loading = false;
         } else {
           // 圈子不存在/已下架等状态异常：空状态展示对应说明（文案以后端返回为准）
           that.loading = false;
-          that.loadMsg = res.msg || '圈子不存在';
+          that.loadMsg = (res && res.msg) || '圈子不存在';
           uni.showToast({ title: that.loadMsg, icon: 'none' });
         }
       } catch (e) {
         // 网络异常兜底：避免加载态卡死，空状态可下拉重试
-        uni.hideLoading();
         uni.stopPullDownRefresh();
         that.loading = false;
-        that.loadMsg = '网络异常，请下拉重试';
+        that.loadMsg = (e && (e.msg || e.errMsg)) || '网络异常，请下拉重试';
         uni.showToast({ title: that.loadMsg, icon: 'none' });
       }
     },

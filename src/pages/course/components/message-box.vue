@@ -21,7 +21,8 @@
         </view>
       </u-transition>
 
-      <!-- 连接状态条：连接中/重连中常驻显示加载态（不隐藏），失败/断开态显示「重新连接」 -->
+      <!-- 连接状态条：首连阶段不显示，断线重连显示加载态，失败/断开态显示刷新图标 + 关闭图标。
+           关闭后由页面在右侧悬浮栏挂一枚入口（见 live.vue 的 linkBarEntryVisible），点它再把这张卡放回来 -->
       <div class="link-error-box" v-if="showLinkBar">
       <span class="link-error-info">
         <span class="link-error-main">
@@ -36,23 +37,35 @@
         </span>
         <span class="link-error-sub" v-if="!isRelinking">直播状态不受影响，会自动刷新</span>
       </span>
-      <span class="re-link-btn" v-if="!isRelinking" @click="reLink()">重新连接</span>
+      <span class="link-error-actions">
+        <span class="re-link-btn" v-if="!isRelinking" @click="reLink()">
+          <tz-icon name="refresh" :size="14" color="#fff"></tz-icon>
+        </span>
+        <span class="link-error-close" @click="closeLinkBar()">
+          <tz-icon name="close" :size="14" color="#fff"></tz-icon>
+        </span>
+      </span>
       </div>
 
-      <scroll-view
-        scroll-y
-        :scroll-with-animation="scroller.animation"
-        :scroll-top="scroller.top"
-        :upper-threshold="0"
-        scroll-anchoring
-        :show-scrollbar="false"
-        @scrolltoupper="loadmore"
-        class="scroller"
-      >
-        <view id="chatlistbox" class="chat-list">
-          <message-list-box :meessageList="messageList" @openRedpacket="onOpenRedpacket"/>
-        </view>
-      </scroll-view>
+      <!-- 外层这一只 view 只挂上下渐隐遮罩，不参与滚动：mask 直接写在 scroll-view 上时，
+           iOS 的惯性滚动会把遮罩算进那一张合成层里（滚动过程中掉帧/整层忽明忽暗），
+           写在不动的父层上才是稳定档。遮罩口径见下面样式里的 .scroller-fade -->
+      <view class="scroller-fade">
+        <scroll-view
+          scroll-y
+          :scroll-with-animation="scroller.animation"
+          :scroll-top="scroller.top"
+          :upper-threshold="0"
+          scroll-anchoring
+          :show-scrollbar="false"
+          @scrolltoupper="loadmore"
+          class="scroller"
+        >
+          <view id="chatlistbox" class="chat-list">
+            <message-list-box :meessageList="messageList" @openRedpacket="onOpenRedpacket" @openShareGift="onOpenShareGift" @openInviteRank="onOpenInviteRank"/>
+          </view>
+        </scroll-view>
+      </view>
     </view>
     
 
@@ -109,6 +122,10 @@ export default {
       messageList: [],
       isLoad: false,
       linkStatus: false,
+      // 本次进页是否已连上过：首连成功前的「正在连接」不显示状态条
+      linkedOnce: false,
+      // 是否由用户点击「重新连接」触发：手点要有加载反馈
+      manualRelink: false,
       tipText: "消息服务连接失败，请刷新重试",
       giftDetail: {},
       // 通用直播消息服务库实例（连接/订阅/事件由库统一管理）
@@ -126,19 +143,29 @@ export default {
   },
   computed: {
     /**
-     * 是否处于连接中/重连中（连接态常驻显示加载条，不隐藏）
+     * 是否处于连接中/重连中
      */
     isRelinking() {
       return ['relink', 'reconnect', 'connecting'].includes(this.linkStatus);
     },
     /**
-     * 是否显示连接状态条
-     * 连接中显示加载态，连接失败/断开显示错误态（带「重新连接」按钮）
+     * 连接状态条「本应显示」判据（不含用户关闭）
+     * 连接失败/断开显示错误态（带刷新图标按钮）；
+     * 加载态只在「已连上过之后掉线重连」或「手点重新连接」时显示，
+     * 首次进页建连那 1~5s 不显示（成功前一闪而过的「正在连接」会被当成报错）
+     * 这一份原样上抛页面，右侧悬浮入口按「本应显示 && 已被用户关掉」判显隐
+     */
+    linkBarShown() {
+      if (['fail', 'losed', 'offline'].includes(this.linkStatus)) {
+        return true;
+      }
+      return this.isRelinking && (this.linkedOnce || this.manualRelink);
+    },
+    /**
+     * 连接状态条实际显示：用户关掉后由页面那枚悬浮入口再放回来
      */
     showLinkBar() {
-      return (
-        this.isRelinking || ['fail', 'losed', 'offline'].includes(this.linkStatus)
-      );
+      return this.linkBarShown && !this.linkBarDismissed;
     },
     /**
      * 是否为阿里云消息服务商
@@ -211,6 +238,13 @@ export default {
       type: [Boolean, Number],
       default: true,
     },
+    /**
+     * 用户点卡片上那枚关闭图标后的收起位（页面持有，页面右侧悬浮入口点开时置回 false）
+     */
+    linkBarDismissed: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     course_id() {
@@ -224,10 +258,24 @@ export default {
     // 连接状态上抛父级：直播间据此联动轮询频率——
     // success（SOCKET 可用）时 getRoomDetail 降为低频兜底；断开/失败回快轮询
     linkStatus(val) {
+      if (val === "success") {
+        this.linkedOnce = true;
+      }
       this.$emit("link-status", val);
+    },
+    // 卡片「本应显示」状态变化上抛：页面右侧悬浮入口据此判显隐（关掉卡片后那枚入口才出现）
+    linkBarShown(val) {
+      this.$emit("link-bar-state", val);
     },
   },
   methods: {
+    /**
+     * 关闭连接状态条（事件名不与原生事件同名，理由同 link-status 那条：H5 端模板里的
+     * 原生监听名会被单向改写成 click，见 ui-baseline-mobile.md M28）
+     */
+    closeLinkBar() {
+      this.$emit("link-bar-dismiss");
+    },
     control() {
       this.$emit("control", false);
     },
@@ -318,6 +366,8 @@ export default {
      * （绕开 SDK logined 幂等跳过）；initializing 卡死（拉鉴权网络黑洞）超过 10s 强制复位重进
      */
     reLink() {
+      // 手点重连要有加载反馈（首连阶段的静默不算）
+      that.manualRelink = true;
       // 阿里云模式：库内 reconnect 完成 登出→重登→入群
       if (that.isAliyunProvider) {
         // #ifdef H5
@@ -630,6 +680,14 @@ export default {
         return;
       }
 
+      // 右侧悬浮入口三枚（红包 / 分享有礼 / 邀请达人榜）的显隐变更：控制类消息，不渲染进聊天列表，
+      // 上抛父级由它把三枚真值按下去（EntryNotice 现算好推下来，前端不自己判，M22）。
+      // 管理员在直播中途改开关 / 建活动 / 发红包时推，学员端据此即时显隐，不必退出重进。
+      if (data.type == "live_entry") {
+        that.$emit("live-entry", data);
+        return;
+      }
+
       // 管理员拉黑通知（群组广播，按 data.user_ids 命中自己才上抛）：直播间收到即停止观看并退出，
       // 属控制类消息不渲染进聊天列表
       if (data.type == "user_black") {
@@ -712,6 +770,14 @@ export default {
         that.$emit("openRedpacket", data);
       }
 
+      // 讨论区里出现「分享有礼 / 达人榜」的活动卡片 ⇒ 上抛父级重判右侧那一枚悬浮入口
+      // （用户 2026-10-04 点名：直播中途才建的活动，只要在讨论区出现过，就该监听这条事件把按钮显示出来）。
+      // 只有实时推送这一路走这里，历史消息走 getMessage() 不经这一段 ⇒ 进房拉历史不会重复触发；
+      // 那一趟由组件 mounted 自己取一次。事件名不与原生事件同名（M28：H5 端编译器只单向改模板里的监听名）。
+      if (data.type == "share_gift" || data.type == "invite_rank") {
+        that.$emit("entry-card", data);
+      }
+
       that.scrollBottom();
     },
 
@@ -748,6 +814,13 @@ export default {
         // 不渲染进聊天列表（控制类消息）；data = {course_id, action, status, status_text}
         if (data.type == "stream_status") {
           that.$emit("stream-status", data);
+          return;
+        }
+
+        // 右侧悬浮入口三枚（红包 / 分享有礼 / 邀请达人榜）的显隐变更：控制类消息，不渲染进聊天列表，
+        // 上抛父级由它把三枚真值按下去（与上面阿里云那一条同一判据、同一载荷形状）
+        if (data.type == "live_entry") {
+          that.$emit("live-entry", data);
           return;
         }
 
@@ -829,6 +902,12 @@ export default {
 
         if (data.type == "redpacket") {
           that.$emit("openRedpacket", data);
+        }
+
+        // 与上面阿里云那一路同一判据、同一载荷：讨论区出现活动卡片 ⇒ 上抛 entry-card 让页面重判那一枚入口
+        // （实时推送才走这里，历史消息走 getMessage()，见 receiveAliyunMessage 那一段的注记）
+        if (data.type == "share_gift" || data.type == "invite_rank") {
+          that.$emit("entry-card", data);
         }
 
         that.scrollBottom();
@@ -926,6 +1005,16 @@ export default {
     onOpenRedpacket(item) {
       that.$emit("openRedpacket", item);
     },
+    // 分享有礼卡片：列表层已经把消息体 JSON 解好（{activity_id, title, subtitle}）再交上来，
+    // 这里只原样转给直播间页，由它打开活动详情弹窗
+    onOpenShareGift(payload) {
+      that.$emit("openShareGift", payload);
+    },
+    // 邀请达人榜卡片：与分享有礼同一条链，列表层解析好的载荷原样上抛，
+    // 由直播间页打开右侧那枚达人榜入口的榜单弹层
+    onOpenInviteRank(payload) {
+      that.$emit("openInviteRank", payload);
+    },
   },
   mounted() {
     that = this;
@@ -964,6 +1053,36 @@ export default {
     // background-color: #f5f6f9;
     overflow: hidden;
     position: relative;
+
+    /* 上下两端渐隐遮罩：消息滚到边界时先淡出，不再整行被硬切成一条直线
+       （2026-10-06 用户点名直播间讨论区「像是被模糊掉了，并不是直接分割那种隐藏掉」）。
+       只吃 alpha 通道，底下是视频还是白面板都能透出，所以不必像背景色遮罩那样猜底色。
+       色标取百分比不取 px+calc：calc() 写在渐变色标位置上，老版本 iOS Safari 会整条丢掉
+       这一声明 —— 丢掉之后一点效果都没有，而源码看着完全正常。
+       12% 在这一屏（讨论区高 = 窗口高 / 3）约 27px ≈ 一条气泡高；嫌宽退到 8%、嫌窄进到 16%。
+       ⚠️ 带 mask 的祖先在 Blink/WebKit 里构成 backdrop root，后代就 blur 不到这个根之外的画面：
+       这一族气泡（.portrait-msg-item、.notice、三张活动卡）都写着 `backdrop-filter: blur(10px)`，
+       父层一加 mask 它们就糊不到身后那层视频，只剩 rgba(0,0,0,.3) 压在原画面上（白字可读性掉一档）。
+       跑起来先看那一眼：气泡里还看得出身后画面的模糊纹理 = 没事；只剩一层 flat 黑 = 被打掉了。
+       退法是撤这两条 mask，改成上下各盖一条覆盖带（覆盖带自己吃 backdrop-filter + mask，
+       气泡的磨砂不动，代价是那两条带里的视频会被糊一小块）。 */
+    .scroller-fade {
+      height: 100%;
+      mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0,
+        #000 12%,
+        #000 88%,
+        rgba(0, 0, 0, 0) 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0,
+        #000 12%,
+        #000 88%,
+        rgba(0, 0, 0, 0) 100%
+      );
+    }
 
     .scroller {
       height: 100%;
@@ -1095,16 +1214,35 @@ export default {
   border-radius: 12px;
 }
 
+.link-error-box .link-error-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* 重新连接：主操作色与直播间一致（关注/主按钮 #FF2C55），文案换成刷新图标。
+   26 见方的方块只框墨迹不框字号（icon-refresh 14px 字号的实际墨迹约 11px），
+   相邻档 24 / 28 —— 卡片内主文字是 12px，图标不宜再大过一档 */
 .link-error-box .re-link-btn{
-  // 主操作色与直播间一致（关注/主按钮 #FF2C55）
   background-color: #FF2C55;
-  color: #fff;
-  padding: 5px 5px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
-  font-size: 12px;
-  width: 90px;
-  text-align: center;
+  flex: none;
   text-shadow: none;
+}
+
+/* 关闭：白字无底，与左侧那枚实心主按钮拉开主次；重连进行中（按钮收起）时它是唯一出口 */
+.link-error-box .link-error-close {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: none;
 }
 

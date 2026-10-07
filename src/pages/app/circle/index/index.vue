@@ -1,6 +1,34 @@
 <template>
   <view class="circle-index">
-    <u-loading-page :loading="loading" bg-color="#F7F8FA"></u-loading-page>
+    <!-- 首屏骨架屏（M16）：整页首载由 circle.circle.detail 一次给全，头部 / 页签 / 动态流三段一起在取。
+         外壳走真实版式那一档的类（.head 保留 #8c7668 兜底底、.nav-bar 白条、.feed 内衬），
+         灰块只往容器内部放，压在深色头图上的那一批用半透明白（深底上 #e5e6eb 读不出来），
+         白底上照旧 #e5e6eb。写死的静态文案不多，头部没有。 -->
+    <view v-if="loading" class="ci-sk">
+      <view class="head ci-sk-head">
+        <view class="head-body">
+          <view class="ci-sk-cover"></view>
+          <view class="head-text">
+            <view class="ci-sk-name"></view>
+            <view class="ci-sk-intro"></view>
+          </view>
+          <view class="ci-sk-round"></view>
+          <view class="ci-sk-round"></view>
+        </view>
+        <view class="head-members">
+          <view class="ci-sk-member"></view>
+        </view>
+      </view>
+      <view class="sticky-wrap">
+        <view class="nav-bar ci-sk-nav">
+          <view class="ci-sk-tab" v-for="i in 3" :key="'ci-sk-tab-' + i"></view>
+        </view>
+      </view>
+      <view class="feed">
+        <tz-circle-post :skeleton="true" :list="[]" :skeleton-count="3" />
+      </view>
+    </view>
+
     <view v-if="!loading && info">
       <!-- 顶部信息区 -->
       <view class="head">
@@ -71,23 +99,26 @@
 
       <!-- 商品橱窗 -->
       <view v-else-if="currentTab.type == 'showcase'" class="feed">
-        <view v-if="tabLoading" class="tab-loading"><u-loading-icon color="#0968f6" text="加载中" textSize="12" /></view>
+        <!-- 切档加载态：只换下面这一屏，头部与页签照常出（M16 切档第一条）。
+             橱窗卡骨架由 tz-course-mini 自己出（版式存在组件里，页面不抄一份） -->
+        <tz-course-mini v-if="tabLoading && !showcaseList.length" :skeleton="true" :skeleton-count="3" :list="[]" type="single" :round="true" :border="true" :margin="8" />
         <tz-course-mini v-else-if="showcaseList.length" :list="showcaseList" type="single" :round="true" :border="true" :margin="8" />
-        <u-empty v-else text="暂无商品" icon="/static/image/empty.png" width="70" height="70" margin-top="60"></u-empty>
+        <u-empty v-else :text="listError || '暂无商品'" icon="/static/image/empty.png" width="70" height="70" margin-top="60"></u-empty>
       </view>
 
       <!-- 动态流 -->
       <view v-else class="feed">
-        <view v-if="tabLoading" class="tab-loading"><u-loading-icon color="#0968f6" text="加载中" textSize="12" /></view>
+        <!-- 切档加载态：只换下面这一屏（判据 loading && !list.length 的切档那一支由 tabLoading 承担） -->
+        <tz-circle-post v-if="tabLoading && !posts.length" :skeleton="true" :list="[]" :skeleton-count="3" />
         <template v-else>
           <tz-circle-post :list="posts" mode="full" :circle-id="id" :content-protect="info.content_protect" @like="onLike" @comment="goDetail" @refresh="refresh" />
           <u-loadmore :status="loadStatus" margin-top="20" v-if="posts.length" />
-          <u-empty v-if="!posts.length && !loadingMore" text="还没有动态，来发布第一条吧" icon="/static/image/empty.png" width="70" height="70" margin-top="60"></u-empty>
+          <u-empty v-if="!posts.length && !loadingMore" :text="listError || '还没有动态，来发布第一条吧'" icon="/static/image/empty.png" width="70" height="70" margin-top="60"></u-empty>
         </template>
       </view>
 
       <!-- 悬浮发布按钮 -->
-      <view class="publish-btn" @tap="goPublish" v-if="myMember.status != 2">
+      <view class="publish-btn" :class="{ disabled: !canPublish }" @tap="goPublish" v-if="myMember.status != 2">
         <tz-icon name="brush_fill" :size="24" color="#86909C" />
       </view>
 
@@ -107,7 +138,9 @@
     <tz-footer v-if="!loading && info" />
 
     <!-- 分享弹窗（海报/图文，type=circle 链接圈子售前页） -->
-    <share-modal v-if="!loading && info" :visible="shareVisible" :val="id" type="circle" @close="shareVisible = false" />
+    <!-- 海报画这个圈子的封面与名称，取本页 circle.index 已加载的 info（内容卡只有「封面 + 标题」，简介不再上海报） -->
+    <share-modal v-if="!loading && info" :visible="shareVisible" :val="id" type="circle" @close="shareVisible = false"
+      :title="info.name" :cover="info.cover" />
 
     <!-- 动态筛选弹窗（排序 + 时间，通用组件） -->
     <tz-filter-popup

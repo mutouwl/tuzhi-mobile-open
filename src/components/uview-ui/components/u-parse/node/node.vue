@@ -375,6 +375,8 @@
   ._img {
     max-width: 100%;
     -webkit-touch-callout: none;
+    /* 行内排版时图片坐在基线上，行盒下方留出字体降部，上下两张图片之间就出现白缝 */
+    display: block;
   }
 
   /* 内部样式 */

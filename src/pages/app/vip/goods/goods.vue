@@ -34,13 +34,16 @@
 
 
 		<!-- 类型筛选 -->
-		<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.type" :actions="type"
+		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.type" :actions="type"
 			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="modal.type = false" @select="typeSelect">
 		</u-action-sheet>
 
 
 		<!-- 分享弹窗 -->
-		<share-modal :val="shareGoodsId" :visible="modal.share" @close="modal.share = false" />
+		<!-- 海报画这一条会员商品的封面与名称，取列表页已加载好的那一行（shareGoods 存下的整行）；
+		     内容卡只有「封面 + 标题」，价格与类型不再抄给海报 -->
+		<share-modal :val="shareGoodsId" :visible="modal.share" @close="modal.share = false"
+			:title="shareGoodsItem.name" :cover="shareGoodsItem.cover" />
 
 		<tz-tab-bar />
 		<tz-footer />

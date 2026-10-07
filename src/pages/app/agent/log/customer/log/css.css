@@ -66,3 +66,43 @@
     line-height: 50px!important;
 }
 /*  #endif  */
+
+/* ===== 客户列表首屏骨架屏（M16）=====
+   占位块复用真实客户卡的容器类（.customer-item / .customer-item-header / .customer-item-cover），
+   只补占位条自身的尺寸；本页样式非 scoped，新增类统一 cus-sk 前缀并限定在 .cus-sk 内，避免污染其它页面。
+   流光渐变与节奏与分销中心页、全站骨架屏同一档（90deg / 1.8s） */
+.cus-sk .cus-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: cus-sk-animate 1.8s ease infinite;
+}
+
+/* 占位条：高度按该行字号取档，行距 5px 与真实 .customer-item-list 的 margin-top 一致 */
+.cus-sk .cus-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.cus-sk .cus-sk-line + .cus-sk-line{
+    margin-top: 5px;
+}
+
+.cus-sk .sk-h-12{ height: 12px; }
+.cus-sk .sk-h-14{ height: 14px; }
+
+.cus-sk .sk-w-35{ width: 35%; }
+.cus-sk .sk-w-50{ width: 50%; }
+.cus-sk .sk-w-60{ width: 60%; }
+
+/* 卡头左侧那一列（昵称 + 最近下单）：真实结构由 .customer-item-name 撑开，
+   占位时给 flex:1 才能把整列推到与右侧箭头同一行，否则被压成一列窄条 */
+.cus-sk .cus-sk-col{
+    flex: 1;
+    min-width: 0;
+}
+
+@keyframes cus-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

@@ -64,3 +64,54 @@
 ::v-deep .u-line{
     border-bottom: 1px solid #efefef!important;
 }
+/* ===== 收支明细首屏骨架屏（M16）=====
+   行几何对齐真实 u-cell：本页穿透选择器给 u-cell 的 body 那一层定的上下内衬 10px 与发丝分隔线 #efefef（本页最后一行不带线，
+   骨架最后一行同样收掉），左侧标题 14px + 灰字时间 12px、右侧变动前后 12px；
+   本页样式非 scoped，新增类统一 wdt-sk 前缀并限定在 .wdt-sk 内。
+   流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.wdt-sk .wdt-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: wdt-sk-animate 1.8s ease infinite;
+}
+
+.wdt-sk .wdt-sk-cell{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #efefef;
+}
+
+.wdt-sk .wdt-sk-cell:last-child{
+    border-bottom: none;
+}
+
+/* 左列（说明 + 时间）：真实 u-cell 里由 title/label 两个块撑开，占位时给 flex:1 才不被值条挤窄 */
+.wdt-sk .wdt-sk-col{
+    flex: 1;
+    min-width: 0;
+    margin-right: 10px;
+}
+
+.wdt-sk .wdt-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.wdt-sk .wdt-sk-col .wdt-sk-line + .wdt-sk-line{
+    margin-top: 4px;
+}
+
+.wdt-sk .sk-h-12{ height: 12px; }
+.wdt-sk .sk-h-14{ height: 14px; }
+
+.wdt-sk .sk-w-35{ width: 35%; }
+.wdt-sk .sk-w-40{ width: 40%; }
+.wdt-sk .sk-w-50{ width: 50%; }
+
+@keyframes wdt-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

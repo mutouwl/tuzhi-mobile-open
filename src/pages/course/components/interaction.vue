@@ -1,41 +1,28 @@
 <template>
     <view class="box">
-        <u-cell-group :border="false">
-            <u-cell v-if="examshow" :label="'已关联 '+list.exercises.length+' 个练习'" :isLink="true"
-                @click="detail('exercises')">
-                <div slot="icon" style="margin-right: 6px;">
-                    <tz-icon name="brush" :size="22" />
-                </div>
-                <text slot="title" style="font-size: 14px;">练习</text>
-            </u-cell>
+        <!-- 加载态：四类清单还在取，按真实行（内衬 10/15、图标 22）先占位再盖骨架 -->
+        <template v-if="loading">
+            <view class="ia-sk-row" v-for="i in 3" :key="'ia-sk-' + i">
+                <view class="ia-sk-icon"></view>
+                <!-- 宽度给数值不给百分比：u-skeleton 的百分比要先量容器宽度，宿主在 flex 行里量不到就画不出块 -->
+                <u-skeleton :loading="true" :animate="true" :title="true" title-width="56" title-height="14"
+                    :rows="1" :rows-width="[130]" rows-height="12" />
+            </view>
+        </template>
 
-
-            <u-cell :border="testshow || formshow" :label="'已关联 '+list.activity.length+' 个线下活动'" :isLink="true"
-                @click="detail('activity')">
-                <div slot="icon" style="margin-right: 6px;">
-                    <tz-icon name="flag" :size="22" />
-                </div>
-                <text slot="title" style="font-size: 14px;">线下活动</text>
-            </u-cell>
-
-            <u-cell v-if="testshow" :border="formshow" :label="'已关联 '+list.test.length+' 个考试'" :isLink="true"
-                @click="detail('test')">
-                <div slot="icon" style="margin-right: 6px;">
-                    <tz-icon name="document" :size="22" />
-                </div>
-                <text slot="title" style="font-size: 14px;">考试</text>
-            </u-cell>
-            
-
-            <u-cell v-if="formshow" :border="false" :label="'已关联 '+list.form.length+' 个表单'" :isLink="true"
-                @click="detail('form')">
-                <div slot="icon" style="margin-right: 6px;">
-                    <tz-icon name="activity" :size="22" />
-                </div>
-                <text slot="title" style="font-size: 14px;">表单</text>
-            </u-cell>
-
-        </u-cell-group>
+        <template v-else>
+            <u-cell-group :border="false" v-if="sections.length > 0">
+                <u-cell v-for="(item, index) in sections" :key="item.type" :border="index < sections.length - 1"
+                    :label="'已关联 ' + item.count + ' 个' + item.name" :isLink="true" @click="detail(item.type)">
+                    <div slot="icon" style="margin-right: 6px;">
+                        <tz-icon :name="item.icon" :size="22" />
+                    </div>
+                    <text slot="title" style="font-size: 14px;">{{ item.name }}</text>
+                </u-cell>
+            </u-cell-group>
+            <!-- 四类都空才是空态；一条都没取到手时说的是失败原因，不把故障说成「暂无」 -->
+            <u-empty v-else icon="/static/image/empty.png" width="70" height="70" :text="loadMsg || '暂无互动内容'" />
+        </template>
 
         <u-popup :show="show" @close="show=false" title="互动" :closeable="true" :round="10">
             <div class="sheet-box">
@@ -52,17 +39,51 @@
 </template>
 
 <script>
-    var that;
     // #ifdef MP-TOUTIAO
     import i18n from "@/components/language/index.js";
     // #endif
+
+    // 互动栏四类实体的名称/图标/接口/所属插件只存这一处，行按「关联数 > 0」渲染
+    const SECTIONS = [
+        {
+            type: "exercises",
+            name: "练习",
+            icon: "brush",
+            api: "app.exam.exercises.getCourseBindExam",
+            plugin: "app_isinstall_test"
+        },
+        {
+            type: "activity",
+            name: "线下活动",
+            icon: "flag",
+            api: "app.activity.courseBindActivity",
+            plugin: ""
+        },
+        {
+            type: "test",
+            name: "考试",
+            icon: "document",
+            api: "app.test.getCourseBindTest",
+            plugin: "app_isinstall_test"
+        },
+        {
+            type: "form",
+            name: "表单",
+            icon: "activity",
+            api: "app.form.courseBindForm",
+            plugin: "app_isinstall_form"
+        }
+    ];
+
     export default {
         // #ifdef MP-TOUTIAO
         i18n,
         // #endif
         data() {
             return {
-                loading: false,
+                loading: true,
+                pending: 0,
+                loadMsg: "",
                 list: {
                     test: [],
                     exercises: [],
@@ -70,10 +91,7 @@
                     form: []
                 },
                 show: false,
-                testshow: false,
-                examshow: false,
-                formshow: false,
-                checked: ''
+                checked: ""
             };
         },
         props: {
@@ -82,60 +100,51 @@
                 default: 0,
             }
         },
+        computed: {
+            // 只有关联到内容的那一类才占一行，四类全空由模板落空态
+            sections() {
+                var list = this.list;
+                var rows = [];
+                SECTIONS.forEach(function (item) {
+                    var bound = list[item.type] || [];
+                    if (bound.length > 0) {
+                        rows.push({ type: item.type, name: item.name, icon: item.icon, count: bound.length });
+                    }
+                });
+                return rows;
+            }
+        },
         watch: {},
         methods: {
-
-            getCourseBindExam() {
-                var url = "app.exam.exercises.getCourseBindExam";
-                that
-                    .$api(url, {
-                        course_id: that.courseId,
-                    })
-                    .then((res) => {
-                        if (res.code === 1) {
-                            that.list.exercises = res.data;
+            /**
+             * 并行取四类关联清单：未安装插件的那一类不发请求，
+             * 全部回音（含失败）后才撤骨架屏，骨架屏不常驻
+             */
+            loadAll() {
+                var vm = this;
+                var tasks = SECTIONS.filter(function (item) {
+                    return !item.plugin || vm.$tools.systemConfig(item.plugin);
+                });
+                vm.pending = tasks.length;
+                tasks.forEach(function (item) {
+                    vm.$api(item.api, { course_id: vm.courseId }).then(function (res) {
+                        if (!res || res.code !== 1) {
+                            vm.loadMsg = (res && res.msg) || "互动内容加载失败";
+                        } else {
+                            vm.list[item.type] = res.data || [];
                         }
-                        this.loading = false;
+                        vm.finishLoad();
+                    }, function () {
+                        vm.loadMsg = "互动内容加载失败，请重试";
+                        vm.finishLoad();
                     });
+                });
             },
-            getCourseBindTest() {
-                var url = "app.test.getCourseBindTest";
-                that
-                    .$api(url, {
-                        course_id: that.courseId,
-                    })
-                    .then((res) => {
-                        if (res.code === 1) {
-                            that.list.test = res.data;
-                        }
-                        this.loading = false;
-                    });
-            },
-            courseBindActivity() {
-                var url = "app.activity.courseBindActivity";
-                that
-                    .$api(url, {
-                        course_id: that.courseId,
-                    })
-                    .then((res) => {
-                        if (res.code === 1) {
-                            that.list.activity = res.data;
-                        }
-                        this.loading = false;
-                    });
-            },
-            getCourseBindForm() {
-                var url = "app.form.courseBindForm";
-                that
-                    .$api(url, {
-                        course_id: that.courseId,
-                    })
-                    .then((res) => {
-                        if (res.code === 1) {
-                            that.list.form = res.data;
-                        }
-                        this.loading = false;
-                    });
+            finishLoad() {
+                this.pending -= 1;
+                if (this.pending <= 0) {
+                    this.loading = false;
+                }
             },
             detail(type) {
                 this.show = true;
@@ -143,22 +152,7 @@
             }
         },
         mounted() {
-            that = this;
-            this.examshow = that.$tools.systemConfig("app_isinstall_test");
-            if (this.examshow) {
-                this.getCourseBindExam();
-            }
-            this.courseBindActivity();
-
-            if (that.$tools.systemConfig("app_isinstall_test")) {
-                this.testshow = true;
-                this.getCourseBindTest();
-            }
-
-            if (that.$tools.systemConfig("app_isinstall_form")) {
-                this.formshow = true;
-                this.getCourseBindForm();
-            }
+            this.loadAll();
         }
     };
 </script>
@@ -185,5 +179,21 @@
         overflow-y: scroll;
         /* background-color: #f6f6f6; */
         /* padding-bottom: calc(env(safe-area-inset-bottom)); */
+    }
+
+    /* 骨架行：与真实 u-cell 行同一档（内衬 10px 15px、左侧图标 22、图标与文字间距 6） */
+    .ia-sk-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 15px;
+    }
+
+    .ia-sk-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 6px;
+        border-radius: 4px;
+        background-color: #e5e6eb;
     }
 </style>

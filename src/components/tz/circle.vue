@@ -1,6 +1,27 @@
 <template>
   <view class="tz-circle" :style="{ margin: margin + 'px' }">
-    <view v-for="item in list" :key="item.id" class="circle-card"
+    <!-- 骨架档（ui-baseline-mobile M16）：外壳复用真实 .circle-card（mini 档 80 高、封面 110、内衬 6/8、
+         圆角与描边同调用点），灰块按真实卡逐块对齐——110 封面 + 名称条 + 有效期条 + 右下角按钮块；
+         版式只存这一份，调用页传 :skeleton 即可，页面不再抄一份卡尺寸（改卡版式时骨架跟着改）。
+         骨架档下真实卡走空数组（rows 计算属性），两者不会同屏叠出 -->
+    <view v-for="i in skCount" :key="'cir-sk-' + i" :class="['circle-card', 'cir-sk', type, { 'circle-card-round': round, 'circle-card-border': border }]">
+      <view class="circle-cover">
+        <view class="cir-sk-cover"></view>
+      </view>
+      <view class="circle-info">
+        <view class="cir-sk-name"></view>
+        <view class="circle-stat">
+          <view class="circle-stat-info">
+            <view class="cir-sk-expire"></view>
+          </view>
+          <!-- 按钮块沿用真实 .circle-btn 的盒子（mini 档是 absolute 靠右，padding 3px 12px），
+               只把底色换成灰块，不另定一份位置（否则与真实卡对不齐） -->
+          <view class="circle-btn cir-sk-btn"></view>
+        </view>
+      </view>
+    </view>
+
+    <view v-for="item in rows" :key="item.id" class="circle-card"
       :class="[type, { 'circle-card-round': round, 'circle-card-border': border, 'circle-card-expired': item.is_expired == 1 }]" @tap="goCircle(item)">
       <view class="circle-cover">
         <image v-if="item.cover && !imgErrors[item.id]" class="circle-cover-img" :src="item.cover" mode="aspectFill" @error="onCoverImgError(item.id)" />
@@ -36,7 +57,7 @@
         </view>
       </view>
     </view>
-    <view v-if="!list.length" class="circle-empty">
+    <view v-if="!rows.length && !skCount" class="circle-empty">
       <text>暂无圈子</text>
     </view>
   </view>
@@ -53,6 +74,20 @@ export default {
     round: { type: [Boolean, Number], default: true },
     border: { type: [Boolean, Number], default: false },
     margin: { type: [Number, String], default: 10 },
+    // 骨架档：只出灰块，不出真实卡（版式由本组件出，调用页不再抄一份卡尺寸）
+    skeleton: { type: Boolean, default: false },
+    // 骨架档铺几张卡
+    skeletonCount: { type: Number, default: 4 },
+  },
+  computed: {
+    // 骨架档铺几张灰卡（非骨架档为 0，模板里 v-for 一个数即按 1..N 出条目）
+    skCount() {
+      return this.skeleton ? this.skeletonCount : 0;
+    },
+    // 骨架档下真实卡走空数组，避免与灰卡同屏叠出
+    rows() {
+      return this.skeleton ? [] : this.list;
+    },
   },
   data() {
     return {
@@ -279,5 +314,34 @@ export default {
   color: #86909c;
   font-size: 12px;
   padding: 20px 0;
+}
+
+/* ===== 骨架档灰块（M16）：静态块取 uview 骨架灰 #e5e6eb、圆角 4px，与课程卡 tz-course-mini 的
+   .mini-sk-* 同一档；外壳 .circle-card / .circle-cover / .circle-info / .circle-stat / .circle-btn
+   全部沿用真实卡的类（mini 档 80 高、封面 110、内衬 6/8、按钮 absolute 靠右），只补占位块自身尺寸。===== */
+.cir-sk-cover {
+  width: 100%;
+  height: 100%;
+  background: #e5e6eb;
+}
+.cir-sk-name {
+  width: 62%;
+  height: 14px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cir-sk-expire {
+  width: 40%;
+  height: 11px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+/* 按钮块只换底色，盒子的 padding 3px 12px / 11px 字（≈46×21）与定位都取真实 .circle-btn */
+.cir-sk-btn {
+  width: 46px;
+  height: 21px;
+  padding: 0;
+  border-radius: 11px;
+  background: #e5e6eb;
 }
 </style>

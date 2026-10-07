@@ -40,3 +40,40 @@
     color: #86909C;
     text-decoration:line-through;
 }
+/* ===== 提现结算页首屏骨架屏（M16）=====
+   占位块复用真实那一格的容器类（.settle-header 居中 + padding-top 30 / .settle-icon 50×50 /
+   .settle-tip 14px 且上留 20 / .settle-balance 26px 且上留 6），行高由这些真实类给，
+   占位条只取宽度 ⇒ 撤骨架屏后数字落位不跳；本页样式非 scoped，新增类统一 stl-sk 前缀
+   并限定在 .stl-sk 内。流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.stl-sk .stl-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: stl-sk-animate 1.8s ease infinite;
+}
+
+.stl-sk .stl-sk-img{
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.stl-sk .stl-sk-line{
+    display: inline-block;
+    height: 14px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.stl-sk .settle-balance .stl-sk-line{
+    height: 26px;
+}
+
+.stl-sk .sk-w-30{ width: 30%; }
+.stl-sk .sk-w-40{ width: 40%; }
+
+@keyframes stl-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

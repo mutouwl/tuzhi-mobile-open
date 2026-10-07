@@ -2,7 +2,7 @@ import Request from './request'
 import apiList from './api_list'
 // import store from '@/common/store/index.js'
 var loginTipShow = false;
-export default function api(url, data = {}) {
+export default function api(url, data = {}, extra = {}) {
 	const request = new Request();
 	console.log("url",url)
 	let api = getApiObj(url);
@@ -26,12 +26,20 @@ export default function api(url, data = {}) {
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
 		if (response.data.code === 0) { // 服务端返回的状态码不等于200，则reject()
-			uni.showToast({
-				title: response.data.msg || '请求出错,稍后重试',
-				icon: 'none',
-				duration: 1000,
-				mask: true
-			});
+			// 第三参带 custom.noToast 的那一发只免这一句 toast（401 的登录引导、reject 分支、
+			// hideLoading 都不受影响）。要这一档的都是**不是用户点出来的**请求（进房自动发的归因
+			// 上报那一族）：这一句黑 toast 是 1 秒 + mask，受邀人刚进直播间就凭空冒出来，
+			// 2026-10-06 用户点名「被邀请的用户进入直播间后，不要弹出来」；失败的原因改由调用点
+			// 落 console（口径同 invite_rank.rank.report——后端那一发对什么都不 error，天然静默）。
+			// 不带的调用点行为一字不变。
+			if (!(response.config && response.config.custom && response.config.custom.noToast)) {
+				uni.showToast({
+					title: response.data.msg || '请求出错,稍后重试',
+					icon: 'none',
+					duration: 1000,
+					mask: true
+				});
+			}
 			uni.hideLoading();
 		}
 
@@ -53,7 +61,10 @@ export default function api(url, data = {}) {
 	return request.request({
 		url: api.url,
 		data,
-		method: api.method
+		method: api.method,
+		// 逐请求的开关走 luch-request 的 custom（request.js 把它留在 handleRe 里，
+		// response.config.custom 读得到；发给 uni.request 的那份副本才删掉）
+		custom: { ...(extra.custom || {}) }
 	})
 
 }

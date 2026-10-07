@@ -3,6 +3,15 @@
 		<view class="coupon-inner">
 			<!-- 左侧金额区 -->
 			<view class="coupon-left">
+				<!-- 骨架档（ui-baseline-mobile M16）：外壳仍走真实那张卡（.coupon-box/.coupon-inner/.coupon-left），
+					 灰块只替换会变的那几格（类型标签 / 金额 / 使用门槛），尺寸逐块对齐真实字号档，
+					 本组件不再让调用页另抄一份卡尺寸（我的券包列表 / 券详情页 / 券使用页共用这一份） -->
+				<template v-if="skeleton">
+					<view class="cmy-sk cmy-sk--tag"></view>
+					<view class="cmy-sk cmy-sk--price"></view>
+					<view class="cmy-sk cmy-sk--type"></view>
+				</template>
+				<template v-else>
 				<view class="left-tag">{{ data.type_text || '优惠券' }}</view>
 				<view class="left-price" :class="data.status == 'expired' || data.status == 'used' ? 'disabled-color' : 'price-color'">
 					<template v-if="data.type === 'reduce' || data.type == 'reduce'">
@@ -17,6 +26,7 @@
 				<view class="left-type" :class="data.status == 'expired' || data.status == 'used' ? 'disabled-color' : 'subtitle-color'">
 					{{ (data.type === 'reduce' || data.type == 'reduce') ? '满' + (data.enough || 0) + '可用' : '优惠券' }}
 				</view>
+				</template>
 			</view>
 
 			<!-- 中间虚线分隔 -->
@@ -29,6 +39,15 @@
 			<!-- 右侧信息区 -->
 			<view class="coupon-right">
 				<view class="right-main">
+					<!-- 骨架档：名称一块 + 有效期两块（券的日期是「起～止」两行那一档）。
+					 规则说明行与右侧操作按钮都按 data 自己判（v-if 才出的元素不给灰块、也不预留空位），
+					 否则「没有说明/已失效」那一档加载完会凭空少一格 -->
+					<template v-if="skeleton">
+						<view class="cmy-sk cmy-sk--title"></view>
+						<view class="cmy-sk cmy-sk--time"></view>
+						<view class="cmy-sk cmy-sk--time2"></view>
+					</template>
+					<template v-else>
 					<view class="right-title" :class="data.status == 'expired' || data.status == 'used' ? 'disabled-color' : 'info-color'">
 						{{ data.name || '-' }}
 					</view>
@@ -45,8 +64,9 @@
 						<text>{{ data.description }}</text>
 						<text class="rule-arrow">></text>
 					</view>
+					</template>
 				</view>
-				<view class="right-action">
+				<view class="right-action" v-if="!skeleton">
 					<!-- picker 选择模式 -->
 					<view class="coupon-choose-box" v-if="picker" @click="change">
 						<view
@@ -67,8 +87,8 @@
 			</view>
 		</view>
 
-		<!-- 不可使用原因提示 -->
-		<view class="cant-use-msg-box" v-if="cantUseMsg">
+		<!-- 不可使用原因提示（v-if 才出，骨架档不预留这一格） -->
+		<view class="cant-use-msg-box" v-if="!skeleton && cantUseMsg">
 			<view class="cant-use-msg">
 				<tz-icon name="prompt" :size="14" color="#FF7820" />{{ cantUseMsg }}
 			</view>
@@ -109,6 +129,12 @@ export default {
 			},
 		},
 		disabled: {
+			type: Boolean,
+			default: false,
+		},
+		// 骨架档（M16）：只出灰块、不出真实券内容。券卡版式只有本组件这一份，
+		// 加载档也由本组件出（调用点只写 :skeleton="loading"），不在页面里另铺一棵灰块树
+		skeleton: {
 			type: Boolean,
 			default: false,
 		},
@@ -347,6 +373,26 @@ export default {
 .disabled-btn {
 	background: #ccc;
 }
+
+/* ===== 骨架档灰块（M16）=====
+   券卡自己的底是 #fff6f0（有色底）：压在中性灰 #e5e6eb 上会读成「有一片脏东西」，
+   按同一口径取同族更浓一档（硬约束 12 / 29⑤）。颜色与圆角只写在 .cmy-sk 一处，
+   各档类只给尺寸与外衬，分成六条各写一遍色值就是下一个人只改一块的复发入口。 */
+.cmy-sk {
+	background: #ffe0cd;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+/* 左侧：类型标签 12px / 金额 32px / 使用门槛 12px，外衬照各自真实那一行 */
+.cmy-sk--tag { width: 46px; height: 14px; margin-bottom: 4px; }
+.cmy-sk--price { width: 76px; height: 28px; margin-bottom: 4px; }
+.cmy-sk--type { width: 56px; height: 12px; }
+
+/* 右侧：名称 16px/600 + 有效期两行 12px */
+.cmy-sk--title { width: 118px; height: 16px; margin-bottom: 6px; }
+.cmy-sk--time { width: 92px; height: 12px; margin-bottom: 4px; }
+.cmy-sk--time2 { width: 66px; height: 12px; }
 
 /* picker 选择框 */
 .coupon-choose-box {

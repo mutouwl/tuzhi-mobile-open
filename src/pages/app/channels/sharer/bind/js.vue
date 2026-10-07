@@ -51,7 +51,7 @@ export default {
     unbind(id) {
       uni.showModal({
         title: "提示",
-        content: "确定要取消该微信对视频号小店的绑定吗",
+        content: "确定要取消该微信对微信小店的绑定吗",
         success: function (res) {
           if (res.confirm) {
             uni.showLoading({

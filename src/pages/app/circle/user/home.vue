@@ -1,33 +1,28 @@
 <template>
   <view class="user-home">
-    <!-- 加载骨架屏：上个人信息 + 下动态列表 -->
+    <!-- 首屏骨架屏（M16）：外壳直接用真实 .profile-head / .profile-main / .profile-info /
+         .profile-stats / .stat-item，加载完不换版；灰块只往容器内部放。
+         「圈主」徽标是 v-if 才出的，不预留空位；下方动态卡版式存在 tz-circle-post 里，这里不抄一份。 -->
     <view v-if="loading" class="user-home-skeleton">
-      <view class="sk-profile">
-        <view class="sk-profile-head">
-          <view class="sk-avatar sk-avatar-lg"></view>
-          <view class="sk-profile-info">
-            <view class="sk-line sk-w-40"></view>
-            <view class="sk-line sk-w-30"></view>
+      <view class="profile-head">
+        <view class="profile-main">
+          <view class="profile-avatar uh-sk-avatar"></view>
+          <view class="profile-info">
+            <view class="uh-sk-line uh-sk-h15 uh-sk-w40"></view>
+            <view class="uh-sk-line uh-sk-h12 uh-sk-w60"></view>
           </view>
         </view>
-        <view class="sk-profile-stats">
-          <view class="sk-stat" v-for="i in 3" :key="i">
-            <view class="sk-line sk-w-40"></view>
-            <view class="sk-line sk-w-30"></view>
+        <view class="profile-stats">
+          <view class="stat-item" v-for="i in 3" :key="'uh-sk-stat-' + i">
+            <view class="uh-sk-line uh-sk-h18 uh-sk-w40"></view>
+            <view class="uh-sk-line uh-sk-h12 uh-sk-w40"></view>
           </view>
         </view>
       </view>
-      <view class="sk-post" v-for="i in 4" :key="i">
-        <view class="sk-head">
-          <view class="sk-avatar"></view>
-          <view class="sk-head-info">
-            <view class="sk-line sk-w-40"></view>
-            <view class="sk-line sk-w-20"></view>
-          </view>
+      <view class="profile-content">
+        <view class="post-list">
+          <tz-circle-post :skeleton="true" :list="[]" :skeleton-count="4" />
         </view>
-        <view class="sk-line"></view>
-        <view class="sk-line sk-w-80"></view>
-        <view class="sk-line sk-w-60"></view>
       </view>
     </view>
 
@@ -67,8 +62,9 @@
 
       <view class="profile-content">
         <view class="post-list">
-          <!-- 列表首次加载态（与圈子首页 tab 加载态一致）；加载更多走 u-loadmore -->
-          <view v-if="postsLoading && !posts.length" class="tab-loading"><u-loading-icon color="#0968f6" text="加载中" textSize="12" /></view>
+          <!-- 列表首次加载态：判据 postsLoading && !posts.length（翻页不闪骨架）；
+               动态卡骨架由 tz-circle-post 自己出 -->
+          <tz-circle-post v-if="postsLoading && !posts.length" :skeleton="true" :list="[]" :skeleton-count="3" />
           <template v-else>
             <tz-circle-post
               :list="posts"
@@ -134,6 +130,7 @@ export default {
     if (!that.$tools.systemConfig('app_isinstall_circle')) {
       uni.showToast({ title: '圈子功能未安装', icon: 'none' });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     if (!that.circleId || !that.userId) {
@@ -293,53 +290,29 @@ export default {
   background: #fff;
 }
 .post-list { overflow: hidden; }
-/* 列表首次加载态（与圈子首页 tab-loading 一致） */
-.tab-loading {
-  display: flex;
-  justify-content: center;
-  padding: 40px 0;
-}
 
-/* 加载骨架屏：上与 profile-head 同构，下为动态卡片 */
+/* ===== 首屏骨架屏（M16）=====
+   外壳复用真实 .user-home-skeleton / .profile-head / .profile-main / .profile-avatar /
+   .profile-info / .profile-stats / .stat-item / .profile-content / .post-list，
+   灰块只往容器内部放。静态块取 uview 骨架灰 #e5e6eb、圆角 4px（压在白底上那一档），
+   流光由 u-skeleton 内置那一档负责，本页不再自写渐变。 */
 .user-home-skeleton { min-height: 100vh; background: #f7f8fa; }
-.sk-profile { padding: 46px 20px 15px; background: #fff; }
-.sk-profile-head { display: flex; align-items: center; }
-.sk-avatar-lg { width: 51px; height: 51px; }
-.sk-profile-info { flex: 1; min-width: 0; margin-left: 14px; }
-.sk-profile-stats { display: flex; margin-top: 34px; }
-.sk-stat { min-width: 68px; margin-right: 16px; }
-.sk-post {
-  margin: 8px 12px 0;
-  padding: 12px 14px 13px;
-  background: #fff;
+.uh-sk-avatar {
+  /* 真实 .profile-avatar 的占位底是半透明白，压在骨架的白底上读不出来，这一档换成骨架灰 */
+  background: #e5e6eb;
+}
+.uh-sk-line {
   border-radius: 4px;
+  background: #e5e6eb;
 }
-.sk-head { display: flex; align-items: center; }
-.sk-avatar {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
+/* 昵称条与下方那行（IP 属地/加入时间）之间：真实 .profile-meta 的上间距 6 */
+.uh-sk .profile-info .uh-sk-line + .uh-sk-line,
+.uh-sk .stat-item .uh-sk-line + .uh-sk-line {
+  margin-top: 6px;
 }
-.sk-head-info { flex: 1; min-width: 0; margin-left: 8px; }
-.sk-line {
-  height: 15px;
-  border-radius: 3px;
-  margin-top: 10px;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-w-80 { width: 80%; }
-.sk-w-60 { width: 60%; }
-.sk-w-40 { width: 40%; }
-.sk-w-30 { width: 30%; }
-.sk-w-20 { width: 20%; }
-@keyframes sk-animate {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
-}
+.uh-sk-h18 { height: 18px; }
+.uh-sk-h15 { height: 15px; }
+.uh-sk-h12 { height: 12px; }
+.uh-sk-w40 { width: 40%; }
+.uh-sk-w60 { width: 60%; }
 </style>

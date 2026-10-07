@@ -1,0 +1,123 @@
+/* 打卡日记详情页：圆角/边距/阴影/边框一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page.school-page--bar（灰底 + 底部留白 90，给吸底评论栏让位）；
+   正文整篇收进一张通栏白块 .school-block（白底、无圆角、无阴影）+ 内衬 14px 16px，
+   与教务详情档（package/detail、campus/detail）和圈子动态详情（.post-main 通栏白块）同口径；
+   本页第一个白块贴住页面顶部（.school-block 的 margin-top 12 由 .cdy-first 归零，照动态详情 .post-main 不留灰底）；
+   卡底关联 chip 行（打卡名称 + 任务名称）按教务小元素档走 4px 圆角（不做胶囊）、两枚同几何同描边
+   （都是 1px #f2f3f5 + 深字 + 主色行首图标），只差行首那枚图标，一行放不下时整行横向滑动；语音与图片/视频同走
+   媒体九宫格（沿用动态详情口径），本页不再单独摆语音条；
+   评论区一张通栏白卡，卡内整块是共用组件 tz-circle-comment-list（标题/评论行/空态都在组件里，
+   与圈子动态详情一份实现），本页只给卡片的一份左右内衬 16，不再自造评论行与分隔线；
+   头像圆角 50%、缩略图 8px、骨架条 4px 与教务同档，本页不再自定义卡片圆角/阴影/区块外边距 */
+
+/* 首块贴顶：本页第一个白块不给上边距（照圈子动态详情 pages/app/circle/post/detail 的 .post-main，
+   白卡直接顶到页面最上方，不再留一条灰底）。用双类选择器压过全局 .school-block 的 margin-top:12px——
+   页面 css 未加 scoped，单类与全局档同权重，谁生效取决于打包顺序（口径见 App.vue 该档注释） */
+.school-block.cdy-first {
+  margin-top: 0;
+}
+
+/* ===== 首屏骨架屏：外壳直接用真实区块的 .school-block（通栏、直角、无阴影），
+   静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（与教务详情页骨架屏同口径），尺寸与真实版式一致（内衬 14/16、头像 40） ===== */
+.cdy-sk-card {
+  padding: 14px 16px;
+}
+.cdy-sk-row {
+  display: flex;
+  align-items: center;
+}
+.cdy-sk-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.cdy-sk-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+/* 正文卡：白底/通栏/直角/无阴影由 .school-block 给，这里给整卡内衬 14/16 */
+.cdy-post {
+  padding: 14px 16px 12px;
+}
+/* 作者行由共用组件 tz-circle-post-head 渲染，本页不再给背景 */
+.cdy-content {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #1d2129;
+  line-height: 1.6;
+  word-break: break-all;
+  /* 与动态卡 .ck-rc-content 同一句：正文里的 \n 要按换行排，默认 white-space 会折成空格 */
+  white-space: pre-wrap;
+}
+/* 九宫格由 tz-circle-media-grid 渲染；组件宿主节点上的 class 在小程序端生效，本页只用它给上下间距。
+   严禁在这里再写 display/布局属性：页面 scoped 规则与组件 scoped 规则同特异性（都是 [data-v-x] 前缀），
+   页面样式后注入会盖掉组件根节点的 display:flex，把「三列横向九宫格」压成一列纵向堆叠（多图变竖排就是这么来的） */
+.cdy-media {
+  margin-top: 10px;
+}
+/* 附件行与媒体九宫格同为「正文下方的一行媒体」，间距取同一档（动态详情的文件块也排在正文之后），
+   同样只给间距，不写 display（口径见上条 .cdy-media） */
+.cdy-files {
+  margin-top: 6px;
+}
+/* 课程卡片接在附件行下面（后台挂课就出，没挂不出），间距与附件行同一档 */
+.cdy-course {
+  margin-top: 10px;
+}
+/* 关联 chip 行（打卡名称 + 任务名称）：小元素档 4px 圆角（不做胶囊），两枚几何与配色逐值相同、只差行首图标；
+   一行放不下时整行横向滑动，不折行。描边两枚都是 1px #f2f3f5 中性（2026-09-26 用户口径：任务标签去掉背景色、
+   增加边框，与左侧的打卡标签一致——原先任务那枚是浅蓝底无边框，同一行两枚两种形态） */
+.cdy-tags {
+  margin-top: 10px;
+  /* scroll-x 的行内排版三件套：容器锁 nowrap、子项 inline-flex、vertical-align 顶对齐
+     （inline-flex 的基线由内部第一个 flex 项给，两枚 chip 内部结构不同，走基线会错开几像素） */
+  white-space: nowrap;
+}
+/* H5 端 uni 的 scroll-view 不认 show-scrollbar（这一版运行时里没有该 prop），
+   宽窗口下会露出一条横向滚动条；这一档只收在本页私有类名下，不碰全局档 */
+/*  #ifdef H5  */
+.cdy-tags ::-webkit-scrollbar {
+  display: none;
+}
+/*  #endif  */
+/* 两枚 chip 都是共用组件（tz-checkin-activity-tag / tz-checkin-task-tag），几何与配色在组件里只存一处；
+   组件是 isolated 的，调用点只能借宿主 class 给「横排对齐」与「两枚之间的 8」这两条（M12/M21）。
+   间距挂在行首那枚的 margin-right 上（不是右侧那枚的 margin-left）：活动名取不到时整行只剩任务 chip，
+   挂在它身上会带出一段没来由的左偏移 */
+.cdy-activity-chip {
+  display: inline-flex;
+  vertical-align: top;
+  margin-right: 8px;
+}
+.cdy-task-chip {
+  display: inline-flex;
+  vertical-align: top;
+}
+/* 活动条右侧的指示箭头取「与文字同墨迹」档：文字 12px ⇒ uview arrow-right 墨迹 0.787，12 ÷ 0.787 = 15.2
+   ⇒ 模板里写 size="15"（原先 20 是行内图标 ≈16px 那一档，墨迹比 12px 文字大一圈，2026-09-25 用户点名缩小）。
+   垂直方向不再补光学下沉（2026-09-26 用户点名「箭头 Icon 要和文字垂直方向居中对齐」，实测偏下）：
+   原先按「12px 中文低 0.48px」补的那 0.5px 是亚像素位移，在 DPR1 的桌面上会被字形栅格化成整像素，
+   读出来就是往下偏；模板上那枚箭头因此去掉了 .cdy-ic-mid 这一档类名，flex 几何居中就是这一档唯一写法
+   （该字形墨迹中心实测压在自身行盒中心 −0.03px，`icon-text-baseline.py 15 15 … 0xe605`）。
+   同一档的行尾箭头在 components/tz/checkin-task-tag.vue 一起改掉；不同档的 .cr-ic-mid（活动卡 20 号箭头）
+   与 .cd-ic-mid（工具行 16 号图标）不在这一档里，未动 */
+/* 灰字时间：与动态流卡片脚同一档（ui-baseline-mobile §1「灰字时间」= 10px，
+   同一条动态在列表卡与日记详情页不能一个 10px 一个 12px） */
+.cdy-time {
+  margin-top: 10px;
+  font-size: 10px;
+  color: #86909c;
+}
+/* 分享/删除入口收进卡片右上角「更多」→ u-action-sheet；底部栏复用 tz-circle-comment-bar，
+   本页不再自造吸底容器与输入框（页面无固定底栏样式，避免与动态详情两套口径） */
+/* 评论卡：白底/通栏/直角/上间距 12 由 .school-block 给，左右内衬 16 与上方正文卡同一档（同页对齐优先），
+   内衬只写在卡片这一处；卡内一切行版式（标题「评论 N」、头像、回复缩进、时间行）都在共用组件
+   tz-circle-comment-list 里，与圈子动态详情同一份，本页不再抄一遍评论行样式 */
+.cdy-comments {
+  padding: 12px 16px;
+}

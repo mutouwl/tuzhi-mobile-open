@@ -77,7 +77,7 @@
 
         // #ifndef MP-TOUTIAO
         uni.showLoading({
-          title: "登录中……",
+          title: "登录中",
         });
         // #endif
 
@@ -256,7 +256,7 @@
 
         // #ifndef MP-TOUTIAO
         uni.showLoading({
-          title: "登录中……",
+          title: "登录中",
         });
         // #endif
 

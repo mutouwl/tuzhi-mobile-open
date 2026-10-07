@@ -9,6 +9,9 @@ unpackage/
 .hbuilderx/
 *.local
 
+# 本地护栏标记：发布脚本写、只用来判断「这目录是脚本建的、可以清空」，不进开源历史
+.oss-mirror
+
 .idea/
 .vscode/
 *.log

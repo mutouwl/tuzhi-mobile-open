@@ -9,7 +9,15 @@
 
         <div class="copyright" @click="jump">
             <span v-if="$tools.systemConfig('name')">{{ $tools.systemConfig('name') }}</span><span v-if="$tools.systemConfig('copyright')">@{{ $tools.systemConfig('copyright') }}</span>
-        </div>   
+        </div>
+
+        <!-- 备案号只在 H5 展示：小程序既没有「新标签页」，web-view 也只允许业务域名 -->
+        <!-- #ifdef H5 -->
+        <div class="beian" v-if="$tools.systemConfig('icp') || $tools.systemConfig('police_record')">
+            <span v-if="$tools.systemConfig('icp')" @click="openBeian('https://beian.miit.gov.cn/')">{{ $tools.systemConfig('icp') }}</span>
+            <span v-if="$tools.systemConfig('police_record')" @click="openBeian(beianUrl())">{{ $tools.systemConfig('police_record') }}</span>
+        </div>
+        <!-- #endif -->
     </div>
 </template>
 <script lang="ts">
@@ -44,7 +52,15 @@ export default {
             if(copyright_link){
                 this.$nav.to(copyright_link, 'url')
             }
-            
+
+        },
+        openBeian(url){
+            // 只在 H5 会被调用（模板里整块已用 #ifdef H5 包住）
+            window.open(url, '_blank');
+        },
+        beianUrl(){
+            var code = this.$tools.systemConfig('police_record');
+            return 'https://beian.mps.gov.cn/#/query/webSearch?code=' + encodeURIComponent(code);
         }
     },
     watch: {
@@ -74,14 +90,26 @@ export default {
 }
 
 
-.copyright{
+.copyright,
+.beian{
     width: 100%;
     text-align: center;
-    margin: 15px 0;
     color: #C9CDD4;
     font-size: 12px;
 
     font-family: serif;
+}
+
+.copyright{
+    margin: 15px 0;
+}
+
+.beian{
+    margin: -5px 0 15px;
+}
+
+.beian span{
+    margin: 0 6px;
 }
 
 </style>

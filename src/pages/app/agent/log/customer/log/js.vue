@@ -10,6 +10,8 @@ export default {
         name:''
       },
       list: [],
+      // 首屏即为加载态：列表区先铺骨架屏（M16），撤骨架屏只在本次请求回音之后
+      loading: true,
       pageParams:{
         type:'money'
       },
@@ -28,9 +30,6 @@ export default {
 
     getData() {
       
-      uni.showLoading({
-        title: '请稍后'
-      });
       //资产类型
       var form = JSON.parse(JSON.stringify(that.form));
       form.type = that.pageParams.type;
@@ -43,8 +42,10 @@ export default {
           }
           that.list = list
         }
-
-        uni.hideLoading();
+        that.loading = false;
+      }).catch(() => {
+        // 请求失败也要撤掉骨架屏，否则页面一直停在占位态（与分销中心页同一口径）
+        that.loading = false;
       });
       uni.stopPullDownRefresh();
     },
@@ -53,6 +54,8 @@ export default {
     refresh() {
       that.form.page = 1
       that.list = [];
+      // 搜索/排序/下拉刷新会清空列表，loading 置回 true 才不换成一帧空态（M16）
+      that.loading = true;
       that.getData();
     },
 

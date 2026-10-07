@@ -36,9 +36,17 @@
 			<u-empty v-else text="暂无课程" icon="/static/image/empty.png" width="70" height="70" margin-top="60"></u-empty>
 		</div>
 
-		<div class="loading" v-if="loading">
-			<u-loading-icon text="加载中" textSize="16"></u-loading-icon>
-		</div>
+		<!-- 目录骨架（M16）：与 circle-course-dir-item 的真实行逐块对齐 —— 16px 标题条 + 12px 元信息条 +
+		     行末那枚 20px 锁图标块，内衬与行距同真实行（15、5px 0）；rows-width 必须绑成数组 -->
+		<view class="dir-box ccd-sk" v-if="loading">
+			<view class="ccd-sk-row" v-for="i in 5" :key="'ccd-sk-' + i">
+				<view class="ccd-sk-main">
+					<u-skeleton :loading="true" :animate="true" :title="false" :rows="2"
+						:rows-width="['62%', '44%']" :rows-height="[16, 12]"></u-skeleton>
+				</view>
+				<view class="ccd-sk-lock"></view>
+			</view>
+		</view>
 	</div>
 </template>
 
@@ -184,10 +192,27 @@
 		overflow: hidden;
 	}
 
-	.loading {
-		width: 100%;
-		height: 200px;
-		padding-top: 100px;
+	/* 骨架行与 circle-course-dir-item 的 .course-box 同一份几何（内衬 15、行距 5px 0） */
+	.ccd-sk-row {
+		display: flex;
+		align-items: center;
+		padding: 15px;
+		margin: 5px 0;
+	}
+
+	.ccd-sk-main {
+		flex: 1;
+		min-width: 0;
+		/* 一行内项与项的间距只由行首这一头给，锁图标块不写 margin-left */
+		margin-right: 8px;
+	}
+
+	.ccd-sk-lock {
+		width: 20px;
+		height: 20px;
+		flex: none;
+		border-radius: 4px;
+		background: #e5e6eb;
 	}
 
 	::v-deep .u-cell__title-text {

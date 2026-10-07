@@ -1,375 +1,191 @@
 <template>
-    <div>
-        <u-popup :show="show" title="分享" @close="close" @open="open" :closeable="true" :round="10" :overlayStyle="{ zIndex: 12000 }" :zIndex="12010">
-            <div class="share-box">
-                <div class="share-tabs">
-                    <!-- <u-tabs :list="tabs" :scrollable="false" @change="tabChange"></u-tabs> -->
-                    <u-subsection :list="tabs" :current="current" @change="tabChange"></u-subsection>
-                </div>
+	<!--
+	  全局分享弹窗（课程/商品/圈子/打卡/活动/教务…各详情页共用这一只）。
+	  2026-09-26 改为与打卡日签图同一套架构：海报在上、选样式与保存/分享在下的底部弹层
+	  （tz-share-poster + tz-share-poster-body），海报由前端画布画，因此能带上这一条内容自己的封面与价格
+	  （参照竞品：只有一张通用底图的海报扫出来认不出分享的是什么）。
+	  原来那两栏「图文 / 海报」收成一处：图文的文案不再单独占一栏，改做底部样式条右侧的「推荐语」入口
+	  （只取文案，图片不进推荐语——海报那一张已经有图了）。
+	  两只弹层平级放（不套在可点容器里，见 M19）。
+	-->
+	<div>
+		<!-- 推荐语入口的判据：有文案才出，文案正在取也出（入口换成骨架块，见 tz-share-poster 的 recommendLoading），
+		     首次就失败时两者都不成立 → 整枚不出，不留点了没反应的按钮 -->
+		<tz-share-poster :show="show" layout="content" :poster="poster" :share-bgs="shareBgs"
+			:code-type="type" :code-id="shareSrc" subject="分享海报" :show-recommend="!!article.text || articleLoading"
+			:recommend-loading="articleLoading"
+			@close="close" @share="copyArticle" @recommend="recommendVisible = true"></tz-share-poster>
 
-                <tz-box padding="10px 15px 15px" bgColor="none">
-                    <div class="share-article" v-if="checkTab == 'article'">
-                        <!-- 图文加载中：骨架屏 -->
-                        <div class="share-article-loading" v-if="articleLoading">
-                            <u-skeleton
-                                :loading="true"
-                                :animate="true"
-                                :title="true"
-                                title-width="50%"
-                                title-height="14"
-                                :rows="3"
-                                rows-height="12"
-                            />
-                            <!-- 按钮骨架：加载中替代「切换文案/复制文案」 -->
-                            <div class="share-btn-loading">
-                                <div class="share-btn-loading-item"></div>
-                                <div class="share-btn-loading-item"></div>
-                            </div>
-                        </div>
-                        <template v-else>
-                            <div class="share-text" v-if="article.text">
-                                <text>{{ article.text }}</text>
-                            </div>
-                            <div class="share-imgs" v-if="article.poster && article.poster.length > 0">
-                                <u-album :urls="article.poster" :multipleSize="110" :maxCount="3"></u-album>
-                                <div class="share-tip">点击图片后长按可保存至相册</div>
-                            </div>
-                            <div class="share-empty" v-if="!article.text && (!article.poster || article.poster.length === 0)">
-                                暂无分享内容
-                            </div>
-
-                            <div class="share-btn">
-                                <u-button text="切换文案" type="info" @click="getArticle"></u-button>
-                                <u-button text="复制文案" type="primary" @click="copy"></u-button>
-                            </div>
-                        </template>
-                    </div>
-
-                    <div class="share-poster" v-if="checkTab == 'poster'">
-                        <div class="share-imgs">
-                            <!-- 海报加载中：骨架屏（块尺寸与真实海报一致，避免弹窗高度跳动） -->
-                            <div class="poster-loading" v-if="posterLoading">
-                                <div class="poster-loading-img"></div>
-                            </div>
-                            <div class="share-poster-img" v-else-if="!posterSrc" @click="getPoster">
-                                海报生成失败，点此重试
-                            </div>
-                            <img class="share-poster-img" v-else @click="preview" :src="posterSrc">
-                            <div class="share-tip" v-if="!posterLoading">点击图片后长按可保存至相册</div>
-                        </div>
-
-                        <div class="poster-themes">
-                            <img src="@/static/image/preview/preview_black.png" :class="[
-                                'poster-themes-item',
-                                { 'item-active': posterThemesChecked == 'black' }
-                            ]" @click="changePosterThemes('black')" />
-                            <img src="@/static/image/preview/preview_blue.png" :class="[
-                                'poster-themes-item',
-                                { 'item-active': posterThemesChecked == 'blue' }
-                            ]" @click="changePosterThemes('blue')" />
-                            <img src="@/static/image/preview/preview_steel.png" :class="[
-                                'poster-themes-item',
-                                { 'item-active': posterThemesChecked == 'steel' }
-                            ]" @click="changePosterThemes('steel')" />
-                        </div>
-                    </div>
-
-                </tz-box>
-            </div>
-        </u-popup>
-    </div>
+		<!-- 推荐语：文案与「换一条」都走 share/getArticle（后端每次随机换一套），复制在点击的同步栈里做 -->
+		<tz-recommend-modal :show="recommendVisible" :text="article.text" :loading="articleLoading"
+			@close="recommendVisible = false" @change="getArticle"></tz-recommend-modal>
+	</div>
 </template>
 
-<script >
+<script>
+/**
+ * props: visible, val, type, circleId + 这一条内容自己的信息（海报上要画，页面已经加载好了就传进来）
+ *        visible  = 开关
+ *        val      = 传给接口的 src（实体 ID 或页面路由）
+ *        type     = 后端 app/common/library/share/Links 的分享口径分派键（goods/physical/course/coupon/
+ *                   exercises/test/vipcard/activity/order/circle/circle_post/checkin/checkin_task/
+ *                   school_booking/school_package/page…），右下角那张码也按它取
+ *        circleId = 来源圈子 ID：从圈子课程列表进入课程详情后分享，链接需带该参数
+ *        title    = 内容名称（与全站课程卡同一份口径，课程详情传 data.name）——海报内容卡上就画这一行字
+ *        cover    = 内容封面（没传就退回 share/getArticle 给的那一张；两个都没有或都加载不出来，
+ *                  由 tz-share-poster-body 填系统 logo，见那里的 coverSrc——所以这里不用再兜一层）
+ *        inviteText = 邀请头那句（默认「邀请你一起学习」）
+ *        shareBgs = 后台配置的分享底图清单；目前只有打卡模块有这一项配置（2026-09-27 起那项暂时下线，
+ *                   后端恒下发空清单），内容分享本就暂无配置项，两种都是整排回落共用组件自带的弥散渐变档
+ *        ⚠ 内容卡只画「封面 + 标题」（2026-09-26 用户点名简化）：类型标签、现价、划线原价、店铺名
+ *          都不再上海报，本组件也就不接收这些入参——调用点别再把 price / pay_type / is_virtual_pay /
+ *          price_marking / tag / subtitle 抄进来，那会是一份没人读的接口
+ * emits: close、open（与改造前同一份对外契约，调用点不用改）
+ */
 export default {
-    data() {
-        return {
-            show: false,
-            current:0,
-            imgs: [
-            ],
-            checkTab: 'article',
-            posterSrc: '',
-            articleLoading: false,
-            posterLoading: false,
-            articleRequestId: 0,
-            posterRequestId: 0,
-            posterThemes: ['blue', 'black', 'steel'],
-            posterThemesChecked: 'blue',
-            article: {
-                text: ''
-            }
-        }
-    },
-    props: {
-        visible: {
-            type: [Boolean, Number],
-            default: false
-        },
-        val: {
-            type: [String, Number],
-            default: ''
-        },
-        type:{
-            type: String,
-            default: 'goods'
-        },
-        //来源圈子 ID：从圈子课程列表进入课程详情后分享，分享链接需携带该参数
-        circleId: {
-            type: [String, Number],
-            default: ''
-        },
-    },
-    computed: {
-        tabs() {
-            const t = [{ name: '海报', type: 'poster' }];
-            // #ifdef H5
-            t.unshift({ name: '图文', type: 'article' });
-            // #endif
-            return t;
-        }
-    },
-    watch: {
-        visible() {
-            this.show = this.visible;
-            if (this.show) {
-                this.posterThemesChecked = 'blue';
-                this.tabChange(0);
-            }
-        }
-    },
-    methods: {
-        tabChange(value) {
-            this.checkTab = this.tabs[value].type;
-            this.current = value;
-
-            if (this.checkTab == 'poster') {
-                this.getPoster();
-            } else {
-                this.getArticle();
-            }
-        },
-        close() {
-            this.$emit('close', false);
-        },
-        open() {
-            this.$emit('open', false);
-        },
-        copy() {
-            var that = this;
-            uni.setClipboardData({
-                data: that.article.text,
-                success: function () {
-                    uni.$u.toast('文案已复制');
-                }
-            });
-        },
-        changePosterThemes(type) {
-
-            this.posterThemesChecked = type;
-            this.getPoster();
-        },
-
-        getArticle() {
-            var that = this;
-            // 防重复请求：加载中再次触发（如反复点「切换文案」）直接忽略
-            if (that.articleLoading) return;
-
-            if(that.type == 'page' && that.val == ''){
-                let pages = getCurrentPages()    //获取加载的页面
-                
-			    let currentPage = pages[pages.length - 1]    //获取当前页面的对象   
-                that.val = currentPage.route;
-            }
-
-            that.posterSrc = '';
-            var requestId = ++that.articleRequestId;
-            that.articleLoading = true;
-            that.$api('share.getArticle', {
-                type: that.type,
-                src: that.val,
-                circle_id: that.circleId
-            }).then(res => {
-                if (requestId !== that.articleRequestId) return;
-                that.articleLoading = false;
-                if (res.code === 1) {
-                    that.article = res.data;
-                }
-            }).catch(() => {
-                if (requestId === that.articleRequestId) {
-                    that.articleLoading = false;
-                }
-            });
-        },
-
-        getPoster() {
-            var that = this;
-            var requestId = ++that.posterRequestId;
-            that.posterSrc = '';
-            that.posterLoading = true;
-            that.$api('share.getPoster', {
-                type: that.type,
-                src: that.val,
-                themes: that.posterThemesChecked,
-                circle_id: that.circleId
-            }).then(res => {
-                if (requestId !== that.posterRequestId) return;
-                that.posterLoading = false;
-                if (res.code === 1) {
-                    that.posterSrc = res.data;
-                }
-            }).catch(() => {
-                if (requestId === that.posterRequestId) {
-                    that.posterLoading = false;
-                }
-            });
-        },
-        preview() {
-            var imgPath = [this.posterSrc];
-            uni.previewImage({
-                urls: imgPath,
-                longPressActions: {
-                    itemList: ['发送给朋友', '保存图片', '收藏'],
-                    success: function (data) {
-                    },
-                    fail: function (err) {
-                        console.log(err.errMsg);
-                    }
-                }
-            });
-        },
-    },
-    mounted() {
-        this.show = this.visible;
-    }
+	name: 'share-modal',
+	data() {
+		return {
+			show: false,
+			articleLoading: false,
+			articleRequestId: 0,
+			article: { text: '' },
+			recommendVisible: false,
+		};
+	},
+	props: {
+		visible: {
+			type: [Boolean, Number],
+			default: false
+		},
+		val: {
+			type: [String, Number],
+			default: ''
+		},
+		type: {
+			type: String,
+			default: 'goods'
+		},
+		//来源圈子 ID：从圈子课程列表进入课程详情后分享，分享链接需携带该参数
+		circleId: {
+			type: [String, Number],
+			default: ''
+		},
+		title: { type: String, default: '' },
+		cover: { type: String, default: '' },
+		inviteText: { type: String, default: '邀请你一起学习' },
+		shareBgs: { type: Array, default: () => [] },
+	},
+	computed: {
+		/**
+		 * 传给接口的 src：type=page 且调用点没给路径时落在当前这一页
+		 * （判据与改造前一致，只是不再把算出来的路由回写进 prop——改 prop 在小程序端会告警）
+		 */
+		shareSrc() {
+			if (this.val !== '' && this.val !== null && this.val !== undefined) return this.val;
+			if (this.type !== 'page') return '';
+			const pages = getCurrentPages();
+			const cur = pages[pages.length - 1];
+			return cur ? cur.route : '';
+		},
+		/** 分享人 = 当前登录用户（未登录时与后端 getArticle 同一份兜底：'用户'） */
+		sharer() {
+			const user = (this.$tools && this.$tools.cachedUser()) || {};
+			return { nickname: user.nickname || '用户', avatar: user.avatar || '' };
+		},
+		/**
+		 * 海报要画的那一张内容卡的数据：只有封面 + 标题（2026-09-26 用户点名「简化内容卡片，仅显示封面+标题」）
+		 *
+		 * 原先还往下画类型标签、现价、划线原价、店铺名四行——两行标题之下空着一截，卡内四边留边就不均了。
+		 * 价格也不再上海报：这一张的职责是「扫进去看这一条」，价格落在详情页说，前端也就不再要
+		 * price / pay_type / is_virtual_pay 这几个入参（金币计价不该写 ¥ 那类判断随之一起消失）。
+		 */
+		poster() {
+			return {
+				nickname: this.sharer.nickname,
+				avatar: this.sharer.avatar,
+				inviteText: this.inviteText,
+				name: this.title,
+				cover: this.cover || this.articleCover,
+			};
+		},
+		/** 调用点没传封面时，退回分享图文接口带的那一张（goods/circle/checkin/checkin_task 后端会给 cover） */
+		articleCover() {
+			const rows = this.article.poster;
+			return rows && rows.length ? rows[0] : '';
+		},
+	},
+	watch: {
+		visible() {
+			this.show = this.visible;
+			if (this.show) {
+				// 每次重开都重新取一条文案（后端每次随机换一套），并收掉推荐语弹窗
+				this.recommendVisible = false;
+				this.getArticle();
+			}
+		},
+	},
+	methods: {
+		close() {
+			this.$emit('close', false);
+		},
+		open() {
+			this.$emit('open', false);
+		},
+		/**
+		 * 取这一页的分享文案（推荐语与「普通浏览器点分享」两条路共用这一份缓存）
+		 *
+		 * 打开弹层就取，不等用户点推荐语：H5 的 setClipboardData 是同步的 document.execCommand('copy')，
+		 * 脱离用户手势再复制在 iOS / 微信里就不生效了，所以点击这一刻只能读缓存（M13：缓存为空要说原因）。
+		 */
+		getArticle() {
+			var that = this;
+			// 防重复请求：加载中再次触发（如反复点「换一条」）直接忽略
+			if (that.articleLoading) return;
+			var requestId = ++that.articleRequestId;
+			that.articleLoading = true;
+			that.$api('share.getArticle', {
+				type: that.type,
+				src: that.shareSrc,
+				circle_id: that.circleId
+			}).then(res => {
+				if (requestId !== that.articleRequestId) return;
+				that.articleLoading = false;
+				if (res && res.code === 1 && res.data) {
+					that.article = res.data;
+					return;
+				}
+				// 失败要有出口（M13）：文案取不到时推荐语里说「获取失败，点换一条重试」，不留一块空白
+				that.article = { text: '', poster: that.article.poster };
+			}).catch(() => {
+				if (requestId === that.articleRequestId) {
+					that.articleLoading = false;
+				}
+			});
+		},
+		/**
+		 * 普通浏览器 / App 点「分享」：这一端既没有可编程调起的分享面板、也看不到右上角「···」，
+		 * 剩下的一条路就是把这条内容的分享文案（含链接）复制走（见 tz-share-poster 的 share 分路）。
+		 */
+		copyArticle() {
+			var that = this;
+			if (!that.article.text) {
+				uni.showToast({ title: '分享文案还没取到，请稍后重试', icon: 'none' });
+				that.getArticle();
+				return;
+			}
+			uni.setClipboardData({
+				data: that.article.text,
+				success: function () {
+					uni.showToast({ title: '文案已复制', icon: 'none' });
+				}
+			});
+		},
+	},
+	mounted() {
+		this.show = this.visible;
+		if (this.show) this.getArticle();
+	}
 }
 
 </script>
-
-<style>
-.share-title {
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    font-size: 14px;
-    text-align: center;
-    border-bottom: 1px solid #efefef;
-}
-
-
-.share-box {
-    /* 高度自适应内容：无图片时弹窗包裹文字与按钮，不再出现大片空白；超出最高高度滚动 */
-    min-height: 300px;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.share-tabs {
-    width: 200px;
-    margin: 0 auto;
-}
-
-.share-text {
-    background-color: #F7F8FA;
-    padding: 15px;
-    border-radius: 4px;
-    font-size: 12px;
-    overflow-wrap: break-word;
-}
-
-.share-article-loading {
-    padding: 6px 0;
-}
-
-.poster-loading-img {
-    width: 270px;
-    height: 340px;
-    margin: 0 auto;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
-    background-size: 400% 100%;
-    animation: share-loading 1.8s ease infinite;
-}
-
-@keyframes share-loading {
-    0% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0 50%;
-    }
-}
-
-.share-imgs {
-    margin-top: 10px;
-    text-align: center;
-}
-
-.share-tip {
-    width: 100%;
-    text-align: center;
-    font-size: 12px;
-    color: #86909C;
-    margin-top: 10px;
-}
-
-.share-empty {
-    padding: 40px 0;
-    text-align: center;
-    font-size: 12px;
-    color: #86909C;
-}
-
-.share-btn {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.share-btn-loading {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.share-btn-loading-item {
-    width: 48%;
-    height: 40px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
-    background-size: 400% 100%;
-    animation: share-loading 1.8s ease infinite;
-}
-
-.share-btn button {
-    width: 48%;
-}
-
-.share-poster-img {
-    width: 270px;
-    height: 340px;
-    line-height: 340px;
-    text-align: center;
-    font-size: 12px;
-    margin: 0 auto;
-    border-radius: 4px;
-}
-
-.poster-themes {
-    text-align: center;
-}
-
-.poster-themes-item {
-    width: 40px;
-    height: 46px;
-    margin: 8px 4px;
-    border-radius: 3px;
-    padding: 5px;
-    border: 3px solid #efefef;
-}
-
-.poster-themes-item.item-active {
-    border: 3px solid #0968f6;
-}
-
-</style>

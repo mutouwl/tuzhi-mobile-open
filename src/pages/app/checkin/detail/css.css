@@ -1,0 +1,410 @@
+/* 打卡活动详情页：圆角/边距/阴影/边框一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   详情页区块 = .school-block（白底通栏、margin 12px 0 0、无圆角、无阴影）+ .school-head（内衬 14px 16px，
+   参照套餐详情 package/detail 的标题卡）；任务/动态列表区 = .school-cards（左右留边 10）+ 直角条目卡；
+   筛选 chip 按教务 .status 档走 4px（不做胶囊）；分隔线按 .school-cell-item 档走 1px #f7f8fa；
+   吸底栏用全局 .school-footer（只给未参与时的参与/购买入口），已参与的发布入口是右侧悬浮圆钮
+   （.cd-publish-btn，档位在动态模块），两者互斥、同屏只出一个主操作；
+   页面底部留白只在有吸底栏时走 .school-page--bar（90px），本页不再自定义 */
+
+/* ===== 首屏骨架屏：外壳直接用真实区块的 .school-block .school-head / .school-card
+   （通栏、直角、无阴影、内衬与真实区块一致），静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px ===== */
+.cd-sk-row {
+  display: flex;
+  align-items: center;
+}
+.cd-sk-cover {
+  width: 88px;
+  height: 60px;
+  border-radius: 8px;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.cd-sk-text {
+  flex: 1;
+  min-width: 0;
+}
+.cd-sk-tools {
+  display: flex;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f7f8fa;
+}
+.cd-sk-tool {
+  width: 56px;
+  height: 14px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-right: 16px;
+}
+.cd-sk-btn {
+  width: 72px;
+  height: 30px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-top: 10px;
+}
+/* 动态列表局部骨架：与 tz-checkin-record-card 逐块对齐（头像 36 + 昵称行 / 正文两行 / 底部时间+动作行），
+   外壳用 .school-card（白底直角、内衬 14、卡间距 10）与真实卡同版式 */
+.cd-sk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+/* 正文占位块的上下留白照抄卡片的 .ck-rc-content（margin 10px 0），骨架与真实卡高度才一致 */
+.cd-sk-feed-body {
+  display: block;
+  margin: 10px 0;
+}
+.cd-sk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.cd-sk-foot-time {
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cd-sk-foot-act {
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 活动头卡：白底/通栏/直角/无阴影由 .school-block 给，内衬 14px 16px 由 .school-head 给 */
+/* 头卡是本页第一块，紧贴导航栏铺满，去掉 .school-block 的 12px 上边距（真实卡与首屏骨架同一份，
+   骨架外壳也挂 .cd-head，否则加载完灰缝才出现）；选择器带上 .school-block 是为了压过全局档 ——
+   两个类同优先级时谁生效取决于打包顺序，页面 css 与 App.vue 全局 css 不同 chunk */
+.school-block.cd-head {
+  margin-top: 0;
+}
+.cd-head-row {
+  display: flex;
+  align-items: center;
+}
+.cd-cover {
+  width: 88px;
+  height: 60px;
+  border-radius: 8px;
+  background: #f2f3f5;
+  flex-shrink: 0;
+}
+.cd-head-text {
+  margin-left: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.cd-title-row {
+  display: flex;
+  align-items: center;
+}
+.cd-title {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1d2129;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+/* 头卡右上角的搜索入口：与活动名同一行、贴右缘（用户 2026-09-26 口径）。
+   图标按 §1「行内图标 ≈16px 墨迹」档——tz search 20 号实测墨迹 16.3px，墨迹中心本就低 0.33px，不补 translateY；
+   热区靠 padding 撑到 28px，容器是 flex 居中，图标与标题文字同一根中线 */
+.cd-head-search {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  padding: 4px;
+}
+.cd-date {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 6px;
+}
+/* 工具入口行：分隔线按教务 cell 行同色（1px #f7f8fa） */
+.cd-tools {
+  display: flex;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f7f8fa;
+}
+/* 工具入口靠左排（与发表页媒体工具行 .cs-tool 同一档间距 16），不再 flex:1 等分整行 */
+.cd-tool {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+}
+/* 工具行是「图标+文字」型按钮：按用户口径（2026-09-25）文字要大于图标——文字取正文档 14px，
+   图标墨迹归一 12px（模板里的 :size 13–14，由 `python tools/icon-ink-normalize.py 12 名字` 反算）。
+   不要再按 §1「行内图标墨迹 ≈16px 配 12px 标签」往回放大：那一档是标签旁的行内小图标，与本档分开 */
+.cd-tool-text {
+  font-size: 14px;
+  color: #4e5969;
+  margin-left: 4px;
+}
+/* 吸顶页签条：白底由 u-sticky 的 bgColor 给，左右内衬与详情头卡同线（16px） */
+.cd-tabs {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 0 16px;
+  position: relative;
+}
+.cd-tab {
+  padding: 12px 0;
+  margin-right: 26px;
+  font-size: 16px;
+  color: #86909c;
+  position: relative;
+}
+.cd-tab-active {
+  /* 选中态走全站主色档（§1 视觉 token：Tab 选中 = #0968f6），与下方主色短线同色 */
+  color: #0968f6;
+  font-weight: bold;
+}
+.cd-tab-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4px;
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: #0968f6;
+}
+.cd-tab-cal {
+  position: absolute;
+  right: 16px;
+  /* 与页签行上下同轴：行高由 .cd-tab 的 12px 上下内衬 + 16px 文字撑出来，写死 top:10px 会随
+     各端默认行高漂移到 1~2px（图标看着比页签文字低），改成整行高度内 flex 居中，中心恒与文字中心同线 */
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+/* 与文字配对的行内图标：光学垂直居中（flex 只能对齐行盒；tz tasklist / zhengxu2 / daoxu /
+   shijianfanwei2 实测墨迹中心在其行盒中心，而 12–13px 中文低约 0.45px ⇒ 图标看着偏上，补 0.5px 下沉；
+   同排的 paixu / group / share 本就与中文同高，不补。
+   口径同 components/tz/campus.vue 的 .tz-campus-ic，判法见 .trae/rules/ui-baseline-mobile.md §1 行内图标）*/
+.cd-ic-mid {
+  transform: translateY(0.5px);
+}
+/* 控件行与 chip：任务栏/动态栏共用同一份 .cd-chips + .cd-chip（行都挂在 .school-cards 里，
+   底色与左右留边由列表容器给，按钮按教务 .status 档走 13px + 灰底 #f2f3f5 + 圆角 4，不做胶囊） */
+.cd-chips {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.cd-chip {
+  font-size: 13px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+  padding: 5px 14px;
+  margin-right: 8px;
+}
+.cd-chip-active {
+  color: #0968f6;
+  background: #eaf1fe;
+  font-weight: bold;
+}
+/* 任务栏排序按钮：灰底版式取自模板上的 .cd-chip，靠右由左组末项 .cd-chip-all 的 margin-right:auto 给，
+   这里只留「图标 + 文字」的配对布局与右组末项的 0 右间距 */
+.cd-chip-sort {
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  color: #86909c;
+}
+.cd-tip {
+  font-size: 12px;
+  color: #86909c;
+  margin: 4px 0 8px;
+}
+/* 任务栏的规则提示图标（点开「规则说明」半屏）：与排序按钮同一排、落在它左侧。
+   图标墨迹按 §1「行内图标」档归一到 16px（uview info-circle 实测墨迹 0.938 ⇒ size 17，
+   由 `python tools/icon-ink-normalize.py 16 info-circle` 反算），配色取 §1 的辅助灰；
+   与排序文字同一水平线，故按 §1「垂直居中两步」补 .cd-ic-mid 的 0.5px 下沉；
+   热区不再靠整行（这一排没有整行了），由左右 8px 内衬（= 本行 chip 的同一档间距）
+   与 align-self:stretch（撑到与相邻 chip 同高，不写死数值）凑出可点的一块 */
+.cd-rule {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 8px;
+}
+/* 规则说明半屏的面板：圆角与最低高度都对齐同档弹层
+   （tz-nickname-modal / tz-recommend-modal / 校区与套餐的教师列表弹窗那一档：
+   面板自己带 `12px 12px 0 0` + overflow:hidden，弹层外壳才是圆的——u-popup 的 __content 只有
+   border-radius 没有 overflow，白底面板是直角会把圆角盖掉，2026-09-26 用户点名「与其他弹窗对齐」）。
+   min-height 220 是推荐语弹窗同一档：这一屏只列 2-5 行灰字，按内容撑开只有 ≈110-190，
+   弹出来像一条窄条、与同页那几排弹层一高一矮；给一档下限换弹层高度不随条数跳动（M18⑨d） */
+.cd-rule-popup {
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  min-height: 220px;
+}
+/* 规则说明半屏的正文行：左右内衬与标题由全局档 .school-popup / .school-popup-title 给，这里只写上下留白 */
+.cd-rule-line {
+  font-size: 14px;
+  color: #4e5969;
+  line-height: 22px;
+  padding: 5px 0;
+}
+/* 章节标题行（任务按章节分组显示，结构照专栏课程目录）：字号字重配色取教务课表分组标题那一档
+   （schedule/index 的 .day-title / .day-count），不另定一套；任务卡本身是白卡，所以标题行不套卡、
+   直接压在 .school-cards 的灰底上，左右留边由容器给（这里只写上下留白） */
+.cd-chapter {
+  display: flex;
+  align-items: baseline;
+  margin: 6px 0 8px;
+}
+.cd-chapter-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+.cd-chapter-count {
+  margin-left: 6px;
+  font-size: 12px;
+  color: #86909c;
+}
+.cd-empty-task {
+  padding: 20px 0;
+}
+.cd-empty-text {
+  text-align: center;
+  font-size: 13px;
+  color: #86909c;
+  margin-top: 6px;
+}
+/* 动态栏排序/时间筛选：底色、圆角、内衬、字号、左右 8px 间距全部由模板上的 .cd-chip 提供
+   （与任务栏同一份口径，两栏同类按钮不会分叉），这里只留图标与文字的配对布局 */
+.cd-feed-sort,
+.cd-feed-filter {
+  display: flex;
+  align-items: center;
+  color: #86909c;
+}
+.cd-feed-filter {
+  margin-right: 0;
+}
+/* 图标与文字 3px 间距：任务栏与动态栏两排 chip 的排序/筛选按钮同一份（只有一排写间距就会一排贴死） */
+.cd-chip-sort text,
+.cd-feed-sort text,
+.cd-feed-filter text {
+  margin-left: 3px;
+}
+/* 左组末项吃掉剩余宽度，把右侧一组推到行右端：动态栏是「排序 + 时间筛选」，
+   任务栏是「提示图标 + 排序」（提示图标按 ruleTips 有无出现，收起时排序位置不动） */
+.cd-chip-all,
+.cd-chip-featured {
+  margin-right: auto;
+}
+/* 吸底栏容器/内衬/阴影/安全区走全局 .school-footer（本页模板用 school-footer h5-bottom-bar），这里只补主按钮与价格行 */
+.cd-join-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f53f3f;
+  margin-right: 12px;
+  line-height: 40px;
+}
+/* 虚拟支付那一档：¥ 换成数字后面的代币名称，档与介绍页 .cdi-join-coin 一致 */
+.cd-join-coin {
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+.cd-join-tip {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: #86909c;
+}
+.cd-main-btn {
+  flex: 1;
+  border: none;
+}
+/* 发布动态悬浮按钮：逐值照抄动态模块 pages/app/circle/index/css.css 的 .publish-btn
+   （48px 白底圆钮 + 1px #e5e6eb 描边 + 右 16/底 160，底 160 是给底部导航 tz-tab-bar 让位），
+   本页只换页面前缀类名；与吸底参与栏互斥，同屏只出一个主操作 */
+.cd-publish-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 160px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e5e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  color: #86909c; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
+  z-index: 90;
+}
+/* 后台「发布设置-允许用户发布动态」关闭时的置灰档（逐值照动态模块 .publish-btn.disabled）：
+   入口不藏、点了给原因（原因文案仍取后端 check_gate.msg） */
+.cd-publish-btn.disabled {
+  opacity: 0.4;
+}
+/* 悬浮「更多」按钮：与上面 .cd-publish-btn 同一档（动态模块 .more-btn 的逐值口径），
+   底 100 = 发布钮 bottom 160 让开自身 48px 高度，两钮同列不同高 */
+.cd-more-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 100px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e5e6eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  color: #86909c;
+  z-index: 90;
+}
+/*  #ifdef H5  */
+/* 同 .h5-bottom-bar 的口径（见 App.vue）：H5 页面内容限宽 480px 居中，而悬浮钮是 fixed 定位，
+   电脑端宽窗口下会贴浏览器右缘、脱离页面内容列；媒体查询把内衬 16px 改按内容列右缘起算
+   （50% - 半列 240px + 16px），窄窗口 <480px 时仍走上面的 right:16px */
+@media (min-width: 480px) {
+  .cd-publish-btn,
+  .cd-more-btn {
+    right: calc(50% - 240px + 16px);
+  }
+}
+/*  #endif  */
+/* 快捷导航网格：与动态模块 .more-grid / tz-hover-btn 的 .box 同一份尺寸档 */
+.cd-more-grid {
+  width: calc(100% - 20px);
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-row-gap: 20px;
+  grid-column-gap: 10px;
+}
+.cd-more-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #1d2129;
+}

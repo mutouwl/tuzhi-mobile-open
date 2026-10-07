@@ -1,296 +1,337 @@
+/* 红包弹窗：微信红包信封那套版式——红色信封身 + 米白内卡（下缘往下坠的弧）+ 口袋里胶囊按钮。
+   三态共用：待开＝整面红身（图1）；已抢到/已抢完/已过期与领取记录＝红身+白卡（图3/图2）
+
+   红身（.redpacket-modal 与 .rp-shell 两条同色）一律**不透明**、不带 backdrop-filter：
+   原先是 rgba(...,0.94) + blur(10px)，2026-10-05 用户点名「红色背景上半部分还是会显示一个
+   灰色的磨砂透明背景」——半透明红叠上遮罩后透出来的是直播间画面，blur 把它糊成一层灰雾，
+   读起来就是「红色背景上蒙了块磨砂玻璃」。磨砂与那 6% 透明度一起去掉，红身自己就是实色 */
 .redpacket-modal {
   width: 300px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  background-color: #fff;
+  background: linear-gradient(180deg, #fa4a60 0%, #ec324e 100%);
   position: relative;
+}
+
+/* 白卡态面板本体不铺色，红身整块由 .rp-shell 从白卡后面起（见下） */
+.redpacket-modal.is-card {
+  background: transparent;
+}
+
+/* 红身从面板顶就铺满（原先 top:44px，头顶那一段没人铺色）——
+   白卡是 margin:0 14px 起的那一块，头顶 44px 只有左右各 14px 的空档露出去，
+   那一档原先透出的是遮罩下的直播间画面，也就是用户读到的那块「灰色磨砂」 */
+.rp-shell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fa4a60 0%, #ec324e 100%);
 }
 
 .modal-close {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 20px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
 }
 
+.is-card .modal-close {
+  background-color: rgba(29, 33, 41, 0.06);
+}
+
 .modal-close:active {
   opacity: 0.7;
 }
 
+/* 加载态：整面一层 + 中间一枚转圈（2026-10-01 用户点名「骨架屏和最终展示的内容不匹配，
+   不匹配指的是这个元素的位置、大小」——那一版把「头像 + 三条文字条 + 圆按钮」按待开态摆，
+   白卡态与领取记录进来时几何完全不同，加载完整体换版）。
+   这一屏在三态下是三套版式，没有任何一块能先摆出真元素再盖灰 ⇒ 走整面那一档（M16「弹层多态面板」那一条）。
+   高度按加载完成后那一版分档给：待开 318（.rp-body 内衬 44+34 ＋ 各段实高）、白卡 354（.rp-card 262 ＋ .rp-pocket 92），
+   这一层铺满该档 ⇒ 撤下时面板不跳高；
+   z-index 5 压在白卡态那层 z-index 为 auto 的 .rp-shell 之上，关闭按钮（10）仍在其上。
+   不取 tz-loading-page：那层直角遮罩会越出 u-popup 的 round 圆角，加载时整只弹窗变直角方框（商品弹窗那条笔记）
+
+   底色（2026-10-02 用户点名「加载中时偏白色的那块显示的是黑色，应该也是偏白色的」）：
+   原先两层都压 rgba(0,0,0,0.35)。红身被压成暗红还读得出「红」，白卡那一档底下本该是
+   #fff8f4 的浅米白，被这层黑压成了黑色——加载态与加载完成后是两种颜色。
+   ⇒ 这一层不再自带底色：**底色由它站的那一块给**——待开态底下就是 .redpacket-modal 的红身
+   （红身照旧是红的），白卡态这一层自己吃白卡那份 #fff8f4。
+   转圈那一枚跟着换（见 js.vue 的 loadingColor）：白底上白转圈看不见，红底上红转圈看不见。 */
 .redpacket-loading {
+  position: relative;
+  z-index: 5;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  min-height: 318px;
 }
 
-.loading-text {
-  color: #999;
-  font-size: 13px;
-  margin-top: 12px;
+.redpacket-modal.is-card .redpacket-loading {
+  min-height: 354px;
+  background-color: #fff8f4;
 }
 
-.redpacket-cover {
-  background: linear-gradient(180deg, #e8553a 0%, #c9302c 100%);
-  padding: 30px 20px 20px;
+/* ── 待开（图1）：类型 / 祝福语 / 总计金额 / 「开」 ── */
+.rp-body {
+  padding: 44px 20px 34px;
   text-align: center;
   position: relative;
 }
 
-.cover-top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.sender-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(255, 215, 0, 0.6);
-}
-
-.sender-avatar image {
-  width: 100%;
-  height: 100%;
-}
-
-.sender-name {
-  color: #ffe4b5;
-  font-size: 14px;
-  margin-top: 8px;
-  font-weight: 500;
-}
-
-.redpacket-blessing {
-  color: #ffe4b5;
-  font-size: 16px;
+.rp-type {
+  color: rgba(255, 240, 214, 0.95);
+  font-size: 13px;
   font-weight: 600;
-  margin-top: 6px;
 }
 
-.redpacket-type {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  margin-top: 4px;
+.rp-title {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 14px;
 }
 
-.cover-action {
+.rp-total {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 24px;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 28px;
 }
 
-.grab-btn {
-  width: 80px;
-  height: 80px;
+.rp-total-label,
+.rp-total-unit {
+  color: rgba(255, 240, 214, 0.9);
+  font-size: 13px;
+}
+
+.rp-total-value {
+  color: rgba(255, 240, 214, 0.98);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0 4px;
+}
+
+.rp-open-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+/* 信封封口那道金线：宽出面板的扁椭圆只留底边，弧线在「开」按钮背后往下坠 */
+.rp-seam {
+  position: absolute;
+  left: -70px;
+  right: -70px;
+  top: 50%;
+  height: 48px;
+  margin-top: -48px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #ffd700 0%, #f5a623 100%);
+  border-bottom: 1px solid rgba(255, 226, 170, 0.5);
+}
+
+.rp-open-btn {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background-color: #e73b55;
+  border: 2px solid rgba(255, 236, 200, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.5);
 }
 
-.grab-btn:active {
+.rp-open-btn:active {
   transform: scale(0.95);
   opacity: 0.9;
 }
 
-.grab-text {
-  color: #c9302c;
-  font-size: 20px;
+.rp-open-text {
+  color: rgba(255, 240, 214, 0.98);
+  font-size: 26px;
   font-weight: 700;
 }
 
-.cover-tip {
-  color: rgba(255, 255, 255, 0.7);
+/* ── 白卡（图3 结果 / 图2 记录）：下缘用大半径圆角坠出信封开口那道弧 ── */
+.rp-card {
+  position: relative;
+  margin: 0 14px;
+  padding: 32px 18px 26px;
+  background-color: #fff8f4;
+  border-radius: 16px 16px 50% 50% / 16px 16px 46px 46px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 262px;
+  box-sizing: border-box;
+}
+
+.rp-card-sender {
+  color: #f0435c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rp-card-line {
+  color: #4e5969;
+  font-size: 15px;
+  margin-top: 16px;
+}
+
+.rp-card-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.rp-card-value {
+  color: #f0435c;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rp-card-unit {
+  color: #f0435c;
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* 金额下面那一句「红包总金额」：只有没抢到/过期/撤回那一档才出，
+   紧贴在数字下方（6px）才读得出这个数是这只红包的总额、不是我到手的钱 */
+.rp-card-caption {
+  color: #86909c;
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.rp-card-link {
+  color: #86909c;
   font-size: 12px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* 领取记录（图2）：白卡内一段确定高度的滚动列表 */
+.rp-card--records {
+  padding: 26px 16px 20px;
+  min-height: 300px;
+}
+
+.rp-records-title {
+  color: #1d2129;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.rp-records-scroll {
+  width: 100%;
+  height: 212px;
   margin-top: 12px;
 }
 
-.cover-result {
+/* 一只都没人领那一档：把 212px 画布居中放一句话，不留半张空白（与记录弹层的 u-empty 同一职责） */
+.rp-records-empty {
+  color: #86909c;
+  font-size: 13px;
+  text-align: center;
+  padding: 84px 0;
+}
+
+.rp-records-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  padding: 9px 2px;
 }
 
-.result-amount {
-  display: flex;
-  align-items: baseline;
+.rp-records-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex: none;
 }
 
-.amount-symbol {
-  color: #ffd700;
-  font-size: 18px;
-  font-weight: 700;
+.rp-records-name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  color: #1d2129;
+  font-size: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.amount-value {
-  color: #ffd700;
-  font-size: 36px;
-  font-weight: 700;
+.rp-records-lucky {
+  flex: none;
+  margin-right: 8px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background-color: rgba(240, 67, 92, 0.08);
+  color: #f0435c;
+  font-size: 10px;
+}
+
+.rp-records-amount {
+  flex: none;
+  color: #f0435c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rp-records-unit {
+  font-size: 11px;
   margin-left: 2px;
 }
 
-.result-tip {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  margin-top: 8px;
-}
-
-.result-empty {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.lucky-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 4px;
-}
-
-.lucky-text {
-  color: #ffd700;
-  font-size: 12px;
-}
-
-/* 领取记录入口 */
-.records-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-}
-
-.records-entry:active {
-  background-color: #f8f8f8;
-}
-
-.entry-text {
-  color: #999;
-  font-size: 12px;
-}
-
-.entry-link {
-  color: #e8553a;
-  font-size: 12px;
-}
-
-/* 领取记录弹窗 */
-.records-popup {
+/* ── 口袋：白卡下缘以下那段红身，摆胶囊按钮与小字 ── */
+.rp-pocket {
+  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 40vh;
-  max-height: 70vh;
-  padding-top: 16px;
-}
-
-.records-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 0 16px 12px;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-.records-title {
-  color: #333;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.records-count {
-  color: #999;
-  font-size: 12px;
-}
-
-.records-scroll {
-  min-height: 30vh;
-  max-height: 50vh;
-}
-
-.records-empty {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 30vh;
+  padding: 16px 20px 22px;
+  min-height: 92px;
+  box-sizing: border-box;
 }
 
-.records-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid #f9f9f9;
-}
-
-.records-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.records-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.records-name {
-  color: #333;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.records-time {
-  color: #999;
-  font-size: 11px;
-  margin-top: 2px;
-}
-
-.records-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: 10px;
-}
-
-.records-amount {
-  color: #e8553a;
+/* 胶囊按钮是参照图（微信红包）自带的形态，全站 4px 圆角口径在这里让位给参照 */
+.rp-pill-btn {
+  min-width: 150px;
+  padding: 10px 30px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fff6ee 0%, #ffd9c4 100%);
+  color: #e0344c;
   font-size: 15px;
   font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.records-lucky {
-  display: flex;
-  align-items: center;
-  margin-top: 2px;
+.rp-pill-btn:active {
+  opacity: 0.85;
 }
 
-.records-lucky .lucky-icon {
-  width: 12px;
-  height: 12px;
-  margin-right: 2px;
-}
-
-.records-lucky .lucky-text {
-  color: #f5a623;
-  font-size: 10px;
+.rp-pocket-note {
+  color: rgba(255, 240, 214, 0.85);
+  font-size: 11px;
+  margin-top: 10px;
 }

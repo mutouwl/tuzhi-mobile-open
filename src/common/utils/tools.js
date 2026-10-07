@@ -35,6 +35,40 @@ export default {
 		return '';
 	},
 	/**
+	 * 读登录时缓存的用户资料（nickname/avatar/id 等）
+	 * 缓存键只有 user_info 一个，且登录时写的是 JSON 字符串（见 pages/public/login/js.vue 的 setToken）；
+	 * 直接 getStorageSync('userInfo') 读的是从未写入过的键，永远拿空值，读成字符串又取不到字段
+	 * @returns {Object} 未登录/解析失败返回 {}
+	 */
+	cachedUser() {
+		var cached = uni.getStorageSync('user_info');
+		if (!cached) {
+			return {};
+		}
+		if (typeof cached === 'string') {
+			try {
+				cached = JSON.parse(cached);
+			} catch (e) {
+				return {};
+			}
+		}
+		return cached && typeof cached === 'object' ? cached : {};
+	},
+	/**
+	 * 局部更新用户资料缓存（改昵称/头像后调用，否则各页首屏仍按旧缓存渲染）
+	 * 写入形态与登录时保持一致（JSON 字符串）
+	 * @param {Object} patch 要覆盖的字段，如 { nickname: '新昵称' }
+	 * @returns {Boolean} 无缓存（未登录）时不写，避免落下一份只有改动字段的假资料
+	 */
+	patchCachedUser(patch) {
+		var user = this.cachedUser();
+		if (!user.id) {
+			return false;
+		}
+		uni.setStorageSync('user_info', JSON.stringify(Object.assign(user, patch || {})));
+		return true;
+	},
+	/**
 	 * 跳转再封装，不支持复杂传参。
 	 */
 	routerTo(path, params = {}, isLogin) {
@@ -675,7 +709,8 @@ export default {
 		if (hours == 0) {
 			return minutes + `分钟`;
 		}
-		return `${hours}小时${minutes}分钟`;
+		// 整小时不补「0分钟」，「2小时0分钟」读起来像没化完（minutes 上面 padStart 过是字符串，要松比较）
+		return minutes != 0 ? `${hours}小时${minutes}分钟` : `${hours}小时`;
 	},
 
 	/**

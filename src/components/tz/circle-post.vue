@@ -1,6 +1,35 @@
 <template>
   <view class="circle-post-list">
-    <view v-for="post in list" :key="post.id" :class="['post-card', { 'post-card-round': round, 'post-card-border': border }]" @tap="onCard(post)">
+    <!-- 骨架档（ui-baseline-mobile M16）：外壳复用真实 .post-card（内衬 12/14/13、间距 8、圆角与描边同调用点），
+         灰块按真实卡逐块对齐——36 头像 + 昵称/时间两条 + 右端「更多」位 + 正文两行 + 卡片脚三枚；
+         版式只存这一份，调用页传 :skeleton 即可，页面不再各抄一份卡尺寸（改卡版式时骨架跟着改）。
+         骨架档下真实卡走空数组（rows 计算属性），两者不会同屏叠出 -->
+    <view v-for="i in skCount" :key="'cp-sk-' + i" :class="['post-card', 'cp-sk', { 'post-card-round': round, 'post-card-border': border }]">
+      <view class="cp-sk-head">
+        <view class="cp-sk-avatar"></view>
+        <view class="cp-sk-head-main">
+          <!-- 昵称与时间是两枚独立档位的文字（15px / margin-top 2 + 11px），行距只有 2px，
+               u-skeleton 的行距是写死的 12px（第一行还要额外 20px），套上去会把卡头撑高一倍 ⇒ 这里走静态块 -->
+          <view class="cp-sk-nick"></view>
+          <view class="cp-sk-meta"></view>
+        </view>
+        <!-- 右端「更多」位：真实是 32px 图标 + padding 2px 3px，位子留着否则昵称条会铺满整行 -->
+        <view class="cp-sk-more"></view>
+      </view>
+      <view class="cp-sk-body">
+        <!-- rows-width 传数组：u-skeleton 对单行列表会把「最后一行」宽度写死 70%，传字符串不生效 -->
+        <u-skeleton :loading="true" :animate="true" :title="false" :rows="2" :rows-width="['92%', '64%']" :rows-height="[14, 14]" />
+      </view>
+      <view class="cp-sk-foot">
+        <view class="cp-sk-foot-icon"></view>
+        <view class="cp-sk-foot-icon">
+          <view class="cp-sk-foot-count"></view>
+        </view>
+        <view class="cp-sk-foot-icon"></view>
+      </view>
+    </view>
+
+    <view v-for="post in rows" :key="post.id" :class="['post-card', { 'post-card-round': round, 'post-card-border': border }]" @tap="onCard(post)">
       <!-- 卡片头（共用组件：头像/昵称/标签插槽/元信息/更多，与动态详情一致）；头部不阻止冒泡，整卡点击进动态详情 -->
       <tz-circle-post-head :post="post" :meta="formatTime(post.createtime)" @more="openMore(post)">
         <template v-slot:tags>
@@ -83,12 +112,14 @@
       </view>
     </view>
 
-    <share-modal :val="shareVal" type="circle_post" :visible="shareVisible" @close="shareVisible = false" />
+    <!-- 海报画这条动态的正文推导标题与首图，取本组件列表里已加载好的那一行（sharePost 存下的整行），判据与动态详情页同一份 -->
+    <share-modal :val="shareVal" type="circle_post" :visible="shareVisible" @close="shareVisible = false"
+      :title="shareTitle" :cover="shareCover" />
     <!-- 附件预览（通用弹窗组件，支持图片/视频/音频/文档） -->
     <tz-file-preview :visible="previewVisible" :data="previewData" @close="previewVisible = false" />
     <!-- 评论弹窗（通用组件：评论列表 + 底部操作栏与详情页一致，点击入口弹出回复评论弹窗） -->
     <tz-circle-comment :visible="commentVisible" :post-id="commentPostId" @close="commentVisible = false" @posted="onPosted" @deleted="onDeleted" @like="onPopupLike" @share="sharePost" />
-    <u-action-sheet :show="moreVisible" :actions="moreActions" cancelText="取消" :closeOnClickOverlay="true"
+    <u-action-sheet :show="moreVisible" title="更多操作" :round="10" :actions="moreActions" cancelText="取消" :closeOnClickOverlay="true"
       @close="moreVisible = false" @select="onMoreAction" />
   </view>
 </template>
@@ -111,11 +142,17 @@ export default {
     border: { type: Boolean, default: false },
     circleId: { type: [Number, String], default: 0 },
     contentProtect: { type: [Number, String], default: 0 },
+    // 骨架档：只出灰块，不出真实卡（版式由本组件出，调用页不再抄一份卡尺寸）
+    skeleton: { type: Boolean, default: false },
+    // 骨架档铺几张卡
+    skeletonCount: { type: Number, default: 3 },
   },
   data() {
     return {
       shareVisible: false,
       shareVal: '',
+      // 分享海报用：一只弹窗服务整张列表，点分享时把这一行存下来（列表接口已下发 content/media，不再取一次接口）
+      shareRow: {},
       moreVisible: false,
       currentPost: null,
       previewVisible: false,
@@ -127,8 +164,27 @@ export default {
     };
   },
   computed: {
+    // 骨架档铺几张灰卡（非骨架档为 0，模板里 v-for 一个数即按 1..N 出条目）
+    skCount() {
+      return this.skeleton ? this.skeletonCount : 0;
+    },
+    // 骨架档下真实卡走空数组，避免与灰卡同屏叠出
+    rows() {
+      return this.skeleton ? [] : this.list;
+    },
     moreActions() {
       return [{ name: '编辑' }, { name: '删除', color: '#f53f3f' }];
+    },
+    // 分享海报用：被分享这一行的正文推导标题（去标签、压空白、截前 30 字）与首图，
+    // 与动态详情页的 shareTitle / onShareAppMessage 同一份算法，数据用的就是列表里的这一行
+    shareTitle() {
+      const c = this.shareRow && this.shareRow.content;
+      if (!c) return '';
+      return String(c).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 30);
+    },
+    shareCover() {
+      const media = (this.shareRow && this.shareRow.media) || {};
+      return (media.images && media.images[0]) || '';
     },
   },
   watch: {
@@ -364,6 +420,8 @@ export default {
     },
     sharePost(post) {
       this.shareVal = post.id;
+      // 分享海报用：整行留在 data 上，弹窗按这一条动态出海报
+      this.shareRow = post;
       this.shareVisible = true;
     },
     // 点击底部回复按钮：弹出评论弹窗（评论列表 + 回复框）
@@ -638,4 +696,72 @@ export default {
 .comment-text { color: #4a4f57; min-width: 0; word-break: break-all; }
 .comment-richtext { color: #4a4f57; font-size: 14px; line-height: 1.65; word-break: break-all; min-width: 0; }
 .comment-more { margin-top: 3px; font-size: 14px; color: #4c78a7; }
+
+/* ===== 骨架档灰块（M16）：静态块取 uview 骨架灰 #e5e6eb、圆角 4px，与教务/直播那一档同口径；
+   外壳 .post-card 与真实卡共用一份（内衬 12/14/13、间距 8、圆角描边同调用点），只补占位块自身尺寸。
+   缩进照真实版式逐块对齐：正文/卡片脚左缩进 42（真实 .post-content / .post-foot 同值），
+   昵称文字左边界 = 头像 36 + 间距 8 = 44。===== */
+.cp-sk-head {
+  display: flex;
+  align-items: center;
+}
+.cp-sk-avatar {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 50%;
+  background: #e5e6eb;
+}
+.cp-sk-head-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 8px;
+}
+.cp-sk-nick {
+  width: 56%;
+  height: 15px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cp-sk-meta {
+  width: 34%;
+  height: 11px;
+  margin-top: 2px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cp-sk-more {
+  flex: none;
+  width: 38px;
+  height: 36px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cp-sk-body {
+  margin: 9px 0 0 42px;
+}
+.cp-sk-foot {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 42px;
+  /* 间距取真实 .post-foot 的 gap: 36（一行内项与项的间距只由容器给，不给某一项写 margin） */
+  gap: 36px;
+}
+.cp-sk-foot-icon {
+  display: flex;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cp-sk-foot-count {
+  width: 24px;
+  height: 13px;
+  margin-left: 4px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
 </style>

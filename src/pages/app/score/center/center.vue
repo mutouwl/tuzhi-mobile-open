@@ -29,7 +29,7 @@
 				<u-empty icon="/static/image/empty.png" width="70" height="70" v-if="list.length == 0" text="暂无积分商品" />
 			</view>
 
-			<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.sort" :actions="sortTypes"
+			<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.sort" :actions="sortTypes"
 				:closeOnClickOverlay="true" :closeOnClickAction="true" @close="modal.sort = false" @select="sortSelect">
 			</u-action-sheet>
 		</template>

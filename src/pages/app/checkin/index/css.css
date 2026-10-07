@@ -1,0 +1,51 @@
+/* 我的打卡列表页：页面底/列表容器/条目卡外壳都走 App.vue 的模块共用档——
+   .school-page（灰底 + 底部留白）、.school-cards--divided（白底通栏档，左右不留边，
+   与「可参与的打卡」列表同一份）、.school-cards（左右留边 10，日记页签那一栏用）；
+   两个页签的条目卡（tz-checkin-activity-card / tz-checkin-record-card）各自带版式，本页不再定样式；
+   本页只补日记页签的骨架屏那几块灰条（活动页签的骨架由卡片组件 :loading="true" 自己出） */
+
+/* ===== 子页签（分段器）行 =====
+   左右内衬 11px = 主页签行 u-tabs 条目的同一份内衬（M5「带内每一行取同一值」），
+   上方 6px 与主页签行拉开、下方 10px 与列表区拉开；分段器自身的高矮、底色、圆角都在 u-subsection 组件里，
+   页面不越层去改它内部（小程序端组件 isolated，页面样式本来就打不进去，M12） */
+.mck-sub-bar {
+  padding: 6px 11px 10px;
+}
+
+/* ===== 日记页签骨架屏：与 tz-checkin-record-card 逐块对齐，数值与动态搜索页 .cks-sk-* 同一档
+   （同一只卡片的同一版式，两页骨架不许各写一套尺寸） ===== */
+.mck-sk-row {
+  display: flex;
+  align-items: center;
+}
+.mck-sk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.mck-sk-text {
+  flex: 1;
+  min-width: 0;
+}
+.mck-sk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.mck-sk-foot-time {
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.mck-sk-foot-act {
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}

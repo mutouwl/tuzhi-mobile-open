@@ -54,6 +54,12 @@ export default {
         total: {},
         time_total: {}
       },
+      // 加载态一律骨架屏（M16，不再弹 uni.showLoading 那枚黑底转圈）：
+      // totalLoading 只管首屏的「历史数据」（累计值不随日/周/月变），statLoading 管当前档位的数字与图
+      totalLoading: true,
+      statLoading: true,
+      // 取数失败时的那句原因（本页已开下拉刷新，写清可以下拉重试），空串表示没有出错
+      statError: '',
       pageParams:{},
       days:{
         study_days:0,
@@ -79,15 +85,19 @@ export default {
 
     /**
      * 获取统计
+     *
+     * 加载态走骨架屏：发请求前置 statLoading/清 statError，回来（成功、业务码异常、网络异常）一律撤骨架；
+     * 失败不把没有的数字摆成 0，改为说一句原因（M13、M16）
      */
     getStatistics() {
-      uni.showLoading({
-        title: '请稍后'
-      });
+      that.statLoading = true;
+      that.statError = '';
       that.$api('study.getStatistics', {
         time: that.timeCurrent
       }).then(res => {
-        if (res.code === 1) {
+        that.statLoading = false;
+        that.totalLoading = false;
+        if (res && res.code === 1) {
           that.statistics = res.data;
 
           var chartsDataLine = {
@@ -116,19 +126,20 @@ export default {
           console.log("chartsDataLine",chartsDataLine)
           that.chartsDataLine = chartsDataLine;
 
+        } else {
+          that.statError = (res && res.msg) ? res.msg : '统计数据加载失败，可下拉本页重试';
         }
-
-        uni.hideLoading();
+      }).catch(() => {
+        that.statLoading = false;
+        that.totalLoading = false;
+        that.statError = '统计数据加载失败，可下拉本页重试';
       });
     },
 
 
     getData() {
+      // 加载态由列表骨架屏给（M16），不再弹「请稍后」那枚转圈 toast
       that.loading = true;
-
-      uni.showLoading({
-        title: '请稍后'
-      });
 
       that.$api('study.getLog', that.form).then(res => {
         if (res.code === 1) {
@@ -139,11 +150,9 @@ export default {
           that.list = list;
         }
 
-        uni.hideLoading();
         that.loading = false;
       }).catch(() => {
         that.loading = false;
-        uni.hideLoading();
       });
       uni.stopPullDownRefresh();
     },

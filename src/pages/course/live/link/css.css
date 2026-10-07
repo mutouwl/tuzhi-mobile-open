@@ -134,19 +134,43 @@
 }
 
 /* 连麦记录列表 */
-.record-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 0;
+.lka-sk {
+  margin-top: 14px;
   flex: 1;
 }
 
-.record-loading-text {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #86909c;
+/* 骨架行不留下沿线（末行收口按 class 写，不靠 :last-child，M7） */
+.lka-sk-item {
+  border-bottom: none;
+}
+
+.lka-sk-icon {
+  background: #e5e6eb;
+}
+
+.lka-sk-line {
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+.lka-sk-line-type {
+  width: 46%;
+  height: 14px;
+}
+
+.lka-sk-line-meta {
+  width: 62%;
+  height: 11px;
+  margin-top: 3px;
+}
+
+.lka-sk-act {
+  width: 56px;
+  height: 26px;
+  margin-left: 10px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex-shrink: 0;
 }
 
 .record-scroll {

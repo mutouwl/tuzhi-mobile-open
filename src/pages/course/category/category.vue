@@ -1,30 +1,43 @@
 <template>
   <view class="tz-category">
-    <u-loading-page :loading="loading" bg-color="#F7F8FA"></u-loading-page>
    
     <tz-box padding="10px 10px">
     <tz-search inputBgColor="#f5f5f5"></tz-search>
     </tz-box>
-    <view class="three-level-wrap tz-flex tz-col-top" v-if="!loading">
+    <view class="three-level-wrap tz-flex tz-col-top">
       <view class="side-menu-wrap">
         <scroll-view scroll-y style="height: 100vh;">
-          <view
-            class="menu-item tz-flex"
-            v-for="(item, index) in categoryList.children"
-            :key="item.id"
-            :class="[{ 'menu-item-active': index == activeMenu }]"
-            @tap="onMenu(index)"
-          >
-            <view class="menu-title tz-line-1">
-              {{ item.name }}
+          <!-- 首屏取分类树时左栏出同尺寸（padding 20/10、行高 16）的灰条目，不遮整页 -->
+          <block v-if="loading">
+            <view class="cat-sk-menu" v-for="i in 8" :key="'m' + i">
+              <view class="cat-sk-menu-bar"></view>
             </view>
-          </view>
+          </block>
+          <block v-else>
+            <view
+              class="menu-item tz-flex"
+              v-for="(item, index) in categoryList.children"
+              :key="item.id"
+              :class="[{ 'menu-item-active': index == activeMenu }]"
+              @tap="onMenu(index)"
+            >
+              <view class="menu-title tz-line-1">
+                {{ item.name }}
+              </view>
+            </view>
+          </block>
         </scroll-view>
+      </view>
+      <!-- 首屏骨架屏（替代 u-loading-page 整页遮罩）：搜索栏、左右两栏的版式都先摆出来，
+           只把两栏各自的内容换成灰块；右侧内容与真实课程卡同一只组件出骨架（banner 块 + 紧凑卡） -->
+      <view class="goods-list-box" v-if="loading">
+        <view class="cat-sk-banner"></view>
+        <tz-course-mini :round="true" :border="false" :skeleton="true" :skeleton-count="5"></tz-course-mini>
       </view>
       <!-- 一级分类没有下级分类时的空状态 -->
       <view
         class="goods-list-box empty-box"
-        v-if="!categoryList.children || !categoryList.children.length"
+        v-else-if="!categoryList.children || !categoryList.children.length"
       >
         <u-empty
           icon="/static/image/empty.png"
@@ -52,10 +65,8 @@
           <u-sticky bgColor="#fff" v-if="showSecondTabs">
             <u-tabs :list="secondCategoryList" :current="activeSecondMenu" @click="onSecondMenu"></u-tabs>
           </u-sticky>
-          <view class="loading-box" v-if="courseLoading && courseList.length === 0">
-            <u-loading-icon mode="circle" size="40"></u-loading-icon>
-            <text class="loading-text">加载中</text>
-          </view>
+          <!-- 切左侧菜单/页签换列表时，骨架只铺这一栏（页签与左栏菜单都已在前一次响应里就位，保持可点） -->
+          <tz-course-mini :round="true" :border="false" :skeleton="true" :skeleton-count="5" v-if="courseLoading && !courseList.length"></tz-course-mini>
           <template v-else>
             <tz-course-mini :round="true" :border="false" :list="courseList" v-if="courseList.length > 0"></tz-course-mini>
             <u-empty icon="/static/image/empty.png" width="70" height="70" v-if="courseList.length == 0" text="暂无课程"></u-empty>

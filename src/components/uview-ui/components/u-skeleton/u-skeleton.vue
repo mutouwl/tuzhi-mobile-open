@@ -100,10 +100,16 @@
 					// 如果有title占位图，第一个段落占位图的外边距需要大一些，如果没有title占位图，第一个段落占位图则无需外边距
 					// 之所以需要这么做，是因为weex的无能，以提升性能为借口不支持css的一些伪类
 					item.marginTop = !this.title && i === 0 ? 0 : this.title && i === 0 ? '20px' : '12px'
-					// 如果设置的为百分比的宽度，转换为px值，因为nvue不支持百分比单位
+					// 百分比宽度只有 nvue 需要换算成 px（nvue 不吃百分比单位）；H5 与小程序一律把 % 原样交给 CSS，
+					// 不再读 this.width——那份宽度是 mounted 后延时查 DOM 查来的，小程序端查不到就不 resolve，
+					// 查不到 = 每条占位条算成 0px，症状是骨架屏只剩几块静态灰块（看着像「没动效、还缺一块」）
 					if (/%$/.test(rowWidth)) {
-						// 通过parseInt提取出百分比单位中的数值部分，除以100得到百分比的小数值
+						// #ifdef APP-NVUE
 						item.width = uni.$u.addUnit(this.width * parseInt(rowWidth) / 100)
+						// #endif
+						// #ifndef APP-NVUE
+						item.width = rowWidth
+						// #endif
 					} else {
 						item.width = uni.$u.addUnit(rowWidth)
 					}
@@ -116,8 +122,13 @@
 			uTitleWidth() {
 				let tWidth = 0
 				if (/%$/.test(this.titleWidth)) {
-					// 通过parseInt提取出百分比单位中的数值部分，除以100得到百分比的小数值
+					// 与 rowsArray 同一档：非 nvue 直接把 % 交给 CSS，不依赖 mounted 后那次延时 DOM 查询
+					// #ifdef APP-NVUE
 					tWidth = uni.$u.addUnit(this.width * parseInt(this.titleWidth) / 100)
+					// #endif
+					// #ifndef APP-NVUE
+					tWidth = this.titleWidth
+					// #endif
 				} else {
 					tWidth = uni.$u.addUnit(this.titleWidth)
 				}
@@ -160,20 +171,17 @@
 				})
 				// #endif
 			},
-			// 获取组件的宽度
-			async getComponentWidth() {
-				// 延时一定时间，以获取dom尺寸
-				await uni.$u.sleep(20)
-				// #ifndef APP-NVUE
-				this.$uGetRect('.u-skeleton__wrapper__content').then(size => {
-					this.width = size.width
-				})
-				// #endif
-
+			// 获取组件的宽度（只有 nvue 需要：nvue 不吃百分比单位，得把 % 换算成 px）
+			// 非 nvue 端不再查这次 DOM：小程序端 $uGetRect 查不到节点时既不 resolve 也不 reject，
+			// width 就永久停在 0，占位条全被算成 0px（骨架屏缺一块、看着像没有动效）
+			getComponentWidth() {
 				// #ifdef APP-NVUE
-				const ref = this.$refs['u-skeleton__wrapper__content']
-				ref && dom.getComponentRect(ref, (res) => {
-					this.width = res.size.width
+				// 延时一定时间，以获取dom尺寸
+				uni.$u.sleep(20).then(() => {
+					const ref = this.$refs['u-skeleton__wrapper__content']
+					ref && dom.getComponentRect(ref, (res) => {
+						this.width = res.size.width
+					})
 				})
 				// #endif
 			}

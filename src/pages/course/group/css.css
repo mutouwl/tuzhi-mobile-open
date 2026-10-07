@@ -22,15 +22,7 @@
     box-sizing: border-box;
 }
 
-.load-more-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 0;
-}
-
-.load-more-text {
-    margin-left: 8px;
-    font-size: 12px;
-    color: #999;
+/* 分页加载行（u-loadmore）：类名带页面前缀，本文件非 scoped，禁用全站会互相覆盖的通用名（M11） */
+.gl-loadmore {
+    padding: 8px 0;
 }

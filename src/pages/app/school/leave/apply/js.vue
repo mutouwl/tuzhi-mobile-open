@@ -174,7 +174,7 @@ export default {
                     can_leave: 1,
                     page, limit: PAGE_SIZE,
                 }).then((ret) => {
-                    if (seq !== this.sessionReqSeq) return;
+                    if (seq !== this.sessionReqSeq) { this.sessionLoading = false; this.sessionRefreshing = false; return; } // 过期响应只丢数据，不撤骨架
                     const list = ret.data.list || [];
                     this.sessions = refresh ? list : this.sessions.concat(list);
                     // 课程筛选选项随列表下发（后端保证不随筛选裁剪，用户可随时切回「全部课程」）；
@@ -187,7 +187,7 @@ export default {
                     this.sessionLoading = false;
                     this.sessionRefreshing = false;
                 }).catch(() => {
-                    if (seq !== this.sessionReqSeq) return;
+                    if (seq !== this.sessionReqSeq) { this.sessionLoading = false; return; } // 过期响应只丢数据，撤骨架的出口不能省
                     this.sessionLoading = false;
                     this.sessionRefreshing = false;
                     this.sessionLoadStatus = 'loadmore';

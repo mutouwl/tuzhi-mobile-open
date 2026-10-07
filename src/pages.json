@@ -84,6 +84,9 @@
 					"path": "message/message",
 					"style": {
 						"navigationBarTitleText": "消息通知",
+						"h5": {
+							"titleNView": false
+						},
 						"enablePullDownRefresh": true,
 						"app-plus": {
 							"pullToRefresh": {
@@ -920,6 +923,125 @@
 					}
 				},
 				{
+					"path": "checkin/index/index",
+					"style": {
+						"navigationBarTitleText": "我的打卡",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/discover/discover",
+					"style": {
+						"navigationBarTitleText": "可参与的打卡",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/intro/intro",
+					"style": {
+						"navigationBarTitleText": "打卡介绍",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/detail/detail",
+					"style": {
+						"navigationBarTitleText": "打卡",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/search/search",
+					"style": {
+						"navigationBarTitleText": "搜索日记",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/taskdetail/taskdetail",
+					"style": {
+						"navigationBarTitleText": "任务详情",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "checkin/submit/submit",
+					"style": {
+						"navigationBarTitleText": "发表日记",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "checkin/record/record",
+					"style": {
+						"navigationBarTitleText": "打卡记录",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "checkin/diary/diary",
+					"style": {
+						"navigationBarTitleText": "日记详情",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "checkin/rank/rank",
+					"style": {
+						"navigationBarTitleText": "排行榜",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "checkin/taskcalendar/taskcalendar",
+					"style": {
+						"navigationBarTitleText": "任务日历",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
+					"path": "checkin/member/member",
+					"style": {
+						"navigationBarTitleText": "成员",
+						"enablePullDownRefresh": true,
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
 					"path": "circle/post/publish",
 					"style": {
 						"navigationBarTitleText": "发布动态",
@@ -994,6 +1116,12 @@
 						"navigationBarTitleText": "用户中心",
 						"h5": {
 							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
 						}
 					}
 				},
@@ -1102,23 +1230,38 @@
 						}
 					}
 				},
-				{
-				"path": "balance/index",
-				"style": {
-					"navigationBarTitleText": "余额",
-					"h5": {
-						"titleNView": false
-					},
-					"enablePullDownRefresh": true,
-					"app-plus": {
-						"pullToRefresh": {
-							"color": "#007aff"
+{
+					"path": "balance/index",
+					"style": {
+						"navigationBarTitleText": "余额",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
 						}
 					}
-				}
-			},
-			{
-				"path": "redpacket/log",
+				},
+				{
+					"path": "prize/index",
+					"style": {
+						"navigationBarTitleText": "我的奖品",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "redpacket/log",
 					"style": {
 						"navigationBarTitleText": "红包记录",
 						"h5": {

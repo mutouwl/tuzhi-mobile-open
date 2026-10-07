@@ -19,7 +19,25 @@
 
 
 		<tz-box bgColor="none">
-			<div class="customer-list" v-if="list.length > 0">
+			<!-- 首屏骨架屏：占位块逐块对齐真实客户卡（45px 头像圆 / 昵称行 + 最近下单 / 两行订单金额），
+			     吸顶搜索栏与排序按钮留在骨架屏外保持可点（M16）；翻页追加列表不闪骨架 -->
+			<div class="customer-list cus-sk" v-if="loading">
+				<div class="customer-item" v-for="i in 4" :key="i">
+					<div class="customer-item-cover cus-sk-block"></div>
+					<div class="customer-item-info">
+						<div class="customer-item-header">
+							<div class="cus-sk-col">
+								<div class="cus-sk-line cus-sk-block sk-h-14 sk-w-35"></div>
+								<div class="cus-sk-line cus-sk-block sk-h-12 sk-w-50"></div>
+							</div>
+						</div>
+						<div class="cus-sk-line cus-sk-block sk-h-12 sk-w-60"></div>
+						<div class="cus-sk-line cus-sk-block sk-h-12 sk-w-60"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="customer-list" v-else-if="list.length > 0">
 				<div class="customer-item" v-for="(item, index) in list"
 					@click="$nav.to('/pages/app/agent/log/customer/detail/detail?id=' + item.user_id)">
 					<div class="customer-item-cover">

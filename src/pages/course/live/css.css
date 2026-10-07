@@ -27,11 +27,11 @@
   height: 100%;
   background-size: cover;
   background-position: center;
-  filter: blur(55px);
-  /* 核心：高斯模糊 */
+  filter: blur(80px);
+  /* 核心：高斯模糊 —— 2026-10-01 用户点名「页面背景的高斯模糊效果增强一点，就是说更模糊一些」，55 → 80 */
   opacity: 0.6;
-  transform: scale(1.1);
-  /* 放大一点防止白边 */
+  transform: scale(1.2);
+  /* 放大一点防止白边：模糊半径越大、向外采样越远，放大量要跟着它走（55→80 时 1.1→1.2，同一次改动） */
 }
 
 /* line 33, /stdin */

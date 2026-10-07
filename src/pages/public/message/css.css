@@ -52,3 +52,12 @@
     color: #4E5969;
     /* color: #0968f6; */
 }
+
+/* ===== 首屏骨架屏（M16）=====
+   外壳复用真实卡片的 .message-box / .message-item-box（内衬、白底、卡间距逐字一致），
+   这里只补真实版式里那一段块间距：正文块与时间的距离 = .message-content 的 margin-top 15px。
+   u-skeleton 的宿主 class 在小程序端与 H5 都生效（组件内部节点打不进，见 M12），
+   流光与全站骨架屏同一档（u-skeleton 内置 90deg / 1.8s），本页不再自写渐变 */
+.msg-sk-body{
+    margin-top: 15px;
+}

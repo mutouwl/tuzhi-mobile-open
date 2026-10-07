@@ -30,14 +30,7 @@
     text-align: center;
 }
 
-.nickname-input{
-    width: 100%;
-    border: 1px solid #f5f5f5;
-    height: 40px;
-    line-height: 40px;
-    font-size: 14px;
-    padding: 0 10px;
-}
+/* 修改昵称的输入框已随弹窗一起抽进 tz-nickname-modal，本页不再有 .nickname-input */
 
 .u-modal__content{
     padding-bottom: 10px!important;

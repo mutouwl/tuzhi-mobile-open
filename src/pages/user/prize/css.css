@@ -1,0 +1,113 @@
+/* 我的奖品（分享有礼 M-P5）页面私有类：一律 sgp- 前缀（M11），
+   卡片外壳、留边与卡间距都由全局 .school-cards / .school-card 给（M21），这里只排行内三块 */
+
+/* 领取期提示那一格的留边：左右 10px 与下面 .school-cards 的内衬对齐。
+   文字与底色由 u-alert 自己出，本类不再管字号/颜色（原先那行灰字样式已随组件化删掉，
+   留死类就是 M11 说的那份冗余） */
+.sgp-tip {
+  padding: 12px 10px 0;
+}
+
+.sgp-item {
+  display: flex;
+  align-items: center;
+}
+
+/* 封面档：60 方、圆角 6（§1 只有小元素 4 / 头像 50% / 封面 6–8 / 弹窗顶 10–12 能有圆角）。
+   没配图 / 图加载不出来时这一格走默认商品图（defaultCover，见 js.vue），不再是空灰块，
+   所以这里只留几何；底色留一层是给图还没解码出来的那一瞬，不至于白闪一下 */
+.sgp-cover {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  flex: none;
+  background: #f2f3f5;
+}
+
+.sgp-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.sgp-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d2129;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sgp-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.sgp-meta-type {
+  font-size: 12px;
+  line-height: 17px;
+  color: #4e5969;
+}
+
+/* 状态短标签走小元素档（12px / #86909c / #f2f3f5 / 圆角 4，与打卡那边同一档，M22） */
+.sgp-meta-tag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-size: 10px;
+  line-height: 14px;
+  color: #86909c;
+  background: #f2f3f5;
+  border-radius: 4px;
+}
+
+/* 灰字时间走 §1 的 10px 档（写成正文档会被读成第二句奖品名） */
+.sgp-sub {
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 14px;
+  color: #86909c;
+}
+
+.sgp-actions {
+  flex: none;
+  margin-left: 8px;
+}
+
+.sgp-loadmore {
+  padding: 4px 0 10px;
+}
+
+/* 骨架行与真实行同一份三块几何：封面 60 方、两行文字、按钮块。
+   按钮块取真实按钮那一档（tz-button size=mini：内衬 2/10 + 12px 文字、行高 16 ⇒ 热区 20 高）：
+   「领取」两字 ≈24+20＝44 宽、「去查看」三字 ≈36+20＝56 宽，一行只会出其中一枚，
+   骨架按最宽那枚取 56（2026-10-04 真实按钮由 mid 收到 mini 时同步改这里——两侧档位必须一致，
+   只改一侧就是「加载完整体换版」，见 ui-baseline-mobile.md M16/M18 逐块对齐那一族） */
+.sgp-sk {
+  display: flex;
+  align-items: center;
+}
+
+.sgp-sk-cover {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  background: #e5e6eb;
+  flex: none;
+}
+
+.sgp-sk-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.sgp-sk-btn {
+  width: 56px;
+  height: 20px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex: none;
+  margin-left: 8px;
+}

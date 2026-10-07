@@ -3,7 +3,7 @@
 	<view class="post-media-grid" :class="{ 'is-editable': editable, 'is-content-indented': contentIndent && !editable }">
 		<view v-for="(item, i) in items" :key="i" class="post-media-item" @tap.stop="previewItem(i)">
 			<!-- 图片点击由外层 post-media-item 统一处理，避免微信小程序点击覆盖层时事件丢失 -->
-			<image v-if="item.type == 'image' && !imgErrors[item.url]" :src="item.url" mode="aspectFill" class="post-media-img" @error="onImgError(item.url)" />
+			<image v-if="item.type == 'image' && !imgFailed(item.url)" :src="item.url" mode="aspectFill" class="post-media-img" @error="onImgError(item.url)" />
 			<!-- 图片加载失败占位：浅灰底 + 居中图标（与评论列表 comment-image-error 一致） -->
 			<view v-else-if="item.type == 'image'" class="post-media-img post-media-image-error">
 				<tz-icon name="tupian" :size="24" color="#c9cdd4" />
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key';
 /**
  * 圈子动态媒体九宫格（通用组件：动态卡片/动态详情展示 + 发布页/回复弹窗媒体编辑器共用）
  * props: items（[{ type: 'image'|'video'|'audio', url, index, name, cover }]，cover 为编辑器视频临时封面）、
@@ -57,12 +58,20 @@ export default {
 	emits: ['preview-image', 'preview-video', 'preview-audio', 'remove', 'add'],
 	data() {
 		return {
-			// 图片加载失败标记：key = 图片 url，值为 true 时该图用图标占位（与评论列表 comment-image-error 一致）
-			// 用 url 作 key：父级每次渲染都会生成新的 items 数组引用，若按下标标记需监听重置，会因父级重渲染触发闪烁
+			// 图片加载失败标记：key = mpKey(图片 url)，值为 true 时该图用图标占位（与评论列表 comment-image-error 一致）
+			// 用 url 作 key：父级每次渲染都会生成新的 items 数组引用，若按下标标记需监听重置，会因父级重渲染触发闪烁。
+			// 转键这一步不能省：url 原样作 data 键会被 setData 当成嵌套路径解析，那一次推送整个丢掉、
+			// uni 的在途标志还不复位（见 common/utils/mp-data-key）
 			imgErrors: {},
 		};
 	},
 	methods: {
+		// 这张图是不是已经取不到（取不到的那一格换灰底图标占位）。
+		// 查表包在方法里而不是写在模板上：模板看不到模块级 import，而 key 是 mpKey(url)
+		// —— 地址原样作 data 键会被 setData 当成嵌套路径解析后抛错（见 common/utils/mp-data-key）
+		imgFailed(url) {
+			return !!this.imgErrors[mpKey(url)];
+		},
 		// 媒体格统一点击入口：保证点击图片、视频、音频或覆盖层都能触发预览
 		previewItem(index) {
 			// 小程序模板不要把 v-for 中的整个 item 作为事件参数传递：旧版 uni-app 会
@@ -100,7 +109,7 @@ export default {
 		},
 		onImgError(url) {
 			// 必须用 $set：Vue2 对 reactive 对象新增 key 不触发更新，直接赋值占位不会渲染
-			this.$set(this.imgErrors, url, true);
+			this.$set(this.imgErrors, mpKey(url), true);
 		},
 		// 点击添加格：禁用态（上传中）不响应，其余一律交给调用方（本组件不知道要选哪类媒体）
 		onAddClick() {

@@ -1,15 +1,9 @@
 <template>
   <view class="my-circle">
-    <!-- 加载骨架屏：与 tz-circle mini 卡片同构 -->
+    <!-- 首屏骨架屏（M16）：版式存在 tz-circle 组件里（:skeleton 那一档），页面不抄一份卡尺寸；
+         原来这份手写流光是裸名且非 scoped，与全站其它页面的 .sk-card/.sk-line 互相覆盖。 -->
     <view v-if="loading" class="list">
-      <view class="sk-card" v-for="i in 4" :key="i">
-        <view class="sk-cover"></view>
-        <view class="sk-info">
-          <view class="sk-line sk-w-40"></view>
-          <view class="sk-line sk-w-30"></view>
-        </view>
-        <view class="sk-btn"></view>
-      </view>
+      <tz-circle :skeleton="true" type="mini" :margin="0" :round="1" :skeleton-count="4" />
     </view>
 
     <view v-else class="list">
@@ -43,6 +37,7 @@ export default {
     if (!that.$tools.systemConfig("app_isinstall_circle")) {
       uni.showToast({ title: "圈子功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     that.load();
@@ -60,18 +55,26 @@ export default {
   },
   methods: {
     async load() {
-      const res = await that.$api('circle.circle.index', { page: that.page, limit: 10 });
-      uni.stopPullDownRefresh();
-      that.loadMsg = '';
-      if (res.code === 1) {
-        that.list = that.list.concat(res.data.rows || []);
-        that.total = res.data.total || 0;
-        that.loading = false;
-      } else {
-        that.loadMsg = res.msg || '加载失败';
-        that.loading = false;
+      try {
+        const res = await that.$api('circle.circle.index', { page: that.page, limit: 10 });
+        uni.stopPullDownRefresh();
+        that.loadMsg = '';
+        // 判 code 之前先判 res 在不在：request.js 对 HTTP 500 是 resolve(response.data)，
+        // 空体会把 undefined 交上来，res.code 直接抛进未处理的 rejection ⇒ loading 永久不撤
+        if (res && res.code === 1) {
+          that.list = that.list.concat((res.data && res.data.rows) || []);
+          that.total = (res.data && res.data.total) || 0;
+        } else {
+          that.loadMsg = (res && res.msg) || '加载失败';
+          uni.showToast({ title: that.loadMsg, icon: 'none' });
+        }
+      } catch (e) {
+        uni.stopPullDownRefresh();
+        that.loadMsg = '加载失败，请重试';
         uni.showToast({ title: that.loadMsg, icon: 'none' });
       }
+      // 骨架屏的出口收在这一条：成功 / 业务码失败 / 网络异常 / 响应体为空都要撤（M13）
+      that.loading = false;
     }
   }
 };
@@ -85,64 +88,5 @@ export default {
 .list {
   padding: 12px;
 }
-/* 加载骨架屏：与 tz-circle mini 卡片同构（封面 110x80 + 名称/有效期两行 + 右侧按钮） */
-.sk-card {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border-radius: 10px;
-  padding: 0;
-  height: 80px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-.sk-cover {
-  flex: none;
-  width: 110px;
-  height: 100%;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-info {
-  flex: 1;
-  min-width: 0;
-  padding: 6px 8px;
-  padding-right: 70px;
-}
-.sk-btn {
-  flex: none;
-  width: 52px;
-  height: 24px;
-  border-radius: 12px;
-  margin-left: -52px;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-line {
-  height: 15px;
-  border-radius: 3px;
-  margin-top: 10px;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-info .sk-line:first-child {
-  margin-top: 0;
-}
-.sk-w-40 {
-  width: 40%;
-}
-.sk-w-30 {
-  width: 30%;
-}
-@keyframes sk-animate {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
-}
+
 </style>

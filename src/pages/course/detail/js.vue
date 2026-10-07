@@ -24,7 +24,10 @@ import courseLibrary from "@/common/utils/course.js";
 
 import columnNextTipModal from "@/pages/course/components/column-next-tip-modal.vue";
 import circleCourseModal from "@/components/modal/circle-course-modal.vue";
-import customForm from "@/pages/app/form/components/custom-form.vue";
+import checkinCourseModal from "@/pages/course/components/checkin-course-modal.vue";
+import { goActivity } from "@/common/utils/checkin-activity";
+import { rememberInviter, resolveInviter, inviterFromParams } from "@/common/utils/live-inviter";
+import customForm from "@/components/tz/custom-form.vue";
 
 export default {
   components: {
@@ -46,6 +49,7 @@ export default {
     columnNextTipModal
     ,circleCourseModal
     ,customForm
+    ,checkinCourseModal
   },
   data() {
     return {
@@ -74,6 +78,7 @@ export default {
         share: false,
         columnNextTip:false,
         circleCourse: false,
+        checkin: false,
       },
 
       columnNextCourse:{},
@@ -86,6 +91,15 @@ export default {
       circleList: [],
       //圈子插件是否安装（未安装时隐藏圈子相关 UI）
       circleInstalled: false,
+
+      //底栏「打卡」那一枚与它弹出的列表：本课程（含所属专栏）关联的打卡活动，一次取到喂两处
+      checkinList: [],
+      //枚举文案（参与条件/打卡状态/打卡模式）由接口下发，前端不写死
+      checkinAttr: { join_type: {}, run_state: {}, checkin_mode: {} },
+      checkinPage: 1,
+      checkinLimit: 20,
+      checkinHasMore: false,
+      checkinLoadStatus: "loadmore",
 
       //推荐评价
       evaluate: {
@@ -169,6 +183,7 @@ export default {
           forms: [],
         };
         done(false);
+        that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
         return;
       }
       that
@@ -435,6 +450,12 @@ export default {
         if(that.pageParams.column_id){
           livePathUrl += "&column_id="+that.pageParams.column_id
         }
+        // 邀请人 id 必须跟着进直播间：达人榜归因与分享有礼助力都在直播间那一页发，
+        // 上一版只搬 id 与 column_id，share 在这一跳丢掉 ⇒ 两张表一行都不落（2026-10-04 现场）
+        var liveInviter = resolveInviter(that.pageParams.id);
+        if (liveInviter) {
+          livePathUrl += "&share=" + encodeURIComponent(liveInviter);
+        }
         //进入直播详情页
         that.$nav.to(
           livePathUrl,
@@ -459,29 +480,39 @@ export default {
       that.playHandle();
     },
 
-    getCircleInstallState() {
+    /**
+     * 付费插件安装状态（三态：true=已装 / false=未装 / null=本地系统配置还没到手）
+     * 判到 null 不能当成「未安装」：init 接口还没回时把插件入口判没，就再没有第二次机会补回来（M14）
+     */
+    getPluginInstallState(key) {
       const raw = uni.getStorageSync('systemConfig');
       if (!raw) return null;
       try {
         const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        if (!config || !Object.prototype.hasOwnProperty.call(config, 'app_isinstall_circle')) return null;
-        return config.app_isinstall_circle === true || config.app_isinstall_circle === 1 || config.app_isinstall_circle === '1';
+        if (!config || !Object.prototype.hasOwnProperty.call(config, key)) return null;
+        return config[key] === true || config[key] === 1 || config[key] === '1';
       } catch (e) {
         return null;
       }
+    },
+    getCircleInstallState() {
+      return this.getPluginInstallState("app_isinstall_circle");
     },
     isVirtualPay(goods) {
       return Number(goods && goods.is_virtual_pay) === 1 && uni.getStorageSync("platform") === "wxMiniProgram";
     },
     /**
-     * 是否为免费课程（与后端 Subscription::isFreeCourse 保持一致）
-     * pay_type=free 或 pay_type=pay 且 price=0 视为免费
+     * 底栏主按钮文字：只渲染后端下发的 join_gate 档位
+     * 判据不在前端算、原因句不在前端另存一份（M13/M22）——原先这里按 pay_type 复刻了一份「是否免费」，
+     * 结果价格位写着「该课程暂不支持单独订阅」、按钮却写着「加入学习」，点下去才被后端拒绝。
+     * 未登录 / 积分兑换 / 指定学员这三档由页面自身状态决定；btn_text 为空是付费购买那一档，回落「立即订阅」。
      */
-    isFreeCourse(goods) {
-      if (!goods) return false;
-      if (goods.pay_type === 'free') return true;
-      if (goods.pay_type === 'pay' && Number(goods.price) === 0) return true;
-      return false;
+    joinBtnText() {
+      if (!this.isLogin) return '立即登录查看';
+      if (this.pageParams.type && this.pageParams.type == 'score') return '立即兑换';
+      if (this.data.pay_type == 'student') return '仅指定学员可用';
+      const gate = this.data.join_gate || {};
+      return gate.btn_text || '立即订阅';
     },
     formatVirtualPrice(price) {
       return (price || 0) + (that.$tools.systemConfig('coin_name') || '金币');
@@ -490,6 +521,157 @@ export default {
       return this.isVirtualPay(goods) ? this.formatVirtualPrice(price) : "¥" + price;
     },
     buyTypesSelect() {},
+
+    /**
+     * 邀请达人榜归因上报（无界面，2026-10-05 从 `pages/course/live/js.vue` 整体迁来）
+     *
+     * **为什么必须落在本页、且必须排在下面的 `course.detail` 之前发**：
+     * 用户点名「被邀请要排除被邀请的人已经进过直播间，不要重复触发邀请成功」。后端判「进来过没有」
+     * 只有一条可靠的判据——`tuzhi_live_user` 里有没有 (受邀人, 这间直播间) 这一行
+     * （进房落地时 `admin\model\live\User::joinLive` 建它，之后再进只查不插，`createtime` 也不再变）。
+     * 而这一行**恰好是本页下一次 `course.detail` 建的**：后端 `application/api/controller/course/Course.php`
+     * 的 `detail()` 在 `if($row['subscription'])` 里调 `joinLive`。
+     *   - 先报：行还不存在 ⇒ 他是第一次到这一间 ⇒ 计入（这才是被邀请链接带来的人）；
+     *   - 后报：行刚被本次请求建好 ⇒ 判据恒为「进过」⇒ 一个人都算不进。
+     * 改按时间差判（`now - createtime` 在多少秒内算新客）不可用：详情页停留时长没有上界，
+     * 窗口开短了会把认真看完详情才点进去的人误判成老用户（真丢单），开长了又放重复触发进来。
+     * ⇒ 判据必须是「这张行在不在」，而前提是**先后**：`getData` 里已把两次请求串成一条链，
+     *   `check-live-inviter-chain.js` 第 ⑬ 组断言本方法排在 `$api('course.detail')` 之前。
+     *
+     * 邀请人 id 的来源仍走 live-inviter（链接直达吃 URL 上的 `share`，中转进来取按课程记下的那一份）。
+     * 只报一次：同一场里 onShow / 下拉刷新都会再进 getData，换一场才重报；失败后撤标记，下次进页补报，
+     * 不把一次网络抖动固化成永久丢单。**未登录这一档不许发**（PRD §12.3-2），它同样不能算「已报」。
+     * 失败一律不在受邀人界面上弹一句「归因失败」（PRD §十-20），出声只进 console——
+     * 静默吞掉会让下一次复现变成瞎子摸象（硬约束 23 同族）。
+     *
+     * 永远返回 Promise：getData 要 await 它再发 `course.detail`，任何提前 return 的档位也必须 resolve，
+     * 否则整个取数链会被这次不上报拖住。插件未安装时同样直接 resolve（插件接口与类都不存在，
+     * paid-plugins §一：代码即插件）。
+     *
+     * @returns {Promise}
+     */
+    reportInviteRank() {
+      // 未安装插件时不发这一条：接口与后端类都不存在（paid-plugins §1.2）
+      if (!this.$tools.systemConfig('app_isinstall_invite_rank')) {
+        return Promise.resolve();
+      }
+      const courseId = this.pageParams.id;
+      const inviterId = resolveInviter(courseId);
+      if (!inviterId || !courseId) {
+        // 这一道原先是**全静默 return**——而它恰恰是 2026-10-05 查了八轮的那一道：
+        // 「没记住邀请人」与「请求发出去了没落库」在库里长得一模一样（两张空表），
+        // 指纹上 `rank/report` 一次都不出现，可这一次出现本身也不能证明是谁没发。
+        // 出声只进 console，不碰受邀人界面（PRD §十-20）；同一场只喊一次，别刷屏。
+        if (!this._inviteRankNoInviterWarned) {
+          this._inviteRankNoInviterWarned = true;
+          console.warn(
+            '[invite_rank] 本场没有邀请人，归因请求不会发出。' +
+              '链接上没带 share（后端 `Share::getArticle` 未登录时会把 userId 置 0，出链就整个不带邀请人）' +
+              '，或详情页那一跳没把 share 带进来。请把本页地址栏里的链接整条贴出来 —— 它带没带 share= 就是这两种情形的判据。'
+          );
+        }
+        return Promise.resolve();
+      }
+      // PRD §12.3-2：未登录**不发**请求。后端 report 对未登录回的是 code=1 / counted=false，
+      // 与「已上报」在前端完全不可区分 —— 照发等于把「已上报」这一标记烧掉，
+      // 登录之后这一场再也不会补报，症状正是「点过好友链接、榜上却还是没有」（2026-10-04 当晚复查）。
+      // 不发就不会烧：登录后由下一次 getData / onShow 这一条路补上（页面实例被 reLaunch 换掉时同理）。
+      if (!uni.getStorageSync('user_token')) {
+        if (!this._inviteRankNoLogin) {
+          this._inviteRankNoLogin = true;
+          console.warn('[invite_rank] 未登录，暂不发归因请求（登录后下一次取数补报）');
+        }
+        return Promise.resolve();
+      }
+      const key = courseId + '-' + inviterId;
+      if (this._inviteRankReported === key) {
+        return Promise.resolve();
+      }
+      this._inviteRankReported = key;
+      return this.$api('invite_rank.rank.report', {
+        course_id: courseId,
+        share: inviterId,
+      }).then((ret) => {
+        if (!ret || ret.code !== 1) {
+          this._inviteRankReported = '';
+          console.warn('[invite_rank] 归因上报未成功：', (ret && ret.msg) || (ret && ret.code));
+        }
+      }).catch(() => {
+        this._inviteRankReported = '';
+        console.warn('[invite_rank] 归因上报请求失败');
+      });
+    },
+
+    /**
+     * 分享有礼助力上报（无界面，2026-10-05 用户点名「只有邀请达人榜正确的显示了邀请记录，
+     * 但是分享有礼的邀请，并没有生效」之后在本页补上这一发）
+     *
+     * **原来的问题**：两条上报落在两页——达人榜在本页（`reportInviteRank`），助力在直播间页
+     * `share-gift-popup` 的 `tryAssist`。于是「受邀人点开分享链接、落在这一个详情页」这个事实，
+     * 只有达人榜认，分享有礼要等他**再点一次「进入直播间」**、且 `share` 在
+     * `detail → live` 那一跳被带过去，才会落 `app_share_gift_assist`。少点一次、或那一跳没带参数，
+     * 两张表就是「一张有、一张空」——这正是 2026-10-05 现场的形状：
+     * `app_invite_rank_visit` 有 (27 → 486, course 4776) 一行，`app_share_gift_assist` 整场 0 行。
+     *
+     * **为什么「进入」以本页为准**：PRD（`文档/功能/分享有礼/PRD.md` 附录数据源那一段）自己认的
+     * 「进入直播间」事实就是 `admin\model\live\User::joinLive` 写的那张 `tuzhi_live_user` 行，
+     * 而这一行**是本页下一次 `course.detail` 建的**（`api/controller/course/Course.php::detail()`）。
+     * 达人榜已经按这一格判「第一次到这一间」，分享有礼跟着它同一次事实记账，两个插件才对得上。
+     *
+     * **与直播间页那一发不冲突**：`Assist::join` 对「同一活动同一受邀人」是幂等的
+     * （`uk_activity_assist(activity_id, assist_user_id)`，重复进回既有行），
+     * 所以本页先记、直播间页再记一次。**两发都静默**（2026-10-06 用户点名「被邀请的用户进入直播间后
+     * 不要弹出来」，直播间那一发原先驱动的 `assist-tip`「助力成功」弹窗整层已删）：
+     * 成功不弹、失败只在 console 出声。
+     *
+     * **不发这一发的档位与达人榜同款**：插件未安装（代码即插件）／没有邀请人／未登录（PRD §12.3-2），
+     * 一律不发而不是发一记注定失败的请求；同一 (course, inviter) 只发一次，失败撤标记等下一次进页补发。
+     * 插件没装或没活动时后端回的是一句「本直播当前没有进行中的分享有礼活动」，
+     * 不是丢单——不占标记，撤掉即可，下次 `getData` 自然补。
+     *
+     * **顺序**：排在 `reportInviteRank()` 之后、`course.detail` 之前。
+     * 达人榜那条的判据是「`tuzhi_live_user` 这行在不在」，本页这一发**不碰那张表**
+     * （不去调 joinLive），所以两者的先后不会互相破坏；排在后面只是为了让两条归属一次到齐。
+     *
+     * 永远返回 Promise，理由同 `reportInviteRank`（不许把整条取数链带崩）。
+     *
+     * @returns {Promise}
+     */
+    reportShareGiftAssist() {
+      // 未安装插件时不发这一条：接口与后端类都不存在（付费插件 §1.2，代码即插件）
+      if (!this.$tools.systemConfig('app_isinstall_share_gift')) {
+        return Promise.resolve();
+      }
+      const courseId = this.pageParams.id;
+      const inviterId = resolveInviter(courseId);
+      if (!inviterId || !courseId) {
+        return Promise.resolve();
+      }
+      // 未登录不发：后端对未登录回的是 code!=0，前端与「已上报」不可区分，照发等于把标记烧掉
+      if (!uni.getStorageSync('user_token')) {
+        return Promise.resolve();
+      }
+      const key = 'sg-' + courseId + '-' + inviterId;
+      if (this._shareGiftAssistReported === key) {
+        return Promise.resolve();
+      }
+      this._shareGiftAssistReported = key;
+      return this.$api('share_gift.gift.assist', {
+        course_id: courseId,
+        inviter_id: inviterId,
+        // 本场没有进行中的活动时后端回 code=0 + 一句 msg，请求层会自己弹那一句黑 toast；
+        // 这一发是进页自动发的归因上报，不是用户点出来的，按静默请求发（口径同 M42）
+      }, { custom: { noToast: true } }).then((ret) => {
+        if (!ret || ret.code !== 1) {
+          this._shareGiftAssistReported = '';
+          console.warn('[share_gift] 助力未成功：', (ret && ret.msg) || (ret && ret.code));
+        }
+      }).catch(() => {
+        this._shareGiftAssistReported = '';
+        console.warn('[share_gift] 助力请求失败');
+      });
+    },
+
     getData(addViews=false) {
       that.loading = true;
 
@@ -511,10 +693,39 @@ export default {
       }
 
       that.tabs = [];
-      that
-        .$api("course.detail", {
-          id: this.pageParams.id,
-          add_views:addViews
+      // 达人榜归因**必须排在 course.detail 之前**发出：后端 Course::detail() 会在里面调 joinLive
+      // 建 tuzhi_live_user 行，而 Report 的「已经进过直播间」判据就是这张行在不在
+      // （先报＝第一次到这一间，计入；后报＝被本次请求自己刚建的行挡掉，一个人都算不进）。
+      // 顺序是判据成立的前提，不是偏好——改这一段顺序等于把整条排除规则作废，
+      // 验法 tuzi-mobile/scripts/check-live-inviter-chain.js 第 ⑬ 组。
+      Promise.resolve()
+        .then(() => {
+          // 归因这一段不许把整条取数链带崩：它发起时是同步调用，抛异常会让下面的 course.detail 根本不发，
+          // 症状变成「为了报一次归因，受邀人连课程详情页都打不开」——那比丢一次归因严重得多。
+          try {
+            return that.reportInviteRank();
+          } catch (e) {
+            console.warn('[invite_rank] 归因上报发起失败：', e);
+            return Promise.resolve();
+          }
+        })
+        .then(() => {
+          // 分享有礼助力同拍补发（静默，无界面）。排在达人榜之后、`course.detail` 之前：
+          // 同一个「受邀人点开分享链接落到本页」的事实，两个插件一起记账，
+          // 不再一个认这一跳、另一个要等下一跳（2026-10-05 用户点名「分享有礼的邀请，并没有生效」）。
+          // 这一发不碰 tuzhi_live_user，所以不会反过来吃掉达人榜那条判据。
+          try {
+            return that.reportShareGiftAssist();
+          } catch (e) {
+            console.warn('[share_gift] 助力上报发起失败：', e);
+            return Promise.resolve();
+          }
+        })
+        .then(() => {
+          return that.$api("course.detail", {
+            id: that.pageParams.id,
+            add_views: addViews,
+          });
         })
         .then((res) => {
           uni.stopPullDownRefresh();
@@ -598,6 +809,9 @@ export default {
             // 加载课程关联的展示圈子（圈子插件）
             that.loadCircle(token);
 
+            // 加载课程（含所属专栏）关联的打卡活动（打卡插件），决定底栏「打卡」那一枚出不出现
+            that.loadCheckin(token);
+
             if (that.tabsChecked == "" && that.tabs.length > 0) {
               that.tabsChecked = that.tabs[0].type;
             }
@@ -621,15 +835,14 @@ export default {
 
             if (res.data.subscription) {
 
-              // 学习前表单拦截：绑定 before_learn 表单未填写时弹窗收集，不产生学习行为
+              // 学习前表单拦截：绑定 before_learn 表单未填写时拦住学习，不产生学习行为
               that.checkLearnForm((blocked) => {
                 if (blocked) {
-                  // 被拦截时不跳转直播页，先释放骨架屏，避免拦截层与填写弹窗被加载态盖住
+                  // 被拦截时不跳转直播页，先释放骨架屏，避免拦截层被加载态盖住。
+                  // 这里只出居中那一层引导卡，不再自动开底部填写弹窗（2026-09-27 用户口径「两个弹窗
+                  // 只保留中间那个引导弹窗」：两层同屏时引导卡压在填写弹窗背后等于白弹一层）；
+                  // 填写弹窗由引导卡上的「去填写」点开
                   that.loading = false;
-                  // 弹窗已打开时不重新加载，避免清空用户正在填写的内容
-                  if (!that.learnFormPopup.show) {
-                    that.openLearnFormPopup();
-                  }
                   return;
                 }
                 that.startLearning();
@@ -845,6 +1058,79 @@ export default {
           type: "circle",
         });
       }
+    },
+
+    /**
+     * 取本课程（含所属专栏）关联的打卡活动：底栏要不要出「打卡」那一枚，就看这一次请求的结果
+     *
+     * 两道守卫缺一不可（paid-plugins.md §4.1：插件的类文件只有装了才存在，未安装连接口都不该打）：
+     * ① 打卡插件未装（含本地系统配置还没到手的 null 态）不发插件接口；
+     * ② 只有已加入学习才发——「打卡」挂在已订阅态那条底栏（control 档）上，未订阅那个位置是「立即订阅」。
+     * 列表同时喂底栏按钮与弹窗，不让弹窗自己再取一遍（两处各取就会出现「按钮出了、弹窗是空的」）。
+     */
+    loadCheckin(token) {
+      if (that.getPluginInstallState("app_isinstall_checkin") !== true) return;
+      if (!that.data.subscription) return;
+      that.fetchCheckin(1, token);
+    },
+
+    /** 弹窗列表上拉加载（滚动到底由 tz-popup-list emit lower） */
+    loadMoreCheckin() {
+      if (!that.checkinHasMore || that.checkinLoadStatus === "loading") return;
+      that.fetchCheckin(that.checkinPage + 1);
+    },
+
+    /**
+     * 取一页并回填：page=1 整张换掉，page>1 追加
+     * @param {Number} page 页码
+     * @param {Number} token 首屏才传（弱网下 getData 并发多次，过期响应直接丢弃）
+     */
+    fetchCheckin(page, token) {
+      if (page > 1) that.checkinLoadStatus = "loading";
+      return that
+        .$api("checkin.course.courseCheckin", {
+          course_id: that.pageParams.id,
+          column_id: that.pageParams.column_id || 0,
+          page: page,
+          limit: that.checkinLimit,
+        })
+        .then((ret) => {
+          if (token && token !== that._getDataToken) return;
+          if (!ret || ret.code !== 1) {
+            // 失败要有读得出来的出口（M13）：翻页失败当场把后端那句原因说出口，已取到的那些条留着、可再拉一次；
+            // 首屏失败只是底栏那一枚整枚收起（留一枚点了没东西的按钮更糟），不把故障说成「这门课没关联打卡」
+            if (page > 1) {
+              uni.showToast({ title: (ret && ret.msg) || "打卡活动加载失败，请稍后重试", icon: "none" });
+            }
+            that.checkinHasMore = page > 1;
+            that.checkinLoadStatus = "loadmore";
+            return;
+          }
+          const data = ret.data || {};
+          const rows = data.rows || [];
+          if (page > 1) {
+            that.checkinList = that.checkinList.concat(rows);
+          } else {
+            that.checkinList = rows;
+            // 枚举文案（参与条件/打卡状态/打卡模式）整页只有一份，随首屏取回来给卡片
+            that.checkinAttr = data.attr || that.checkinAttr;
+          }
+          that.checkinPage = page;
+          that.checkinHasMore = Number(data.has_more) === 1;
+          that.checkinLoadStatus = that.checkinHasMore ? "loadmore" : "nomore";
+        })
+        .catch(() => {
+          if (page > 1) {
+            uni.showToast({ title: "打卡活动加载失败，请稍后重试", icon: "none" });
+          }
+          that.checkinHasMore = page > 1;
+          that.checkinLoadStatus = "loadmore";
+        });
+    },
+
+    // 点弹窗里的一条活动：已参与进打卡主页、未参与进介绍页，落点判据在 common/utils/checkin-activity 一处存
+    goCheckin(item) {
+      goActivity(item);
     },
 
     // 圈子课程按圈子目录的排序展示，用于详情页底部前后课程导航。
@@ -1084,10 +1370,28 @@ export default {
         return false;
       }
 
-      //免费课程（pay_type=free 或 pay_type=pay 价格为 0）与会员免费权益命中时，
-      //直接走【加入学习】免费订阅；圈内课程（未开启单独售卖）对非圈子成员由后端 free 接口拦截
-      if (that.isFreeCourse(that.data) || that.data.vip_free_access) {
+      //「加入学习」这一条路由后端逐行判（detail 下发的 join_gate）：能走才发订阅请求，
+      //被门槛拦下时把后端那句原因说出口并给出下一步（有专栏可买就把人带到那一专栏），不在前端另存一套文案（M13/M22）
+      const gate = that.data.join_gate || {};
+      if (gate.can_join) {
         that.freeSubscription();
+        return false;
+      }
+      if (gate.text) {
+        if (gate.column_id) {
+          uni.showModal({
+            title: "提示",
+            content: gate.text,
+            confirmText: "立即订阅",
+            success: function (res) {
+              if (res.confirm) {
+                that.$nav.to(gate.column_id, "column");
+              }
+            },
+          });
+        } else {
+          uni.$u.toast(gate.text);
+        }
         return false;
       }
 
@@ -1103,7 +1407,9 @@ export default {
             content: "请订阅该课程所属专栏",
             confirmText: "立即订阅",
             success: function (res) {
-              that.$nav.to(that.pageParams.column_id, "column");
+              if (res.confirm) {
+                that.$nav.to(that.pageParams.column_id, "column");
+              }
             },
           });
         } else {
@@ -1258,6 +1564,13 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    // 直播课的分享链接落点就是本页（Links.php 出 `/pages/course/detail/detail?id=..&share=<邀请人>`），
+    // 而付费课「详情 → 下单 → 支付结果页 → 返回直播」那三跳链接参数早没了：
+    // 进页先把「这一间直播间由谁请进来」按课程记下来（live-inviter），跳转那几跳都靠它续上。
+    // **达人榜归因已在本页就地发**（reportInviteRank，排在 course.detail 之前），
+    // 记下的这一份是它的唯一取数入口，也是付费课那一头「先自己买了、后被归因」能判的前提。
+    // 参数名一律走 live-inviter 的 inviterFromParams（线上那一个是 `share`，`share_id` 只是后端的取值键）
+    rememberInviter(that.pageParams.id, inviterFromParams(that.pageParams));
     clearInterval(this.studyTimer);
     courseLibrary.banScreenRecordCancel();
 

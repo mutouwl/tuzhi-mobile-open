@@ -18,7 +18,12 @@ export default {
       list: [],
       pageParams: {},
       showTabs: false,
-      loading: true
+      loading: true,
+      // 分页状态：hasMore 由「本页是否铺满」判定，loadStatus 供底部 u-loadmore 展示
+      hasMore: true,
+      loadStatus: 'loadmore',
+      // 取数失败（接口 code!=1）时不复用「暂无课程」，避免把后端故障说成没内容
+      loadFailed: false
     };
   },
   watch: {},
@@ -36,19 +41,27 @@ export default {
       }
 
       that.loading = true;
+      that.loadStatus = 'loading';
 
       that.$api("course.course", that.form).then((res) => {
-        uni.hideLoading();
         that.loading = false;
-        if (res.code === 1) {
-          var list = that.list;
-          for (var i in res.data) {
-            list.push(res.data[i]);
-          }
-          that.list = list;
+        // 下拉刷新指示器要等数据回来再收，否则用户看不出刷新有没有生效
+        uni.stopPullDownRefresh();
+        if (!res || res.code !== 1) {
+          that.loadFailed = true;
+          // 失败复位加载行，便于再次上拉重试
+          that.loadStatus = that.hasMore ? 'loadmore' : 'nomore';
+          return;
         }
+        var rows = res.data || [];
+        for (var i in rows) {
+          that.list.push(rows[i]);
+        }
+        that.loadFailed = false;
+        // 本页没铺满即到底：不再发下一页请求，加载行收掉
+        that.hasMore = rows.length >= that.form.limit;
+        that.loadStatus = that.hasMore ? 'loadmore' : 'nomore';
       });
-      uni.stopPullDownRefresh();
     },
     getGroup() {
       that.tabsList = [
@@ -67,9 +80,9 @@ export default {
     refresh() {
       that.form.page = 1;
       that.list = [];
-      uni.showLoading({
-        title: "请稍后",
-      });
+      that.hasMore = true;
+      that.loadStatus = 'loadmore';
+      // 不再叠 uni.showLoading：首屏/切页签的加载反馈由骨架屏给（M16），下拉刷新有原生指示器
       that.getData();
     },
 
@@ -114,6 +127,8 @@ export default {
     that.refresh();
   },
   onReachBottom() {
+    // 请求在途或已到底不再翻页：翻页期间列表留着、由 u-loadmore 给反馈（M16 不闪骨架）
+    if (that.loading || !that.hasMore) return;
     that.form.page++;
     that.getData();
   },

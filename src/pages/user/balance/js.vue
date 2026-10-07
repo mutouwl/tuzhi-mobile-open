@@ -41,9 +41,17 @@ export default {
       withdrawSubmitting: false,
       showWechatNamePopup: false,
       wechatRealName: '',
+      // 首屏加载态：骨架屏只服务首进，下拉刷新不再回骨架（否则闪一下等于白改）
+      loading: true,
+      // 已取到过一轮数据。骨架判据是 loading && !loaded，
+      // 所以刷新时即使 loading 再次为 true 也不会闪骨架
+      loaded: false,
     };
   },
   computed: {
+    showSkeleton() {
+      return this.loading && !this.loaded;
+    },
     currentTypeAccounts() {
       var type = this.withdrawType;
       return this.accountList.filter(function (item) {
@@ -108,17 +116,27 @@ export default {
     that = this;
     this.loadData();
   },
+  // 本页用了模块级 that（页面重新可见时把实例收回，避免异步回调写到已销毁的旧实例）
+  onShow() {
+    that = this;
+  },
   onPullDownRefresh() {
     this.loadData();
   },
   methods: {
     loadData() {
-      uni.showLoading({ title: '加载中' });
+      // 首进才进加载态；下拉刷新时 loaded 已为 true，不回骨架屏
+      if (!that.loaded) {
+        that.loading = true;
+      }
       var balanceDone = false;
       var accountDone = false;
+      // 收口写在两条腿的每一支退出口上（成功 / 业务失败 / 网络异常都会回调），
+      // 只收成功那一支会让骨架屏撤不下来
       var checkDone = function () {
         if (balanceDone && accountDone) {
-          uni.hideLoading();
+          that.loading = false;
+          that.loaded = true;
           uni.stopPullDownRefresh();
         }
       };

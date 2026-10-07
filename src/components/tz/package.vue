@@ -50,11 +50,13 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key';
   export default {
     components: {},
     data() {
       return {
-        // 封面加载失败记录（按封面地址记录，不用数组下标：列表刷新/翻页后下标会串到别的套餐上）
+        // 封面加载失败记录（按封面地址记录，不用数组下标：列表刷新/翻页后下标会串到别的套餐上）。
+        // 存的是 mpKey(地址)：这张表在 data 里，地址原样作 key 会被 setData 当成嵌套路径解析后抛错
         coverErrors: {},
         // 封面缺失或加载失败时的默认商品图
         defaultCover: '/static/image/default-goods.jpg',
@@ -102,12 +104,12 @@
       // 有封面且未加载失败才展示原图，否则走默认商品图
       showCover(item) {
         const cover = item && item.cover;
-        return !!cover && !this.coverErrors[cover];
+        return !!cover && !this.coverErrors[mpKey(cover)];
       },
       onCoverError(item) {
         const cover = item && item.cover;
         if (cover) {
-          this.$set(this.coverErrors, cover, true);
+          this.$set(this.coverErrors, mpKey(cover), true);
         }
       },
       // 价格为空（undefined/null/''）时隐藏价格行，兼容无价格列表

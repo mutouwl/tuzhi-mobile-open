@@ -1,12 +1,12 @@
 <template>
 	<!-- 评论底部操作栏（共用组件：动态详情页固定 bottom-bar / 评论弹窗内静态底栏，样式与交互一致） -->
 	<view class="comment-bar" :class="{ 'comment-bar-fixed': fixed, 'h5-bottom-bar': fixed }" :style="barStyle">
-		<!-- 评论入口：点击由父级弹出回复评论弹窗 -->
-		<view class="comment-entry" @tap="$emit('open')">写下你的评论吧</view>
+		<!-- 评论入口：点击由父级弹出回复评论弹窗（disabled 仅置灰样式，提示由父级按开关状态下发） -->
+		<view class="comment-entry" :class="{ disabled }" @tap="$emit('open')">写下你的评论吧</view>
 		<view class="bar-actions">
 			<view class="bar-action" @tap="$emit('like', post)">
 				<tz-icon :name="post.liked == 1 ? 'like_fill' : 'like'" :size="24" :color="post.liked == 1 ? '#f53f3f' : '#4e5969'" />
-				<text class="bar-label">点赞</text>
+				<text class="bar-label">{{ likeText || '点赞' }}</text>
 			</view>
 			<view class="bar-action" @tap="$emit('share', post)">
 				<tz-icon name="share" :size="24" color="#4e5969" />
@@ -19,7 +19,8 @@
 <script>
 /**
  * 圈子动态评论底部操作栏（共用组件：动态详情页 / 评论弹窗，样式与交互一致）
- * props: post（动态对象，用于点赞态展示）、fixed（是否固定屏幕底部：详情页 true，评论弹窗内 false）、safeAreaInsetBottom（是否由本组件增加安全区）
+ * props: post（动态对象，用于点赞态展示）、fixed（是否固定屏幕底部：详情页 true，评论弹窗内 false）、safeAreaInsetBottom（是否由本组件增加安全区）、disabled（评论入口置灰：管理端关闭「允许用户发布评论」）、
+ *        likeText（点赞位文案，调用方要显示赞数时传，如「点赞 12」；默认空 = 只写「点赞」，圈子两处口径不变）
  * emits: open（点击评论入口，父级打开回复评论弹窗）、like(post)、share(post)
  */
 export default {
@@ -27,6 +28,8 @@ export default {
 	props: {
 		post: { type: Object, default: null },
 		fixed: { type: Boolean, default: false },
+		disabled: { type: Boolean, default: false },
+		likeText: { type: String, default: '' },
 		// 评论弹窗的安全区由外层 u-popup 处理；详情页固定底栏保留本组件的安全区
 		safeAreaInsetBottom: { type: Boolean, default: true },
 	},
@@ -38,10 +41,13 @@ export default {
 		};
 	},
 	computed: {
+		// 必须回字符串：:style 绑「返回对象的 computed」在小程序端不走 __get_style 序列化，
+		// 产物是 style="{{(barStyle)}}" → 渲染成 style="[object Object]"，安全区那一档内衬直接丢掉
+		// （实测小程序端截图如此；H5 有真 Vue 的 normalizeStyle 所以看不出差别）
 		barStyle() {
 			// 安全区只保留一个来源：固定详情底栏由本组件处理，弹窗内底栏交给 u-popup
-			if (!this.safeAreaInsetBottom) return {};
-			return { paddingBottom: 'calc(7px + ' + this.safeAreaPx + ')' };
+			if (!this.safeAreaInsetBottom) return '';
+			return 'padding-bottom:calc(7px + ' + this.safeAreaPx + ');';
 		},
 	},
 	created() {
@@ -65,6 +71,7 @@ export default {
 /* 详情页固定底部：去分隔线改阴影，与页面滚动内容区分 */
 .comment-bar-fixed { position: fixed; left: 0; right: 0; bottom: 0; border-top: 0; box-shadow: 0 -1px 6px rgba(0,0,0,0.05); }
 .comment-entry { flex: 1; padding: 8px 11px; border-radius: 16px; background: #f3f4f6; color: #9ba2aa; font-size: 12.5px; }
+.comment-entry.disabled { opacity: 0.4; }
 .bar-actions { display: flex; align-items: center; margin-left: 10px; }
 .bar-action { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 40px; padding: 0 6px; }
 .bar-label { font-size: 11px; color: #4e5969; margin-top: 2px; }

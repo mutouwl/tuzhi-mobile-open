@@ -175,7 +175,6 @@ $u-action-sheet-cancel-text-hover-background-color: rgb(242, 243, 245) !default;
 	&__header {
 		position: relative;
 		padding: $u-action-sheet-title-padding;
-		border-bottom: 1px solid #f6f6f6;
 		&__title {
 			font-size: $u-action-sheet-title-font-size;
 			color: $u-action-sheet-title-color;

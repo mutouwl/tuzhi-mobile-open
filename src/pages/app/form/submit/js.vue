@@ -1,7 +1,7 @@
 <script>
 var that;
 import backCourseModal from "@/pages/app/form/components/back-course-modal.vue";
-import customForm from "@/pages/app/form/components/custom-form.vue";
+import customForm from "@/components/tz/custom-form.vue";
 export default {
   components: {
     backCourseModal,

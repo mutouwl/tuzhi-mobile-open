@@ -1,6 +1,31 @@
 <template>
   <view class="circle-presale" :class="{ 'has-footer-bar': info }" :style="(info && tabbarVisible && tabbarHeight) ? ('padding-bottom:' + (80 + tabbarHeight) + 'px;') : ''">
-    <u-loading-page :loading="loading" bg-color="#F8F8F8"></u-loading-page>
+    <!-- 首屏骨架屏（M16）：外壳复用真实版式那一档的类（.cover-wrap 16:9、.info-card 白底 15 内衬、
+         .tab-card 白卡），灰块只往容器内部放，压在白底上取 #e5e6eb。
+         「详情 / 动态预览」两枚页签名与底部操作栏是 v-if/v-show 才判的，不在骨架里预留。 -->
+    <view v-if="loading" class="ps-sk">
+      <view class="cover-wrap">
+        <view class="ps-sk-cover"></view>
+      </view>
+      <view class="info-card">
+        <view class="ps-sk-line ps-sk-h22 ps-sk-w30"></view>
+        <view class="ps-sk-line ps-sk-h16 ps-sk-w70"></view>
+        <view class="ps-sk-line ps-sk-h12 ps-sk-w88"></view>
+        <view class="ps-sk-line ps-sk-h12 ps-sk-w45"></view>
+      </view>
+      <view class="tab-card">
+        <view class="ps-sk-tabs">
+          <view class="ps-sk-line ps-sk-h14 ps-sk-w56"></view>
+          <view class="ps-sk-line ps-sk-h14 ps-sk-w70"></view>
+        </view>
+        <view class="tab-body">
+          <view class="ps-sk-line ps-sk-h12 ps-sk-w92"></view>
+          <view class="ps-sk-line ps-sk-h12 ps-sk-w96"></view>
+          <view class="ps-sk-line ps-sk-h12 ps-sk-w88"></view>
+          <view class="ps-sk-line ps-sk-h12 ps-sk-w64"></view>
+        </view>
+      </view>
+    </view>
 
     <!-- 圈子不存在/已下架等状态异常：空状态 + 对应说明（文案以后端返回为准） -->
     <view v-if="!loading && !info" class="presale-empty">

@@ -48,6 +48,7 @@ export default {
                 setTimeout(() => {
                     if (getCurrentPages().length > 1) { uni.navigateBack(); } else { uni.reLaunch({ url: '/pages/index/index' }); }
                 }, 800);
+              this.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
                 return;
             }
         },

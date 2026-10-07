@@ -14,8 +14,8 @@
           </view>
         </template>
 
-        <view class="filter-group-title">时间</view>
-        <view class="time-options">
+        <view class="filter-group-title" v-if="showTime">时间</view>
+        <view class="time-options" v-if="showTime">
           <view v-for="option in timeOptions" :key="option.value" class="time-option"
             :class="{ active: pendingTime == option.value }" @tap="selectTimeFilter(option.value)">
             <text>{{ option.name }}</text>
@@ -85,6 +85,11 @@ export default {
     customRange: {
       type: Object,
       default: () => ({ start: '', end: '' }),
+    },
+    // 时间组是否展示：打卡成员页只有排序可筛，展示时间组等于造一个「能选但必为空」的假选项
+    showTime: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

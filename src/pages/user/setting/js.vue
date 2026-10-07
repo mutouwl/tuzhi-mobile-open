@@ -4,10 +4,6 @@ import Wechat from '@/common/wechat/wechat'
 export default {
   data() {
     return {
-      nickname: '',
-      modal: {
-        nickname: false
-      },
       userInfo: {},
       list: [],
       pageParams: {},
@@ -45,7 +41,6 @@ export default {
         if (res.code === 1) {
           that.userInfo = res.data;
           // that.userInfo = res.data;
-          // that.nickname = res.data.nickname;
         }
       });
     }, 
@@ -61,50 +56,9 @@ export default {
     },
 
 
-    hideModal(type) {
-      that.model[type] = false;
-    },
-    changeModalShow(type) {
-      that.modal[type] = !that.modal[type];
-    },
-
-    nicknameInputChange(option) {
-      that.nickname = option.detail.value;
-      // that.nickname = value;
-    },
-
-
-
-    //修改昵称
-    nicknameConfirm() {
-      if (that.userInfo.nickname == that.nickname) {
-        that.changeModalShow('nickname');
-        return false;
-      }
-
-      if (!that.nickname) {
-        uni.showToast({
-          title: '请输入昵称',
-          icon: 'none',
-          duration: 1000,
-          mask: true
-        });
-        return false;
-      }
-      that.$api('user.info.profile', {
-        nickname: that.nickname
-      }).then(res => {
-        if (res.code === 1) {
-          uni.showToast({
-            title: res.msg,
-            icon: 'success',
-            duration: 1000,
-            mask: true
-          });
-          that.changeModalShow('nickname');
-          that.getData();
-        }
-      });
+    // 昵称行：弹共用组件 tz-nickname-modal（标题/暗提示/上限/校验文案只存组件一份）
+    openNicknameEdit() {
+      that.$refs.nicknameModal.open();
     },
 
     //注销登录

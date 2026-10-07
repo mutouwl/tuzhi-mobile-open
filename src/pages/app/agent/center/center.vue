@@ -198,7 +198,9 @@
 		</template>
 		<!-- #endif -->
 
-		<share-modal val="pages/index/index" type="page" :visible="modal.share" @close="modal.share = false" />
+		<!-- 海报画的是店铺首页（type=page、val=pages/index/index），封面/名称就取站点自己的 logo 与店铺名，与 tz-footer 同一取法 -->
+		<share-modal val="pages/index/index" type="page" :visible="modal.share" @close="modal.share = false"
+			:title="$tools.systemConfig('name')" :cover="$tools.systemConfig('logo')" />
 
 
 		<tz-tab-bar />

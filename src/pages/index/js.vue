@@ -16,6 +16,8 @@ export default {
       circleInstalled: false,
       // 教务插件安装状态（付费插件）：未安装时模板不渲染课程套餐/老师/校区组件
       schoolInstalled: false,
+      // 打卡插件安装状态（付费插件）：未安装时模板不渲染打卡列表组件
+      checkinInstalled: false,
     };
   },
   watch: {},
@@ -43,6 +45,8 @@ export default {
             that.loadCircleComponents(res.data.compontents || []);
             // 教务组件安装状态：未安装时模板不渲染（数据由装修接口在插件已安装时下发）
             that.schoolInstalled = !!that.$tools.systemConfig("app_isinstall_school");
+            // 打卡组件安装状态：同上，取数已在装修接口里按配置做完，这里只挡模板
+            that.checkinInstalled = !!that.$tools.systemConfig("app_isinstall_checkin");
 
             // #ifdef H5
             this.$nav.share(res.data.page.name);
@@ -111,6 +115,9 @@ export default {
     },
   },
   onShow() {
+    // 模块级 that 停在最后一次 onLoad 的实例上；本页重新可见先收回绑定。
+    // 本页下面几行就要往 that.pageParams 上写，绑定不收回到当前实例就会写到别的（已销毁的）首页实例上
+    that = this;
     // 获取当前页面的路由信息
 
     // #ifdef MP-WEIXIN || MP-TOUTIAO

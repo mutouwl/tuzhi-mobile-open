@@ -4,7 +4,9 @@ export default {
   data() {
     return {
       pageParams:{},
-      data:{}
+      data:{},
+      // 首屏即为加载态：金额那一格先铺骨架屏（M16）；onShow 重取不置回 true，已渲染的数字不被盖掉
+      loading:true
     }
   },
   watch: {
@@ -15,6 +17,10 @@ export default {
         if (res.code === 1) {
           that.data = res.data;
         }
+        that.loading = false;
+      }).catch(() => {
+        // 请求失败也要撤掉骨架屏，否则页面一直停在占位态（与分销中心页同一口径）
+        that.loading = false;
       });
       uni.stopPullDownRefresh();
     },

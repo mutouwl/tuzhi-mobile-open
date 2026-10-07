@@ -168,6 +168,8 @@
       @confirm="showParamsModal = false"
       @close="showParamsModal = false"
     />
+    <!-- 悬浮快捷导航按钮（与课程/校区/教师/套餐详情页同一组件） -->
+    <tz-hover-btn />
     <tz-tab-bar />
     <tz-footer />
   </view>

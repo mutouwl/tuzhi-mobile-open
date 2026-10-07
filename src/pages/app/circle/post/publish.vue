@@ -1,7 +1,15 @@
 <template>
   <view class="circle-publish">
-    <u-loading-page :loading="loading" bg-color="#fff"></u-loading-page>
-    <view class="form">
+    <!-- 编辑态加载骨架屏（M16）：只有带 id 进来才要回填（loadEdit），新建态 loading 初值 false、
+         输入框立即可填，不铺骨架。骨架只盖表单区这一格，底部工具条与发布按钮照常摆着
+         （那一格本来就要等回填，入口不该整枚藏掉）。 -->
+    <view v-if="loading" class="form">
+      <view class="pub-sk-input"></view>
+      <view class="pub-sk-media">
+        <view class="pub-sk-cell" v-for="i in 4" :key="'pub-sk-' + i"></view>
+      </view>
+    </view>
+    <view v-else class="form">
       <textarea
         class="content-input"
         v-model="content"
@@ -30,17 +38,18 @@
     </view>
 
     <view class="footer-bar h5-bottom-bar">
+      <!-- 回填未回来时 tz-media-editor 还没挂载，四枚入口一并置灰（否则点下去打到空 $refs） -->
       <view class="media-toolbar">
-        <view class="tool-item" :class="{ disabled: uploading }" v-if="uploadLimit.media_image_enable !== 0" @tap="!uploading && $refs.mediaEditor.chooseImage()">
+        <view class="tool-item" :class="{ disabled: uploading || loading }" v-if="uploadLimit.media_image_enable !== 0" @tap="!uploading && !loading && $refs.mediaEditor.chooseImage()">
           <tz-icon name="picture" :size="22" color="#4e5969" />
         </view>
-        <view class="tool-item" :class="{ disabled: uploading }" v-if="uploadLimit.media_video_enable !== 0" @tap="!uploading && $refs.mediaEditor.chooseVideo()">
+        <view class="tool-item" :class="{ disabled: uploading || loading }" v-if="uploadLimit.media_video_enable !== 0" @tap="!uploading && !loading && $refs.mediaEditor.chooseVideo()">
           <tz-icon name="video" :size="22" color="#4e5969" />
         </view>
-        <view class="tool-item" :class="{ disabled: uploading }" v-if="uploadLimit.media_audio_enable !== 0" @tap="!uploading && $refs.mediaEditor.chooseAudio()">
+        <view class="tool-item" :class="{ disabled: uploading || loading }" v-if="uploadLimit.media_audio_enable !== 0" @tap="!uploading && !loading && $refs.mediaEditor.chooseAudio()">
           <tz-icon name="sound-on" :size="22" color="#4e5969" />
         </view>
-        <view class="tool-item" :class="{ disabled: uploading }" v-if="uploadLimit.media_file_enable !== 0" @tap="!uploading && $refs.mediaEditor.chooseFile()">
+        <view class="tool-item" :class="{ disabled: uploading || loading }" v-if="uploadLimit.media_file_enable !== 0" @tap="!uploading && !loading && $refs.mediaEditor.chooseFile()">
           <tz-icon name="document" :size="22" color="#4e5969" />
         </view>
       </view>
@@ -286,6 +295,30 @@ export default {
   min-height: 100px;
   font-size: 14px;
   color: #1d2129;
+}
+/* ===== 编辑态加载骨架屏（M16）=====
+   外壳沿用真实 .form 的 12 内衬；正文区取 textarea 的 min-height 100，
+   媒体区三列格子逐值照 tz-circle-media-grid 的 .post-media-grid / .post-media-item
+   （gap 8、单格 calc((100% - 16px) / 3) 正方形、圆角 6、上间距 10），加载完不跳版。
+   静态块取 uview 骨架灰 #e5e6eb（页面底色是纯白那一档）。 */
+.pub-sk-input {
+  width: 100%;
+  height: 100px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.pub-sk-media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.pub-sk-cell {
+  width: calc((100% - 16px) / 3);
+  height: 0;
+  padding-bottom: calc((100% - 16px) / 3);
+  border-radius: 6px;
+  background: #e5e6eb;
 }
 .footer-bar {
   position: fixed;

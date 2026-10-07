@@ -1,0 +1,109 @@
+/* 打卡介绍页（商品详情形态，版式借教务详情页 pages/app/school/package/detail 的「封面 + 卡片区块 + 吸底操作栏」；
+   打卡没有多规格，不引入套餐页的「选择套餐」行 / 规格弹窗 / 多规格价格）：
+   通栏白卡区块（.school-block / .school-head）、列表留白（.school-page）、吸底栏（.school-footer）一律走 App.vue 的
+   模块统一版式，本页只补本页私有元素（封面、标签、价格、骨架灰块、吸底按钮），类名统一 cdi- 前缀，
+   不与其他页的同名结构类互相覆盖；「关联课程」区块不再有私有样式（标题走 tz-title、卡片走 tz-course 自己那一档） */
+
+/* ===== 首屏骨架屏：外壳直接用真实区块的 .school-sk-card，灰块 uview 档 #e5e6eb、圆角 4px ===== */
+.cdi-sk-banner {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #e5e6eb;
+}
+.cdi-sk-tags {
+  display: flex;
+  margin-top: 10px;
+}
+.cdi-sk-tag {
+  width: 52px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-right: 8px;
+}
+
+/* ===== 顶部封面（16:9，与后台上传提示的 750*420 同比例） ===== */
+.cdi-banner-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #fff;
+  overflow: hidden;
+}
+.cdi-banner {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== 标题卡（.school-head 已给白底与 14px 16px 内衬） ===== */
+.cdi-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2129;
+  line-height: 26px;
+}
+.cdi-tags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cdi-tag {
+  font-size: 11px;
+  color: #0968f6;
+  background: #e8f4ff;
+  border-radius: 3px;
+  padding: 1px 6px;
+}
+/* 页头不再有灰字日期行（.cdi-date 已删）：打卡时间是「打卡信息」卡的一行，页头重复一份就是用户点名的
+   「两个打卡时间」。删掉后「参与数据」直接跟在标签行后面，间距取原来日期行那档 8px，不留 4px 的紧贴感 */
+.cdi-stats {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #86909c;
+}
+.cdi-price {
+  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  color: #f53f3f;
+  font-size: 15px;
+  font-weight: 500;
+}
+.cdi-price .rmb {
+  font-size: 13px;
+  margin-right: 1px;
+}
+.cdi-price .num {
+  font-size: 24px;
+  font-weight: 700;
+}
+/* 虚拟支付那一档的代币名称：符号位（.rmb）换成它，字号同符号档、只把间距换到左侧 */
+.cdi-price .coin {
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+/* ===== 吸底参与栏：容器/内衬/阴影/安全区走全局 .school-footer，本页只补主按钮、价格行与只读提示 ===== */
+.cdi-join-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f53f3f;
+  margin-right: 12px;
+  line-height: 40px;
+}
+.cdi-join-coin {
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+.cdi-main-btn {
+  flex: 1;
+  border: none;
+}
+.cdi-join-tip {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: #86909c;
+}

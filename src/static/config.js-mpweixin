@@ -1,1 +1,25 @@
-let siteinfo = wx.getExtConfigSync? wx.getExtConfigSync(): {};export default{apiUrl:siteinfo.siteroot+"?i="+siteinfo.uniacid+"&c=entry&m=tuzi_v1&do=index&route=api/"};
+// 小程序端 apiUrl：优先吃微擎模板下发的小程序配置（getExtConfigSync）。
+// 但 getExtConfigSync 只有「第三方平台授权开发的模板小程序」才回得到值——开发者工具用非授权
+// appid、真机预览/体验版未绑定，它都回 {}（本项目 IDE 日志里那句「未绑定为第三方平台的开发小程序」
+// 就是这一支），此时拼出来的 apiUrl 是 "undefined?i=undefined&...&route=api/"：
+// 全站接口全废 → systemConfig 取不到 → 打卡/圈子/教务这些带插件判定的页面一律停在骨架屏上，
+// 点赞、评论这类要发请求的按钮点了也没任何反应，且控制台不报错。
+// 所以量不到就回落到 src/siteinfo.js（H5 端本来就读这一份），两端同一口径。
+var ext = {};
+try {
+  ext = (typeof wx !== 'undefined' && wx.getExtConfigSync) ? (wx.getExtConfigSync() || {}) : {};
+} catch (e) {
+  ext = {};
+}
+var base = {};
+try {
+  base = require('../siteinfo.js') || {};
+} catch (e) {
+  base = {};
+}
+// ext 里键可能存在但值为 undefined，逐个判空再回落，不能直接 Object.assign
+var siteroot = ext.siteroot || base.siteroot || '';
+var uniacid = (ext.uniacid === undefined || ext.uniacid === null || ext.uniacid === '') ? base.uniacid : ext.uniacid;
+// 站点地址统一收成「无尾斜杠」，后面自己拼 '/'，避免 ext 带斜杠、siteinfo 不带时出现 //?i=
+siteroot = siteroot.replace(/\/+$/, '') + '/';
+export default { apiUrl: siteroot + '?i=' + uniacid + '&c=entry&m=tuzi_v1&do=index&route=api/' };

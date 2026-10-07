@@ -51,3 +51,29 @@
   font-weight: 500;
   color: #4E5969;
 }
+
+/* ===== 首屏骨架屏（M16）：三块灰块与真实行的三块一一对应，
+   标题行与元信息行由 .cert-item-info-step 那份 margin-top:10px 隔开，行高/分隔线由 .cert-item 给，
+   这里只定灰块自己的宽与高（元信息两项 12px 文字档、按钮块 = u-button size="small" 的 30px 高与 60px 下限宽） ===== */
+.cert-sk-meta-time{
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 两项常驻、不按条件收起，故间距给在第二枚上（真实行那两枚的 10px 间距写在 .cert-item-info-step div 上，
+   骨架用的是 view，那条 div 选择器打不到，间距必须自己给一份才不致两块贴在一起） */
+.cert-sk-meta-type{
+  width: 56px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-left: 10px;
+}
+
+.cert-sk-btn{
+  height: 30px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}

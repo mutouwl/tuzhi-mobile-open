@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key';
 export default {
 	name: 'TzSchoolCourse',
 	props: {
@@ -63,7 +64,8 @@ export default {
 	},
 	data() {
 		return {
-			// 封面加载失败记录（按封面地址记录，不用数组下标：列表刷新后下标会串到别的课程上）
+			// 封面加载失败记录（按封面地址记录，不用数组下标：列表刷新后下标会串到别的课程上）。
+			// 存的是 mpKey(地址)：地址原样作 key 会被 setData 当成嵌套路径解析后抛错，见 common/utils/mp-data-key
 			coverErrors: {},
 			// 封面缺失或加载失败的兜底图（与套餐卡、校区卡同一张默认商品图）
 			defaultCover: '/static/image/default-goods.jpg'
@@ -81,11 +83,11 @@ export default {
 			return parseInt(c.id, 10) > 0;
 		},
 		showCover(c) {
-			return !!c.cover && !this.coverErrors[c.cover];
+			return !!c.cover && !this.coverErrors[mpKey(c.cover)];
 		},
 		onCoverError(c) {
 			if (c.cover) {
-				this.$set(this.coverErrors, c.cover, true);
+				this.$set(this.coverErrors, mpKey(c.cover), true);
 			}
 		},
 		onTap(c) {

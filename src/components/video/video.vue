@@ -2,7 +2,7 @@
     <view class="box">
         <!--  #ifdef H5 -->
         <video-h5 :controlBarVisibility="controlBarVisibility" :showFullscreenButton="showFullscreenButton" :objectFit="objectFit" :pictureOffsetPercent="pictureOffsetPercent" @control-bar-visible-change="handleControlBarVisibleChange" @ended="end" @ready="ready" ref="videoPlayer" :domId="domId" :playauth="playauth" :cover="cover" :height="height" :source="source" :isLive="isLive" :autoplay="autoplay" :views="views"
-            :bulletScreen="bulletScreen" :disableSeek="disableSeek" :resumePlay="resumePlay" @stop="stopHandle" @paused="pausedHandle" @play="playHandle" @refresh="refresh" @error="error" @waiting="waitingHandle" @playing="playingHandle" @timeupdate="timeUpdateHandle" @onM3u8Retry="onM3u8RetryHandle"/>
+            :bulletScreen="bulletScreen" :disableSeek="disableSeek" :resumePlay="resumePlay" :showProgress="showProgress" @stop="stopHandle" @paused="pausedHandle" @play="playHandle" @refresh="refresh" @error="error" @waiting="waitingHandle" @playing="playingHandle" @timeupdate="timeUpdateHandle" @onM3u8Retry="onM3u8RetryHandle"/>
         <!--  #endif -->
 
         <!--  #ifdef MP -->
@@ -109,6 +109,15 @@ export default {
         disableSeek: {
             type: Boolean,
             default: false
+        },
+        // 点播模式下是否显示进度条与时长（直播间伪直播传 false：伪直播窗口内按点播模式播放
+        // 录制视频只是为了能 seek 对齐进度，露出进度条/时长等于告诉观众这是录播且允许跳到未播内容）。
+        // 注意：本组件是 video-h5 的包装层，必须在这里声明 props 才能把父级的值转下去——
+        // 只写模板上的 :showProgress="showProgress" 而不声明，取到的永远是 undefined，子组件回落到
+        // 自己的默认值 true，表现为「传了 false 但进度条照样显示」的静默失效
+        showProgress: {
+            type: Boolean,
+            default: true
         }
     },
     watch: {
@@ -130,6 +139,19 @@ export default {
             if (this.$refs.videoPlayer && typeof this.$refs.videoPlayer.reload === 'function') {
                 this.$refs.videoPlayer.reload();
             }
+        },
+        /**
+         * 播放器是否停在「等用户手势」（大播放按钮、什么都没在拉）：转给内层播放器。
+         * 本组件是 video-h5 的包装层，**方法也要一层层转下去**——只加在实现层，页面隔着
+         * 这一层拿到的是 undefined，判据恒为 false（同本文件 115 行那条 props 透传的教训：
+         * 「画面加载中不再压在播放按钮上」这一条就是这么在包装层断掉的）
+         * @return {Boolean} 内层没实现（小程序端 video-mp）时返回 false，不改小程序表现
+         */
+        isAwaitingPlay() {
+            if (this.$refs.videoPlayer && typeof this.$refs.videoPlayer.isAwaitingPlay === 'function') {
+                return this.$refs.videoPlayer.isAwaitingPlay();
+            }
+            return false;
         },
         play() {
             this.$refs.videoPlayer.play();
@@ -248,8 +270,5 @@ export default {
     width: 100%;
 }
 
-.video video {
-    width: 100%;
-}
 
 </style>

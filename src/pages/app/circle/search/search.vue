@@ -3,11 +3,10 @@
     <!-- 顶部搜索栏：搜索框 + 右侧筛选按钮（共用组件） -->
     <tz-search-filter-bar :value="keyword" placeholder="搜索圈子动态" :focus="searchFocus" :maxlength="MAX_KEYWORD_LEN" :filter-active="filterActive" @change="onKeywordChange" @submit="onSearch" @filter="toggleFilter" />
 
-    <!-- 动态列表 -->
+    <!-- 动态列表：首屏与切档/搜索/筛选共用一支骨架，判据 loading && !list.length（翻页不闪骨架）。
+         吸顶搜索筛选栏留在骨架屏外保持可点；动态卡骨架由 tz-circle-post 自己出，页面不抄一份卡尺寸。 -->
     <view class="feed">
-      <view v-if="loading || tabLoading" class="tab-loading">
-        <u-loading-icon color="#0968f6" text="加载中" textSize="12" />
-      </view>
+      <tz-circle-post v-if="listLoading" :skeleton="true" :list="[]" :skeleton-count="3" />
       <template v-else>
         <tz-circle-post :list="posts" mode="full" :circle-id="id" :content-protect="contentProtect" @like="onLike" @comment="goDetail" @refresh="refresh" />
         <u-loadmore :status="loadStatus" margin-top="20" v-if="posts.length" />

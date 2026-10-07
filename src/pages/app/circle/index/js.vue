@@ -12,6 +12,9 @@ export default {
       info: null,
       notFound: false,
       loadMsg: '',
+      // 切档/筛选失败的那一句（M16 切档④）：与首屏的 loadMsg 分开，只喂列表空态，
+      // 不把接口故障说成「还没有动态」
+      listError: '',
       tabIndex: 0,
       sort: 'new',
       timeFilter: 'all', // 时间筛选：all/7/30/custom
@@ -35,6 +38,10 @@ export default {
     },
     myMember() {
       return (this.info && this.info.my_member) || {};
+    },
+    // 管理端「发布设置-允许用户发布动态」：关闭后发布入口置灰并提示；字段缺失（旧版接口）按允许处理
+    canPublish() {
+      return !this.info || Number(this.info.allow_user_post) !== 0;
     },
     navTabs() {
       const info = this.info || {};
@@ -90,6 +97,7 @@ export default {
     if (!that.$tools.systemConfig("app_isinstall_circle")) {
       uni.showToast({ title: "圈子功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     if (!that.id) {
@@ -103,7 +111,9 @@ export default {
   },
   onShow() {
     if (that.info) {
-      that.refresh();
+      // 静默重取：保留已渲染内容不铺骨架屏。回到本页时列表已经摆在那儿，
+      // 整屏换成灰块再换回来就是「加载态中间断了一次」（M16 列表页判据的静默那一档）
+      that.refresh(true);
     }
   },
   onReachBottom() {
@@ -233,11 +243,17 @@ export default {
       }
       return { start_time: 0, end_time: 0 };
     },
-    refresh() {
+    // silent = 静默重取：清空列表与铺骨架屏都跳过（回到本页时已渲染的内容不盖掉，
+    // 只让底部 u-loadmore 走 loading）。非静默那一支才清 posts + 置 tabLoading，
+    // 否则换筛选条件/切页签会先闪一帧空态。
+    refresh(silent) {
       that.page = 1;
-      that.posts = [];
-      that.total = 0;
-      that.tabLoading = true;
+      that.listError = '';
+      if (!silent) {
+        that.posts = [];
+        that.total = 0;
+        that.tabLoading = true;
+      }
       // 请求序号：tab 切换/刷新时自增，用于丢弃上一个未完成请求的过期响应
       const seq = ++that.reqSeq;
       let p;
@@ -295,18 +311,35 @@ export default {
                 that.$nav.to('/pages/app/circle/presale/presale?id=' + ((res.data && res.data.circle_id) || that.id));
               }
             });
+          } else if (!more) {
+            // 切档/筛选失败只喂列表空态（与首屏 loadMsg 分开），不把接口故障说成「还没有动态」
+            that.listError = res.msg || '加载失败，请重试';
           }
+        }
+      } catch (e) {
+        // 网络异常这一支也要收尾：否则骨架屏撤不掉（tabLoading 由 refresh 的 finally 兜住，这里只补文案）
+        if (seq === that.reqSeq && !more) {
+          that.loadStatus = 'loadmore';
+          that.listError = (e && (e.msg || e.errMsg)) || '加载失败，请重试';
         }
       } finally {
         that.loadingMore = false;
       }
     },
     async loadShowcase(seq) {
-      const res = await that.$api('circle.circle.showcase', { circle_id: that.id });
-      // 期间已切换 tab / 重新刷新：丢弃过期响应
-      if (seq !== that.reqSeq) return;
-      if (res.code === 1) {
-        that.showcaseList = res.data || [];
+      try {
+        const res = await that.$api('circle.circle.showcase', { circle_id: that.id });
+        // 期间已切换 tab / 重新刷新：丢弃过期响应
+        if (seq !== that.reqSeq) return;
+        if (res.code === 1) {
+          that.showcaseList = res.data || [];
+        } else {
+          that.listError = res.msg || '加载失败，请重试';
+        }
+      } catch (e) {
+        if (seq === that.reqSeq) {
+          that.listError = (e && (e.msg || e.errMsg)) || '加载失败，请重试';
+        }
       }
     },
     goTask() {
@@ -315,6 +348,11 @@ export default {
     },
     // 问答功能已隐藏：点击发布按钮直接进入发布动态页
     goPublish() {
+      // 与后端 publish 校验文案一致：关闭后成员端不可发布，仅管理员在后台发布
+      if (!that.canPublish) {
+        uni.showToast({ title: '该圈子已关闭动态发布', icon: 'none' });
+        return;
+      }
       that.$nav.to('/pages/app/circle/post/publish?circle_id=' + that.id + '&type=text');
     },
     // 更多弹窗快捷导航（与 hover-btn 弹窗一致）

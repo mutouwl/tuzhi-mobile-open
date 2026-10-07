@@ -189,6 +189,13 @@ export default {
                         this.$nav.to('/pages/app/school/package/detail/detail?id=' + this.packageId, 'local')
                     }
                     break;
+                case 'checkin':
+                    //打卡活动：跳转活动主页（参与/购买入口在该页吸底栏）。路径取 router.js 的 checkin 档，不在这里另抄一遍；
+                    //未安装打卡插件时不跳转（与 school_package 同口径），itemId 为空（评价等只读列表）时同样不跳，避免跳成 ?id= 的打不开页
+                    if (this.itemId && this.$tools.systemConfig('app_isinstall_checkin')) {
+                        this.$nav.to(this.itemId, 'checkin')
+                    }
+                    break;
 
                 default:
                     break;

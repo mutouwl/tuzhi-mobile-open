@@ -15,8 +15,36 @@
 		</u-sticky>
 
 
-		<tz-box padding="5px 15px" v-if="list.length > 0">
-			<div class="order-list">
+		<!-- 首屏骨架屏：占位块逐块对齐真实提现卡（收益额 + 状态 / 四条「标签 + 值」行），
+		     吸顶的月份与状态筛选留在骨架屏外保持可点；加载完再换成提现记录或空态（M16） -->
+		<tz-box padding="5px 15px" v-if="loading || list.length > 0">
+			<div class="wlg-sk" v-if="loading">
+				<div class="order-list">
+					<div class="order-item" v-for="i in 4" :key="i">
+						<div class="order-item-header">
+							<div class="wlg-sk-line wlg-sk-block sk-h-16 sk-w-25"></div>
+							<div class="wlg-sk-line wlg-sk-block sk-h-14 sk-w-20"></div>
+						</div>
+						<div class="wlg-sk-row">
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-25"></div>
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-35"></div>
+						</div>
+						<div class="wlg-sk-row">
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-25"></div>
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-45"></div>
+						</div>
+						<div class="wlg-sk-row">
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-25"></div>
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-40"></div>
+						</div>
+						<div class="wlg-sk-row">
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-25"></div>
+							<div class="wlg-sk-line wlg-sk-block sk-h-12 sk-w-35"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="order-list" v-else>
 				<div class="order-item" v-for="(item, index) in list">
 					<div class="order-item-header">
 						<div class="order-item-price">
@@ -65,7 +93,7 @@
 
 
 		<!-- 类型 -->
-		<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
+		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
 			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('mode')"
 			@select="modeSelect"
 			>

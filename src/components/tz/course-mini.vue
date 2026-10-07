@@ -3,6 +3,9 @@
         'course-list-box',
         'single'
     ]">
+        <!-- 骨架档（ui-baseline-mobile M16）：与真实卡同一只外壳类（卡高 80、封面 140、内衬 6/8、圆角由
+             round 决定），调用页 loading 时传 :skeleton="true" 即可，页面不再抄一份卡片尺寸；
+             骨架档下真实卡走空数据（rows 计算属性），两者不会同屏叠出 -->
         <div :class="[
             'course-item-box',
             {
@@ -11,7 +14,34 @@
             }
         ]" :style="{
     'margin-bottom': margin + 'px'
-}" v-for="(item, index) in list" :key="index" @click="detail(item.id, item.type)">
+}" v-for="i in skCount" :key="'sk' + i">
+            <div class="cover" :class="{ 'course-item-box-round': round }">
+                <div class="mini-sk-cover"></div>
+            </div>
+            <div class="info">
+                <!-- rows-width 用数组传值：u-skeleton 对单行列表会把「最后一行」宽度写死成 70%，传字符串不生效 -->
+                <u-skeleton
+                    :loading="true"
+                    :animate="true"
+                    :title="true"
+                    title-width="85%"
+                    title-height="15"
+                    :rows="1"
+                    :rows-width="['55%']"
+                    rows-height="11"
+                />
+                <div class="mini-sk-price"></div>
+            </div>
+        </div>
+        <div :class="[
+            'course-item-box',
+            {
+                'course-item-box-round': round,
+                'course-item-box-border': border,
+            }
+        ]" :style="{
+    'margin-bottom': margin + 'px'
+}" v-for="(item, index) in rows" :key="index" @click="detail(item.id, item.type)">
             <div :class="[
                 'cover',
                 {
@@ -98,7 +128,27 @@ export default {
         margin: {
             type: Number,
             default: 10
+        },
+        //骨架档：只出灰块，不出真实卡（见模板顶部注释）
+        skeleton: {
+            type: Boolean,
+            default: false
+        },
+        //骨架档铺几张卡
+        skeletonCount: {
+            type: Number,
+            default: 4
         }
+    },
+    computed: {
+        // 骨架档铺几张灰卡（非骨架档为 0，模板里 v-for 一个数即按 1..N 出条目）
+        skCount() {
+            return this.skeleton ? this.skeletonCount : 0;
+        },
+        // 真实卡数据：骨架档一律出空，避免骨架与真实卡同屏
+        rows() {
+            return this.skeleton ? [] : this.list || [];
+        },
     },
     methods: {
         detail(id, type) {
@@ -237,6 +287,26 @@ export default {
     font-size: 10px;
     font-weight: 600;
     line-height: 12px;
+}
+
+/* ===== 骨架档灰块（M16）：封面块铺满真实 .cover 的盒子，价格块对齐左下角价格位（真实价格 bottom 4 / 14px） ===== */
+.mini-sk-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #e5e6eb;
+}
+
+.mini-sk-price {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    width: 60px;
+    height: 14px;
+    border-radius: 4px;
+    background: #e5e6eb;
 }
 </style>
 

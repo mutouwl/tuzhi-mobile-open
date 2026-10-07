@@ -421,3 +421,49 @@
   background-color: #0968f6;
   color: #fff;
 }
+
+/* ===== 首屏骨架屏（加载中占位） =====
+   外壳全部复用真实元素那一档的类（.balance-card / .amount-input-wrap / .pay-type-list），
+   静态文案（余额（元）/ 总收入 / 已提现 / 提现金额 / 提现方式 / ¥）保持真文字，
+   灰块只进到真正会变的那几格；按状态才出的元素（提现提示、最低金额、本月次数、收款账户行）不给灰块也不预留空位。 */
+.bl-sk-value {
+  width: 120px;
+  height: 32px;
+  margin-top: 8px;
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 与真实 .stat-value 同为 16px 字高 */
+.bl-sk-stat {
+  width: 56px;
+  height: 16px;
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 与真实金额输入位同档（24px 字高），右侧留白对应可输入区域 */
+.bl-sk-amount {
+  flex: 1;
+  height: 24px;
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 提现方式标签块：与真实 .pay-type-item 同高（上下 8px 内衬 + 13px 字 + 1px 描边 ≈ 34px），
+   宽度按「银行卡 / 支付宝」三字那一档取 72px；真实项数由后端下发（常见 2~3 种） */
+.bl-sk-pay {
+  width: 72px;
+  height: 34px;
+  background: #e5e6eb;
+  border-radius: 4px;
+}
+
+/* 提交按钮块：与真实 .withdraw-btn 同高同圆角 */
+.bl-sk-btn {
+  width: 100%;
+  height: 44px;
+  margin-top: 8px;
+  background: #e5e6eb;
+  border-radius: 8px;
+}

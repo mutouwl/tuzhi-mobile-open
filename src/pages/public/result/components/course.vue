@@ -70,6 +70,13 @@
                             this.$nav.to("/pages/app/school/package/detail/detail?id=" + packageId, "local", "redirectTo");
                         }
                         break;
+                    case "checkin":
+                        //打卡活动：跳转活动主页（参与/购买入口在该页吸底栏）。不加这一条会掉进 default 跳成课程详情（id 对不上，报「课程不存在」）；
+                        //路径统一取 router.js 的 checkin 档，未安装打卡插件时不跳转
+                        if (id && this.$tools.systemConfig("app_isinstall_checkin")) {
+                            this.$nav.to(id, "checkin", "redirectTo");
+                        }
+                        break;
 
                     default:
                         this.$nav.to(id, "course", "redirectTo");

@@ -102,4 +102,14 @@ export default {
     z-index: 10;
     padding: 8px 10px;
 }
+
+/*  #ifdef H5  */
+/* 悬浮「更多」钮是 fixed 定位，宽窗口下会贴浏览器右缘、脱离限宽 480px 居中的页面内容列
+   （口径同 App.vue 的 .h5-bottom-bar）；把内衬 20px 改按内容列右缘起算，<480px 时仍用上面的 right:20px */
+@media (min-width: 480px) {
+    .hover-btn {
+        right: calc(50% - 240px + 20px);
+    }
+}
+/*  #endif  */
 </style>

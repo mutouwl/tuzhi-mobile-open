@@ -23,6 +23,13 @@
                     <div>评论</div>
                 </div>
 
+                <!-- 打卡入口只在「这门课（或其所属专栏）确实关联了上架活动」时出，显隐判据由调用页按接口
+                     返回值给（params.checkin），未安装打卡插件时调用页根本不发请求，这里不再判一次 -->
+                <div class="control-btn" @click="checkin" v-if="params.checkin">
+                    <div><tz-icon name="tasklist" color="#444" /></div>
+                    <div>打卡</div>
+                </div>
+
                 <div class="control-btn" @click="share">
                     <div><tz-icon name="share" color="#444" /></div>
                     <div>分享</div>
@@ -183,6 +190,9 @@ export default {
         },
         comment() {
             this.$emit('comment', false);
+        },
+        checkin() {
+            this.$emit('checkin', false);
         }
     }
 }

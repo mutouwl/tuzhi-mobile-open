@@ -10,11 +10,18 @@ import playbackVideoModal from "@/pages/course/components/playback-video.vue";
 import liveStatusBox from "@/pages/course/components/live-status-box.vue";
 import interactionTab from "@/pages/course/components/interaction.vue";
 import courseLibrary from "@/common/utils/course.js";
+import { rememberInviter, resolveInviter, inviterFromParams } from "@/common/utils/live-inviter";
 import messageBoxBottomBox from "@/pages/course/components/message-box-bottom.vue";
+import shareModal from "@/components/modal/share-modal.vue";
 import columnCourseModal from "@/pages/course/components/column-course-modal.vue";
 
 import platformLimit from "@/pages/course/live/components/platform-limit.vue";
 import redpacketModal from "@/pages/course/live/redpacket/redpacket-modal.vue";
+import redpacketRecords from "@/pages/course/live/redpacket/records-modal.vue";
+// 分享有礼（直播拉新付费插件）：悬浮入口 + 活动列表/详情/受邀助力三层弹窗都收在这一只组件里，
+// 页面只负责把讨论区卡片那一次点击转进去（未安装时连挂载都进不去，判据在模板的 v-if）
+import shareGiftPopup from "@/pages/course/live/share-gift/share-gift-popup.vue";
+import inviteRankEntry from "@/pages/course/live/invite-rank/invite-rank-entry.vue";
 // #ifdef H5
 import linkEntry from "@/pages/course/live/link/link-entry.vue";
 // #endif
@@ -29,15 +36,10 @@ var ROOM_DETAIL_FAIL_LIMIT = 5;
 // 布防的剩余窗口，用户停留几秒再点播放就会被误判超时 → 降级换源 → 播放器重建 →
 // 大播放按钮重现，首次点击作废需再点一次（线上实测「点播放后按钮重复出现」根因）
 var VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT = 10000;
-// 同源续播的新鲜期（ms）：后端播流鉴权地址有效期 12 小时（live/Url.php $playExpireTime），
-// 详情刷新返回的同路径新签名地址在新鲜期内沿用（不重建播放器），该场景实际不再触发，
-// 逻辑保留作为兜底
-var LIVE_SOURCE_KEEP_MS = 8 * 60 * 1000;
-// 鉴权地址临期主动重签阈值（ms）：稳定观看期间 getRoomDetail 不会自动刷新，地址过 10 分钟
-// 过期后播放器拉流 403 → 恢复失败 → liveStreamStop「主播暂时离开」（线上实证观看约 10 分钟
-// 掉一次且需约 40s 才恢复）。在线在播时临近过期主动全量刷新，由 applyOnlineSourceUrl 的
-// 临期重签路径换新签名重建（须大于 LIVE_SOURCE_KEEP_MS，保证重签判定生效）
-var LIVE_SOURCE_RESIGN_MS = (8 * 60 + 30) * 1000;
+// 鉴权地址的提前重签量（ms）：播放地址到期前 2 分钟主动换签名，留出请求与重建的余量
+var LIVE_SOURCE_RESIGN_AHEAD_MS = 2 * 60 * 1000;
+// 重签刷新最小间隔（ms）：后端返回的地址签名未变（缓存/时钟偏差）时，避免 10s 轮询反复重建
+var LIVE_SOURCE_RESIGN_MIN_MS = 60 * 1000;
 // 是否优先选用 LL-HLS(hls_ll) 播流地址。
 // 曾重新开启（2026-09-01）：意图是让 iOS 无 MSE 终端的标清/转码流落到近边缘 3~5s；
 // 但 RTC（超低延时直播/ARTMC）推流期间 -llhls.m3u8 周期性 404（低延时转直播 CDN 会话重置
@@ -66,7 +68,11 @@ export default {
     messageBoxBottomBox,
     columnCourseModal,
     platformLimit,
-    redpacketModal
+    redpacketModal,
+    redpacketRecords,
+    shareGiftPopup,
+    inviteRankEntry,
+    shareModal
     // #ifdef H5
     ,linkEntry
     // #endif
@@ -75,6 +81,7 @@ export default {
     return {
       coverImage:"https://www.tuzhi.ltd/assets/img/tuzhi/2c924502dd0401555b9e332c7b49fc87.png",
       isClearScreen: false,
+      shareVisible: false,
       showVideoControlBar: true,
       startX: 0,
       startY: 0,
@@ -104,6 +111,10 @@ export default {
       //视频高度
       videoBoxHeight: 230,
       messageBoxHeight: 200,
+      //讨论区（消息面板）垂直中心线，单位 px，相对直播间容器顶边。
+      //右侧悬浮栏按它整栏垂直居中（2026-10-05 用户点名「y 轴下移到讨论区高度垂直居中的位置」，
+      //原先那一档写死的 38% 落在讨论区上方一大截的空画面上）。0 = 还没量到，入口暂吃组件的 38% 兜底档。
+      discussionCenterY: 0,
       //控制区高度
       controlPanelHeight: 0,
       modal: {
@@ -167,8 +178,8 @@ export default {
       // 用户是否已表达播放意图（onPlay 触发即置位）：降级换源/重建播放器后据此自动续播，
       // 避免换源重建把大播放按钮顶回来、用户必须再点一次；错误锁定（终态）时复位
       userPlayRequested: false,
-      // 当前 videoUrl 的落盘时间戳：配合同源续播判定（后端鉴权地址有效期 10 分钟，
-      // 同路径地址在新鲜期内沿用，临近过期才接受重签）
+      // 当前 videoUrl 的落盘时间戳：只作临期重签刷新的节流基准（地址还需不需要换签名，
+      // 由 playUrlFresh 按地址自带 auth_key 到期时间判定，不看这里）
       videoUrlSetAt: 0,
       // 转码清晰度协议是否已在本会话耗尽（全部 404/失败后已降回原画链）：
       // 置位后详情刷新不再回选转码流，避免「转码(未生成)→原画→刷新→转码」循环；
@@ -291,9 +302,27 @@ export default {
       // 直播开始已不依赖推送，状态实时性由 10s 轮询保证；未连接/断线保持快轮询（10s）
       messageConnected: false,
 
+      // 消息服务连接失败那张卡（message-box 内 .link-error-box）的两枚状态位：
+      // linkBarState = 卡片「本应显示」（message-box 的 linkBarShown 原样上抛，含首连不显示那层判据），
+      // linkBarDismissed = 用户点了卡上那枚关闭图标。两者与在一起才轮到右侧那枚悬浮入口
+      linkBarState: false,
+      linkBarDismissed: false,
+      // 分享有礼 / 邀请达人榜这两枚入口「此刻显示着」的状态，由各自组件用 entry-state 上抛：
+      // 右侧那根栏要按实际显示着的几枚连续编号，不能各写死一个 level（缺席一枚中间会留空洞）
+      shareGiftEntryOn: false,
+      inviteRankEntryOn: false,
+
       // 红包相关
       redpacketData: {}, // 当前红包数据
       showRedpacketModal: false, // 红包弹窗显示状态
+      showRedpacketRecords: false, // 红包记录弹层（右侧那枚红包入口开的一屏）显示状态
+      // 底部工具条自己开的商品/礼物弹窗开合（由 message-box-bottom 的 @popup 上抛）：
+      // 这两个弹窗都挂在 .ui-layer(z-index:150) 之内，而右侧悬浮入口在 .ui-layer 之外、z-index:160，
+      // 不收起入口就会压在商品列表弹窗上面（2026-09-30 用户点名「按钮遮罩商品列表弹窗」）
+      toolbarPopup: {
+        goods: false,
+        gift: false
+      },
     };
   },
   watch: {
@@ -307,6 +336,9 @@ export default {
           newVal,
           this.userPlayRequested ? VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT : undefined
         );
+        // 底距那一档（.bottom-container 45 / 10）跟着「在线态且有地址」翻，讨论区随之上下挪 35px，
+        // 右侧悬浮栏那根栏的基准线要重量一次
+        this.measureDiscussionCenter();
         // LL-HLS 地址秒级预检：封装未配置/未覆盖转码流时 -llhls.m3u8 会 404（无 MSE 终端原生
         // HLS 对 404 静默重试不触发 error），不等看门狗、直接走降级链
         this.probeHlsLlUrl(newVal);
@@ -336,9 +368,163 @@ export default {
           this.leaveStreamBuffering();
         }
       }
+      // 在线态是 .bottom-container 底距那一档（45 / 10）的判据之一，翻它讨论区就上下挪 35px
+      this.measureDiscussionCenter();
+    },
+    // 右侧悬浮栏那根栏的纵向基准线跟着讨论区走，讨论区的位置/高度一变就重量一次。
+    // 讨论区本身在 .ui-layer 里（骨架屏期间不渲染），所以撤骨架那一拍（loading → false）才是第一次真能量到。
+    loading(open) {
+      if (!open) {
+        this.$nextTick(this.measureDiscussionCenter);
+      }
+    },
+    messageBoxHeight() {
+      this.$nextTick(this.measureDiscussionCenter);
     },
   },
   computed: {
+    /**
+     * 这一场直播的邀请人 id（达人榜归因与分享有礼助力共用同一份，两插件不许各读各的）：
+     * 链接直达直播间时吃 URL 上的 share / inviter_id，从课程详情页中转进来时 URL 上没有，
+     * 就按当前这一间直播间取 `common/utils/live-inviter.js` 记住的那一份（跨课程一律给空）。
+     */
+    liveInviterId() {
+      const fromUrl = inviterFromParams(this.pageParams);
+      if (fromUrl) {
+        return fromUrl;
+      }
+      return resolveInviter(this.data.id || this.pageParams.id);
+    },
+    /**
+     * 右侧悬浮栏（红包 / 分享有礼 / 邀请达人榜三枚）当前该不该出。
+     * 两个页面级闸门，判据只存在这一处：
+     * ① 清屏：清屏就是「只剩画面」，.ui-layer 已整层收起，而三枚入口刻意挂在 .ui-layer 之外
+     *    （那一层自带 z-index:150 的层叠上下文，入口在里面会被商品/礼物弹窗压住），
+     *    所以清屏时要在这一层单独收起，2026-09-30 用户点名；
+     * ② 任意弹窗打开期间：入口那一层永远在所有弹窗之上（160 > .ui-layer 里的 u-popup），
+     *    开着就是一枚压在弹窗上的悬浮钮（商品列表弹窗那一处被点名，同族按「有弹窗就收起」一次扫完）。
+     * 各入口自己的显隐判据（后端 show_entry / has_active / 红包是否存在）仍在各自组件里，两层不混判。
+     */
+    sideEntryVisible() {
+      if (this.isClearScreen) {
+        return false;
+      }
+      return !(
+        this.modal.control ||
+        this.modal.playbackVideo ||
+        this.modal.columnCourse ||
+        this.toolbarPopup.goods ||
+        this.toolbarPopup.gift ||
+        this.shareVisible ||
+        this.qualityPopupVisible ||
+        this.showRedpacketModal ||
+        this.showRedpacketRecords
+      );
+    },
+    /**
+     * 消息服务连接失败那张卡被关掉后，右侧悬浮栏挂的这一枚「再放回来」入口
+     * 判据只有两条：卡片本应显示（linkBarState，含「重连进行中」那一档）且确实被用户关掉了；
+     * 收起条件与另三枚同一份 sideEntryVisible（清屏 / 任意弹窗打开期间）
+     */
+    linkBarEntryVisible() {
+      return this.linkBarState && this.linkBarDismissed && this.sideEntryVisible;
+    },
+    /**
+     * 右侧那根栏里「红包」这一枚显示不显示：只认后端下发的那一枚真值 `roomData.redpacket_entry`
+     * （= 直播间红包开关 AND 本场发过红包；后端 Room::courseGetRoom 与 EntryNotice 广播共用同一份实现，
+     * 插件未装时开关已被强制置 0，前端不复判第二遍，M22）。
+     *
+     * 用户 2026-10-04 点名「如果本场直播还没有发过红包，那么右侧按钮就不要显示红包按钮」，
+     * 因此判据是**发过**（已抢完/已过期/已撤回的行都算）而不是**此刻有进行中的红包**——
+     * 后者正是硬约束 27② 那一族自锁：红包默认几分钟过期，一过期入口自己先消失，
+     * 学员再也点不开自己的手气记录（2026-09-30 用户点名「点击红包入口没有弹出红包记录弹窗」）。
+     *
+     * 老版本安装包里还没有 `redpacket_entry` 这个键（前后端版本错开的那一档），此时退回房间开关那一枚，
+     * 宁可多出那一枚入口也不让老用户凭空少一枚——键在不在由后端说了算，这里只判「读到没有」。
+     * 收起条件仍与另两枚同一份 sideEntryVisible（清屏 / 任意弹窗打开期间）。
+     */
+    redpacketEntryOn() {
+      var room = this.roomData || {};
+      var entry =
+        room.redpacket_entry !== undefined && room.redpacket_entry !== null
+          ? room.redpacket_entry
+          : room.config && room.config.redpacket;
+      return !!(Number(entry) === 1 && this.sideEntryVisible);
+    },
+    /**
+     * 右侧那根栏里各枚的层号，分两拨算：
+     *
+     * 【一】常驻那三枚（红包 / 分享有礼 / 达人榜）自上而下（红包 → 分享有礼 → 达人榜）连续编号
+     * 0、1、2…，只给此刻真的显示着的那几枚发号，缺席的不占号，于是「红包没有 → 分享有礼上移补上那一格」，
+     * 中间不留空洞（2026-09-30 用户点名）。**顺序是这一栏读出来的第一条约定**：
+     * 2026-09-30 用户点名「可以按现在红包的位置作为顶部，后面如果有新增按钮，按照红包的位置依次往下排列」
+     * ⇒ level 0 锚在 top 上就是**最上那枚**（红包），其余几枚按 ENTRY_STEP 往下让。将来再加新入口，
+     * 在 order 末尾追加一项即可（往下长），不许插到红包前面去——插前面等于整根栏下移。
+     *
+     * base 是每一枚在「三枚全在」时的老层号，也就是连续编号前的排布。页面还没拿到某一枚的显隐
+     * （子组件的 entry-state 还没上抛）时落回它这一档，**而不是落回 0**——落回 0 会让三枚一起挤在
+     * 最上那一格里（用户 2026-09-30 点名「都堆叠在一起了」）。base 保证最坏情况退回老排布，
+     * 等 entry-state 到了自然换成连续编号。
+     *
+     * 【二】「消息」那一枚**不参与发号**，由上面那三枚显示着的枚数算出自己该待的那一格：
+     * `shown`（常驻显示着几枚就取几）正好落在最下那枚之下、一格不多不少；一枚常驻都没有时是 0（占住锚点本身）。
+     * 理由：它出不出只取决于「那张消息服务提示卡有没有被用户关掉」（linkBarState + linkBarDismissed），
+     * 与常驻那三枚的配置、插件、数据都无关——用户往往是在**进房后**才去关那张卡，于是每关一次
+     * 整根栏就重排一次。让它参与发号的后果正是 2026-09-30 用户点名的那个：关掉提示之后它插到最上、
+     * 原有那几枚全被顶下去一格（"这个消息按钮会出现在中间，导致原有的两个按钮都往上跑了"）。
+     * 临时追加的入口只能往下长，不能挤动常驻的那几枚。
+     */
+    sideEntryLevels() {
+      const order = [
+        {
+          key: 'redpacket',
+          base: 0,
+          on: this.redpacketEntryOn,
+        },
+        { key: 'shareGift', base: 1, on: this.shareGiftEntryOn },
+        { key: 'inviteRank', base: 2, on: this.inviteRankEntryOn },
+      ];
+      const levels = {};
+      let shown = 0;
+      order.forEach((it) => {
+        levels[it.key] = it.on ? shown : it.base;
+        if (it.on) { shown += 1; }
+      });
+      // 晚到的那一枚排在常驻发号之外：层号 = 常驻此刻显示着的枚数，正好是最下那枚之下、一格不多不少
+      //（shown 是上面那轮遍历出来的，赋它不回头改任何一枚常驻的号 ⇒ 消息出没不影响原有几枚）。
+      // 不显示时这一档 v-if 已把它收掉，取什么值都不影响画面。
+      levels.linkBar = shown;
+      return levels;
+    },
+    /**
+     * 右侧那根栏里**常驻**那几枚此刻显示着的枚数（红包 / 分享有礼 / 达人榜）。
+     * 只用来告诉组件「整栏多高」以便按讨论区中心线居中，**不参与发号**（发号仍看 sideEntryLevels）。
+     * 晚到的消息入口刻意不算进去：它一出就牵动整栏的居中基准 = 已显示着的那几枚全体位移，
+     * 正是 2026-09-30 被点名四轮的那一类（「关闭提示后原有的两个按钮都往上跑了」）。
+     * 判据与 sideEntryLevels 里那三枚读的是同几枚 computed，不另拼一份。
+     */
+    sideEntryResidentShown() {
+      let n = 0;
+      if (this.redpacketEntryOn) { n += 1; }
+      if (this.shareGiftEntryOn) { n += 1; }
+      if (this.inviteRankEntryOn) { n += 1; }
+      return n;
+    },
+    /**
+     * 右侧那根栏的纵向基准线 = 讨论区（消息面板）的垂直中心线（px，相对直播间容器顶边）。
+     *
+     * 2026-10-05 用户点名「右侧的分享有礼等按钮往下移动，y 轴下移到讨论区高度垂直居中的位置」：
+     * 原先那一档 `top: 38%` 是与屏高挂钩的估值，而讨论区固定占底部 1/3（`messageBoxHeight = 窗口高 / 3`），
+     * 38% 落在讨论区**上方一大截**的空画面上 ⇒ 这一栏与讨论区不在一条视觉中线上。
+     *
+     * 为什么实测而不是按窗口高算一个百分比：讨论区的顶边由「底部容器底距（10 / 45 两档）+ 底部工具条自身高
+     * + 讨论区高」三者叠出来，工具条那一段各端不一致（MP 的输入行更高），写死系数必然对不上；
+     * 量一次 `.message-box` 的 rect 就与真实布局同源，改任何一段都不用回来改这里。
+     * 量不到时返回 0，组件退回自己那档 `top`（38%）兜底，量到后自动换上，不会停在老位置。
+     */
+    sideEntryCenterY() {
+      return Number(this.discussionCenterY) || 0;
+    },
     /**
      * 直播页背景层（暖场图/封面）：数据未返回时 cover 为空，不能拼 url(undefined)，
      * 否则 CSS background 会请求 `/undefined` 产生 404（H5 页面 Network 噪音）
@@ -359,13 +545,35 @@ export default {
       return true;
     },
     /**
+     * 是否「直播中的伪直播」（course.live_type=2 且 status=online）：
+     * 后端 courseGetRoom 把课程上传的录制视频原样塞进 push_url.hls，它是点播资源
+     * （阿里云点播转码的 m3u8 带 #EXT-X-ENDLIST，或直接 mp4），没有任何实时推流在推
+     */
+    isPseudoLiveOnline() {
+      return !!(this.data && this.data.live_type == 2 && this.roomData.status == "online");
+    },
+    /**
+     * 播放器是否自动首播：直播分支在 video-h5 内部强制 autoplay，而伪直播改走点播分支后
+     * autoplay 完全由该值决定，这里显式补上，保持改动前「进房静音自动播 + 取消静音大按钮」
+     */
+    videoAutoplay() {
+      return this.playbackAutoplay || this.isPseudoLiveOnline;
+    },
+    /**
      * 根据直播类型与视频地址判断是否启用直播模式
      * 回放：非直播
+     * 伪直播（live_type=2）：非直播——按直播模式播放点播列表，播放器会用直播语义对待它：
+     * 列表拉完即判「直播流停止」抛 liveStreamStop，且直播模式不支持 seek，伪直播的进度对齐
+     * （fakeVideoJump）拿不到有效时长只能 seek 到 -2，进房首轮必然报错锁死（口径同
+     * tuzi-web 中控台 live/room/components/studio.vue 的 isPlayUrlLive）
      * 自定义播流地址（live_type=3）：mp4 当作点播；其他（m3u8/flv/rtmp）当作直播
      * 其他直播类型：直播
      */
     isCustomVideoLive() {
       if (this.roomData.status == 'run_playback') {
+        return false;
+      }
+      if (this.isPseudoLiveOnline) {
         return false;
       }
       if (this.data && this.data.live_type == 3 && this.videoUrl) {
@@ -484,6 +692,18 @@ export default {
     },
   },
   methods: {
+    /**
+     * 底部工具条自己开的弹窗（商品 / 礼物）开合上抛：收进 toolbarPopup 供 sideEntryVisible 判。
+     * 这两个弹窗都挂在 .ui-layer 之内，而右侧悬浮栏在 .ui-layer 之外、层级更高，
+     * 不跟着收就会出现「悬浮入口压在商品列表弹窗上面」（2026-09-30 用户点名）
+     */
+    onToolbarPopup(payload) {
+      if (!payload || !payload.name) {
+        return;
+      }
+      this.$set(this.toolbarPopup, payload.name, !!payload.open);
+    },
+
     // 刷新视频
     refreshVideo() {
       if (this.$refs.videoBox) {
@@ -509,6 +729,7 @@ export default {
      */
     openRedpacket(data) {
       if (!this.$tools.systemConfig('app_isinstall_live_redpacket')) {
+        this.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
         return;
       }
       var raw = data.data || data;
@@ -537,13 +758,129 @@ export default {
     },
 
     /**
+     * 打开红包记录（右侧那枚悬浮红包入口点进来的一屏）：竞品这一屏放在直播间右下角「···」里，
+     * 本系统右侧悬浮栏就是同一档运营入口，所以落在红包那一枚上
+     */
+    openRedpacketRecords() {
+      if (!this.$tools.systemConfig('app_isinstall_live_redpacket')) {
+        this.loading = false; // 兜底分支也要撤骨架，理由同 openRedpacket
+        return;
+      }
+      this.showRedpacketRecords = true;
+    },
+
+    /**
+     * 从记录里点某一只红包：**这一屏不关**，信封叠在它上面（2026-10-01 用户点名「红包记录中，点击弹出领取红包弹窗，
+     * 不要关闭这个红包记录弹窗」）。关掉信封就回到这一屏，能接着点下一只或下拉刷新 ——「领过哪几只、还剩哪几只」
+     * 本来就是这一屏存在的理由，进去一趟把它关掉等于每次都要重新点开。
+     * 分层由 z-index 保证：信封那一份抬到 10220、遮罩 10210，这一屏留在 10210/10200（挂点顺序只当同层兜底），
+     * 不靠「谁写在后面谁在上」那种隐式排法。
+     * 行是 live_redpacket 的原始行，字段名与信封吃的这一份一致（type/total_amount/blessing/status/expire_time），
+     * 不再搬发放人那份（顶行已是红包类型）。
+     * 状态与过期时间照后端逐行下发的值直接用（getList 已把过了 expire_time 的 pending 改成 expired），
+     * 前端不再自己比一次时间戳（M22）。
+     * 备注：信封里抢完之后这一行仍显示抢之前的状态。行的 status 只有整只被抢光才翻成 finished
+     * （RedPacketService.php:145/176），一个人领了不影响，且信封自己会重取详情（js.vue:145/152），
+     * 列表这一侧留给出下拉刷新那条路即可，不为这一处另接一条静默重取。
+     */
+    openRedpacketFromRecord(row) {
+      if (!row || !row.id) {
+        // 行是历史消息，取不到 id 就等于点了没反应，把原因说出口（M13）
+        uni.showToast({ title: '这只红包已经找不到了，下拉刷新记录再看', icon: 'none' });
+        return;
+      }
+      // 下面只搬信封真正读的六个字段（顶行已是红包类型，发放人那一行按用户要求不再显示，
+      // nickname/avatar 这两份兜底数据随之下线，不留没人读的键）——这一段之外一个字都不动那一屏的显隐
+      this.redpacketData = {
+        id: row.id,
+        type: row.type,
+        total_amount: row.total_amount,
+        blessing: row.blessing,
+        status: row.status,
+        expire_time: row.expire_time,
+      };
+      this.showRedpacketModal = true;
+    },
+
+    /**
      * 红包被抢回调
      */
     onRedpacketGrabbed(data) {
       // 可扩展：播放动画、更新UI等
     },
-    
 
+    /**
+     * 打开分享有礼活动详情（讨论区那张卡片点进来）
+     * 负载 = 消息体里的 JSON（{activity_id, title, subtitle}），卡片只管「点的是哪条活动」，
+     * 活动此刻的真实状态（还在不在、我跑到第几步）一律由组件再取一次详情接口说（M-P6 那条已知限制）
+     */
+    openShareGift(payload) {
+      if (!this.$tools.systemConfig('app_isinstall_share_gift')) {
+        return;
+      }
+      const popup = this.$refs.shareGiftPopup;
+      if (!popup || typeof popup.openDetail !== 'function') {
+        return;
+      }
+      const activityId = payload && (payload.activity_id || payload.activityId);
+      if (!activityId) {
+        // 卡片是历史消息，JSON 被截断时拿不到 id：把原因说出口，不留一次静默的点击（M13）
+        uni.showToast({ title: '这条活动卡片已经打不开，请点右侧的分享有礼入口', icon: 'none' });
+        return;
+      }
+      popup.openDetail(activityId);
+    },
+
+    /**
+     * 打开邀请达人榜的榜单弹层（讨论区那张卡片点进来）
+     * 负载 = 消息体里的 JSON（{activity_id, title, subtitle}），但榜单要的是「这一场的榜」，
+     * 而一场只有一份活动，所以不拿消息里的 id 再查详情——直接开右侧那枚入口同一个弹层
+     * （$refs.inviteRankPopup，页面里两处入口共用这一只，不新造第二层弹层）
+     */
+    openInviteRank() {
+      if (!this.$tools.systemConfig('app_isinstall_invite_rank')) {
+        return;
+      }
+      const popup = this.$refs.inviteRankPopup;
+      if (!popup || typeof popup.openBoard !== 'function') {
+        // 插件未安装时组件文件根本不在（引用即致命错误），这一层兜住「没挂上」而不是静默吞掉
+        uni.showToast({ title: '邀请达人榜暂时打不开，请联系客服', icon: 'none' });
+        return;
+      }
+      popup.openBoard();
+    },
+
+    /**
+     * 直播间三处外发邀请都收口到页面根那一只分享弹层：底部工具条分享按钮（@openShare）、
+     * 分享有礼详情主按钮、达人榜弹层「立即分享」。
+     * 分享链接、海报与按端取码四条端路只在 share-modal 一份实现里，第二处不再造一层（M18⑧）。
+     * 弹层挂在页面根而不是工具条里：工具条在 .ui-layer(z-index:150) 之内，那层自带层叠上下文，
+     * 里面的 fixed 弹层 z-index 再大也排不进根挂载弹层（10230）之上，会被活动详情整块盖住。
+     */
+    openLiveShare() {
+      // course.detail 还没回来时海报要画的封面与 id 都取不到（工具条自己带 v-if="data.id" 同源）：
+      // 点一枚没反应的入口得给一句原因，不能静默（feedback：不可用的入口要么藏要么说清）
+      if (!this.data.id) {
+        uni.showToast({ title: '直播信息还在加载，稍等一下再分享', icon: 'none' });
+        return;
+      }
+      this.shareVisible = true;
+    },
+
+    /**
+     * 邀请达人榜归因上报（无界面）：**已迁到课程详情页** `pages/course/detail/js.vue` 的
+     * `reportInviteRank`，本页不再发这一条。
+     *
+     * 2026-10-05 用户点名「被邀请要排除被邀请的人已经进过直播间，不要重复触发邀请成功」。
+     * 要判「已经进过没有」，唯一可靠的判据是 tuzhi_live_user 里有没有他这一行
+     * （进房落地时建、之后再进只查不插）。而这一行**在课程详情页那一跳就被建好了**
+     * ——`course/Course.php:204` 的 joinLive 调在 `course.detail` 里。
+     * 归因若继续挂在直播间页，它发出时这一行必然已经存在 ⇒ 判据恒为「进过」⇒ 一个人都算不进；
+     * 改成按时间差判又会被「他在详情页读了多久」这段无上界的停留搅乱。
+     * ⇒ 归因必须挪到建行**之前**的那一跳，也就是本页之前的那一跳：课程详情页，
+     *   且必须排在它的 `course.detail` 请求之前发（详见那一页的注释）。
+     * 本页保留这一处调用只会得到恒定的 repeat 空转：访行已存在、或本就不该计入。
+     */
     // 清屏功能 - 点击按钮切换
     toggleClearScreen() {
       this.isClearScreen = !this.isClearScreen;
@@ -1227,7 +1564,12 @@ export default {
                   for (var i = 0; i < Math.min(bytes.length, 8); i++) {
                     head += String.fromCharCode(bytes[i]);
                   }
-                  if (head.indexOf("FLV") === 0 || head.indexOf("#EXTM3U") === 0) {
+                  // FLV（'FLV' 打头）、HLS/m3u8（'#EXTM3U' 打头）、mp4（第 5~8 字节 'ftyp' box）
+                  if (
+                    head.indexOf("FLV") === 0 ||
+                    head.indexOf("#EXTM3U") === 0 ||
+                    head.indexOf("ftyp") > -1
+                  ) {
                     done(true);
                   } else {
                     tryNext();
@@ -1293,17 +1635,35 @@ export default {
     },
 
     /**
+     * 播放器是不是停在「等用户手势」（大播放按钮）那一态
+     * 只有 H5 那一只组件暴露了 isAwaitingPlay（小程序端 video-box 没有媒体元素可问），
+     * 拿不到方法就判 false ⇒ 小程序端表现逐字不变
+     * @return {Boolean} true=此刻没有任何东西在加载
+     */
+    videoAwaitingPlay() {
+      var box = this.$refs.videoBox;
+      if (!box || typeof box.isAwaitingPlay !== "function") {
+        return false;
+      }
+      return box.isAwaitingPlay();
+    },
+
+    /**
      * 视频缓冲事件
      */
     onVideoWaiting() {
       // 首次出画面（首帧）加载：起播/切源后、首个 playing 之前的缓冲显示转圈加载遮罩，
       // 与多清晰度提示解耦（showQualitySwitch 关闭、且无转码清晰度时同样给出加载反馈）；
-      // 降级换源（artc→hls_ll→hls 等）期间遮罩保持，直至出画面或错误锁定
+      // 降级换源（artc→hls_ll→hls 等）期间遮罩保持，直至出画面或错误锁定。
+      // 「等用户手势」那一态不点亮：桌面浏览器拦掉有声自动播放后播放器停在大播放按钮、
+      // 什么都没在拉，遮罩压在上面就是用户点名的「加载中不消失、还能透过它点播放」
+      // （2026-09-28）；用户真点播放后由 onPlay 点亮这一格
       if (
         !this.everPlayed &&
         !this.qualitySwitching &&
         this.roomData.status === "online" &&
-        !this.videoErrorLocked
+        !this.videoErrorLocked &&
+        !this.videoAwaitingPlay()
       ) {
         this.videoFirstLoading = true;
       }
@@ -1535,15 +1895,23 @@ export default {
     },
     /**
      * 播放回放视频
+     * @param {String} url 回放播放地址（列表项的 file_path；为空即这一条没取到地址，
+     *                     原因由回放弹窗自己说出口，这里不再静默换源）
+     * @param {Boolean} fromAutoPlay true=进房自动播第一条；false=用户在回放列表里点的这一条
      */
-    playback(url, autoplay = false) {
+    playback(url, fromAutoPlay = false) {
       if (!url) return;
 
-      if (!autoplay) {
+      if (!fromAutoPlay) {
         this.userPlaybackSelected = true;
       }
       this.videoErrorLocked = false;
-      this.playbackAutoplay = autoplay;
+      // 自动首播与用户点选走同一条起播链：播放器按 autoplay 建实例，有声被浏览器拦截时
+      // 由 video-h5 的 playWithAutoplayFallback 降级静音重试。此前用户点选传的是
+      // autoplay=false，换源/首次挂载后播放器只停在「大播放按钮」那一帧，
+      // $nextTick 里补的那一次 play() 又常因引擎未 ready 被吞掉——
+      // 用户读出来就是「点了回放列表某一条，画面没有任何反应」
+      this.playbackAutoplay = true;
       this.videoUrlSetAt = Date.now();
       this.videoUrl = url;
       this.isLive = false;
@@ -1607,6 +1975,7 @@ export default {
       // 未安装表单插件时直接放行
       if (!that.$tools.systemConfig('app_isinstall_form')) {
         done(false);
+        that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
         return;
       }
       that
@@ -1938,20 +2307,23 @@ export default {
     checkLiveEnded() {
       var self = this;
 
-      // 鉴权地址临期主动重签：播流地址签名有效期 10 分钟，稳定观看期间 getRoomDetail 不会
-      // 自动刷新，地址过期后播放器拉流 403 → 恢复失败 → liveStreamStop「主播暂时离开」，
-      // 需约 40s 才能恢复（线上实证观看约 10 分钟掉一次）。在线在播时临近过期（>8.5min）
-      // 主动全量刷新，由 applyOnlineSourceUrl 的临期重签路径换新签名重建（约 1~2s 换源，
-      // pickUrlWithDowngradeState 同源重签沿用当前协议，不跳协议）
+      // 鉴权地址临期主动重签：按地址自带 auth_key 的到期时刻判定（见 playUrlExpireAt），
+      // 到期前 2 分钟全量刷新换签名，由 applyOnlineSourceUrl 的重签路径重建播放器（约 1~2s
+      // 换源，pickUrlWithDowngradeState 同源重签沿用当前协议，不跳协议）。
+      // 原实现是「距上次落盘超过 8.5 分钟就刷新」——那是播流地址只有 10 分钟有效期时代
+      // 的阈值，后端地址有效期已改成 12 小时（live/Url.php $playExpireTime），这条判定只剩
+      // 副作用：稳定观看每 8.5 分钟为一个还有效的流白重建一次播放器，观感即「看着看着画面
+      // 突然停住、顶出大播放按钮」，重建慢于出画面看门狗窗口时还会直接锁成「视频加载失败」。
+      // 重签节流 60s：后端返回同一条已过期的签名地址时（缓存/时钟偏差）不让 10s 轮询连环重建
       if (
+        !this.playUrlFresh() &&
+        Date.now() - this.videoUrlSetAt > LIVE_SOURCE_RESIGN_MIN_MS &&
         this.everPlayed &&
         !this.videoErrorLocked &&
         !this.qualitySwitching &&
         !this.streamStopped &&
         this.roomData &&
-        this.roomData.status == "online" &&
-        this.videoUrlSetAt > 0 &&
-        Date.now() - this.videoUrlSetAt > LIVE_SOURCE_RESIGN_MS
+        this.roomData.status == "online"
       ) {
         this.refresh(false, true);
         return;
@@ -1962,8 +2334,12 @@ export default {
       // FLV/转码流断流时播放器往往不抛 liveStreamStop/error 任何事件，画面停在最后一帧；
       // 后端 CDN 断流检测也存在滞后窗口，只靠 live.room.status 等待翻转可能长时间不刷新。
       // 此处先行进入「主播暂时离开」过渡态（streamStopped）并轻量刷新，
-      // 由刷新后的后端权威状态接管：主播恢复推流则解除标记恢复直播，直播已结束则停在状态页
+      // 由刷新后的后端权威状态接管：主播恢复推流则解除标记恢复直播，直播已结束则停在状态页。
+      // 伪直播豁免：播的是录制视频，播完/停滞都不代表断流，本地死流判定只会成为
+      // 「重建→又播完→再重建」的循环源头；结束与否由后端开播时间段轮询为准
+      // （口径同 tuzi-web 中控台 studio.vue checkStreamAlive 的伪直播分支）
       if (
+        !this.isPseudoLiveOnline &&
         !this.streamStopped &&
         !this.videoErrorLocked &&
         this.roomData &&
@@ -2030,6 +2406,113 @@ export default {
       if (this.onlineStatusTimer) {
         this.stopOnlineStatusPolling();
         this.startOnlineStatusPolling();
+      }
+    },
+
+    /**
+     * 消息服务连接状态卡「本应显示」状态变化（message-box 上抛 link-bar-state）
+     * 卡片彻底不该显示时（连上 / 未进过失败态）把收起位一并复位，否则下一次失败会被上一次的
+     * 关闭动作挡住、卡片再也不出来，右侧那枚入口却亮着
+     * @param {Boolean} shown
+     * @return {void}
+     */
+    onLinkBarState(shown) {
+      this.linkBarState = !!shown;
+      if (!shown) {
+        this.linkBarDismissed = false;
+      }
+    },
+
+    /**
+     * 分享有礼 / 邀请达人榜两枚入口各自上抛「此刻显示着」（组件已把自己的 entryVisible 与页面闸门
+     * 与过一遍，见 share-gift-popup 与 invite-rank-entry 的 entryOn）
+     * @param {Boolean} on
+     * @return {void}
+     */
+    onShareGiftEntryState(on) {
+      this.shareGiftEntryOn = !!on;
+    },
+    onInviteRankEntryState(on) {
+      this.inviteRankEntryOn = !!on;
+    },
+
+    /**
+     * 实时消息：右侧悬浮栏三枚的显隐变更（message-box 上抛 live-entry，后端 EntryNotice 推）
+     *
+     * 用户 2026-10-02 点名的三个场景都落在这一条上：
+     *   ① 分享有礼：管理员在直播中新建活动 → 入口即时出（此前只在进房/onShow 取一次，学员完全收不到）
+     *   ② 邀请达人榜：管理员在直播中把开关打开 → 入口即时出
+     *   ③ 红包：管理员在直播中发红包 → 入口即时出
+     *
+     * 三枚真值由后端现算随消息下发（redpacket / share_gift / invite_rank），
+     * **前端只赋值不自己判**（M22）—— 判据一旦在前端再抄一遍，下一轮商家改口径就对不上。
+     *
+     * 三枚的处理方式不同，理由各不相同：
+     *   - 红包：判据（开关 AND 本场发过红包）后端已算成一个数，直接 $set 进 roomData.redpacket_entry
+     *     （与 redpacketEntryOn 读的是同一个键；**不去改 roomData.config.redpacket**——那一枚是商家开关本身，
+     *      被广播的值覆盖掉后，首屏重取与页面其它读点会和商家设置对不上）
+     *   - 分享有礼 / 达人榜：判据落在各自组件里（各自接口 + 插件安装 + 页面闸门），
+     *     页面不另存一份，所以转调它们的 reload() 重取一次，由组件自己判完上抛 entry-state，
+     *     sideEntryLevels 随之重算（缺席一枚时另两枚补位，中间不留空洞）
+     *
+     * 消息服务没开 / 没连上时推不到：那一档由 onShow 的 reload 与 10s 轮询兜底，本就不依赖这条消息。
+     * @param {Object} data live_entry 消息体
+     * @return {void}
+     */
+    onLiveEntry(data) {
+      if (!data) {
+        return;
+      }
+      // 二次校验 course_id：群组广播理论上只到这一场，仍按控制类消息的既有口径（link_rejected 那几支）挡一道
+      if (data.course_id && String(data.course_id) !== String(this.pageParams.id)) {
+        return;
+      }
+      if (data.redpacket !== undefined && data.redpacket !== null && this.roomData) {
+        this.$set(this.roomData, "redpacket_entry", Number(data.redpacket) === 1 ? 1 : 0);
+      }
+      if (data.share_gift !== undefined && data.share_gift !== null) {
+        this.$refs.shareGiftPopup &&
+          this.$refs.shareGiftPopup.reload &&
+          this.$refs.shareGiftPopup.reload();
+      }
+      if (data.invite_rank !== undefined && data.invite_rank !== null) {
+        this.$refs.inviteRankPopup &&
+          this.$refs.inviteRankPopup.reload &&
+          this.$refs.inviteRankPopup.reload();
+      }
+    },
+
+    /**
+     * 讨论区里出现活动卡片（分享有礼 / 邀请达人榜）⇒ 重判右侧那一枚悬浮入口
+     *
+     * 用户 2026-10-04 点名：「直播开始时并没有相关记录，直播过程中添加了一个活动……只要在讨论区出现过，
+     * 那么应该判断一下，监听这个事件显示按钮」。上面 onLiveEntry 那一路走的是「管理侧写入即推」的控制消息，
+     * 卡片这一路是**落库的聊天消息**，两条路各有各的落空面（消息服务没开时都推不到；
+     * 建活动那一刻没连上、之后主播才把卡片发到讨论区），收到卡片这一枚既成事实就重取一次，
+     * 比只押一条路稳。
+     * 这里只做「重取」，判据仍在后端各自的接口里（分享有礼 = 这一场有没有活动行；
+     * 达人榜 = 运营设置开关 ∧ 设置表单状态），**前端不自己把入口点亮**——点亮一枚后端判不该出的入口
+     * 就是 M22 明令禁止的「前端重判」。
+     * @param {Object} data 聊天消息，data.type = share_gift | invite_rank
+     * @return {void}
+     */
+    onEntryCardMessage(data) {
+      if (!data || !data.type) {
+        return;
+      }
+      // 与 onLiveEntry 同一道二次校验：群组广播理论上只到这一场，仍按 course_id 挡一道
+      if (data.course_id && String(data.course_id) !== String(this.pageParams.id)) {
+        return;
+      }
+      if (data.type === "share_gift") {
+        this.$refs.shareGiftPopup &&
+          this.$refs.shareGiftPopup.reload &&
+          this.$refs.shareGiftPopup.reload();
+      }
+      if (data.type === "invite_rank") {
+        this.$refs.inviteRankPopup &&
+          this.$refs.inviteRankPopup.reload &&
+          this.$refs.inviteRankPopup.reload();
       }
     },
 
@@ -2210,7 +2693,10 @@ export default {
             // 期间已切离线过渡/终态/锁定：状态链路已接管
             return;
           }
-          if (!alive) {
+          // 伪直播一律走重挂续播：它播的是点播文件，永远 200 可达，alive=true 不能像直播
+          // 那样证明「协议真死」；而降级链对伪直播没有任何可降协议（push_url 只有一个 hls
+          // 键），照直播分支锁死就等于「起播稍慢一次 → 直接报错等人手点刷新」
+          if (!alive || that.isPseudoLiveOnline) {
             that.streamRetryCount++;
             setTimeout(function () {
               if (that.videoErrorLocked || that.streamStopped || that.roomData.status !== "online") {
@@ -2307,6 +2793,30 @@ export default {
     },
 
     /**
+     * 播放地址自带的鉴权到期时刻（ms）：阿里云 URL 鉴权 A 型的 auth_key 形如
+     * 「到期秒级时间戳-0-0-md5」，第一段即到期时间（后端 live/Url.php 用
+     * time() + $playExpireTime 签发，播流地址 12 小时有效；点播 PlayURL 由云端签发更短）。
+     * 必须是方法而不是 computed：到期与否随时间推进，computed 在 videoUrl 不变时会一直
+     * 返回首次求值的旧结论
+     * @param {String} url 待判地址，缺省取当前播放地址
+     * @return {Number} 到期时间戳（ms），地址不含 auth_key（公开读/本地存储）时返回 0
+     */
+    playUrlExpireAt(url) {
+      var m = String(url || this.videoUrl || "").match(/[?&]auth_key=(\d{6,})/);
+      return m ? parseInt(m[1], 10) * 1000 : 0;
+    },
+
+    /**
+     * 播放地址是否仍然够用（离到期还有提前量）：不含 auth_key 的地址视为一直够用
+     * @param {String} url 待判地址，缺省取当前播放地址
+     * @return {Boolean} true = 还不需要换签名
+     */
+    playUrlFresh(url) {
+      var expireAt = this.playUrlExpireAt(url);
+      return expireAt === 0 || expireAt - Date.now() > LIVE_SOURCE_RESIGN_AHEAD_MS;
+    },
+
+    /**
      * 两个播放地址是否同一播放源（协议+流路径一致，忽略签名等 query 参数）：
      * 阿里云鉴权地址每次接口请求签名都不同，但路径相同即为同一流——
      * 详情刷新/状态探测/开播推送的重复刷新不应因「签名变了」重建播放器
@@ -2333,7 +2843,7 @@ export default {
 
     /**
      * 在线状态播放地址落盘（统一入口）：
-     * - 同源（路径一致）且地址仍在新鲜期（后端签名有效期 10 分钟，留余量 8 分钟）：
+     * - 同源（路径一致）且当前地址离到期还有余量：
      *   沿用当前地址继续播——只刷新清晰度登记（含最新签名地址对象，供降级链取同源各协议地址），
      *   不重写 videoUrl、不重建播放器、不复位降级状态；
      * - 真换源（路径变化）或地址临近过期：落盘新地址并复位 RTS/FLV/LL-HLS 降级标记（新一轮尝试）。
@@ -2346,8 +2856,7 @@ export default {
      */
     applyOnlineSourceUrl(url, quality, forceRebuild) {
       if (!url) return;
-      var keepAlive = Date.now() - (this.videoUrlSetAt || 0) < LIVE_SOURCE_KEEP_MS;
-      if (!forceRebuild && this.sameSourcePath(url, this.videoUrl) && keepAlive) {
+      if (!forceRebuild && this.sameSourcePath(url, this.videoUrl) && this.playUrlFresh()) {
         this.currentQuality = quality || null;
         return;
       }
@@ -2786,10 +3295,9 @@ export default {
             that.stopOnlineUserPolling();
           }
 
-          // 直播在线且红包插件已安装时，拉取进行中的红包（用户错过消息推送可补拉）
-          if (res.data.status == "online") {
-            that.getActiveRedpacket();
-          }
+          // 进页不再单独补拉「进行中的红包」：那一份数据原先只喂右侧入口的显隐判据，
+          // 判据改成吃商家开关后它就没有读者了；错过推送的用户现在从右侧「红包」进记录屏挑那一只
+          // （记录屏按 course_id 列这一场发过的每一只，进行中那支自然排在最上面）
 
           // 结束探测：在线状态时启动 10s 轻量状态轮询，直播结束后及时切换状态页；
           // 非在线状态由上方 10s 轮询（offline/not_start）接管，此处停止在线轮询
@@ -2806,36 +3314,6 @@ export default {
           that.applyRoomStatusFailTip(false);
           return false;
         });
-    },
-
-    /**
-     * 拉取直播间当前进行中的红包
-     * 进入直播间时调用，避免用户错过红包消息推送后无法看到红包
-     */
-    getActiveRedpacket() {
-      if (!this.$tools.systemConfig('app_isinstall_live_redpacket')) {
-        return;
-      }
-      var self = this;
-      this.$api('live.redpacket.getActive', {
-        course_id: this.pageParams.id,
-      }).then(function (res) {
-        if (res && res.code == 1 && res.data && res.data.id) {
-          var rp = res.data;
-          // 构造弹窗数据（与消息推送的数据结构保持一致）
-          self.redpacketData = {
-            id: rp.id,
-            nickname: rp.admin_name,
-            avatar: '',
-            type: rp.type,
-            type_text: rp.type == 'equal' ? '普通红包' : '拼手气红包',
-            total_amount: rp.total_amount,
-            total_num: rp.total_count,
-            blessing: rp.blessing,
-          };
-          // 不自动弹出，仅在用户点击红包气泡时打开（进行中红包会在消息列表渲染）
-        }
-      }).catch(function () {});
     },
 
     /**
@@ -3054,6 +3532,11 @@ export default {
       this.isPlaying = true;
       // 用户已表达播放意图：后续若降级换源/重建播放器，据此自动续播（不必再点一次）
       this.userPlayRequested = true;
+      // 起播真的开始了、首帧还没出：这一格才该给加载反馈（waiting 在「等用户手势」那一态
+      // 不点亮，见 onVideoWaiting），首个 timeupdate 确认真实出画面后收起
+      if (!this.everPlayed) {
+        this.videoFirstLoading = true;
+      }
       // 结束播放中途卡顿缓冲遮罩（waiting 恢复后 first play 即出画面）
       this.clearVideoBufferTimer();
       if (this.videoBuffering) {
@@ -3071,17 +3554,24 @@ export default {
     },
 
     fakeVideoJump(){
-      if(this.roomData && this.data && this.data.live_type == 2 && this.roomData.status == 'online'){
-        //这里应该通过前端获取实时的live_current_time
-        // 计算当前应跳转的直播进度（秒）
-        const now = Math.floor(Date.now() / 1000); // 当前 Unix 时间戳（秒）
-        const liveStartTime = parseInt(this.data.live_start_time); // PHP 时间戳（秒）
-        this.data.live_current_time = Math.max(0, now - liveStartTime); // 直播已进行时长（秒）
-
-        setTimeout(() => {
-          this.$refs.videoBox.setCurrentTime(parseInt(this.data.live_current_time));
-        }, 500);
+      if (!this.isPseudoLiveOnline || !this.$refs.videoBox) {
+        return;
       }
+      const liveStartTime = parseInt(this.data.live_start_time); // PHP 时间戳（秒）
+      if (!liveStartTime) {
+        return;
+      }
+      //这里应该通过前端获取实时的live_current_time
+      // 计算当前应跳转的直播进度（秒）
+      const now = Math.floor(Date.now() / 1000); // 当前 Unix 时间戳（秒）
+      this.data.live_current_time = Math.max(0, now - liveStartTime); // 直播已进行时长（秒）
+
+      setTimeout(() => {
+        // 500ms 内播放器可能已因错误锁定被 v-if 卸载
+        if (this.$refs.videoBox) {
+          this.$refs.videoBox.setCurrentTime(parseInt(this.data.live_current_time));
+        }
+      }, 500);
     },
 
     /**
@@ -3139,8 +3629,64 @@ export default {
         },
       });
     },
+
+    /**
+     * 实测讨论区（消息面板）的垂直中心线，写进 discussionCenterY 供右侧悬浮栏整栏居中
+     *
+     * 量 `.message-box`（页面自己模板里的那一层，不是子组件内部节点 —— 小程序端
+     * createSelectorQuery 的类选择器穿不进自定义组件，量 `.page-chat` 会量不到）。
+     * 减去 `.tiktok-live-room` 的顶边，得到的坐标才是「相对直播间容器」的（容器是
+     * `top:50% + translateY(-50%)` 的 fixed，正常等于视口顶边，但仍按实测相减，换定位方式也不会错）。
+     *
+     * 三道收口，一处都不能少：
+     * ① 清屏期间 `.ui-layer` 是 `display:none`（v-show），量出来全是 0 ⇒ 直接跳过，保留上一份；
+     * ② 量不到 / 量出 0（骨架屏期间该节点还不存在、横竖屏切换那一瞬）⇒ 保留上一份，**不许拿 0 覆盖**，
+     *    覆盖的表现是整栏瞬间贴到容器顶部再弹回来；
+     * ③ 回调晚于页面卸载时不再写响应式数据（M23：这一族会让整条 setData 通道出事；
+     *    这里逐回调挡一道，main.js 那个出口闸门是兜底）。
+     * 反复调用由 _centerMeasureTimer 合并成一次（watch 与 onShow 会各叫一次）。
+     */
+    measureDiscussionCenter() {
+      const self = this;
+      if (this.isClearScreen) {
+        return;
+      }
+      if (this._centerMeasureTimer) {
+        clearTimeout(this._centerMeasureTimer);
+      }
+      // 下一拍再量：watch 触发时这一轮的 DOM 还没落，nextTick 也只保证到本轮渲染队列
+      this._centerMeasureTimer = setTimeout(function () {
+        self._centerMeasureTimer = null;
+        if (self._isDestroyed || self._isBeingDestroyed) {
+          return;
+        }
+        uni
+          .createSelectorQuery()
+          .in(self)
+          .select('.tiktok-live-room')
+          .boundingClientRect()
+          .select('.message-box')
+          .boundingClientRect()
+          .exec(function (res) {
+            if (self._isDestroyed || self._isBeingDestroyed) {
+              return;
+            }
+            const room = res && res[0];
+            const box = res && res[1];
+            if (!room || !box || !box.height) {
+              return;
+            }
+            const y = box.top + box.height / 2 - room.top;
+            if (y > 0) {
+              self.discussionCenterY = y;
+            }
+          });
+      }, 60);
+    },
   },
   onHide() {
+    // 离开页面先补最后一枪再停表：缓存里最后一段时长原本要等定时任务才落库
+    courseLibrary.flushLiveStudyLog(that.pageParams.id, that.pageParams.column_id);
     courseLibrary.stopStudyLog();
     courseLibrary.banScreenRecordCancel();
 
@@ -3183,6 +3729,11 @@ export default {
     this.stopOnlineStatusPolling();
     // 清理骨架屏兜底定时器
     clearTimeout(this._loadingWatchdog);
+    // 清理讨论区中心线实测的合并定时器（回调里另有已销毁闸门，这里先停掉别让它再排下一轮）
+    if (this._centerMeasureTimer) {
+      clearTimeout(this._centerMeasureTimer);
+      this._centerMeasureTimer = null;
+    }
 
     // #ifdef H5
     window.removeEventListener('message', this.handleIframePayMessage);
@@ -3191,10 +3742,14 @@ export default {
     this.$refs.message && this.$refs.message.onPageUnload && this.$refs.message.onPageUnload()
   },
   deactivated() {
+    courseLibrary.flushLiveStudyLog(that.pageParams.id, that.pageParams.column_id);
     courseLibrary.stopStudyLog();
   },
   onShow() {
     courseLibrary.intervalSetStudyLog(that.pageParams.id,that.pageParams.column_id);
+    // 右侧悬浮栏那根栏的基准线跟着讨论区走：从别的页面退回、或横竖屏转过一轮之后，
+    // 视口尺寸变了，先按新尺寸重量一次（这一行不重量的后果：栏停在旧屏高的位置上）
+    that.measureDiscussionCenter();
     // 页面重新显示时标记为活跃，恢复轮询；首次 onShow 与 onLoad 属同一次进页，
     // 首次详情请求已经发出，不能再补发一次，否则会在用户首次点播放时重建播放器。
     that.isPageActive = true;
@@ -3202,6 +3757,17 @@ export default {
       // 非 H5 端首次加载仍由 onShow 发起；后续从后台回到页面同样视为用户主动刷新，
       // 停机状态下也放行一次。
       that.userRefresh();
+      // 分享有礼入口同理：从地址编辑页/其它页退回直播间时由本页重判一次显隐（M23：谁被返回谁自己重取）。
+      // 首进那一次不补发——组件自己 mounted 已经取过一遍了。
+      if (that.hasShownOnce) {
+        that.$refs.shareGiftPopup &&
+          that.$refs.shareGiftPopup.reload &&
+          that.$refs.shareGiftPopup.reload();
+        // 邀请达人榜入口同理（判据是后端 show_entry = 开关开 且 榜上有人，会从别处变掉）
+        that.$refs.inviteRankPopup &&
+          that.$refs.inviteRankPopup.reload &&
+          that.$refs.inviteRankPopup.reload();
+      }
     }
     that.hasShownOnce = true;
   },
@@ -3221,6 +3787,9 @@ export default {
     that = this;
     this.setContainerHeight(true);
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    // 链接直达直播间（分享有礼的邀请链接、后端 Links 出的海报二维码）带的邀请人 id 也记一份：
+    // 从直播间退回详情页、再进直播间时 URL 上不再有参数，这一场仍然认原来那位邀请人
+    rememberInviter(that.pageParams.id, inviterFromParams(that.pageParams));
     // #ifdef H5
     that.initialRefreshStarted = true;
     that.refresh(true);

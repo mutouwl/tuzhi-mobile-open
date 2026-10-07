@@ -87,6 +87,15 @@
 			this.init()
 		},
 		methods: {
+			/**
+			 * 组件/所在页面是否已销毁：量宽与交叉观察器的回调都是异步的，回来时页面可能已经卸载，
+			 * 此刻写响应式数据 ⇒ Vue patch ⇒ setData 打到空页面上 ⇒ WeChat 运行时抛
+			 * `TypeError: Cannot read properties of null` 并从此废掉整个 setData 通道
+			 * （所有页面停在首屏骨架屏、点击全像失灵，接口却都是 200）。详见 tz-share-poster-body 的 gone()。
+			 */
+			gone() {
+				return this._isDestroyed === true || this._isBeingDestroyed === true
+			},
 			init() {
 				this.getStickyTop()
 				// 判断使用的模式
@@ -99,6 +108,15 @@
 			initObserveContent() {
 				// 获取吸顶内容的高度，用于在js吸顶模式时，给父元素一个填充高度，防止"塌陷"
 				this.$uGetRect('#' + this.elId).then((res) => {
+					if (this.gone()) return
+					// 小程序端首帧可能量到 0（节点还没进渲染层）。JS 吸顶模式下内容会被搬进
+					// position:fixed + width:0px 那只盒子——版式看着照常（子节点溢出绘制），
+					// 命中区域却收成 0，症状是「带里的页签/按钮整排全点不动」且控制台不报错。
+					// 量不到就退回纯 CSS sticky 那一档（本组件自己的 wxss 已声明 position:sticky）
+					if (!res || !res.width || !res.height) {
+						this.cssSticky = true
+						return
+					}
 					this.height = res.height
 					this.left = res.left
 					this.width = res.width
@@ -125,6 +143,8 @@
 				this.contentObserver = contentObserver
 			},
 			setFixed(top) {
+				// 交叉观察器的回调：组件销毁后仍可能再来一发（observer 的 disconnect 与回调在同一拍竞争）
+				if (this.gone()) return
 				// 判断是否出于吸顶条件范围
 				const fixed = top <= this.stickyTop
 				this.fixed = fixed
@@ -136,7 +156,6 @@
 			},
 			getStickyTop() {
 				this.stickyTop = uni.$u.getPx(this.offsetTop) + uni.$u.getPx(this.customNavHeight)
-				console.log("this.stickyTop",uni.$u.getPx(this.offsetTop),this.offsetTop,this.customNavHeight)
 			},
 			async checkSupportCssSticky() {
 				// #ifdef H5
@@ -174,6 +193,14 @@
 					uni.createSelectorQuery().in(this).select('.u-sticky').fields({
 						computedStyle: ["position"]
 					}).exec(e => {
+						// 原来不判空就读 e[0].position：首帧节点还没进渲染层时 e[0] 是 null，这一下抛进
+						// exec 回调 ⇒ Promise 永不 resolve ⇒ cssSticky 永久停在 false，组件掉进 JS 吸顶
+						// 那一档（0 尺寸的命中区域见 initObserveContent 的守卫）。查不到不等于不支持：
+						// 本组件的 wxss 已声明 position:sticky，按支持处理
+						if (!e || !e[0]) {
+							resolve(true)
+							return
+						}
 						resolve('sticky' === e[0].position)
 					})
 				})

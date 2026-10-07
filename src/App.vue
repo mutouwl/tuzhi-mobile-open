@@ -3,6 +3,15 @@
 	import Wechat from "./common/wechat/wechat";
 	export default {
 		onLaunch: function () {
+			/**
+			 * 构建戳：排查「客户端到底跑的是哪一份包」用。
+			 * ⚠ 不能只写 console.log —— 生产包（build:mp-weixin）会把 console 全部剥掉，
+			 * 那条戳在产物里根本不存在（2026-09-27 实测 dist 里 grep 不到），照着"打日志看戳"会白查。
+			 * 所以同时写一份 Storage：开发者工具 → 调试器 → Storage 面板搜 `__mp_build__` 即可确认版本。
+			 */
+			var buildStamp = "2026-09-28-0620 渲染异常四层隔离 + 出栈窗口自愈看门狗 + 海报按需挂载 + 清 wxss 非法选择器";
+			try { uni.setStorageSync("__mp_build__", buildStamp); } catch (e) {}
+			console.log("__MP_BUILD__ " + buildStamp);
 			this.init();
 
 			var that = this;
@@ -84,6 +93,19 @@
 				}
 				// 访问统计关闭后不再上报页面访问记录
 				if (this.$tools && this.$tools.systemConfig("app_statistics_visit_log") == '0') {
+					return false;
+				}
+				// 切到阿里云日志服务后直连上报，不再经过自己的 PHP。
+				// PV 不做汇总：进出几次就是几条，汇总反而把「进出次数」这个语义抹掉了。
+				// page_type / page_id 不在端上算 —— 那套 url 映射是后端 Record::getPageInfo 里的
+				// switch 白名单，端上再抄一份必然对不上，留给回流时按同一套逻辑补。
+				if (this.$sls && this.$sls.isSlsMode()) {
+					this.$sls.send({
+						biz_type: 'pv',
+						log_id: this.$sls.newLogId(),
+						url: url,
+						visitor_id: this.$sls.visitorId()
+					});
 					return false;
 				}
 				this.$api("data.record", { url: url });
@@ -194,8 +216,12 @@
 	*{
 		box-sizing: border-box;
 	}
+	/* uni.showToast 要压在「图片放大预览」那一层之上：uni-app 的 app 外壳里 <toast> 排在
+	   <preview-image> 前面，同 z-index 时预览会把提示盖掉（日签图点「保存」要在放大图的同时
+	   看得见那句「长按图片可保存至相册」，2026-09-26 用户点名）。提示层是 pointer-events:none
+	   的整屏壳，抬高一档不会挡住预览的滑动与长按。 */
 	uni-toast {
-		z-index: 999999;
+		z-index: 1000000;
 	}
 
 	/*  #ifdef H5  */
@@ -287,11 +313,12 @@
 		border-radius: 10px;
 	}
 
-	/* ===== 校务（教务）模块统一版式 =====
+	/* ===== 校务（教务）/ 打卡等模块统一版式（卡片版式口径见 .trae/rules/ui-baseline-mobile.md M21） =====
 	   口径参照套餐详情页 pages/app/school/package/detail：整页卡片为通栏白卡（margin 12px 0 0、无圆角、
 	   左右内衬 16px）；列表页条目卡同样不做圆角（直角）、列表左右留边 10、卡间距 10、卡内衬 14；底部弹窗顶部圆角 10。
 	   说明：移动端页面 css 未加 scoped，H5 端所有页面样式合并为全站生效，同名结构类会随打包顺序互相覆盖
-	   （历史上教务页圆角/边距反复不统一的根因），故模块共用结构类集中在此，各页不再自定义同名规则。 */
+	   （历史上教务页圆角/边距反复不统一的根因），故模块共用结构类集中在此，各页不再自定义同名规则。
+	   自带底色的提示条（蓝/橙 notice）不要挂 .school-block，只借它的 margin 档位。 */
 	.school-page {
 		min-height: 100vh;
 		background: #f7f8fa;
@@ -367,6 +394,13 @@
 	/* 列表页：容器留边 10，条目卡直角（不做圆角，与模块通栏白卡口径一致）、内衬 14、卡间距 10 */
 	.school-cards {
 		padding: 10px;
+	}
+
+	/* 分隔线档列表（打卡「我的打卡」「可参与的打卡」）：条目卡自带左右内衬与行间发丝线、白底通栏，
+	   容器随之收掉左右留边（白底要铺到屏幕缘）；顶部贴顶不留边（2026-09-27 用户口径「最上方去掉页面顶部上边距」），
+	   底部留边仍取上面的 10px 档 */
+	.school-cards.school-cards--divided {
+		padding: 0 0 10px;
 	}
 
 	/* 列表页吸顶搜索栏（套餐列表 / 校区列表同款） */

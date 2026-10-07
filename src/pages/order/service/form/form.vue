@@ -52,7 +52,7 @@
 		<u-empty mode="order" text="加载中" v-if="error"></u-empty>
 
 
-		<u-action-sheet v-if="reasonOption.length > 0" cancelText="取消" :closeOnClickOverlay="true" :closeOnClickAction="true"
+		<u-action-sheet v-if="reasonOption.length > 0" :round="10" cancelText="取消" :closeOnClickOverlay="true" :closeOnClickAction="true"
 			 :show="modal.reason"
 			@close="modal.reason = false" :actions="reasonOption" title="请选择原因" @select="reasonSelect">
 		</u-action-sheet>

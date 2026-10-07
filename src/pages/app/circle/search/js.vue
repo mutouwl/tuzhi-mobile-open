@@ -11,8 +11,11 @@ export default {
       // 搜索框自动聚焦（进入页面后延迟置 true，拉起输入键盘）
       searchFocus: false,
       loading: true,
-      // 空状态文案：未搜索/搜索无结果两种
+      // 空状态文案：未搜索/搜索无结果/请求失败三种
       loadMsg: '请输入搜索内容',
+      // 搜索/筛选失败的那一句（M16 切档④）：与「没有找到相关动态」分开，不把接口故障说成没结果
+      listError: '',
+      reqSeq: 0, // 请求序号：连点搜索/筛选时自增，丢弃过期响应
       sort: 'new',
       timeFilter: 'all', // 时间筛选：all/7/30/custom
       customRange: { start: '', end: '' }, // 自定义时间范围（YYYY-MM-DD）
@@ -28,6 +31,12 @@ export default {
     };
   },
   computed: {
+    // 列表加载态（M16 列表页判据）：首屏（loading）与切档/搜索/筛选（tabLoading）两支都驱动它，
+    // 但都要「且列表为空」才成立——翻页追加时列表非空，不闪骨架。
+    // 吸顶搜索栏不在这个判据里，它留在骨架屏外保持可点。
+    listLoading() {
+      return (this.loading || this.tabLoading) && !this.posts.length;
+    },
     // 筛选条件是否已生效（非默认排序或非全部时间），驱动筛选图标选中色
     filterActive() {
       return this.sort != 'new' || this.timeFilter != 'all';
@@ -41,6 +50,7 @@ export default {
     if (!that.$tools.systemConfig("app_isinstall_circle")) {
       uni.showToast({ title: "圈子功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     if (!that.id) {
@@ -70,7 +80,8 @@ export default {
   },
   onReachBottom() {
     if (that.posts.length < that.total) {
-      that.loadPosts(true);
+      // 带上当前序号，否则 loadPosts 里的过期响应闸门会把这一页整条丢弃（翻页永远长不出内容）
+      that.loadPosts(true, that.reqSeq);
     }
   },
   methods: {
@@ -140,15 +151,18 @@ export default {
     refresh() {
       that.page = 1;
       that.posts = [];
+      // 请求序号：连点搜索/筛选时自增，只有最后一条结果算数，
+      // 早回来的那条整条丢弃，否则慢的那次会把新条件的结果盖回去（M16 切档③）
+      const seq = ++that.reqSeq;
       that.tabLoading = true;
-      return that.loadPosts(false).finally(() => {
-        that.tabLoading = false;
+      return that.loadPosts(false, seq).finally(() => {
+        if (seq === that.reqSeq) that.tabLoading = false;
         // 停止下拉刷新动画：refresh 被 onPullDownRefresh 直接调用（不走 loadCircle），
         // 不在此停止会导致数据已加载完成但原生下拉加载图标一直转
         uni.stopPullDownRefresh();
       });
     },
-    async loadPosts(more) {
+    async loadPosts(more, seq) {
       if (that.loadingMore) return;
       that.loadingMore = true;
       that.loadStatus = 'loading';
@@ -159,6 +173,7 @@ export default {
         that.total = 0;
         that.loadStatus = 'nomore';
         that.loadMsg = '请输入搜索内容';
+        that.listError = '';
         return;
       }
       // 时间筛选参数：近七天/近30天传开始时间戳；自定义传起止时间戳
@@ -173,23 +188,39 @@ export default {
         start_time: timeParams.start_time,
         end_time: timeParams.end_time,
       };
-      const res = await that.$api('circle.post.list', params);
+      let res;
+      try {
+        res = await that.$api('circle.post.list', params);
+      } catch (e) {
+        // 网络异常这一支也要收尾，否则骨架屏撤不掉
+        that.loadingMore = false;
+        that.loadStatus = 'loadmore';
+        if (seq === that.reqSeq && !more) {
+          that.listError = (e && (e.msg || e.errMsg)) || '加载失败，请重试';
+          that.loadMsg = that.listError;
+        }
+        return;
+      }
       that.loadingMore = false;
-      if (res.code === 1) {
+      // 期间已改搜索词/换筛选：丢弃过期响应
+      if (seq !== that.reqSeq) return;
+      if (res && res.code === 1) {
         const rows = res.data.rows || [];
         that.total = res.data.total || 0;
         that.posts = more ? that.posts.concat(rows) : rows;
         that.page++;
         that.loadStatus = that.posts.length >= that.total ? 'nomore' : 'loadmore';
+        that.listError = '';
         // 首次搜索（非加载更多）无结果时展示搜索无结果提示
-        if (!more && rows.length === 0) {
-          that.loadMsg = '没有找到相关动态';
+        if (!more) {
+          that.loadMsg = rows.length === 0 ? '没有找到相关动态' : '';
         }
       } else {
         that.loadStatus = 'loadmore';
         if (!more) {
-          // 非成员/异常：展示接口提示
-          that.loadMsg = res.msg || '没有找到相关动态';
+          // 非成员/异常：展示接口提示（不把接口故障说成「没有找到相关动态」）
+          that.listError = (res && res.msg) || '加载失败，请重试';
+          that.loadMsg = that.listError;
         }
       }
     },

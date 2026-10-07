@@ -117,7 +117,7 @@ export default {
                     end_date: endDate,
                 }).then((ret) => {
                     // 过期响应丢弃：快速切天/翻周时后发的请求先回，旧响应不得覆盖新数据
-                    if (seq !== this.refreshSeq) return;
+                    if (seq !== this.refreshSeq) { this.calendarLoading = false; return; } // 过期响应只丢数据，日历卡蒙版的出口不能省
                     // 首个课表数据已落地（成功或失败都算「初始化结束」），撤掉日历卡的加载蒙版
                     this.calendarLoading = false;
                     this.allowLeave = ret.data.allow_leave !== false;

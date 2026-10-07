@@ -1,7 +1,14 @@
 <template>
 	<div class="container">
 		<tz-box bgColor="none">
-			<div class="settle-header">
+			<!-- 可提现金额随接口回填：到手前这一格按真实版式占好位置再盖骨架块，不摆一枚空的「¥ 」（M16）；
+			     提现按钮与下方两个入口不依赖接口，常驻不动 -->
+			<div class="settle-header stl-sk" v-if="loading">
+				<div class="settle-icon"><span class="stl-sk-img stl-sk-block"></span></div>
+				<div class="settle-tip"><span class="stl-sk-line stl-sk-block sk-w-30"></span></div>
+				<div class="settle-balance"><span class="stl-sk-line stl-sk-block sk-w-40"></span></div>
+			</div>
+			<div class="settle-header" v-else>
 				<div class="settle-icon">
 					<img src="@/static/image/app/withdraw.png">
 				</div>

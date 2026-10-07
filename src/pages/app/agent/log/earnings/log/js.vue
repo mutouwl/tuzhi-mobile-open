@@ -11,6 +11,8 @@ export default {
         type: 'commission'
       },
       list: [],
+      // 首屏即为加载态：列表与汇总区先铺骨架屏（M16），撤骨架屏等本页这次要的数据全部回音
+      loading: true,
       pageParams: {
         uid: 0
       },
@@ -73,27 +75,31 @@ export default {
 
     getData() {
 
-      uni.showLoading({
-        title: '请稍后'
-      });
-      that.getTotal();
       //资产类型
       var form = JSON.parse(JSON.stringify(that.form));
 
       form.uid = that.pageParams.uid;
       form.time = Math.round(that.form.time/1000);
 
-      
-      that.$api('app.agent.order.getOrderList', form).then(res => {
-        if (res.code === 1) {
-          var list = that.list;
-          for (var i in res.data) {
-            list.push(res.data[i])
+      // 骨架屏收口：本页同时发列表 / 汇总 /（按客户查看时）详情，三者全部回音才撤骨架屏，
+      // 早撤会在汇总还是空对象时露出 '-'（与分销中心页同一口径）；单路失败不拖住其余
+      var jobs = [
+        that.$api('app.agent.order.getOrderList', form).then(res => {
+          if (res.code === 1) {
+            var list = that.list;
+            for (var i in res.data) {
+              list.push(res.data[i])
+            }
+            that.list = list
           }
-          that.list = list
-        }
-
-        uni.hideLoading();
+        }),
+        that.getTotal()
+      ];
+      if (that.pageParams.uid) {
+        jobs.push(that.getCustomerDetail());
+      }
+      Promise.all(jobs.map(job => job.catch(() => null))).then(() => {
+        that.loading = false;
       });
       uni.stopPullDownRefresh();
     },
@@ -101,7 +107,7 @@ export default {
     getTotal() {
 
 
-      that.$api('app.agent.order.getTotal', {
+      return that.$api('app.agent.order.getTotal', {
         type:that.form.type
       }).then(res => {
         if (res.code === 1) {
@@ -116,24 +122,21 @@ export default {
      */
     getCustomerDetail() {
       
-      uni.showLoading({
-        title: '请稍后'
-      });
-      that.$api('app.agent.customer.getCustomerDetail', {
+      return that.$api('app.agent.customer.getCustomerDetail', {
         user_id:that.pageParams.uid
       }).then(res => {
         if (res.code === 1) {
           that.customerDetail = res.data
         }
-        uni.hideLoading();
       });
-      uni.stopPullDownRefresh();
     },
 
     //刷新
     refresh() {
       that.form.page = 1
       that.list = [];
+      // 切页签/状态/时间会清空列表，loading 置回 true 才不换成一帧空态（M16）
+      that.loading = true;
       that.getData();
     },
 
@@ -141,10 +144,6 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);;
-
-    if(that.pageParams.uid){
-      that.getCustomerDetail()
-    }
 
     this.getData();
   },

@@ -67,7 +67,7 @@
 
 
 		<!-- 类型 -->
-		<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
+		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
 			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('mode')"
 			@select="modeSelect"
 			>

@@ -51,10 +51,10 @@
       <view class="icon" @click="control()">
         <img src="@/static/image/live/control.png" />
       </view>
-      <view v-if="gift == 1 && $tools.systemConfig('app_isinstall_live_gift')" class="icon" @click="modal.gift = true">
+      <view v-if="gift == 1 && $tools.systemConfig('app_isinstall_live_gift')" class="icon" @click="setModal('gift', true)">
         <img src="@/static/image/live/gift.png" />
       </view>
-      <view v-if="goods == 1" class="icon" @click="modal.goods = true">
+      <view v-if="goods == 1" class="icon" @click="setModal('goods', true)">
         <img src="@/static/image/live/goods.png" />
       </view>
 
@@ -63,7 +63,7 @@
         <tz-icon color="#fff" :size="24" name="video" />
       </view>
 
-      <view class="icon" @click="modal.share = true">
+      <view class="icon" @click="$emit('openShare')">
         <tz-icon color="#fff" :size="24" name="share_fill" />
       </view>
 
@@ -80,7 +80,7 @@
       <goods-modal
         :live-id="courseId"
         :visible="modal.goods"
-        @close="modal.goods = false"
+        @close="setModal('goods', false)"
       />
     </template>
     <template v-if="gift == 1 && $tools.systemConfig('app_isinstall_live_gift')">
@@ -88,20 +88,16 @@
         :gift_max_count="gift_max_count"
         :live-id="courseId"
         :visible="modal.gift"
-        @close="modal.gift = false"
+        @close="setModal('gift', false)"
       />
     </template>
 
-    <share-modal :val="courseId" :visible="modal.share" @close="modal.share = false" />
-
-    
     <!-- <u-safe-bottom></u-safe-bottom> -->
   </div>
 </template>
 
 <script>
 var that;
-import shareModal from "@/components/modal/share-modal.vue";
 import goodsPopover from "@/pages/course/live/goods/goods-popover.vue";
 import goodsModal from "@/pages/course/live/goods/goods-modal.vue";
 import giftModal from "@/pages/course/live/gift/gift-modal.vue";
@@ -110,9 +106,12 @@ export default {
   components: {
     goodsPopover,
     goodsModal,
-    giftModal,
-    shareModal
+    giftModal
   },
+  // popup：{name, open} —— 本组件自己开的商品/礼物弹窗开合上抛给直播间页。
+  // 直播间右侧那三枚悬浮入口挂在 .ui-layer 之外、z-index 高于本层，收起与否要由页面统一判
+  // （清屏、或任意弹窗打开期间收起，2026-09-30 用户点名「按钮遮罩商品列表弹窗」）
+  emits: ['popup'],
   data() {
     return {
       input: {
@@ -125,8 +124,7 @@ export default {
       modal: {
         goods: false,
         gift: false,
-        column:false,
-        share:false
+        column:false
       },
     };
   },
@@ -191,6 +189,14 @@ export default {
   },
   watch: {},
   methods: {
+    /**
+     * 本组件自己开的弹窗统一走这里：改状态 + 上抛给页面，
+     * 避免「哪一处开、哪一处关」各自写 modal.xxx，漏一处就留下永不收起的入口
+     */
+    setModal(name, open) {
+      this.modal[name] = open;
+      this.$emit('popup', { name: name, open: !!open });
+    },
     dir(){
       this.$emit("dir", false);
     },

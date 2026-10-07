@@ -116,10 +116,10 @@ export default {
     /*  #ifdef  H5  */
     height: calc(100%);
     /*  #endif  */
-    /* 高斯模糊效果 - 替换原来的半透明背景 */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Safari 兼容 */
-    background-color: rgba(0, 0, 0, .3); /* 降低透明度，让模糊效果更明显 */
+    /* 高斯模糊效果 - 替换原来的半透明背景（模糊半径 10 → 20，配合更浓一档的遮罩让毛玻璃更明显） */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Safari 兼容 */
+    background-color: rgba(0, 0, 0, .35); /* 遮罩压深一档：模糊更明显，白字对比不降反升 */
     z-index: 1;
     position: absolute;
     top: 0;

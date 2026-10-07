@@ -1,0 +1,40 @@
+/* 打卡动态搜索页：页面底/列表容器/条目卡外壳都走 App.vue 的模块共用档
+   （.school-page 灰底 + 底部留白、.school-cards 左右留边 10、.school-card 白底直角内衬 14 卡间距 10），
+   本页只补骨架屏那几块灰条；搜索栏是共用组件 tz-search-filter-bar（自带吸顶白底通栏），不再包一层 .school-search-box */
+
+/* ===== 骨架屏：与 tz-checkin-record-card 逐块对齐，数值取活动主页动态栏 .cd-sk-* 那一档（同一张卡的同一版式） ===== */
+.cks-sk-row {
+  display: flex;
+  align-items: center;
+}
+.cks-sk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.cks-sk-text {
+  flex: 1;
+  min-width: 0;
+}
+.cks-sk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.cks-sk-foot-time {
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cks-sk-foot-act {
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}

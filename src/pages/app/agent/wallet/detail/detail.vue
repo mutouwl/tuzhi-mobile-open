@@ -16,8 +16,19 @@
 		</u-sticky>
 
 
-		<tz-box padding="5px 15px" v-if="list.length > 0">
-			<u-cell-group :border="false">
+		<!-- 首屏骨架屏：行结构与真实 u-cell 逐块对齐（左侧说明 + 灰字时间、右侧变动前后），
+		     吸顶的月份与类型筛选留在骨架屏外保持可点；加载完再换成流水行或空态（M16） -->
+		<tz-box padding="5px 15px" v-if="loading || list.length > 0">
+			<div class="wdt-sk" v-if="loading">
+				<div class="wdt-sk-cell" v-for="i in 5" :key="i">
+					<div class="wdt-sk-col">
+						<div class="wdt-sk-line wdt-sk-block sk-h-14 sk-w-50"></div>
+						<div class="wdt-sk-line wdt-sk-block sk-h-12 sk-w-35"></div>
+					</div>
+					<div class="wdt-sk-line wdt-sk-block sk-h-12 sk-w-40"></div>
+				</div>
+			</div>
+			<u-cell-group :border="false" v-else-if="list.length > 0">
 				<u-cell  size="large" v-for="(item,index) in list" :key="index"  :border="(list.length - 1) == index ? false : true" :title="(item.memo ? item.memo : '-') + '【'+item.value+'】'" :value='"变动前:"+item.before+"｜变动后:"+item.after' :label="$tools.formatDate(item.createtime)"></u-cell>
 			</u-cell-group>			
 		</tz-box>
@@ -38,7 +49,7 @@
 
 
 		<!-- 类型 -->
-		<u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
+		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.mode" :actions="modeList"
 			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('mode')"
 			@select="modeSelect"
 			>

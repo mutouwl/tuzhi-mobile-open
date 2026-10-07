@@ -1,0 +1,209 @@
+/* 打卡记录页（我的打卡）：版式一律走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page → 内容区 .school-cards（左右留边 10）→ 区块卡一律 .school-card
+   （白底、直角不做圆角、内衬 14、卡间距 10、无阴影），参照 pages/app/school/records/index 与 schedule/index；
+   日历卡由 tz-checkin-calendar 按同口径渲染（tz-school-calendar 的 .cal-card 也是直角无阴影）；
+   头像圆角 50%、缩略图 8px、骨架条 4px 与教务同档，本页不再自定义卡片圆角/阴影/内衬 */
+
+/* ===== 首屏骨架屏：外壳直接用真实卡的 .school-card（直角、内衬 14、卡间距 10、无阴影），
+   静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（与教务列表/详情页骨架屏同口径），尺寸与真实版式一致（头像 44、统计五格、日历卡高） ===== */
+.cr-sk-user {
+  display: flex;
+  align-items: center;
+}
+.cr-sk-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+}
+.cr-sk-nick {
+  width: 96px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  margin-left: 10px;
+}
+.cr-sk-card {
+  display: flex;
+  align-items: center;
+}
+.cr-sk-act-icon {
+  width: 19px;
+  height: 19px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+/* u-skeleton 的宿主节点在小程序是块级组件根，flex:1 + min-width:0 才能撑开剩余宽度 */
+.cr-sk-text {
+  flex: 1;
+  min-width: 0;
+}
+/* 统计五格：卡内衬 14 由 .school-card 给，这里只把格内容上下撑开与真实卡同高 */
+.cr-sk-stats {
+  align-items: stretch;
+}
+.cr-sk-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cr-sk-line {
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cr-sk-line.w40 {
+  width: 40%;
+}
+.cr-sk-line.w24 {
+  width: 24%;
+  height: 18px;
+  margin-top: 6px;
+}
+.cr-sk-cal {
+  height: 260px;
+}
+
+/* ===== 当日列表的局部骨架屏：日历上点了另一天时铺（切日期即重取那一天，见 js.vue 的 onDayClick）。
+   只占「当日列表」这一块，上面的用户卡/活动卡/统计卡/日历卡不跟着闪；外壳复用真实卡的 .school-card
+   （白底直角、内衬 14、卡间距 10），灰块 #e5e6eb + 圆角 4px 与首屏骨架同一档；
+   逐块对齐 tz-checkin-record-card 的真实版式（头像 36 + 昵称行 / 正文两行 / 卡片脚「时间—动作」两端），
+   正文与卡片脚按卡内 42px 缩进档（.ck-rc-content / .ck-rc-foot 同一个左边缘），
+   写法参照 pages/app/checkin/detail/ 动态栏的 .cd-sk-feed ===== */
+.cr-sk-rec-row {
+  display: flex;
+  align-items: center;
+}
+.cr-sk-rec-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e6eb;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+/* u-skeleton 的宿主在 flex 里要吃掉剩余宽度，否则昵称行会按内容宽撑不开 */
+.cr-sk-rec-text {
+  flex: 1;
+  min-width: 0;
+}
+.cr-sk-rec-body {
+  margin: 9px 0 0 42px;
+}
+.cr-sk-rec-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0 0 42px;
+}
+.cr-sk-rec-time {
+  width: 84px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cr-sk-rec-act {
+  width: 72px;
+  height: 16px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 用户行 / 活动行 / 统计行：白底直角卡由 .school-card 给，这里只管卡内排列 */
+.cr-user {
+  display: flex;
+  align-items: center;
+}
+.cr-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f2f3f5;
+}
+.cr-nickname {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1d2129;
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 昵称右侧的编辑入口：四周补 8px 热区、再负 8px 外边距收回原线，
+   图标右缘仍与卡片 14px 内衬同线，行高由 44px 头像撑着不会被撑高。
+   display:flex 不是可省：不给容器 flex 居中，图标就按内联排版坐在容器基线上，而容器行盒被继承
+   字号（16px）的下伸部撑到 21px，图标墨迹中心因此比行盒中心高约 1px —— 看着就是比左侧昵称偏上 */
+.cr-user-edit {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  margin-right: -8px;
+}
+.cr-act-card {
+  display: flex;
+  align-items: center;
+}
+.cr-act-title {
+  flex: 1;
+  font-size: 14px;
+  color: #1d2129;
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cr-act-days {
+  font-size: 12px;
+  color: #86909c;
+  margin-right: 4px;
+}
+/* 活动卡与统计卡连成一块：去掉 .school-card 的 10px 卡间距，中间按 M21 信息行档补一条分隔线；
+   首屏骨架屏同口径（cr-sk-act / cr-sk-stats 与真实两卡逐块对齐，加载完不跳版）。
+   盖 .school-card 的 margin 用双类选择器（0,2,0 > 0,1,0），不靠样式注入顺序赌谁在后面 */
+.school-card.cr-act-card,
+.school-card.cr-sk-act {
+  margin-bottom: 0;
+}
+.cr-stats,
+.cr-sk-stats {
+  border-top: 1px solid #f7f8fa;
+}
+.cr-stats {
+  display: flex;
+}
+.cr-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cr-stat-label {
+  font-size: 12px;
+  color: #86909c;
+}
+.cr-stat-num {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1d2129;
+  margin-top: 4px;
+}
+/* 分组小标题：左边线与卡片同线（不再另加 2px 位移） */
+.cr-day-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1d2129;
+  margin: 4px 0 8px;
+}
+/* 行尾那枚 arrow-right 不再挂「光学下沉」那一档（原来这里有个 .cr-ic-mid: translateY(0.5px)）：
+   实测该字形墨迹中心就压在自己行盒中心（−0.03px），补的 0.5px 是按 12–14px 中文低 0.44–0.51px 算的，
+   但那是亚像素位移——DPR2 手机上不足一个物理像素，DPR1 的桌面浏览器会被字形栅格化成整像素，
+   用户读出来正是「箭头偏下」（2026-09-26 用户在打卡动态卡的任务标签上点名同一档，此处一并改掉）。
+   行内图标与文字的垂直居中一律只交给 flex 的 align-items:center。
+   判法与口径见 .trae/rules/ui-baseline-mobile.md §1「行内图标 / 关联 chip」 */

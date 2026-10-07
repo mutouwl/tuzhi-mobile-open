@@ -33,9 +33,18 @@
 			<!-- <subscription-tip v-if="!subscription" text="订阅后查看完整目录内容" /> -->
 		</div>
 
-		<div class="loading" v-if="loading">
-			<u-loading-icon text="加载中" textSize="16"></u-loading-icon>
-		</div>
+		<!-- 目录骨架（M16）：灰块与 column-dir-course 的真实行逐块对齐 —— 16px 标题条 + 12px 元信息条 +
+		     行末那枚 20px 锁图标块，行内衬/行距同真实行（15px 内衬、5px 行距），换内容时不跳位。
+		     rows-width 带冒号绑成数组：写成静态属性就是一条字符串，u-skeleton 认不出数组 -->
+		<view class="dir-box cdir-sk" v-if="loading">
+			<view class="cdir-sk-row" v-for="i in 5" :key="'cdir-sk-' + i">
+				<view class="cdir-sk-main">
+					<u-skeleton :loading="true" :animate="true" :title="false" :rows="2"
+						:rows-width="['62%', '44%']" :rows-height="[16, 12]"></u-skeleton>
+				</view>
+				<view class="cdir-sk-lock"></view>
+			</view>
+		</view>
 	</div>
 </template>
 
@@ -209,10 +218,27 @@ import value from "../../../components/uview-ui/components/u-text/value";
 		margin-top: 10px;
 	}
 
-	.loading {
-		width: 100%;
-		height: 200px;
-		padding-top: 100px;
+	/* 骨架行与 column-dir-course 的 .course-box 同一份几何（内衬 15、行距 5px 0） */
+	.cdir-sk-row {
+		display: flex;
+		align-items: center;
+		padding: 15px;
+		margin: 5px 0;
+	}
+
+	.cdir-sk-main {
+		flex: 1;
+		min-width: 0;
+		/* 一行内项与项的间距只由行首这一头给，锁图标块不写 margin-left */
+		margin-right: 8px;
+	}
+
+	.cdir-sk-lock {
+		width: 20px;
+		height: 20px;
+		flex: none;
+		border-radius: 4px;
+		background: #e5e6eb;
 	}
 
 	::v-deep .u-cell__body {

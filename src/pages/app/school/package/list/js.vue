@@ -19,6 +19,7 @@ export default {
                 setTimeout(() => {
                     if (getCurrentPages().length > 1) { uni.navigateBack(); } else { uni.reLaunch({ url: '/pages/index/index' }); }
                 }, 800);
+              this.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
                 return;
             }
             // 支持按校区/讲师进入（校区详情、教师详情「更多」分别携带 campus_id / teacher_id）
@@ -74,7 +75,7 @@ export default {
                 this.loadStatus = 'loading';
                 return this.fetchPage(page).then((data) => {
                     // 过期响应丢弃：筛选条件已变，旧响应不得回写覆盖新列表（也不能清掉在途标记）
-                    if (seq !== this.refreshSeq) return;
+                    if (seq !== this.refreshSeq) { this.fetching = false; return; } // 过期响应只丢数据，撤骨架的出口不能省
                     this.fetching = false;
                     this.loading = false;
                     if (!data) {

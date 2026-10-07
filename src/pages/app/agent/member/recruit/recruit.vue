@@ -4,7 +4,39 @@
 		<u-empty icon="/static/image/empty.png" width="70" height="70" text="分销功能禁止抖音小程序端使用" />
 		<!-- #endif -->
 		<!-- #ifndef MP-TOUTIAO -->
-		<u-loading-page :loading="status == 0"></u-loading-page>
+		<!-- 首屏骨架屏：本页首屏要等「配置 + 申请状态 + 达成条件」三个接口，在到手之前 config.status 是空，
+		     下方各分支都不渲染，故按真实那一屏的版式给占位（申请条件卡：标题两行 + 两条条件行 → 分隔条 → 说明正文一块），
+		     撤骨架屏后换成对应状态的内容，位置不跳（M16） -->
+		<div class="rct-sk" v-if="loading">
+			<tz-box>
+				<div class="condition-box">
+					<div class="condition-header">
+						<div class="rct-sk-line rct-sk-block sk-h-14 sk-w-30"></div>
+						<div class="rct-sk-line rct-sk-block sk-h-12 sk-w-50"></div>
+					</div>
+					<div class="rct-sk-cell">
+						<div class="rct-sk-icon rct-sk-block"></div>
+						<div class="rct-sk-col">
+							<div class="rct-sk-line rct-sk-block sk-h-14 sk-w-45"></div>
+							<div class="rct-sk-line rct-sk-block sk-h-12 sk-w-60"></div>
+						</div>
+						<div class="rct-sk-line rct-sk-block sk-h-12 sk-w-15"></div>
+					</div>
+					<div class="rct-sk-cell">
+						<div class="rct-sk-icon rct-sk-block"></div>
+						<div class="rct-sk-col">
+							<div class="rct-sk-line rct-sk-block sk-h-14 sk-w-45"></div>
+							<div class="rct-sk-line rct-sk-block sk-h-12 sk-w-60"></div>
+						</div>
+						<div class="rct-sk-line rct-sk-block sk-h-12 sk-w-15"></div>
+					</div>
+				</div>
+			</tz-box>
+			<tz-divider />
+			<tz-box>
+				<div class="rct-sk-poster rct-sk-block"></div>
+			</tz-box>
+		</div>
 
 		<u-empty v-if="config.status == 0" icon="/static/image/empty.png" width="70" height="70" text="分销功能已关闭" />
 		<template v-if="config.status == 1">

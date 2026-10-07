@@ -8,6 +8,7 @@ export default {
         page: 1
       },
       list: [],
+      // 首屏即为加载态：列表区先铺骨架屏（M16），撤骨架屏只在这次请求回音之后
       loading: true,
     }
   },
@@ -17,10 +18,6 @@ export default {
 
 
     getData() {
-      that.loading = true;
-      uni.showLoading({
-        title: '请稍后'
-      });
       that.$api('user.message.list', this.form).then(res => {
         if (res.code === 1) {
           var list = that.list;
@@ -30,11 +27,9 @@ export default {
           that.list = list
         }
 
-        uni.hideLoading();
         that.loading = false;
       }).catch(() => {
         that.loading = false;
-        uni.hideLoading();
       });
       uni.stopPullDownRefresh();
     },
@@ -43,6 +38,8 @@ export default {
     refresh() {
       that.form.page = 1
       that.list = [];
+      // 清空列表后把 loading 置回 true，否则骨架屏与真实列表之间会闪一帧空态（M16）
+      that.loading = true;
       that.getData();
     },
 

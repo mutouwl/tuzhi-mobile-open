@@ -228,6 +228,58 @@
   padding-top: 8px;
 }
 
+/* ===== 首屏骨架屏（M16）=====
+   外壳 .cover-wrap / .info-card / .tab-card / .tab-body 与真实版式同一份，
+   只补占位块自身尺寸；静态块取 uview 骨架灰 #e5e6eb、圆角 4px（压在白底上那一档）。
+   封面区真实是整图铺满 16:9，骨架块同样铺满，不给内衬。 */
+.ps-sk-cover {
+  width: 100%;
+  height: 100%;
+  background: #e5e6eb;
+}
+.ps-sk-line {
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+/* 逐行间距照真实版式：价格→名称 10、名称→简介 6、简介→统计 6（真实 .cover-* 的 margin-top 同一份） */
+.ps-sk-line + .ps-sk-line {
+  margin-top: 6px;
+}
+.ps-sk .info-card .ps-sk-line:first-child {
+  margin-top: 0;
+}
+.ps-sk .info-card .ps-sk-line:first-child + .ps-sk-line {
+  margin-top: 10px;
+}
+.ps-sk-h22 { height: 22px; }
+.ps-sk-h16 { height: 16px; }
+.ps-sk-h14 { height: 14px; }
+.ps-sk-h12 { height: 12px; }
+.ps-sk-w30 { width: 30%; }
+.ps-sk-w45 { width: 45%; }
+.ps-sk-w56 { width: 56%; }
+.ps-sk-w64 { width: 64%; }
+.ps-sk-w70 { width: 70%; }
+.ps-sk-w88 { width: 88%; }
+.ps-sk-w92 { width: 92%; }
+.ps-sk-w96 { width: 96%; }
+/* 页签条：高度逐字对齐真实 u-tabs 的项盒内衬（uview MP 5px / H5 10px） */
+.ps-sk-tabs {
+  display: flex;
+  align-items: center;
+}
+.ps-sk-tabs .ps-sk-line {
+  margin: 5px 11px;
+}
+/*  ifdef H5  */
+.ps-sk-tabs .ps-sk-line {
+  margin: 10px 11px;
+}
+/*  endif  */
+.ps-sk .tab-body .ps-sk-line + .ps-sk-line {
+  margin-top: 10px;
+}
+
 /* 底部栏 */
 .footer-bar {
   position: fixed;

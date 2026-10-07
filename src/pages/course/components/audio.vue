@@ -65,7 +65,7 @@
         </tz-box>
 
         <!-- speed -->
-        <u-action-sheet :safeAreaInsetBottom="true" cancelText="取消" :show="modal.speed" :actions="speedOption"
+        <u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.speed" :actions="speedOption"
             :closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('speed')" @select="speedSelect">
         </u-action-sheet>
  

@@ -17,7 +17,7 @@
                 <u-empty icon="/static/image/empty.png" width="70" height="70" v-else text="暂无文件" />
             </div>
 
-            <u-action-sheet :round="10" :safeAreaInsetBottom="true" :show="modal.control" cancelText="取消"
+            <u-action-sheet :round="10" title="操作" :safeAreaInsetBottom="true" :show="modal.control" cancelText="取消"
                 :actions="actionlist" :closeOnClickOverlay="true" :closeOnClickAction="true"
                 @close="modal.control = false" @select="controlSelect">
             </u-action-sheet>

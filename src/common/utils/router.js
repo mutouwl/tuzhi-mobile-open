@@ -116,6 +116,10 @@ export default {
                     case 'circle':
                         url = '/pages/app/circle/presale/presale?id=' + src;
                         break;
+                    // 打卡活动：落地页是活动主页（参与/购买入口在该页吸底栏），与后端 share Links 的 checkin 链路同一目标
+                    case 'checkin':
+                        url = '/pages/app/checkin/detail/detail?id=' + src;
+                        break;
                 }
             }
         }

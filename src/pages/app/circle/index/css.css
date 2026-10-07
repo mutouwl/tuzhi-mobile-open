@@ -226,11 +226,6 @@
 .feed {
   padding: 8px 12px 70px;
 }
-.tab-loading {
-  display: flex;
-  justify-content: center;
-  padding: 40px 0;
-}
 .publish-btn {
   position: fixed;
   right: 16px;
@@ -246,6 +241,10 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   color: #86909c; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
   z-index: 90;
+}
+/* 管理端关闭「允许用户发布动态」：入口保留但置灰，点击提示已关闭 */
+.publish-btn.disabled {
+  opacity: 0.4;
 }
 .more-btn {
   position: fixed;
@@ -263,6 +262,16 @@
   color: #86909c; /* 微信小程序端图标继承父级颜色，需与图标颜色一致 */
   z-index: 90;
 }
+/*  #ifdef H5  */
+/* 悬浮钮是 fixed 定位，宽窗口下会贴浏览器右缘、脱离限宽 480px 居中的内容列（口径同 App.vue 的 .h5-bottom-bar）；
+   这里把内衬 16px 改按内容列右缘起算，<480px 时仍用上面的 right:16px。打卡详情 .cd-*-btn 与本档逐值一致 */
+@media (min-width: 480px) {
+  .publish-btn,
+  .more-btn {
+    right: calc(50% - 240px + 16px);
+  }
+}
+/*  #endif  */
 /* 更多弹窗（与 hover-btn 弹窗一致：快捷导航网格） */
 .more-grid {
   width: calc(100% - 20px);
@@ -280,3 +289,62 @@
   font-size: 12px;
   color: #1D2129;
 }
+
+/* ===== 首屏骨架屏（M16）=====
+   外壳复用真实版式那一档的类：.head（含 #8c7668 兜底底与 20/14/16 内衬、.head-body 的 20 上间距、
+   .head-members 的 18 上间距）、.nav-bar、.sticky-wrap、.feed，灰块只往容器内部放，
+   加载完整体不换版。
+   色值分两档：头部是深色底（封面图模糊后的暗调），压在上面用半透明白；白底上照旧 #e5e6eb。 */
+.ci-sk-head {
+  background: #8c7668;
+}
+.ci-sk-cover {
+  width: 72px;
+  height: 52px;
+  flex: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.ci-sk-name {
+  width: 62%;
+  height: 17px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.34);
+}
+.ci-sk-intro {
+  width: 78%;
+  height: 13px;
+  margin-top: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.24);
+}
+.ci-sk-round {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+}
+.ci-sk-member {
+  width: 120px;
+  height: 13px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.24);
+}
+/* 页签条：高度逐字对齐真实 u-tabs 的项盒（内衬与行高都取 uview 那一档，H5 与小程序两端各自取值） */
+.ci-sk-nav {
+  display: flex;
+  align-items: center;
+}
+.ci-sk-tab {
+  height: 14px;
+  margin: 5px 11px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+/*  #ifdef H5  */
+.ci-sk-tab {
+  margin: 10px 11px;
+}
+/*  #endif  */

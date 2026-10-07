@@ -102,6 +102,14 @@
 							:round="data.compontents[index].config.round"
 							:margin="data.compontents[index].config.margin" />
 
+						<!-- 打卡列表组件（付费插件）：数据由装修接口按配置取好下发，未安装时模板不渲染 -->
+						<tz-checkin-list v-if="item && item.type == 'checkin' && checkinInstalled"
+							:list="data.compontents[index].config.list"
+							:type="data.compontents[index].config.type"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin" />
+
 						<tz-teacher v-if="item && item.type == 'teacher'"
 						:round="data.compontents[index].config.round"
 						:name="data.compontents[index].config.name" :introduce="data.compontents[index].config.introduce"

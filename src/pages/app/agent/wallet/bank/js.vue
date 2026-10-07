@@ -4,6 +4,8 @@ export default {
   data() {
     return {
       pageParams: {},
+      // 首屏即为加载态：已存卡片回填到手前整块铺骨架屏（M16），不摆一张看着像没填的空表
+      loading: true,
       data: {},
       form: {
         card_no: '',
@@ -37,7 +39,7 @@ export default {
   },
   methods: {
     getCard() {
-      that.$api('app.agent.wallet.getCard', {}).then(res => {
+      return that.$api('app.agent.wallet.getCard', {}).then(res => {
         if (res.code === 1) {
           if (res.data) {
             that.form = res.data;
@@ -78,7 +80,10 @@ export default {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
 
-    this.getCard();
+    // 骨架屏收口：回填到手（或失败）才出表单——空表摆在页面上等着被提交，会覆盖掉已存的那张卡号
+    this.getCard().catch(() => null).then(() => {
+      that.loading = false;
+    });
   }
 }
 </script>

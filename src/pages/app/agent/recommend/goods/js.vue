@@ -30,6 +30,8 @@ export default {
         }
       ],
       list: [],
+      // 首屏即为加载态：商品列表区先铺骨架屏（M16），本次请求回音后才撤
+      loading: true,
       pageParams:{
         type:'money'
       },
@@ -86,7 +88,9 @@ export default {
       ],
       typeChecked:0,
       shareGoodsId:'',
-      shareGoodsType:'goods'
+      shareGoodsType:'goods',
+      // 分享海报用：被分享这一条商品的整行数据（列表接口已下发 name/cover/price，随 shareGoods 一起存下，不再取一次接口）
+      shareGoodsItem:{}
     }
   },
   watch: {
@@ -111,12 +115,14 @@ export default {
       this.refresh();
     },
 
-    shareGoods(id,type){
+    shareGoods(id,type,item){
         if(type == 'article' || type == 'column' || type == 'video' || type == 'audio' || type == 'live'){
           type = 'goods';
         }
         this.shareGoodsId = id;
         this.shareGoodsType = type;
+        // 分享海报用：把整行留在 data 上（列表接口已下发 name/cover/price，不用再取一次接口）
+        this.shareGoodsItem = item || {};
         this.showModel('share');
     },
     showModel(type){
@@ -126,9 +132,6 @@ export default {
 
     getData() {
       
-      uni.showLoading({
-        title: '请稍后'
-      });
       //资产类型
       var form = JSON.parse(JSON.stringify(that.form));
       // form.type = that.pageParams.type;
@@ -145,8 +148,10 @@ export default {
           }
           that.list = list
         }
-
-        uni.hideLoading();
+        that.loading = false;
+      }).catch(() => {
+        // 请求失败也要撤掉骨架屏，否则页面一直停在占位态（与分销中心页同一口径）
+        that.loading = false;
       });
       uni.stopPullDownRefresh();
     },
@@ -154,6 +159,8 @@ export default {
     refresh() {
       that.form.page = 1
       that.list = [];
+      // 搜索/类型/排序会清空列表，loading 置回 true 才不换成一帧空态（M16）
+      that.loading = true;
       that.getData();
     },
 
@@ -185,6 +192,15 @@ export default {
       that.type.push({
         name: '课程套餐',
         type: 'school_package',
+        key: that.type.length
+      });
+    }
+
+    // 仅当 checkin（打卡）付费插件已安装时，添加“打卡活动”筛选项
+    if (that.$tools.systemConfig('app_isinstall_checkin')) {
+      that.type.push({
+        name: '打卡活动',
+        type: 'checkin',
         key: that.type.length
       });
     }

@@ -39,9 +39,11 @@ var data = {
   "paytype.balance": "余额支付",
   "paytype.wechat": "微信支付",
   "paytype.alipay": "支付宝支付",
-  "paytype.douyinpay": "支付宝支付",
+  "paytype.douyinpay": "抖音支付",
+  "paytype.channels": "微信小店",
   "paytype.score": "积分支付",
   "paytype.virtual_pay": "微信虚拟支付",
+  "paytype.offline": "无需支付",
   "controll.delete": "删除",
   "controll.evaluate": "评价",
   "controll.cancel": "取消",
@@ -280,6 +282,15 @@ var data = {
   "exercises": "练习",
   "composite": "组合商品",
   "school_package": "课程套餐",
+  "checkin": "打卡活动",
+  // 打卡活动条目卡封面右下角的磨砂标签：文案由后端 attr 下发（状态 attr.run_state、模式 attr.checkin_mode），
+  // 卡片走课程列表卡的 $t(type) 渲染，故在此登记恒等映射保证原样透出（H5 与微信走 vue-i18n 缺失键回退本就不改写；
+  // 头条端 main.js 把 $t 换成了 CN[key] 查表，缺登记会静默渲染成空白）
+  "未开始": "未开始",
+  "进行中": "进行中",
+  "已结束": "已结束",
+  "日历打卡": "日历打卡",
+  "闯关打卡": "闯关打卡",
   "wxofficialaccount": "公众号",
   "wxminiprogram": "小程序",
   "h5": "H5",

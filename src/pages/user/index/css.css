@@ -167,6 +167,71 @@
     border-bottom:1px solid #F2F3F5!important;
 }
 
+/* 列表版式的入口图标：定尺寸方框 + flex 居中，保证与右侧标题文字垂直居中对齐
+   （tz-icon 是 inline 的 <text>，行盒随字体上下延走，套一层定尺寸盒子由 flex 摆正更稳） */
+.uc-cell-icon{
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 学习中心那一行：图标 + 名称在 u-cell 的 title 位，「累计学习 N 分钟」在 value 位（贴右侧箭头之前）。
+   图标方框只框墨迹不框字号：barrage 在 20px 字号下实测墨迹宽 13.8px（python tools/icon-text-baseline.py 量的），
+   方框按 14px 给，图标与名称之间就是下面写死的 9px，不再叠 u-cell 左图标槽自带的 4px 右距 */
+.uc-study-title{
+    display: flex;
+    align-items: center;
+    line-height: 22px;
+}
+
+.uc-study-ic{
+    width: 14px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 9px;
+    /* flex 只对齐两个盒子，盒子居中了墨迹还没对齐：实测 barrage 在 20px 字号下墨迹中心低于自身行盒中心
+       0.62px，而 17px 中文（学/习/中/心）低 0.69~1.21px、均值 0.94px ⇒ 图标读起来偏高 0.3px，按实测补下沉
+       （python tools/icon-text-baseline.py 20 20 <iconfont.ttf> E6E7 / 17 22 <msyh.ttc> 5B66 4E60 4E6D） */
+    transform: translateY(0.3px);
+}
+
+.uc-study-name{
+    font-size: 15px;
+    flex-shrink: 0;
+    /* 名称是左组末项，「靠右」一律由它这一枚 margin-right:auto 给（说明按 v-if 收起时不会带出偏移） */
+    margin-right: auto;
+}
+
+.uc-study-note{
+    font-size: 14px;
+    color: #86909C;
+    flex-shrink: 0;
+    /* 与右侧箭头之间 4px */
+    margin-right: 4px;
+}
+
+.uc-study-num{
+    color: #0968F6;
+}
+
+/* 分钟数在取时的占位条：尺寸按「累计学习 0 分钟」那一档（14px 字号），与说明同一个落位（离箭头 4px），
+   到手那一刻整行不跳 */
+.uc-study-sk{
+    width: 100px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-right: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: user-skeleton 1.8s ease infinite;
+}
+
 ::v-deep .u-cell__body--large{
     padding-top: 5px!important;
     padding-bottom: 5px!important;
@@ -184,4 +249,81 @@
 
 .u-grid-item{
     margin: 10px 0!important;
+}
+
+/* 装修配置到达前的骨架屏：块尺寸与真实版式逐块对齐（资产那几格数值+名称、功能 5 格图标+名称），
+   格数由模板按「core 三项 + 已安装的插件项」给；渐变与节奏复用上面 .skeleton-bar 那一份
+   （90deg / 1.8s），与本页头部骨架屏观感一致 */
+.user-sk-row{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.user-sk-cell{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 10px 0;
+    flex: 1;
+}
+
+.user-sk-value,
+.user-sk-icon,
+.user-sk-name{
+    background: linear-gradient(90deg, #F1F2F4 25%, #e5e6eb 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: user-skeleton 1.8s ease infinite;
+    border-radius: 4px;
+}
+
+/* .nav-value 是 20px/600 的数字，行盒约 24px */
+.user-sk-value{
+    width: 40px;
+    height: 24px;
+}
+
+/* 图标位按 tz-icon 默认 28px 墨迹档给 */
+.user-sk-icon{
+    width: 28px;
+    height: 28px;
+}
+
+/* .nav-name 是 12px 文字，margin-top 5px 与真实行一致 */
+.user-sk-name{
+    width: 48px;
+    height: 12px;
+    margin-top: 5px;
+}
+
+/* 学习中心行的骨架：与真实行逐块同尺寸（图标位 14x20 是 barrage 的实测墨迹档、间距 4px，
+   名称条按「学习中心 + 累计学习 N 分钟」那一档的宽度给），行高同一份 22px */
+.user-sk-study{
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 12px 0;
+}
+
+.user-sk-study-ic,
+.user-sk-study-name{
+    background: linear-gradient(90deg, #F1F2F4 25%, #e5e6eb 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: user-skeleton 1.8s ease infinite;
+    border-radius: 4px;
+}
+
+/* 图标块按 barrage 的实测墨迹档（13.8 x 17.5）给，与真实行的图标同大小 */
+.user-sk-study-ic{
+    width: 14px;
+    height: 18px;
+    margin-right: 9px;
+}
+
+.user-sk-study-name{
+    width: 168px;
+    height: 18px;
 }

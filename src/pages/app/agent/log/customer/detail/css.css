@@ -100,3 +100,55 @@
 .detail-item:first-child{
     margin-top: 0;
 }
+/* ===== 客户详情首屏骨架屏（M16）=====
+   占位块复用本页真实容器类（.customer-item / .total-box 2×2 / .order-log / .detail-list），
+   只补占位条自身的尺寸；本页样式非 scoped，新增类统一 cud-sk 前缀并限定在 .cud-sk 内。
+   流光渐变与节奏与分销中心页同一档（90deg / 1.8s） */
+.cud-sk .cud-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: cud-sk-animate 1.8s ease infinite;
+}
+
+/* 占位条：高度按该行字号取档，行距 5px 与真实 .customer-item-list / .total-item-value 的 margin-top 一致 */
+.cud-sk .cud-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.cud-sk .cud-sk-line + .cud-sk-line{
+    margin-top: 5px;
+}
+
+/* 「绑定时间 + 值」那一行是横排两端对齐，行内不叠行距 */
+.cud-sk .cud-sk-row{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cud-sk .cud-sk-row .cud-sk-line{
+    margin-top: 0;
+}
+
+/* 收益记录入口：真实那一行 40px 高、文字居中，占位条跟着居中才不顶在上面 */
+.cud-sk .order-log .cud-sk-line{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.cud-sk .sk-h-12{ height: 12px; }
+.cud-sk .sk-h-14{ height: 14px; }
+.cud-sk .sk-h-16{ height: 16px; }
+
+.cud-sk .sk-w-25{ width: 25%; }
+.cud-sk .sk-w-30{ width: 30%; }
+.cud-sk .sk-w-35{ width: 35%; }
+.cud-sk .sk-w-40{ width: 40%; }
+.cud-sk .sk-w-50{ width: 50%; }
+.cud-sk .sk-w-75{ width: 75%; }
+
+@keyframes cud-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}

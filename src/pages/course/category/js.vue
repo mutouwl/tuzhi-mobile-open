@@ -82,9 +82,7 @@ export default {
       that.courseList = [];
       that.hasMore = true;
       that.loadStatus = 'loadmore';
-      uni.showLoading({
-        title: '请稍后'
-      });
+      // 不再叠 uni.showLoading：加载反馈由左右两栏的骨架屏给（M16），下拉刷新有原生指示器
       that.getList({});
     },
 
@@ -94,7 +92,6 @@ export default {
         id: options.id || 0,
       });
       that.loading = false;
-      uni.hideLoading();
       uni.stopPullDownRefresh();
       if (res.code === 1) {
         let data = res.data;
@@ -202,7 +199,6 @@ export default {
       
       const res = await that.$api('course.course', that.courseForm);
       that.courseLoading = false;
-      uni.hideLoading();
       
       if (res.code === 1) {
         const newList = res.data || [];

@@ -1,34 +1,14 @@
 <template>
   <view class="post-detail">
-    <!-- 加载骨架屏 -->
+    <!-- 首屏骨架屏（M16）：动态主体版式存在 tz-circle-post 里（:skeleton 那一档），页面不抄一份卡尺寸；
+         评论区由 tz-circle-comment-list 自己出骨架（内部走 u-skeleton）。
+         点赞区是 v-if（没有点赞人就不出），不预留空位。 -->
     <view v-if="loading" class="post-skeleton">
-      <view class="sk-main">
-        <view class="sk-head">
-          <view class="sk-avatar"></view>
-          <view class="sk-head-info">
-            <view class="sk-line sk-w-40"></view>
-            <view class="sk-line sk-w-20"></view>
-          </view>
-        </view>
-        <view class="sk-line"></view>
-        <view class="sk-line sk-w-80"></view>
-        <view class="sk-line sk-w-60"></view>
-        <view class="sk-grid">
-          <view class="sk-grid-item" v-for="i in 6" :key="i"></view>
-        </view>
+      <view class="post-main">
+        <tz-circle-post :skeleton="true" :list="[]" :skeleton-count="1" />
       </view>
-      <view class="sk-block">
-        <view class="sk-line sk-w-60"></view>
-      </view>
-      <view class="sk-block">
-        <view class="sk-line sk-w-30"></view>
-        <view class="sk-comment" v-for="i in 3" :key="i">
-          <view class="sk-avatar sk-avatar-sm"></view>
-          <view class="sk-comment-body">
-            <view class="sk-line sk-w-30"></view>
-            <view class="sk-line"></view>
-          </view>
-        </view>
+      <view class="comment-section">
+        <tz-circle-comment-list :loading="true" :loaded="false" />
       </view>
     </view>
     <view v-if="!loading && post">
@@ -72,7 +52,7 @@
       </view>
 
       <!-- 底部操作栏（共用组件：评论入口 + 点赞 + 分享，与评论弹窗底部一致；点击入口弹出回复评论弹窗） -->
-      <tz-circle-comment-bar :post="post" fixed @open="openReplyBar" @like="toggleLike" @share="openShare" />
+      <tz-circle-comment-bar :post="post" :disabled="!canComment" fixed @open="openReplyBar" @like="toggleLike" @share="openShare" />
     </view>
 
     <!-- 动态不存在/参数缺失空状态（避免白屏 + 避免 ?id=undefined 触发无意义请求） -->
@@ -80,8 +60,8 @@
       <u-empty :text="loadMsg || '动态不存在或已删除'" icon="/static/image/empty.png" width="70" height="70" margin-top="80"></u-empty>
     </view>
 
-    <!-- 操作菜单 -->
-    <u-action-sheet :show="showAction" :actions="actions" cancelText="取消" :closeOnClickOverlay="true" @select="onAction" @close="showAction = false"></u-action-sheet>
+    <!-- 操作菜单（半屏：标题 + 顶部圆角 10，全站同一档） -->
+    <u-action-sheet :show="showAction" title="更多操作" :round="10" :actions="actions" cancelText="取消" :closeOnClickOverlay="true" @select="onAction" @close="showAction = false"></u-action-sheet>
 
     <u-popup :show="answerPopup" mode="bottom" :round="16" :safeAreaInsetBottom="true" @close="answerPopup = false">
       <view class="answer-popup" v-if="questionAnswer">
@@ -116,7 +96,9 @@
       @cancel="cancelDelComment"
     />
 
-    <share-modal :val="shareVal" type="circle_post" :visible="shareVisible" @close="shareVisible = false" />
+    <!-- 海报画这条动态的正文推导标题与首图，取本页 circle.post.detail 已加载的 post（判据同 onShareAppMessage） -->
+    <share-modal :val="shareVal" type="circle_post" :visible="shareVisible" @close="shareVisible = false"
+      :title="shareTitle" :cover="(post && post.media && post.media.images && post.media.images[0]) || ''" />
     <!-- 附件预览（通用弹窗组件，支持图片/视频/音频/文档） -->
     <tz-file-preview :visible="filePreviewVisible" :data="previewData" @close="filePreviewVisible = false" />
     <tz-tab-bar />
@@ -176,6 +158,7 @@ export default {
     if (!that.$tools.systemConfig("app_isinstall_circle")) {
       uni.showToast({ title: "圈子功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 1200);
+      that.loading = false; // 兜底分支也要撤骨架：这一页只弹一句 toast 就留在灰块上，看着像「一直加载中」
       return;
     }
     that.load();
@@ -247,6 +230,15 @@ export default {
     contentIsHtml() {
       const c = that.postContent;
       return /<[a-z][^>]*>/i.test(c);
+    },
+    // 分享海报用：动态本身没有标题，标题取正文推导那一份（与 load 里的 H5 分享、onShareAppMessage 同一算法）
+    shareTitle() {
+      if (!that.post || !that.post.content) return '';
+      return String(that.post.content).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 30);
+    },
+    // 管理端「发布设置-允许用户发布评论」：关闭后评论入口置灰、点击提示；字段缺失（旧版接口）按允许处理
+    canComment() {
+      return !that.post || Number(that.post.allow_user_comment) !== 0;
     },
   },
   methods: {
@@ -432,10 +424,18 @@ export default {
     },
     // 点击底部评论入口：清空回复对象，弹出回复评论弹窗（共用组件，与评论弹窗一致）
     openReplyBar() {
+      if (!that.canComment) {
+        uni.showToast({ title: '该圈子已关闭评论', icon: 'none' });
+        return;
+      }
       that.$refs.replyPopup.open(null);
     },
     // 点击评论条目/回复按钮：设置回复对象并弹出回复评论弹窗
     replyComment(c) {
+      if (!that.canComment) {
+        uni.showToast({ title: '该圈子已关闭评论', icon: 'none' });
+        return;
+      }
       that.$refs.replyPopup.open({ id: c.id, user_id: c.user_id, nickname: c.nickname });
     },
     openShare() {
@@ -547,83 +547,12 @@ export default {
   min-height: 70vh;
   background: #f7f8fa;
 }
-/* 加载骨架屏 */
+/* 首屏骨架屏（M16）：只留外壳，灰块分别由 tz-circle-post（动态主体）与
+   tz-circle-comment-list（评论区，内部走 u-skeleton）自己出，版式存在组件里、页面不抄第二份。
+   原来那份手写流光是裸名，与全站其它页面的 .sk-line/.sk-avatar 互相覆盖。 */
 .post-skeleton {
   background: #f7f8fa;
   min-height: 100vh;
-}
-.sk-main {
-  background: #fff;
-  padding: 12px 14px;
-}
-.sk-head {
-  display: flex;
-  align-items: center;
-}
-.sk-avatar {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-avatar-sm {
-  width: 28px;
-  height: 28px;
-}
-.sk-head-info {
-  flex: 1;
-  min-width: 0;
-  margin-left: 8px;
-}
-.sk-line {
-  height: 15px;
-  border-radius: 3px;
-  margin-top: 10px;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-w-80 { width: 80%; }
-.sk-w-60 { width: 60%; }
-.sk-w-40 { width: 40%; }
-.sk-w-30 { width: 30%; }
-.sk-w-20 { width: 20%; }
-.sk-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 12px;
-}
-.sk-grid-item {
-  width: calc((100% - 8px) / 3);
-  height: 0;
-  padding-bottom: calc((100% - 8px) / 3);
-  border-radius: 4px;
-  background: linear-gradient(90deg, #f1f2f4 25%, #e6e6e6 37%, #f1f2f4 50%);
-  background-size: 400% 100%;
-  animation: sk-animate 1.8s ease infinite;
-}
-.sk-block {
-  background: #fff;
-  margin-top: 8px;
-  padding: 12px 14px;
-}
-.sk-comment {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin-top: 14px;
-}
-.sk-comment-body {
-  flex: 1;
-  min-width: 0;
-}
-@keyframes sk-animate {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
 }
 .post-main {
   background: #fff;

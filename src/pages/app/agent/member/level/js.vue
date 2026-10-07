@@ -11,7 +11,8 @@ export default {
       config: {},
       userInfo: {},
       current: 0,
-      loading: false,
+      // 首屏即为加载态：初值 false 会先渲染一帧空的等级卡再切骨架屏（M16）
+      loading: true,
     };
   },
   watch: {},

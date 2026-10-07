@@ -186,7 +186,16 @@ export default {
         getRect() {
             // #ifndef APP-NVUE
             this.$uGetRect(".u-subsection__item--0").then((size) => {
-                this.itemRect = size;
+                // 小程序端首帧节点还没进渲染层，量到的是 width=0：滑块宽度跟着成 0，
+                // 症状就是「当前项那一段没有白色底」（与 u-tabs 选中条贴左缘、u-sticky 命中区收成 0 同一族）。
+                // 量不到就当没量到，隔帧补量，最多 6 次
+                if (size && size.width) {
+                    this.itemRect = size;
+                    return;
+                }
+                this.rectTried = (this.rectTried || 0) + 1;
+                if (this.rectTried > 6) return;
+                uni.$u.sleep(40).then(() => this.getRect());
             });
             // #endif
 

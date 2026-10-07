@@ -71,7 +71,9 @@ export default {
         }
       ],
       typeChecked: 0,
-      shareGoodsId: ''
+      shareGoodsId: '',
+      // 分享海报用：被分享这一条会员商品的整行数据（列表接口已下发 name/cover/price，随 shareGoods 一起存下，不再取一次接口）
+      shareGoodsItem: {}
     }
   },
   watch: {
@@ -94,6 +96,13 @@ export default {
         this.form.sort = type;
       }
       this.refresh();
+    },
+
+    // 分享海报用：整行留在 data 上（列表接口已下发 name/cover/price，不用再取一次接口），弹窗按这一条商品出海报
+    shareGoods(item) {
+      this.shareGoodsItem = item || {};
+      this.shareGoodsId = item ? item.id : '';
+      this.modal.share = true;
     },
 
     showModel(type) {

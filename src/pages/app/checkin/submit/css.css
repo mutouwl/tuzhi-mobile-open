@@ -1,0 +1,186 @@
+/* 打卡发表页（表单页）：圆角/内衬走教务模块全局档（App.vue「校务/打卡模块统一版式」）——
+   页面根 .school-page.school-page--bar（灰底 + 底部留白 90）；表单区块 = .school-block（白底通栏、
+   无圆角、无阴影）+ 内衬 14px 16px（照确认报名页 package/confirm 与请假申请页 leave/apply）；
+   吸底栏用全局 .school-footer，栏内排布与圈子发布页同构（左＝四类媒体入口、右＝主操作单按钮）；
+   可见范围行用 .school-cell-card + .school-cell-item（行内衬 14/16、1px #f7f8fa 分隔线）；
+   chip 圆角按教务档收到 4px，本页不再自定义卡片圆角。
+   ⚠ 全局档 .school-block / .school-cell-card 自带 margin 12px 0 0（列表页卡间露灰底用的），
+   本页是「一张连续表单」不是卡片列表，块与块之间的灰缝全部去掉（含骨架，避免加载完跳版）；
+   覆盖一律用「全局类 + 页内 cs- 前缀类」双类选择器：页面 css 未加 scoped，单改 .school-block
+   会波及其他教务页，且单类与全局档同权重、谁生效看打包顺序（口径见 App.vue 该档注释与
+   ui-baseline-mobile M21） */
+
+/* ===== 首屏骨架屏：外壳直接用真实区块的 .school-block（通栏、直角、无阴影），
+   静态块取 uview 骨架屏灰 #e5e6eb、圆角 4px（与教务确认报名页骨架屏同口径），
+   卡内衬 14/16 由 .school-head 给，输入区高 = 正文 140（媒体入口在吸底栏，不计入本块） ===== */
+.school-block.cs-sk-card {
+  margin-top: 0;
+}
+.cs-sk-card {
+  padding: 14px 16px;
+}
+.cs-sk-area {
+  height: 140px;
+}
+.cs-sk-line-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cs-sk-line {
+  width: 96px;
+  height: 14px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cs-sk-chip {
+  width: 120px;
+  height: 26px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 任务信息头：白底/通栏/直角/无阴影由 .school-block 给，内衬由 .school-head 给。
+   本页第一块贴顶，清掉全局档的 12px 上边距（与打卡活动主页 .cd-head、日记页 .cdy-first 同一口径；
+   H5 端本页 titleNView:false 没有原生标题栏，留灰缝会在页面最上方凭空出一条灰带） */
+.school-block.cs-task-head {
+  margin-top: 0;
+}
+.cs-task-title {
+  font-size: 17px;
+  font-weight: bold;
+  color: #1d2129;
+}
+.cs-task-date {
+  font-size: 12px;
+  color: #86909c;
+  margin-top: 6px;
+}
+/* 规则提示条与要求条：同为通栏块，与上下卡片贴齐不露灰底（本页是一张连续表单，不是卡片列表）。
+   这两块自带底色（蓝/橙），不挂 .school-block —— 全局档的 background:#fff 与页面同名类的
+   同优先级规则谁生效取决于打包顺序（App.vue 版式注释里记过这个坑） */
+.cs-tip {
+  background: #eaf1fe;
+  color: #0968f6;
+  font-size: 13px;
+  padding: 10px 16px;
+}
+.cs-require {
+  background: #fff7e8;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cs-require-label {
+  font-size: 13px;
+  color: #ff7d00;
+}
+.cs-require-item {
+  font-size: 12px;
+  color: #ff7d00;
+  border: 1px solid #ffcf99;
+  border-radius: 4px;
+  padding: 1px 8px;
+  margin: 2px 6px 2px 8px;
+  background: #fff;
+}
+/* ===== 区块贴齐：本页是一张连续表单，不是卡片列表，块与块之间不留全局档那条 12px 灰缝。
+   两块白卡真的挨在一起时补一条分割线（1px #f2f3f5，与打卡成员列表连续条目同一口径）；
+   选择器一律「全局类 + 页内 cs- 前缀类」双类，既压得过 App.vue 全局档（同权重看打包顺序），
+   也不会因为直改 .school-block / .school-cell-card 而外溢到其他教务页 ===== */
+.school-block.cs-editor {
+  margin-top: 0;
+}
+.school-cell-card.cs-visible-card {
+  margin-top: 0;
+  border-top: 1px solid #f2f3f5;
+}
+/* 头卡与正文卡之间：有蓝/橙提示条时由色条自身分段，不补线；活动没配提示与要求、两块真相邻时才补 */
+.school-block.cs-task-head + .school-block.cs-editor {
+  border-top: 1px solid #f2f3f5;
+}
+/* 骨架外壳同贴齐同分割线，加载完成不跳版 */
+.school-block.cs-sk-card + .school-block.cs-sk-card {
+  border-top: 1px solid #f2f3f5;
+}
+
+/* 正文输入区 + 计数 + 媒体九宫格：三段贴在同一个通栏白块内（白底/直角由 .school-block 给） */
+.cs-textarea {
+  width: 100%;
+  padding: 14px 16px 0;
+  box-sizing: border-box;
+  font-size: 15px;
+  color: #1d2129;
+}
+/* 计数行不再自带 12px 下内衬：下方留白统一交给媒体区（九宫格自身有 10px 上间距），
+   一张图都没选时卡底也就 12px，不再出现「正文卡下方一大片空」 */
+.cs-count {
+  text-align: right;
+  font-size: 12px;
+  color: #86909c;
+  padding: 6px 16px 0;
+}
+/* 媒体区：左右跟着卡内衬收 16px（照请假申请页 .imgs-block 的摆法），卡片底部留 12px。
+   不收这 16px 时九宫格通栏铺到屏幕两边，一行最后一格的删除按钮（right:-6px）顶出视口，
+   选满 3 张（正好一行）整页就能左右滑 */
+.cs-media {
+  padding: 0 16px 12px;
+}
+/* 吸底栏：容器/内衬/安全区走全局 .school-footer，栏内左＝媒体入口、右＝主操作（圈子发布页同构）。
+   媒体入口的图标间距用 margin 而非 flex gap（小程序 iOS < 14.5 不支持 gap，写了会静默挤成一列） */
+.cs-footer {
+  justify-content: space-between;
+}
+.cs-toolbar {
+  display: flex;
+  align-items: center;
+}
+/* 媒体选择按钮：容器给 flex 居中，图标才与同排其它工具同一中心线 ——
+   不给 flex 时图标按内联排版坐在容器基线上，墨迹中心被行盒下伸部顶高约 1px，一排三个看着高低不齐 */
+.cs-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-right: 16px;
+}
+.cs-tool-disabled {
+  opacity: 0.4;
+}
+/* 可见范围行：行内衬 14/16 与分隔线由 .school-cell-item 给，这里只管左右两端的排列 */
+.cs-visible-label {
+  flex: 1;
+  font-size: 14px;
+  color: #1d2129;
+}
+.cs-visible-chips {
+  display: flex;
+  flex-shrink: 0;
+}
+.cs-visible-chip {
+  font-size: 13px;
+  color: #4e5969;
+  background: #f2f3f5;
+  border-radius: 4px;
+  padding: 5px 16px;
+  margin-left: 8px;
+  border: 1px solid transparent;
+}
+.cs-visible-chip-active {
+  color: #0968f6;
+  border-color: #0968f6;
+  background: #fff;
+}
+/* 注意事项：灰底说明块，左右内衬与区块同线 */
+.cs-notes {
+  padding: 14px 16px;
+  font-size: 12px;
+  color: #86909c;
+  line-height: 22px;
+}
+/* 吸底栏的主操作：宽度随文字（圈子发布页的按钮同档，不占满整条），圆角/配色由 tz-button 持有（4px / #0968f6） */
+.cs-btn-primary {
+  flex: none;
+  margin-left: 10px;
+}

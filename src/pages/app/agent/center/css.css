@@ -83,7 +83,14 @@
     flex-wrap: wrap;
 }
 
+/* 两枚推广入口并排：width 用 calc(50% - 5px)，所以 box-sizing 必须显式给 border-box。
+   App.vue 那条全局 `*{box-sizing:border-box}` 在小程序编译期被丢弃（产物 app.wxss/common/main.wxss 里
+   查无 `*{`），小程序端 <view> 退回 content-box，那一档 padding 就实打实加在宽度之外：
+   两枚 = 100% - 10px + 20px = 100% + 10px > 容器，flex-wrap 在换行判定阶段（早于收缩）就把第二枚挤到
+   下一行 —— 症状即「推广商品/推广海报没有并排」，H5 因为有那条 `*` 看不出问题。
+   同一族写法参照 components/tz/circle-media-grid.vue 的 .post-media-add（也是靠显式 border-box 才不提前换行） */
 .channel-item{
+    box-sizing: border-box;
     width: calc(50% - 5px);
     margin: 5px 0;
     padding: 10px;
@@ -279,7 +286,7 @@
     flex: none;
 }
 
-/* 「可提现金额」行：对齐 u-cell 的分割线与上下留白（::v-deep .u-cell__body 为 margin-top/padding-top 10px） */
+/* 「可提现金额」行：对齐 u-cell 的分割线与上下留白（本页穿透选择器给 body 那一层定的 margin-top / padding-top 10px） */
 .agent-sk .agent-sk-cell{
     display: flex;
     align-items: center;
