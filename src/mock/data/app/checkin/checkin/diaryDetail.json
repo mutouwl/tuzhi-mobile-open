@@ -1,0 +1,82 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344789",
+  "data": {
+    "id": 33827,
+    "uniacid": 1,
+    "checkin_id": 628,
+    "task_id": 15222,
+    "user_id": 38,
+    "day": "2026-09-28",
+    "content": "你好吗？我知道了。",
+    "images": [],
+    "videos": [],
+    "audios": [],
+    "files": [],
+    "is_makeup": 0,
+    "visible_to": 0,
+    "is_featured": 0,
+    "is_top": 0,
+    "like_count": 0,
+    "comment_count": 0,
+    "status": 1,
+    "createtime": 1790569760,
+    "updatetime": 1790569760,
+    "link_data": [],
+    "nickname": "冯**",
+    "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+    "is_official": 0,
+    "checkin_title": "name",
+    "checkin_cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "allow_user_comment": 1,
+    "task_title": "副本-章节1任务1",
+    "day_seq": 5,
+    "total_days": 5,
+    "quotes": [
+      {
+        "text": "千里之行，始于足下。",
+        "from": "老子《道德经》"
+      },
+      {
+        "text": "合抱之木，生于毫末。",
+        "from": "老子《道德经》"
+      },
+      {
+        "text": "不积跬步，无以至千里。",
+        "from": "荀子《劝学》"
+      },
+      {
+        "text": "锲而不舍，金石可镂。",
+        "from": "荀子《劝学》"
+      },
+      {
+        "text": "天行健，君子以自强不息。",
+        "from": "《周易》"
+      },
+      {
+        "text": "路漫漫其修远兮，吾将上下而求索。",
+        "from": "屈原《离骚》"
+      },
+      {
+        "text": "博观而约取，厚积而薄发。",
+        "from": "苏轼《稼说送张琥》"
+      },
+      {
+        "text": "苟日新，日日新，又日新。",
+        "from": "《礼记·大学》"
+      },
+      {
+        "text": "绳锯木断，水滴石穿。",
+        "from": "罗大经《鹤林玉露》"
+      },
+      {
+        "text": "不驰于空想，不骛于虚声。",
+        "from": "李大钊"
+      }
+    ],
+    "share_bgs": [],
+    "is_liked": 0,
+    "is_mine": 1
+  }
+}

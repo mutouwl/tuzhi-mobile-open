@@ -1,0 +1,303 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344778",
+  "data": {
+    "config": {
+      "version": 1,
+      "header": {
+        "vip_entry": 1
+      },
+      "assets": {
+        "status": 1,
+        "items": [
+          "score",
+          "money",
+          "coupon",
+          "prize"
+        ]
+      },
+      "study_center": {
+        "status": 1
+      },
+      "functions": {
+        "status": 1,
+        "style": "grid",
+        "items": [
+          {
+            "key": "study",
+            "status": 1
+          },
+          {
+            "key": "vip",
+            "status": 1
+          },
+          {
+            "key": "school",
+            "status": 1
+          },
+          {
+            "key": "circle",
+            "status": 1
+          },
+          {
+            "key": "checkin",
+            "status": 1
+          },
+          {
+            "key": "subscription",
+            "status": 1
+          },
+          {
+            "key": "collect",
+            "status": 1
+          },
+          {
+            "key": "agent",
+            "status": 1
+          },
+          {
+            "key": "exchange",
+            "status": 1
+          },
+          {
+            "key": "sign",
+            "status": 1
+          },
+          {
+            "key": "score_shop",
+            "status": 1
+          },
+          {
+            "key": "practice",
+            "status": 1
+          },
+          {
+            "key": "test",
+            "status": 1
+          },
+          {
+            "key": "ticket",
+            "status": 1
+          },
+          {
+            "key": "form",
+            "status": 1
+          },
+          {
+            "key": "cert",
+            "status": 1
+          },
+          {
+            "key": "service",
+            "status": 1
+          },
+          {
+            "key": "address",
+            "status": 1
+          },
+          {
+            "key": "setting",
+            "status": 1
+          }
+        ]
+      }
+    },
+    "options": {
+      "assets": [
+        {
+          "key": "money",
+          "name": "余额",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "score",
+          "name": "积分",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "coupon",
+          "name": "优惠券",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "prize",
+          "name": "我的奖品",
+          "app_tag": "",
+          "installed": true
+        }
+      ],
+      "functions": [
+        {
+          "key": "study",
+          "name": "学习中心",
+          "icon": "barrage",
+          "path": "/pages/user/study/study",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "vip",
+          "name": "会员中心",
+          "icon": "huiyuan",
+          "path": "/pages/app/vip/center/center",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "school",
+          "name": "教务中心",
+          "icon": "peixun",
+          "size": 21,
+          "path": "/pages/app/school/index/index",
+          "app_tag": "school",
+          "installed": true
+        },
+        {
+          "key": "circle",
+          "name": "我的圈子",
+          "icon": "group",
+          "path": "/pages/app/circle/my/index",
+          "app_tag": "circle",
+          "installed": true
+        },
+        {
+          "key": "checkin",
+          "name": "我的打卡",
+          "icon": "task",
+          "path": "/pages/app/checkin/index/index",
+          "app_tag": "checkin",
+          "installed": true
+        },
+        {
+          "key": "subscription",
+          "name": "我的订阅",
+          "icon": "task",
+          "path": "/pages/user/subscription/subscription",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "collect",
+          "name": "我的收藏",
+          "icon": "like",
+          "path": "/pages/user/collect/collect",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "agent",
+          "name": "分销中心",
+          "icon": "jiagoufenxiao",
+          "path": "/pages/app/agent/center/center",
+          "not_platform": [
+            "dyMiniProgram"
+          ],
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "exchange",
+          "name": "兑换码",
+          "icon": "flashlight",
+          "path": "/pages/app/exchange/center/center",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "sign",
+          "name": "每日签到",
+          "icon": "flag",
+          "path": "/pages/app/sign/center/center",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "score_shop",
+          "name": "积分商城",
+          "icon": "service",
+          "path": "/pages/app/score/center/center",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "practice",
+          "name": "练习",
+          "icon": "brush",
+          "path": "/pages/app/exam/center/center",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "test",
+          "name": "考试",
+          "icon": "document",
+          "path": "/pages/app/test/log/log",
+          "app_tag": "test",
+          "installed": true
+        },
+        {
+          "key": "ticket",
+          "name": "活动票券",
+          "icon": "qrcode",
+          "path": "/pages/app/activity/user/user",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "form",
+          "name": "表单",
+          "icon": "activity",
+          "path": "/pages/app/form/log/log",
+          "app_tag": "form",
+          "installed": true
+        },
+        {
+          "key": "cert",
+          "name": "我的证书",
+          "icon": "headlines",
+          "path": "/pages/app/cert/index/index",
+          "app_tag": "cert",
+          "installed": true
+        },
+        {
+          "key": "service",
+          "name": "联系客服",
+          "icon": "customerservice",
+          "path": "service",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "address",
+          "name": "收货地址",
+          "icon": "coordinates",
+          "path": "/pages/user/address/list/list",
+          "app_tag": "",
+          "installed": true
+        },
+        {
+          "key": "setting",
+          "name": "设置",
+          "icon": "shezhi",
+          "path": "/pages/user/setting/setting",
+          "app_tag": "",
+          "installed": true
+        }
+      ],
+      "styles": [
+        {
+          "value": "grid",
+          "name": "宫格"
+        },
+        {
+          "value": "list",
+          "name": "列表"
+        }
+      ]
+    }
+  }
+}

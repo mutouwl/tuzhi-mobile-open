@@ -27,7 +27,36 @@ import circleCourseModal from "@/components/modal/circle-course-modal.vue";
 import checkinCourseModal from "@/pages/course/components/checkin-course-modal.vue";
 import { goActivity } from "@/common/utils/checkin-activity";
 import { rememberInviter, resolveInviter, inviterFromParams } from "@/common/utils/live-inviter";
+// 拼团「加入别人的团」上下文（URL 上的 gb_team 那一组，只活在本页实例上）
+import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
 import customForm from "@/components/tz/custom-form.vue";
+
+/**
+ * 「回本页要不要重取」的时间窗（判据②的兜底那一半，2026-10-09 刷新分层）
+ * 只有三条写路径没有可广播的事件源——商家在后台改价/下架、订阅按时间自然到期、
+ * 用户在另一台设备买过——所以超窗才补一次静默回收；窗内只有付过款才回收。
+ */
+const STALE_MS = 5 * 60 * 1000;
+/**
+ * 播流地址的保鲜期（保源那一条的年龄闸门，H5 与微信小程序同一档）
+ * 后端签发的阿里云播流地址有效期是 6 小时（`addons/alivod/library/Alivod.php:18`
+ * `PLAY_URL_AUTH_TIMEOUT = 21600`），回收档保住旧地址不能没有上限——H5 那一页挂着过夜、
+ * 小程序端实例活到第二天，回来点播放就是一发过期地址。留 2 小时余量取 4 小时：
+ * 超龄那一次让 `refreshState` 吃新地址（换源会重建播放器，但那一趟 `ready → study.media.progress`
+ * 会把进度接回来，比「点了没画面」轻）。
+ */
+const MEDIA_MAX_AGE = 4 * 60 * 60 * 1000;
+/**
+ * 播放凭证的重取上限（不含首次那一发）
+ * 阿里云的 PlayAuth 本身是短命的（默认 100 秒），过期后要的是「再取一枚」而不是重试很多次；
+ * 这里限次只为挡住一条坏链上的无限循环（@error / @onM3u8Retry / @refresh 三枚来源会互相顶着发），
+ * 到上限就回落地址档，比停在「一直转圈」对用户有用。
+ */
+const VOD_AUTH_MAX_RETRY = 2;
+/**
+ * 支付成功的统一广播名（发送方 common/utils/pay.js 的 goOrder，只有各端支付成功那一条链会进那里）
+ */
+const PAY_EVENT = "orderPaid";
 
 export default {
   components: {
@@ -86,7 +115,13 @@ export default {
       circleCourseContext: false,
 
       tabsChecked: "",
-      tabs: [],
+      //页签集合是 computed（tabs）：由课程数据 + 商家配置 + 下面两份「展示类数据到手情况」算出来，
+      //不再由各取数方法各自 push——订阅态翻转时要整份重算（专栏已订阅要把「目录」提到最前），
+      //push 出来的那一份没法回退
+      //圈子插件装了且这门课绑了圈子才出「圈子」那一枚
+      circleTabVisible: false,
+      //推荐位有货才出「推荐」那一枚
+      recommendTabVisible: false,
       //圈子tab数据（课程关联的圈子卡片列表，一个课程可绑定多个圈子）
       circleList: [],
       //圈子插件是否安装（未安装时隐藏圈子相关 UI）
@@ -127,6 +162,57 @@ export default {
 
       loading: true,
 
+      //---- 刷新分层的四枚账（2026-10-09，判据全在 onShow 一处）----
+      //首屏取数是否已落地。没落地（首进 / 首取失败）时 onShow 走完整首取，落地后 onShow 不再整页重取
+      loaded: false,
+      //上一次成功取数的时刻，超窗才补一次静默回收（STALE_MS）
+      loadedAt: 0,
+      //页面上这一份播流地址是哪一刻到手的（保源的年龄闸门，见 MEDIA_MAX_AGE）
+      mediaAt: 0,
+
+      /**
+       * 阿里云点播的播放凭证（只有 H5 用得上，小程序端留空、继续吃播流地址）
+       * 这一组是「起播前现取、过期再取」的一次性资格，不进 data（课程详情那份响应）：
+       * 详情发回来的 fullurl 是一条 6 小时有效期的签名地址，播放器内置重试会给它拼 `_t=<毫秒>`
+       * 当场把签名弄废，所以「刷新一下才正常」在过去只能靠整页重载重新签一条（2026-10-26 收口的
+       * 那一条链）。凭证档把这件事变成「再要一枚凭证」，页面不用重载。
+       */
+      vodAuth: {
+        // 这一枚凭证属于哪门课的哪一格（video / try_watch），换课换格都要先清
+        field: "",
+        vid: "",
+        play_auth: "",
+      },
+      // 播放器要不要等凭证落地再挂：初值 true ⇒ 图文/直播/音频/小程序端一律不受影响
+      vodReady: true,
+      // 凭证重取次数（含首次）；超上限就退回地址档，不把用户卡在「一直转圈」
+      vodAuthTries: 0,
+      // 在途标记：@error / @onM3u8Retry / @refresh 三个来源可能同拍触发，只发一发
+      vodAuthPending: false,
+      //「别处改过用户态」的账：支付成功广播与本页发起的购买链都标这一枚，回本页收一次就清
+      stateDirty: false,
+
+      //拼团区经 @ready 上抛的活动摘要（{ text: '立即开团', activity } / null）：
+      //`text` 喂底栏那枚拼团按钮的显隐与文案，`activity` 喂课程信息卡价格格里的拼团横幅（2026-10-27）。
+      //两条都只在拼团区组件里取一次，本页只做一枚转发（不给这一页另开第二条拼团取数链）
+      gbEntry: null,
+      // 受邀参团的上下文（2026-10-30）：团详情「立即加入」带 gb_team 一组参数进本页时才有。
+      // 只活在本页实例上，不写 storage —— 退出后从别处重进就是正常的自己开团链。
+      // `gbJoinMode` 初值按 URL 先置真（底栏的单独购买立刻收起，不给一个早期可点的窗口），
+      // 拼团区取到活动后由 `@ready.join` 校准（活动结束/不是那一场会被抛成 false）。
+      gbJoinCtx: null,
+      gbJoinMode: false,
+      // 购买弹幕素材（2026-10-29 用户点名「gba-danmu 应该放在这个页面的左上角」）：
+      // 来自拼团区 @ready 上抛的活动本体，只喂封面左上角那一枚
+      // `tz-group-buy-danmu`；活动到期抛 null 时一并清空。WXML 侧读 data，不读 computed。
+      gbBuyers: [],
+      //控制栏那枚「送好友」这一拍到底摆不摆得出来（吃组件 `visible` 事件）：控制栏是 flex 均分，
+      //这一枚收掉时剩下几枚要按实际枚数重新均分（4 枚 → 3 枚），不许按固定 4 格排版
+      //（2026-10-29 用户追问「下面的按钮不一定是固定 4 个，这个送好友它是动态显示的」）。
+      //**初值给 true**：给 false 就永远挂不上组件、也永远收不到 `visible`（硬约束 31② 的自锁）；
+      //乐观初值期间那一格是空的，init/entry 回包判出「不该出」后组件抛 false ⇒ 宿主挂 `.sf-control-slot--off`
+      sfEntryShown: true,
+
       //回复的评论ID
       commentReplyId: 0,
       commentSort: "time",
@@ -164,6 +250,66 @@ export default {
         submitting: false,
       },
     };
+  },
+  computed: {
+    /**
+     * 宿主价格行显不显示（2026-10-30 第五轮，用户第二次点名「拼团价要复制覆盖原来的价格」）：
+     * 拼团进行中（拼团区 `@ready` 上抛的 `gbEntry.activity` 非空）⇒ 本页价格行收起，
+     * 价格只由拼团卡第一行的横幅给 —— 一屏只有一个价；没有活动 / 活动结束抛 null ⇒ 照常显示。
+     * 判据只此一处（与底栏那枚拼团按钮、封面弹幕同一份 `gbEntry`）。
+     */
+    gbPriceShown() {
+      return !(this.gbEntry && this.gbEntry.activity);
+    },
+    /**
+     * 积分兑换页（`pageParams.type === 'score'`，积分商城的商品卡跳进来时带的那枚参数）。
+     *
+     * 这一页比普通商详少三块（2026-10-29 用户点名「如果是积分商品，应该在页面中屏蔽送好友、拼团、优惠券」）：
+     * 送好友（信息卡长条 + 已订阅控制栏那一枚）、拼团（拼团区 + 底栏拼团按钮）、优惠券（领券条）。
+     * 三处收口都写在模板的 `v-if` 上，**组件不挂载 ⇒ 它们各自那几条请求也不发**；本计算属性是唯一判据，
+     * 模板里不许再各写一遍 `pageParams.type == 'score'`（会分叉）。价格格同理：「兑换积分」占掉原价位，
+     * 拼团横幅不再接管那一格。
+     */
+    isScorePage() {
+      return !!(this.pageParams.type && this.pageParams.type == "score");
+    },
+    /**
+     * 页签集合：课程数据 + 商家配置 + 两份展示类数据的到手情况，纯函数算出来
+     * 口径与老写法逐条一致（详情/目录的先后、评论入口开关、互动恒在、圈子与推荐按到手才出），
+     * 改成的这一份只为让「订阅态翻转」能整份重算：专栏已订阅要把「目录」提到最前、
+     * 未订阅且正文为空要收掉「详情」那一枚——老写法是各方法往数组里 push，翻转时没法回退。
+     * 数据没到手时返回空数组（模板那一句 v-if="tabs.length > 0" 靠它把整段页签区藏到首屏之后）
+     */
+    tabs() {
+      const d = this.data;
+      if (!d.id) {
+        return [];
+      }
+      const tabs = [];
+      if (!d.subscription || (d.detail && d.detail != "<p><br></p>")) {
+        tabs.push({ name: "详情", type: "detail" });
+      }
+      if (d.type == "column") {
+        if (d.subscription) {
+          tabs.unshift({ name: "目录", type: "dir" });
+        } else {
+          tabs.push({ name: "目录", type: "dir" });
+        }
+      }
+      // 评论入口关闭时不显示评论tab
+      if (this.$tools.systemConfig("comment_entry_status") != "close") {
+        tabs.push({ name: "评论", type: "comment" });
+      }
+      tabs.push({ name: "互动", type: "interaction" });
+      // 下面两枚属「商家配的展示数据」（组 1）：只在首屏/下拉那一次取，回本页不重取
+      if (this.circleTabVisible) {
+        tabs.push({ name: "圈子", type: "circle" });
+      }
+      if (this.recommendTabVisible) {
+        tabs.push({ name: "推荐", type: "recommend" });
+      }
+      return tabs;
+    },
   },
   watch: {},
   methods: {
@@ -672,33 +818,20 @@ export default {
       });
     },
 
-    getData(addViews=false) {
-      that.loading = true;
-
-      // 弱网下 onShow/下拉刷新/订阅刷新 可能并发触发多次请求，请求按完成顺序回填
-      // 会导致 tabs 重复、旧响应覆盖新数据。用递增 token 只采纳最后一次请求的结果。
-      const token = (that._getDataToken || 0) + 1;
-      that._getDataToken = token;
-
-      // 骨架屏兜底：请求挂起（无响应/不 settle）或成功回调内分支遗漏/异常时，
-      // loading 都可能不被复位，必须由定时器无条件兜底释放——
-      // 带 token 条件会漏掉「早退后新请求也随之失效」的场景，页面会一直停在骨架屏
-      clearTimeout(that._loadingWatchdog);
-      that._loadingWatchdog = setTimeout(function () {
-        that.loading = false;
-      }, 8000);
-
-      if (this.pageParams.type && this.pageParams.type == "score") {
-        that.getScoreDetail();
-      }
-
-      that.tabs = [];
-      // 达人榜归因**必须排在 course.detail 之前**发出：后端 Course::detail() 会在里面调 joinLive
-      // 建 tuzhi_live_user 行，而 Report 的「已经进过直播间」判据就是这张行在不在
-      // （先报＝第一次到这一间，计入；后报＝被本次请求自己刚建的行挡掉，一个人都算不进）。
-      // 顺序是判据成立的前提，不是偏好——改这一段顺序等于把整条排除规则作废，
-      // 验法 tuzi-mobile/scripts/check-live-inviter-chain.js 第 ⑬ 组。
-      Promise.resolve()
+    /**
+     * 会打到 course.detail 的请求只有这一个出口（2026-10-09 刷新分层时抽出）
+     *
+     * 达人榜归因**必须排在 course.detail 之前**发出：后端 `Course::detail()` 会在里面调 joinLive
+     * 建 tuzhi_live_user 行，而 Report 的「已经进过直播间」判据就是这张行在不在
+     * （先报＝第一次到这一间，计入；后报＝被本次请求自己刚建的行挡掉，一个人都算不进）。
+     * 顺序是判据成立的前提，不是偏好——改这一段顺序等于把整条排除规则作废，
+     * 验法 tuzi-mobile/scripts/check-live-inviter-chain.js 第 ⑬ 组。
+     * ⇒ 以后再加取详情的路径（回收档、其它触发点）一律从这里走，不许另开一份不打归因的 detail。
+     * @param bool addViews 是否计入浏览量（只有首进那一次算，见 onShow 判据①）
+     * @returns {Promise}
+     */
+    fetchDetail(addViews) {
+      return Promise.resolve()
         .then(() => {
           // 归因这一段不许把整条取数链带崩：它发起时是同步调用，抛异常会让下面的 course.detail 根本不发，
           // 症状变成「为了报一次归因，受邀人连课程详情页都打不开」——那比丢一次归因严重得多。
@@ -724,165 +857,522 @@ export default {
         .then(() => {
           return that.$api("course.detail", {
             id: that.pageParams.id,
-            add_views: addViews,
+            add_views: addViews ? 1 : 0,
           });
-        })
+        });
+    },
+
+    /**
+     * 完整取数：首进、下拉刷新、以及本页自己完成订阅之后走这一条
+     * @param bool addViews 只首进那一次传 true。老写法把它挂在 onShow 上，
+     *        于是浏览器切一次标签页、微信把页面丢进小窗再还原，`views` 就 +1
+     *        （后端 setInc 没有幂等），浏览数被读成虚高——2026-10-09 起一次页面实例只加一次
+     */
+    getData(addViews = false) {
+      // 骨架屏只服务首进（M23②）：下拉刷新顶部已有原生转圈，再把整页换成灰块等于闪第二次
+      if (!that.loaded) {
+        that.loading = true;
+        // 骨架屏兜底：请求挂起（无响应/不 settle）或成功回调内分支遗漏/异常时，
+        // loading 都可能不被复位，必须由定时器无条件兜底释放——
+        // 带 token 条件会漏掉「早退后新请求也随之失效」的场景，页面会一直停在骨架屏
+        clearTimeout(that._loadingWatchdog);
+        that._loadingWatchdog = setTimeout(function () {
+          that.loading = false;
+        }, 8000);
+      }
+
+      // 弱网下 首进/下拉刷新/订阅刷新 可能并发触发多次请求，请求按完成顺序回填
+      // 会让展示数据被旧响应覆盖。用递增 token 只采纳最后一次请求的结果。
+      const token = (that._getDataToken || 0) + 1;
+      that._getDataToken = token;
+      // 「圈子」「推荐」两枚页签先收掉，等这一趟的响应重新点亮
+      // （下拉刷新后商家把推荐位清空了，页签就该跟着没有）
+      that.circleTabVisible = false;
+      that.recommendTabVisible = false;
+
+      if (this.pageParams.type && this.pageParams.type == "score") {
+        that.getScoreDetail();
+      }
+
+      that
+        .fetchDetail(addViews)
         .then((res) => {
           uni.stopPullDownRefresh();
 
-          // 过期响应直接丢弃，避免重复 push tabs / 旧响应覆盖新数据
+          // 过期响应直接丢弃，避免旧响应覆盖新数据
           if (token !== that._getDataToken) {
             return;
           }
           // 不在此处撤销骨架屏兜底定时器：响应被采纳不等于 loading 一定被复位
           // （成功回调内分支或异步链路中断时），保留 8s 定时器做最终兜底
-          // （直播中转场景由 _liveLoadingTimer 与下方显式复位共同接管）
+          // （直播中转场景由 _liveLoadingTimer 与 runLearnChain 内的显式复位共同接管）
 
-          if (res.code === 1) {
-            if (res.data.type == "audio" || res.data.type == "video") {
-              // that.getMediaProgress();
-              courseLibrary.banScreenRecordStart();
-            }
-            // #ifdef MP-WEIXIN
-            //检查PC端是否能学习
-            courseLibrary.checkBanPc(res.data.type, res.data.id);
-            // #endif
-
-            that.data = res.data;
-
-            // 页面标题跟随课程名称（原标题为固定的「课程详情」，直播课程即对应直播的标题）：
-            // H5 端同步浏览器/微信顶部标题，小程序端同步导航栏标题
-            if (res.data.name) {
-              uni.setNavigationBarTitle({ title: res.data.name });
-            }
-
-            that.loadCircleCourseNav();
-
-            // 分享卡片描述取课程简介，简介为空时由 $nav.share 回退为「打开查看详情」
-            // #ifdef H5
-            this.$nav.share(res.data.name, res.data.briefing || '', res.data.cover);
-            // #endif
-
-            if (
-              !res.data.subscription ||
-              (res.data.detail && res.data.detail != "<p><br></p>")
-            ) {
-              that.tabs.push({
-                name: "详情",
-                type: "detail",
-              });
-              that.tabsChecked = "detail";
-            }
-
-            if (res.data.type == "column") {
-              if (res.data.subscription) {
-                //放到第一个
-                that.tabs.unshift({
-                  name: "目录",
-                  type: "dir",
-                });
-                that.tabsChecked = "dir";
-              }else{
-                that.tabs.push({
-                  name: "目录",
-                  type: "dir",
-                });
-              }              
-              if (that.tabsChecked == "") {
-                that.tabsChecked = "dir";
-              }
-            }
-
-            // 评论入口关闭时不显示评论tab
-            if (that.$tools.systemConfig("comment_entry_status") != "close") {
-              that.tabs.push({
-                name: "评论",
-                type: "comment",
-              });
-            }
-
-            that.tabs.push({
-              name: "互动",
-              type: "interaction",
-            });
-
-            // 加载课程关联的展示圈子（圈子插件）
-            that.loadCircle(token);
-
-            // 加载课程（含所属专栏）关联的打卡活动（打卡插件），决定底栏「打卡」那一枚出不出现
-            that.loadCheckin(token);
-
-            if (that.tabsChecked == "" && that.tabs.length > 0) {
-              that.tabsChecked = that.tabs[0].type;
-            }
-
-            // 直播课程的直播源不适配课程播放器（跳转会提示播放异常），详情页只作跳转直播页的中转：
-            // 保持骨架屏直到跳转完成，由 startLearning 跳转或下面被拦截的分支释放
-            var liveRedirect = res.data.type == "live" && !!res.data.subscription;
-
-            // 直播中转兜底：跳转链路（表单检查回调 → startLearning → redirectTo）任一环节卡住时
-            // 也必须释放骨架屏。定时器在此处挂载而不是只放在 startLearning 内——
-            // 表单插件已安装时 startLearning 需等 app.form.checkBeforeLearn 回调，
-            // 该请求不回调时既不会跳转、也不会启动定时器，页面会永久停在加载态
-            if (liveRedirect) {
-              clearTimeout(that._liveLoadingTimer);
-              that._liveLoadingTimer = setTimeout(function () {
-                if (that.isPageActive) {
-                  that.loading = false;
-                }
-              }, 3000);
-            }
-
-            if (res.data.subscription) {
-
-              // 学习前表单拦截：绑定 before_learn 表单未填写时拦住学习，不产生学习行为
-              that.checkLearnForm((blocked) => {
-                if (blocked) {
-                  // 被拦截时不跳转直播页，先释放骨架屏，避免拦截层被加载态盖住。
-                  // 这里只出居中那一层引导卡，不再自动开底部填写弹窗（2026-09-27 用户口径「两个弹窗
-                  // 只保留中间那个引导弹窗」：两层同屏时引导卡压在填写弹窗背后等于白弹一层）；
-                  // 填写弹窗由引导卡上的「去填写」点开
-                  that.loading = false;
-                  return;
-                }
-                that.startLearning();
-              });
-            } else {
-              courseLibrary.setStudyLog(that.pageParams.id,that.pageParams.column_id);
-              // 订阅失效等场景下清除学习前表单拦截状态
-              that.learnForm = {
-                blocking: false,
-                forms: [],
-              };
-            }
-            that.getIsCollect();
-            that.getCourseRecommendList();
-            that.getRecommendGoods(token);
-
-            that.getGoodsVipPrivilege();
-            // 直播中转才保持骨架屏（跳转完成前不露出详情页，由跳转/拦截分支/_liveLoadingTimer 释放）；
-            // 其余课程数据已到即渲染页面，取反会让页面在响应到达的同一刻重新挂上加载态
-            that.loading = liveRedirect;
-          } else {
-            that.loading = false;
-            uni.showModal({
-              title: "提示",
-              content: res.msg,
-              success: function () {
-                // 记录不存在（如失效分享链接）时无上一页可退，direct 打开时
-                // navigateBack 会退化成页面刷新再次提示，直接返回首页
-                uni.reLaunch({
-                  url: "/pages/index/index",
-                });
-              },
-            });
+          if (res.code !== 1) {
+            that.detailUnavailable(res.msg);
+            return;
           }
+
+          that.applyCourseData(res.data);
+          // 组 1：商家配的展示数据，只挂在这一条完整取数链上，回到本页不再重取
+          that.loadCourseExtras(token);
+
+          if (!that.loaded) {
+            that.applyDefaultTab();
+          }
+          that.loaded = true;
+          that.loadedAt = Date.now();
+          that.stateDirty = false;
         })
         .catch((res) => {
           clearTimeout(that._loadingWatchdog);
           that.loading = false;
-          console.log("errorres", res);
+          // 收条要等这一趟有回音才收（失败也是回音），否则下拉转圈停不下来
+          uni.stopPullDownRefresh();
+          console.warn("[course.detail] 取数失败：", res);
         });
+    },
+
+    /**
+     * 详情落到页面上：播放器约束 → 页面数据 → 标题与分享 → 随用户态变的那几份 → 学习链
+     * 完整取数与「订阅态翻转」共用这一份，两处不许各写一份
+     */
+    applyCourseData(d) {
+      if (d.type == "audio" || d.type == "video") {
+        courseLibrary.banScreenRecordStart();
+      }
+      // #ifdef MP-WEIXIN
+      //检查PC端是否能学习
+      courseLibrary.checkBanPc(d.type, d.id);
+      // #endif
+
+      // #ifdef H5
+      // 阿里云点播的课先拿凭证再挂播放器：拿凭证这一发只有一两百毫秒，而地址档那一条在桌面
+      // 浏览器上是必失败的一条（私有加密 m3u8 交给 MSE 解不出密钥 ⇒ 4400），让它先挂上去
+      // 再换凭证，用户会先看到一句「播放出错啦」才开始播。正文、价格、页签都不等这一发。
+      that.prepareVodAuth(d);
+      // #endif
+
+      that.data = d;
+      // 这一份媒体字段是刚签出来的（完整取数与订阅态翻转两支都会走到这里）
+      that.mediaAt = Date.now();
+
+      // 页面标题跟随课程名称（原标题为固定的「课程详情」，直播课程即对应直播的标题）：
+      // H5 端同步浏览器/微信顶部标题，小程序端同步导航栏标题
+      if (d.name) {
+        uni.setNavigationBarTitle({ title: d.name });
+      }
+
+      // 分享卡片描述取课程简介，简介为空时由 $nav.share 回退为「打开查看详情」
+      // #ifdef H5
+      this.$nav.share(d.name, d.briefing || "", d.cover);
+      // #endif
+
+      that.getIsCollect();
+      that.getGoodsVipPrivilege();
+      that.loadCheckin();
+      // 骨架屏的落点在 runLearnChain 里（只有直播中转那一档要保持加载态）
+      that.runLearnChain();
+    },
+
+    /**
+     * 这一份详情该播哪一格阿里云点播素材（正片 / 试看），素材行里必须带后端发的 vid
+     * 判据与模板那两条 v-if 一致：已订阅吃正片，未订阅只有开了试看才有试看片；
+     * 没有 vid（本地存储、直播课、图文课）就没有凭证可取，端上照旧走地址档
+     */
+    vodMediaOf(d) {
+      if (!d || d.type != "video") {
+        return null;
+      }
+      if (d.subscription) {
+        return d.video_path && d.video_path.vid
+          ? { field: "video", vid: d.video_path.vid, row: d.video_path }
+          : null;
+      }
+      if (d.try_watch_status && d.try_watch_content && d.try_watch_content.vid) {
+        return { field: "try_watch", vid: d.try_watch_content.vid, row: d.try_watch_content };
+      }
+      return null;
+    },
+
+    /**
+     * 起播前取一枚播放凭证（H5）：换课、换格都先把旧凭证清掉再取，
+     * 否则新挂上来的播放器会拿上一格的凭证重建一次、白报一次错
+     */
+    prepareVodAuth(d) {
+      const media = that.vodMediaOf(d);
+      if (!media) {
+        that.resetVodAuth();
+        return;
+      }
+      if (that.vodAuth.field === media.field && that.vodAuth.vid === media.vid && that.vodAuth.play_auth) {
+        // 同一格、凭证还在手上（静默回收那一支不会重取媒体字段）⇒ 不再发这一发
+        that.vodReady = true;
+        return;
+      }
+      that.resetVodAuth();
+      that.vodReady = false;
+      that.requestVodAuth(media, false);
+    },
+
+    /**
+     * 清掉凭证与计数：把播放器放回地址档。
+     * vodReady 必须跟着放回 true —— 「等凭证」不能变成「这一页没有播放器」
+     */
+    resetVodAuth() {
+      that.vodAuth = { field: "", vid: "", play_auth: "" };
+      that.vodAuthTries = 0;
+      that.vodReady = true;
+    },
+
+    /**
+     * 取凭证的一发
+     * @param object media  vodMediaOf 出来的 {field, vid, row}
+     * @param bool   retry  是不是失败后的重取（重取限次数；首次失败直接放它回地址档）
+     */
+    requestVodAuth(media, retry) {
+      if (!media || that.vodAuthPending) {
+        return;
+      }
+      if (retry && that.vodAuthTries >= VOD_AUTH_MAX_RETRY) {
+        // 取不到凭证就把这一格交回地址档：宁可维持今天这条手机端能播的路，
+        // 也不要为了修电脑端把画面整个赔进去
+        console.warn("[course.playAuth] 取凭证已试 " + that.vodAuthTries + " 次，回落地址档");
+        that.vodAuth = { field: "", vid: "", play_auth: "" };
+        that.vodReady = true;
+        return;
+      }
+      that.vodAuthTries++;
+      that.vodAuthPending = true;
+
+      // 首次那一发要有退出口：请求挂起（无响应、被 cancel）时 vodReady 会一直是 false，
+      // 页面就等于没有播放器——比「退回地址档」严重得多（硬约束 22：进入加载态要把退出分支一次写全）
+      if (!retry) {
+        clearTimeout(that._vodAuthWatchdog);
+        that._vodAuthWatchdog = setTimeout(function () {
+          if (that._isDestroyed) {
+            return;
+          }
+          if (!that.vodAuth.play_auth && !that.vodReady) {
+            console.warn("[course.playAuth] 取凭证超时，先按地址档把播放器挂上");
+            that.vodAuthPending = false;
+            that.vodReady = true;
+          }
+        }, 4000);
+      }
+
+      that
+        .$api(
+          "course.playAuth",
+          { course_id: that.pageParams.id, field: media.field },
+          { custom: { noToast: true } }
+        )
+        .then((res) => {
+          clearTimeout(that._vodAuthWatchdog);
+          if (that._isDestroyed) {
+            return;
+          }
+          that.vodAuthPending = false;
+          const data = (res && res.data) || {};
+          if (!res || res.code != 1 || !data.play_auth || !data.video_id) {
+            // 运维那一句原因（AccessKey 被禁用这类）只进控制台：这一页后面还有地址档那条路，
+            // 真放不出画面时播放器自己的报错板才带得出出路，这里再压一句 toast 只会盖住它
+            console.warn("[course.playAuth] 未取得凭证：", res && res.msg, data && data.reason);
+            if (!retry) {
+              that.vodReady = true;
+            }
+            return;
+          }
+          that.vodAuth = {
+            field: media.field,
+            vid: data.video_id,
+            play_auth: data.play_auth,
+          };
+          that.vodReady = true;
+        })
+        .catch((err) => {
+          clearTimeout(that._vodAuthWatchdog);
+          if (that._isDestroyed) {
+            return;
+          }
+          that.vodAuthPending = false;
+          console.warn("[course.playAuth] 请求失败：", err);
+          if (!retry) {
+            that.vodReady = true;
+          }
+        });
+    },
+
+    /**
+     * 播放器报错 / 内置重试 / 错误板上那枚刷新：一律当作「手上这枚凭证不灵了」，重取一枚。
+     * 三枚来源同拍只发一发（vodAuthPending 拦），到上限回落地址档，不许在这里无限循环——
+     * 「要刷新页面才能播」这一条从此由这一发接手，页面不用再重载
+     * @param string from 触发来源，只进日志
+     */
+    renewVodAuth(from) {
+      // #ifdef H5
+      const media = that.vodMediaOf(that.data);
+      if (!media) {
+        return;
+      }
+      console.warn("[course.playAuth] 由 " + from + " 触发重取凭证");
+      that.requestVodAuth(media, true);
+      // #endif
+    },
+
+    /**
+     * 当前这一格该发给播放器的地址：凭证到手就不该再把播流地址发过去。
+     * Aliplayer 的判据是 `vid && !source`（vendored 2.15.2 构造里那句 `if(t.vid&&!t.source)`），
+     * 两个都给等于回到地址档、这枚凭证白取
+     */
+    vodSourceOf(row) {
+      if (!row || !row.fullurl) {
+        return "";
+      }
+      const media = that.vodMediaOf(that.data);
+      if (media && row.vid && media.vid === row.vid && that.vodAuth.play_auth) {
+        return "";
+      }
+      return row.fullurl;
+    },
+
+    /**
+     * 详情到手之后的学习链：已订阅 → 表单闸门 → 心跳/完课/直播中转；未订阅 → 只记一次进入
+     * 完整取数与「订阅态翻转」都从这里出结论，所以 loading 的落点也在这一处
+     */
+    runLearnChain() {
+      // 小程序学习闸门：本端被商家拦下时不开学习链。
+      // 播放器/正文都不渲染，开了只会把学习时长空转上去、图文还会直接 finish 成「已学完」。
+      // 判据只认后端下发的 mp_study（配置/课程类型/端都在后端折好），前端不自己比类型
+      if (that.data.subscription && Number(that.data.mp_study) === 1) {
+        that.loading = false;
+        return;
+      }
+
+      // 直播课程的直播源不适配课程播放器（跳转会提示播放异常），详情页只作跳转直播页的中转：
+      // 保持骨架屏直到跳转完成，由 startLearning 跳转或下面被拦截的分支释放
+      var liveRedirect = that.data.type == "live" && !!that.data.subscription;
+
+      // 直播中转兜底：跳转链路（表单检查回调 → startLearning → redirectTo）任一环节卡住时
+      // 也必须释放骨架屏。定时器在此处挂载而不是只放在 startLearning 内——
+      // 表单插件已安装时 startLearning 需等 app.form.checkBeforeLearn 回调，
+      // 该请求不回调时既不会跳转、也不会启动定时器，页面会永久停在加载态
+      if (liveRedirect) {
+        that.loading = true;
+        clearTimeout(that._liveLoadingTimer);
+        that._liveLoadingTimer = setTimeout(function () {
+          if (that.isPageActive) {
+            that.loading = false;
+          }
+        }, 3000);
+      }
+
+      if (that.data.subscription) {
+        // 学习前表单拦截：绑定 before_learn 表单未填写时拦住学习，不产生学习行为
+        that.checkLearnForm((blocked) => {
+          if (blocked) {
+            // 被拦截时不跳转直播页，先释放骨架屏，避免拦截层被加载态盖住。
+            // 这里只出居中那一层引导卡，不再自动开底部填写弹窗（2026-09-27 用户口径「两个弹窗
+            // 只保留中间那个引导弹窗」：两层同屏时引导卡压在填写弹窗背后等于白弹一层）；
+            // 填写弹窗由引导卡上的「去填写」点开
+            that.loading = false;
+            return;
+          }
+          that.startLearning();
+        });
+      } else {
+        courseLibrary.setStudyLog(that.pageParams.id, that.pageParams.column_id);
+        // 订阅失效等场景下清除学习前表单拦截状态
+        that.learnForm = {
+          blocking: false,
+          forms: [],
+        };
+      }
+
+      // 直播中转才保持骨架屏（跳转完成前不露出详情页，由跳转/拦截分支/_liveLoadingTimer 释放）；
+      // 其余课程数据已到即渲染页面，取反会让页面在响应到达的同一刻重新挂上加载态
+      that.loading = liveRedirect;
+    },
+
+    /**
+     * 组 2：用户态回收（2026-10-09 刷新分层的另一条链，只在 onShow 判据② 命中时发）
+     *
+     * 静默、不闪骨架、不动组 1，且订阅态没翻就不换播流地址——所以它不会打断正在播的音视频。
+     * 「购买后返回本页」「订阅专栏后返回」「开通会员后返回」都落在这一条上：
+     * 订阅态翻那一支等价于重新进过一次这门课，直接走完整回填（含学习链与直播中转）。
+     */
+    refreshState() {
+      if (that._stateFetching) {
+        return;
+      }
+      that._stateFetching = true;
+      const before = !!that.data.subscription;
+
+      that
+        .fetchDetail(false)
+        .then((res) => {
+          that._stateFetching = false;
+          if (res.code !== 1) {
+            // 详情取不到只有「课程不存在」与「直播被拉黑」两支，与完整取数同一份处理
+            that.detailUnavailable(res.msg);
+            return;
+          }
+          const after = !!res.data.subscription;
+          that.loadedAt = Date.now();
+          that.stateDirty = false;
+
+          if (after === before) {
+            // 保不保源由地址年龄决定（超龄那一趟吃新地址，见 MEDIA_MAX_AGE）
+            if (!that.keepRenderingSource(res.data)) {
+              that.mediaAt = Date.now();
+            }
+            that.data = res.data;
+            // 没翻就只回收随登录/会员态变的那三份（权益条、收藏、积分商品），学习链一律不重跑：
+            // 重跑会再上一格完课、再发一次心跳首枪，直播课还会把人再跳一次
+            that.getIsCollect();
+            that.getGoodsVipPrivilege();
+            if (that.pageParams.type && that.pageParams.type == "score") {
+              that.getScoreDetail();
+            }
+            return;
+          }
+
+          // 翻转：页签集合要整份重算（专栏已订阅把「目录」提到最前、正文到手才出「详情」），
+          // 当前停着的那一枚可能已经不在了
+          that.applyCourseData(res.data);
+          that.syncTabChecked();
+        })
+        .catch((res) => {
+          // 网络抖动不等于「状态没变」：账不清，下一次回本页再收一次，
+          // 不把一次抖动固化成「买了却一直没显示」
+          that._stateFetching = false;
+          console.warn("[course.detail] 用户态回收失败，下一次回本页再试：", res);
+        });
+    },
+
+    /**
+     * 订阅态没翻时，把「正在页面上播着/渲染着」的那几份媒体字段留在旧值上
+     * 为什么必须留：后端每次 course.detail 都给阿里云点播重签一次播流地址
+     * （`api/controller/course/Course.php` 的 courseDataLimit → `Alivod::parseAliovdTag`，
+     *  签名有效期常量 6 小时），同一个视频每次回来的 fullurl 都不相同。换源在两端都是破坏性的：
+     *  - H5：`components/video/video-h5.vue` 的 `watch: source` 是「换源即 dispose 重建播放器」，
+     *    重建后 `@ready → mediaReady → study.media.progress` 把进度回灌成服务端记录那一格；
+     *  - 微信小程序：`components/video/video-mp.vue` 把 `:src="source"` 直接绑在原生 `<video>` 上，
+     *    属性换值即从头播，且它的 `watch: source` 还顺手 `playVideo()` 自动播起来
+     *    ⇒ 「微信来了信息、点开小窗回复再返回，视频从头开始播放」（2026-10-09 用户点名这一条）
+     *    在小程序端比 H5 更直接，一次 onShow 就是一次重播；
+     *  - 音频：`components/tz/course-audio.vue` 的 `watch: path` 把 currentTime 归零。
+     * 6 小时内地址不会过期，换源的必要时机只有订阅态翻转（试看片 ⇄ 正片），那一支不走这里。
+     * 万一小程序真把页面回收了（挂在后台被系统杀掉），回来是重建实例、走首屏取数，
+     * 那一趟靠 `onHide` 的 `setStudyLog(..., pause=1)` 已经落库的 media_progress 续播
+     * （后端 `user/study/getMediaProgress` 取的就是这条），不会从头。
+     */
+    keepRenderingSource(d) {
+      // 地址挂过头就放它换新的：保源的目的是不打断正在播的这一条，不是把旧地址钉死到过期
+      if (Date.now() - that.mediaAt > MEDIA_MAX_AGE) {
+        return false;
+      }
+      const fields = [
+        "video_path",
+        "audio_path",
+        "try_watch_content",
+        "try_listen_content",
+        "detail",
+        "try_read_content",
+      ];
+      fields.forEach((field) => {
+        // 旧值取到过才留：未订阅那一档后端把 detail/audio_path 清空过，
+        // 拿一份空旧值去盖新值等于把「翻转那一支才该管的清场」提前做了
+        if (that.data[field]) {
+          d[field] = that.data[field];
+        }
+      });
+      return true;
+    },
+
+    /**
+     * 组 1：商家配的展示数据（推荐商品 / 课程关联圈子 / 推荐评价 / 圈子课程目录导航）
+     * 这一组与登录态、订阅态都无关，只随「这门课」走 ⇒ 只在首屏与下拉刷新取；
+     * 切标签页、微信小窗还原、从评论/收藏一类的子页退回，一概不重取（2026-10-09 用户点名）
+     */
+    loadCourseExtras(token) {
+      // 加载课程关联的展示圈子（圈子插件）
+      that.loadCircle(token);
+      // 推荐评价（评价入口的「共 N 条评价」与两条预览）
+      that.getCourseRecommendList();
+      // 推荐商品（全站推荐位，与本课程无关，更与用户态无关）
+      that.getRecommendGoods(token);
+      // 从圈子课程目录进入时的前后课程导航
+      that.loadCircleCourseNav();
+    },
+
+    /**
+     * 首进取到详情后选默认页签：专栏已订阅落「目录」，其次「详情」，都没有才回首枚
+     * （口径与改动前逐条一致）
+     */
+    applyDefaultTab() {
+      const tabs = that.tabs;
+      if (that.data.type == "column" && that.data.subscription) {
+        that.tabsChecked = "dir";
+        return;
+      }
+      if (tabs.some((item) => item.type === "detail")) {
+        that.tabsChecked = "detail";
+        return;
+      }
+      that.tabsChecked = tabs.length > 0 ? tabs[0].type : "";
+    },
+
+    /**
+     * 页签集合变过之后校对当前页签：还在就继续停着（用户正看着的那一屏不许被回收动作跳走），
+     * 不在了才退回首枚
+     */
+    syncTabChecked() {
+      const tabs = that.tabs;
+      if (tabs.length === 0) {
+        that.tabsChecked = "";
+        return;
+      }
+      if (!tabs.some((item) => item.type === that.tabsChecked)) {
+        that.tabsChecked = tabs[0].type;
+      }
+    },
+
+    /**
+     * 详情取不到的那一支（课程不存在 / 直播被拉黑）：完整取数与静默回收同一份处理
+     */
+    detailUnavailable(msg) {
+      that.loading = false;
+      uni.showModal({
+        title: "提示",
+        content: msg,
+        success: function () {
+          // 记录不存在（如失效分享链接）时无上一页可退，direct 打开时
+          // navigateBack 会退化成页面刷新再次提示，直接返回首页
+          uni.reLaunch({
+            url: "/pages/index/index",
+          });
+        },
+      });
+    },
+
+    /**
+     * 回到本页立刻接上的三件本地事（一件请求都不发）
+     *
+     * 学习心跳这一段是这次改动必须补的：老写法的定时器是「onShow → getData → 表单闸门回调 →
+     * startLearning」这条链的末端顺手重起的，去掉全量刷新后不接上就变成「切标签页回来学习时长不涨」，
+     * 而 onHide 那一刻已经把这一段桶结算掉了（course.js 的 flushBucket）。
+     * 防录屏与「禁止 PC 端学习」同理：onHide 里 banScreenRecordCancel 撤掉了，回来要重新上。
+     */
+    reactivate() {
+      if (that.data.subscription && !that.learnForm.blocking) {
+        that.setStudyLog();
+      }
+      if (that.data.type == "audio" || that.data.type == "video") {
+        courseLibrary.banScreenRecordStart();
+      }
+      // #ifdef MP-WEIXIN
+      courseLibrary.checkBanPc(that.data.type, that.data.id);
+      // #endif
     },
 
     /**
@@ -987,7 +1477,7 @@ export default {
     },
 
     /**
-     * 获取推荐商品
+     * 获取推荐商品（组 1：全站推荐位，与本课程、与登录态都无关，只在完整取数这一条链上发）
      */
     getRecommendGoods(token) {
       that.$api("app.recommend.getRecommendGoods", {}).then((res) => {
@@ -996,10 +1486,7 @@ export default {
           return;
         }
         if (res.code == 1 && res.data) {
-          that.tabs.push({
-            name: "推荐",
-            type: "recommend",
-          });
+          that.recommendTabVisible = true;
           that.recommendGoodsList = res.data;
         }
       });
@@ -1038,7 +1525,7 @@ export default {
       this.tabsChecked = option.type;
     },
 
-    //加载课程关联的展示圈子（圈子插件，未安装或无绑定时静默跳过）
+    //加载课程关联的展示圈子（圈子插件，未安装或无绑定时静默跳过；组 1，只随完整取数发）
     async loadCircle(token) {
       if (that.getCircleInstallState() !== true) {
         return;
@@ -1053,10 +1540,7 @@ export default {
       }
       if (res.code === 1 && res.data && res.data.has_circle == 1) {
         that.circleList = res.data.list || [];
-        that.tabs.push({
-          name: "圈子",
-          type: "circle",
-        });
+        that.circleTabVisible = true;
       }
     },
 
@@ -1067,11 +1551,20 @@ export default {
      * ① 打卡插件未装（含本地系统配置还没到手的 null 态）不发插件接口；
      * ② 只有已加入学习才发——「打卡」挂在已订阅态那条底栏（control 档）上，未订阅那个位置是「立即订阅」。
      * 列表同时喂底栏按钮与弹窗，不让弹窗自己再取一遍（两处各取就会出现「按钮出了、弹窗是空的」）。
+     *
+     * 调用点只有 applyCourseData 一处，所以订阅态翻转（购买后回本页那一支）也会跟着再取一次；
+     * 两道守卫没过时把列表清干净，别让上一档订阅态的残留撑出底栏那一枚。
      */
-    loadCheckin(token) {
-      if (that.getPluginInstallState("app_isinstall_checkin") !== true) return;
-      if (!that.data.subscription) return;
-      that.fetchCheckin(1, token);
+    loadCheckin() {
+      if (
+        that.getPluginInstallState("app_isinstall_checkin") !== true ||
+        !that.data.subscription
+      ) {
+        that.checkinList = [];
+        that.checkinHasMore = false;
+        return;
+      }
+      that.fetchCheckin(1);
     },
 
     /** 弹窗列表上拉加载（滚动到底由 tz-popup-list emit lower） */
@@ -1364,7 +1857,7 @@ export default {
 
       //积分商品走独立兑换流程（优先于免费判断）
       if (this.pageParams.type && this.pageParams.type == "score") {
-        that.$nav.to(
+        that.leaveToPay(
           "/pages/order/submit/submit?type=score&goodsList=" + JSON.stringify(goodsList)
         );
         return false;
@@ -1385,7 +1878,7 @@ export default {
             confirmText: "立即订阅",
             success: function (res) {
               if (res.confirm) {
-                that.$nav.to(gate.column_id, "column");
+                that.leaveToPay(gate.column_id, "column");
               }
             },
           });
@@ -1408,7 +1901,7 @@ export default {
             confirmText: "立即订阅",
             success: function (res) {
               if (res.confirm) {
-                that.$nav.to(that.pageParams.column_id, "column");
+                that.leaveToPay(that.pageParams.column_id, "column");
               }
             },
           });
@@ -1428,7 +1921,74 @@ export default {
         return false;
       }
 
-      that.$nav.to("/pages/order/submit/submit?goodsList=" + JSON.stringify(goodsList));
+      that.leaveToPay("/pages/order/submit/submit?goodsList=" + JSON.stringify(goodsList));
+    },
+
+    /**
+     * 离开本页去下单 / 订阅专栏 / 积分兑换：先把「用户态可能要变」记在账上，再跳
+     *
+     * 支付成功那一条链本来就有全站事件（PAY_EVENT，发在 common/utils/pay.js 的 goOrder）兜着，
+     * 这一枚是它的同级备份：H5 WAP 与支付宝那一族是整页跳走再回跳，不一定经过那一条收口；
+     * 下单页也可能被用户直接关掉。回本页时宁可多回收一次（一条静默请求、不动播放器），
+     * 也不能出现「付了钱回来页面还写着立即订阅」——那是这次去掉 onShow 全量刷新唯一的真实风险面。
+     * @param {String|Number} dest 地址或课程/专栏 id
+     * @param {String} type 路由类型，同 $nav.to
+     */
+    leaveToPay(dest, type) {
+      that.stateDirty = true;
+      that.$nav.to(dest, type);
+    },
+
+    /**
+     * 拼团区（`components/tz/group-buy-area.vue`）要把人带去下单：
+     * 导航由组件自己发（它得先挂上 `extend.group_buy` 那一枚上下文，页面这边不知道选了哪一档），
+     * 本页只补这一枚「用户态可能要变」的账 —— 与 leaveToPay 同一件事、同一个判据，
+     * 付完款退回来由 onShow 判据② 走静默回收（不闪骨架、不动正在播的那一份源）。
+     * 用 `this` 不用模块级 `that`：这一枚是模板上的事件处理器，`this` 就是渲染出这一页的实例。
+     */
+    gbGoPay() {
+      this.stateDirty = true;
+    },
+
+    /**
+     * 拼团区 @ready：活动摘要（有活动给 { text, inTeam, activity }，没有给 null）收在本地。
+     * `text` 喂底栏那枚拼团按钮；`inTeam` 喂底栏的 `hideMain`（我正在这一场拼团中 ⇒ 主购买按钮收起，
+     * 2026-10-27 用户点名「当前正在拼团不能再购买」）；`activity.buyers` 喂封面左上角那枚弹幕
+     * （2026-10-29）。**横幅与本页无关了**（2026-10-30 用户点名「拼团连成一个整体」）：
+     * 拼团价横幅回拼团区那张卡的第一行；拼团进行中本页价格格收起（`gbPriceShown`），本页不做二次加工、也不在这里另发请求。
+     */
+    gbReady(entry) {
+      this.gbEntry = entry;
+      // join 态校准：活动不在/不是团上那一场时拼团区抛 `join:false`（或 null）⇒ 底栏单独购买放回来
+      this.gbJoinMode = !!(entry && entry.join);
+      this.gbBuyers = (entry && entry.activity && entry.activity.buyers) || [];
+    },
+
+    /**
+     * 底栏「¥xx 拼团」按钮：打开拼团区那只凑团弹层（壳就挂在拼团区组件里，
+     * `activity` / `teams` 只在那一份里取过一次）。不走页面导航，弹层由那里就地开。
+     */
+    openGb() {
+      if (this.$refs.gbArea) { this.$refs.gbArea.openPopup(); }
+    },
+
+    /**
+     * 送好友区（`components/tz/send-friend-area.vue`，M-P1）要把人带去送礼下单页：
+     * 与 gbGoPay 同一件事、同一个判据 —— 导航由组件自己发，本页只补这一枚「用户态可能要变」的账，
+     * 付完款退回来由 onShow 判据② 走静默回收（不闪骨架、不动正在播的那一份源）。
+     * **不许在这里整页重取，也不许给这一枚入口另加一条 onShow 取数**（硬约束 16 例外二：
+     * 那三档判据是这一页保住播放进度的前提，被送礼入口翻掉就是「切一次标签页重播一遍」复发）。
+     * 用 `this` 不用模块级 `that`：这一枚是模板上的事件处理器，`this` 就是渲染出这一页的实例。
+     */
+    sfGoPay() {
+      this.stateDirty = true;
+    },
+
+    /**
+     * 会员权益条点进会员中心：开完会员回来同样要吃一次回收，口径同 leaveToPay
+     */
+    goVipCenter() {
+      that.leaveToPay("/pages/app/vip/center/center");
     },
 
     /**
@@ -1534,6 +2094,7 @@ export default {
     clearInterval(this.studyTimer);
     clearTimeout(this._liveLoadingTimer);
     clearTimeout(this._loadingWatchdog);
+    clearTimeout(this._vodAuthWatchdog);
     courseLibrary.banScreenRecordCancel();
   },
   onUnload() {
@@ -1543,15 +2104,56 @@ export default {
     clearInterval(this.studyTimer);
     clearTimeout(this._liveLoadingTimer);
     clearTimeout(this._loadingWatchdog);
+    clearTimeout(this._vodAuthWatchdog);
     courseLibrary.banScreenRecordCancel();
+    // 全站支付成功的监听要按 handler 注销：uni.$off(name) 不带 handler 会把别的页面那一份一起摘掉
+    if (this._onPaySuccess) {
+      uni.$off(PAY_EVENT, this._onPaySuccess);
+      this._onPaySuccess = null;
+    }
   },
+  /**
+   * 回本页要不要取数，判据只有这三条（2026-10-09 用户点名「onShow 方法中存在刷新方法，
+   * 导致每次页面刷新、标签页切换都会触发页面刷新，并且在播放视频、音频直播时会因为刷新导致
+   * 播放中断，甚至播放一半时还会因为刷新重置播放进度。在微信中，将页面切换到小窗再还原也会导致该问题」）
+   *
+   * 为什么切一次标签页就整页重取：uni-app H5 把 `document.visibilitychange` 直接发成
+   * 当前页的 onShow（`node_modules/@dcloudio/uni-h5/src/core/service/bridge/on.js` 的
+   * onAppEnterForeground → callCurrentPageHook('onShow')，监听器在 dist 里），
+   * 微信小窗还原走的是同一条，所以「看不见的那一段时间」两端都报成一次 onShow。
+   *
+   * 换来的是：老写法每次 onShow 都 `getData(true)` ⇒ ① 骨架屏重挂一次（整页换版），
+   * ② 后端每次都给阿里云点播重签播流地址、`watch: source` 换源即重建播放器（进度退回
+   * 服务端记录那一格），③ 每切一次标签页 `views` +1，④ 一轮 9 条接口。
+   */
   onShow() {
+    // M23 硬要求：用了模块级 that 的页面，onShow 的第一条语句必须把它收回当前实例
     that = this;
     that.isPageActive = true;
     courseLibrary.stopStudyLog();
-    clearInterval(this.studyTimer);
+    clearInterval(that.studyTimer);
     courseLibrary.banScreenRecordCancel();
-    this.getData(true);
+
+    // 判据①：首屏还没落地（首进，或首取失败留下的空页）→ 完整取数。
+    // 浏览数只在第一次那一趟加，重试趟不加（否则网络抖几下 views 就涨几格）
+    if (!that.loaded) {
+      const firstAttempt = !that._firstFetchTried;
+      that._firstFetchTried = true;
+      that.getData(firstAttempt);
+      return;
+    }
+
+    // 判据③：其余一律不取数（切标签页、小窗还原、从评论/收藏/日记一类的子页退回）。
+    // 不取数不等于什么都不做——心跳计时与防录屏这两件在 onHide 时被撤掉了，必须在这里接上，
+    // 否则「学习时间日志」会跟着全量刷新一起断掉（老写法是靠 getData 末端顺手重起定时器的）
+    that.reactivate();
+
+    // 判据②：只有「用户态可能变了」才回收，且走静默回收那一条（不闪骨架、不动正在播的那一份源）：
+    // 付过款（全站支付成功事件，或本页发起过下单/订阅专栏/开会员）标过脏，
+    // 或这一次取数已经超过 STALE_MS（商家改价、订阅自然到期、其他设备购买这三条没有事件源，靠它兜）
+    if (that.stateDirty || Date.now() - that.loadedAt > STALE_MS) {
+      that.refreshState();
+    }
   },
   //下拉刷新
   onPullDownRefresh() {
@@ -1559,11 +2161,21 @@ export default {
     clearInterval(this.studyTimer);
     courseLibrary.banScreenRecordCancel();
     this.getData();
+    // 下拉是这一页唯一的「强制重载」出口，拼团区跟着重取一次（它自己那两条，不借整页取数）
+    if (this.$refs.gbArea) { this.$refs.gbArea.reload(); }
+    // 送好友区同理：它自己那一口 `send_friend.gift.entry`（商家刚改完开关/勾选项，只有下拉看得到）。
+    // 未订阅那一枚是信息卡里的长条（`ref="sfCard"`）、已订阅那一枚在控制栏（`ref="sfArea"`）：
+    // 两档互斥、两枚 ref 各调各的，不许合并成一枚再猜是哪个实例
+    if (this.$refs.sfCard) { this.$refs.sfCard.reload(); }
+    if (this.$refs.sfArea) { this.$refs.sfArea.reload(); }
   },
 
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    // 受邀参团：只认 URL 上那一组 gb_*；积分商品页不收（那一档整页没有拼团区）
+    that.gbJoinCtx = readGroupBuyJoin(that.pageParams);
+    that.gbJoinMode = !!that.gbJoinCtx && !that.isScorePage;
     // 直播课的分享链接落点就是本页（Links.php 出 `/pages/course/detail/detail?id=..&share=<邀请人>`），
     // 而付费课「详情 → 下单 → 支付结果页 → 返回直播」那三跳链接参数早没了：
     // 进页先把「这一间直播间由谁请进来」按课程记下来（live-inviter），跳转那几跳都靠它续上。
@@ -1576,14 +2188,28 @@ export default {
 
     this.isLogin = uni.getStorageSync("user_token") ? true : false;
 
+    // 首屏取数不在这里发，由 onShow 判据① 发（H5 端 onLoad 紧接着就 onShow，两处都发会撞成
+    // 两条并发请求，弱网下靠 token 丢一条等于白跑一趟）
 
-    // clearInterval(this.studyTimer);
-    // courseLibrary.banScreenRecordCancel();
-    // this.getData();
-
-    // this.getData();
-    // this.getColumnDir();
-    // this.getColumnCourse();
+    // 「别处改了用户态」的账：下单页、会员页、别的课那一头付过款都要回到本页回收一次
+    // （2026-10-09 去掉 onShow 全量刷新后，购买态的显示改由这一枚账 + refreshState 静默回收承担）。
+    // handler 里不许碰模块级 that——同路由在栈里出现两次时（订阅专栏那一跳就是同一路由新实例），
+    // that 停在后创建的那一个，账会标到别人身上；用闭包捕获本页实例
+    const vm = this;
+    vm._onPaySuccess = function () {
+      vm.stateDirty = true;
+      // 拼团区随支付成功重取自己的那两条（开团付完款回来，凑团名单里要有自己那一行；
+      // 活动结束整段要收掉）。**只在拼团区已挂载时才发**，且不改 onShow 那三条判据、
+      // 不动正在播的那一份源（硬约束 16 例外二）；ref 取不到就是没挂（已订阅/未装插件/无活动）
+      if (vm.$refs.gbArea) { vm.$refs.gbArea.reload(); }
+      // 送好友区同一档：付完送礼款回来，这一屏的入口要从「买一份送好友」换成「查看赠送记录」，
+      // 礼单已经落库。口径与上面拼团区那一条逐字相同（只在已挂载时发、不动正在播的那一份源、
+      // 不退回「每次 onShow 全取」，硬约束 16 例外二）；ref 取不到就是没挂（未装插件/商家没开）。
+      // 两枚 ref 对应两档互斥的摆法：信息卡长条 `sfCard`（未订阅）/ 控制栏 `sfArea`（已订阅）
+      if (vm.$refs.sfCard) { vm.$refs.sfCard.reload(); }
+      if (vm.$refs.sfArea) { vm.$refs.sfArea.reload(); }
+    };
+    uni.$on(PAY_EVENT, vm._onPaySuccess);
   },
 
   onShareAppMessage() {

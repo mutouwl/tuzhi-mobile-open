@@ -1,0 +1,286 @@
+/* 好友领取页（M-P6/M-P7）页面私有类：一律 sfr- 前缀（M11）。
+   版式与同模块「赠送记录」页（pages/app/send_friend/gift）同一档：内容区走全局 `.school-cards`
+   （左右留边 10）+ `.school-card`（白卡、内衬 14、卡间距 10），商品区复用紧凑档课程卡 `tz-course-mini`
+   （2026-10-27 用户点名「课程也没有使用 course-item-mini」）；
+   本文件只排卡内那三段：送出人/权益说明 → 三态提示 → 主操作，以及首屏骨架那几块。
+   单位只用 px（禁 rpx）；颜色只吃 §1 token 与 M6/M21 已登记的那几档
+   （正文 #1d2129 / 次级 #4e5969 / 发丝线 #f2f3f5 / 蓝标签底 #e8f3ff + 字 #0d5bc4 / 骨架 #e5e6eb）。
+   ⚠ **同一行里项与项的间距只由容器的 `gap` 给，任何一项都不许写 `margin-left/right`**（硬约束 20）：
+   这一族按状态出没（未登录那一档送出人整块收起），项自带的 margin 会在它成了首项时变成整行左偏移。 */
+
+/* ── 商品卡下方那一栏：送出人 + 权益说明 ──────────────────────────────────── */
+/* 一道发丝线把「送的是什么」与「谁送的」分开（口径同赠送记录页 `.sfg-info`：上 10 / 上内衬 10） */
+.sfr-meta {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f2f3f5;
+}
+
+/* 送出人这一行：**标签在前、头像贴着昵称**（同一形态见赠送记录页「领取人」行；2026-10-27 用户点名
+   「标签夹在头像和昵称中间」）。行内间距只由本层的 `gap` 给，三枚项都不带 margin（硬约束 20） */
+.sfr-giver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 头像 24 圆：与赠送记录页的领取人头像同一档（两页是同一件事的两端，尺寸不许各定一份） */
+.sfr-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex: none;
+  background: #f2f3f5;
+}
+
+/* 昵称那一格：标签已挪到头像前（2026-10-27），这一层只剩昵称；`flex:1 + min-width:0` 是长昵称
+   能走省略号的前提（`<text>` 默认 min-width:auto 会把整行撑出卡片） */
+.sfr-giver-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.sfr-giver-label {
+  flex: none;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909c;
+}
+
+.sfr-giver-name {
+  font-size: 13px;
+  line-height: 18px;
+  color: #1d2129;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 权益说明：只在有送出人时才需要让开 8px；它自己成首项时贴着发丝线走，不留一段假空白（硬约束 18） */
+.sfr-giver + .sfr-desc {
+  margin-top: 8px;
+}
+
+.sfr-desc {
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909c;
+}
+
+/* ── 三态提示：图标 + 主句（+ 有效期）────────────────────────────────────────
+   2026-10-27 用户点名「提示也没有样式优化」：不再是一行裸灰字，改成一块带底色的提示条，
+   按态换色调（可领/未登录=主色蓝，不可领=中性灰，领取被拒=灰色块 + 警示红图标，色值由 computed 给）。
+   蓝底那两档色值照 M6 的蓝标签档（#e8f3ff / #0d5bc4，压底 5.6:1 ≥ 4.5:1，硬约束 29①）。
+   同一轮用户再点名「让文本水平 icon 居中显示」：整块不是一条贴左的通栏，而是**图标 + 主句作为一组
+   在提示条里水平居中**（`.sfr-tip-main` 是一行、`justify-content: center`），文字格按内容宽
+   （`flex: 0 1 auto` + `min-width: 0`，长句仍能折行）并 `text-align: center`；
+   提示条本体是**竖排 + `align-items: center`**：有效期那一句是第二行、单独按提示条自身的轴线居中 ——
+   若它仍住在文字格里，居中轴会跟着「图标 + 间距」右移半格，读出来是「第二行偏右」。 */
+.sfr-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background: #f2f3f5;
+}
+
+.sfr-tip--info {
+  background: #e8f3ff;
+}
+
+/* 图标 + 主句这一行：整行居中，行内间距只由 `gap` 给（硬约束 20） */
+.sfr-tip-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+/* 图标直接容器要给 flex 居中：只有 padding 的容器里图标按内联排版坐在基线上，墨迹中心会被顶高约 1px
+   （§1「图标与文字垂直居中两步」①）；高度取主句的行盒 21，使图标对齐第一行而不是整块的顶边 */
+.sfr-tip-icon {
+  flex: none;
+  height: 21px;
+  display: flex;
+  align-items: center;
+}
+
+/* 主句：flex 子项按内容宽（长句到顶才折行），换行后按自身中线居中；
+   `min-width: 0` 是让它缩得下去的那一档（`<text>` 默认 min-width:auto 会把整行撑出提示条） */
+.sfr-tip-text {
+  display: block;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 21px;
+  color: #4e5969;
+  text-align: center;
+}
+
+.sfr-tip--info .sfr-tip-text {
+  color: #0d5bc4;
+}
+
+/* 有效期那一句：同一块里的小字一档，颜色跟着主句走（灰底上 #86909c 只有 2.9:1，硬约束 29① 不许）；
+   它是提示条整宽的第二行，`align-self: stretch` 让 `text-align: center` 以提示条为轴 */
+.sfr-tip-sub {
+  display: block;
+  align-self: stretch;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #4e5969;
+  text-align: center;
+}
+
+.sfr-tip--info .sfr-tip-sub {
+  color: #0d5bc4;
+}
+
+/* 主操作：一页内只这一处（M17），按钮本体走 tz-button（4px 圆角），宿主只给这一格的上边距 */
+.sfr-action {
+  margin-top: 12px;
+}
+
+/* ── 整页那一句（未装 / 链接不对 / 取不到）──────────────────────────────── */
+/* 空态本体走 u-empty（图标 + 一句，登记在册那一档）；上下留白按 M6 的 40/48 给
+   （u-empty 根节点自带 margin 100px，不补这档内衬它就顶在上方控件下面） */
+.school-card.sfr-empty {
+  padding: 40px 0 48px;
+}
+
+/* ── 首屏骨架：外壳与真实卡同一只（.school-cards + .school-card），灰块只替换会变的那几格（M16）── */
+/* 骨架头像与真实头像同尺寸同位置，只换色（24 圆） */
+.sfr-avatar--sk {
+  background: #e5e6eb;
+}
+
+/* 按钮块按到手那一档 tz-button size="normal" 给（内衬 10+10 + 21 行盒 = 41 高），不藏入口、不留空白（硬约束 18） */
+.sfr-sk-btn {
+  height: 41px;
+  margin-top: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 骨架那一格：提示条现在是竖排 + 居中，骨架格要自己撑满整条宽度（`u-skeleton` 的百分比行宽
+   只有在有宽度可算时才出得来，靠内容撑会缩成 0），与真实文字那一行的左右起止同档（M16） */
+.sfr-tip-sk {
+  width: 100%;
+}
+
+
+/* ── 礼盒版式那一档（2026-10-28 参考图）──────────────────────────────────────
+   这一档不再用本页的白卡列表版式，改为与送礼页终局同一套：页首大标题 + 蓝面板 + 白卡。
+   2026-10-28 用户点名「.school-page.sfr-page--gift 页面的背景色恢复为默认」（同轮也点名了
+   送礼页 `.school-page.sfs-page`）：暖米底 #FDF5E4 整族下线，页面底色回全站默认
+   （App.vue 的 `.school-page` = #f7f8fa），本类只留排版（竖轴 + 正文撑满 + 去底部留白），
+   不写 background。 */
+.school-page.sfr-page--gift {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 0;
+}
+
+/* 蓝面板与白卡之间的留白由 `.sfs-claim-card` 自己给；这一档的正文吃共用档的 `.sfs-main` */
+.school-page.sfr-page--gift .sfs-main {
+  flex: 1;
+}
+
+
+/* ── 可领那一档（2026-10-28 用户点名「领礼物的页面啊 没动」）──────────────────
+   与已领取同一套礼盒版式（蓝面板 + 商品卡，底色走全站默认）；这一档从顶部往下排
+   （送出人 → 礼盒 → 权益/有效期 → 立即领取），不居中。 */
+.sfs-main--claim {
+  justify-content: flex-start;
+  padding-top: 24px;
+}
+
+/* 送出人一行：头像 28 圆 + 昵称 + 「送你的礼物」；与 P2 参考页同一档 */
+.sfr-giver-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.sfr-giver-head-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex: none;
+  background: #F2F3F5;
+}
+
+.sfr-giver-head-name {
+  font-size: 13px;
+  line-height: 18px;
+  color: #1D2129;
+}
+
+.sfr-giver-head-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: #86909C;
+}
+
+/* 权益说明 + 有效期：两行灰字，居中；有哪行显示哪行 */
+.sfr-claim-meta {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.sfr-claim-desc,
+.sfr-claim-expire {
+  display: block;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909C;
+}
+
+.sfr-claim-expire {
+  margin-top: 4px;
+}
+
+/* 主操作：与送好友下单页同色深钢蓝，4px 圆角由 tz-button 给 */
+.sfr-claim-action {
+  margin-top: 24px;
+}
+
+
+/* ── 骨架（与真实可领礼盒逐块同形）─────────────────────────────────────────
+   2026-10-28 用户点名「骨架屏为什么没变动」：送出人一行、蓝面板、权益/有效期、主按钮
+   四段的灰块全部落在真实版式同一只外壳里，商品卡仍由 tz-course-mini 自己的骨架档给。 */
+.sfr-giver-head-avatar--sk {
+  background: #E5E6EB;
+}
+
+.sfr-sk {
+  height: 14px;
+  border-radius: 4px;
+  background: #E5E6EB;
+  flex: none;
+}
+
+.sfr-sk-name {
+  width: 80px;
+}
+
+.sfr-sk-gift {
+  width: 60px;
+}
+
+.sfr-sk-desc {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.sfr-sk-expire {
+  width: 40%;
+  height: 12px;
+  margin: 8px auto 0;
+}

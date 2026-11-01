@@ -1,6 +1,6 @@
 <template>
     <div>
-        <u-cell :border="false" :titleStyle="{ fontWeight: 600 }" :title="$t('status.'+ status)" :label="describe" center>
+        <u-cell :border="false" :titleStyle="{ fontWeight: 600 }" :title="statusText || $t('status.'+ status)" :label="describe" center>
             <template #icon>
                 <img :src="'/static/order/status/'+status+'.png'" class="icon">
             </template>
@@ -23,6 +23,11 @@ export default {
     },
     props: {
         status:{
+            type:String,
+            default:''
+        },
+        /** 订单状态展示词（2026-10-28）：拼团挂起单后端下「待成交」，其余单空串走 `status.<code>` 词条 */
+        statusText:{
             type:String,
             default:''
         },

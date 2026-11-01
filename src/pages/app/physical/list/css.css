@@ -18,18 +18,8 @@
 	height: 30px;
 	padding: 0 10px;
 	background-color: #f5f5f5;
-	border-radius: 15px;
-	font-size: 14px;
-}
-
-.goods-list-page .search-bar .search-btn {
-	margin-left: 10px;
-	padding: 0 15px;
-	height: 30px;
-	line-height: 30px;
-	background-color: #0968f6;
-	color: #fff;
-	border-radius: 15px;
+	/* 方形档 4px：与全站搜索框同值（u-search shape="square"、tz-search-filter-bar 的 --td-search-square-radius） */
+	border-radius: 4px;
 	font-size: 14px;
 }
 

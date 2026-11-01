@@ -22,3 +22,37 @@
 .u-input{
     font-weight: 600;
 }
+
+/* ===== 首屏骨架（2026-10-31 用户点名「加载方式调整为骨架屏」）=====
+   外壳直接用真实 .activity-box（94% 宽 / 白底 / 圆角 10 / 阴影 / overflow hidden），
+   灰块只替换会变的那几格，取骨架灰 #e5e6eb、圆角 4px（与同模块选票页 .tk-sk 同一档）。
+   类名带 asign-sk- 前缀（本页样式未加 scoped，裸名会外溢到别的页面）。 */
+.asign-sk-cover {
+    width: 100%;
+    /* 封面比例按 banner 兜底占位那一档（16:9），骨架切真实图时不至于整屏跳高 */
+    padding-top: 56.25%;
+    background: #e5e6eb;
+}
+
+.asign-sk-block {
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.asign-sk-title {
+    width: 68%;
+    height: 22px;
+}
+
+.asign-sk-subtitle {
+    width: 84px;
+    height: 16px;
+    margin-top: 8px;
+}
+
+/* 时间条：真实 live-start-time-bar 自带 8px 上下内衬，整块高 34px */
+.asign-sk-time {
+    width: 100%;
+    height: 34px;
+    margin-top: 12px;
+}

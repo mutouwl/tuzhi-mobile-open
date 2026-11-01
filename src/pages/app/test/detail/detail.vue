@@ -19,7 +19,7 @@
       </tz-box>
     </div>
 
-    <tz-divider />
+    <tz-divider bgColor="#fafafa" />
     <tz-title title="考试信息" size="small" :more="false" />
     <tz-box padding="0 15px 15px">
       <div class="test-property-box">
@@ -61,7 +61,7 @@
     </tz-box>
 
     <template v-if="data.bind_course && data.bind_course.length >0" >
-      <tz-divider />
+      <tz-divider bgColor="#fafafa" />
       <tz-title title="该考试关联课程" size="small" :more="false" />
       <tz-box padding="0 15px 15px">
         
@@ -70,7 +70,7 @@
     </template>
 
     <template v-if="data.detail && data.detail != '<p><br></p>'">
-      <tz-divider />
+      <tz-divider bgColor="#fafafa" />
       <tz-title title="考试详情" size="small" :more="false" />
       <tz-box padding="0 15px 15px">
         <tz-parse :content="data.detail" />

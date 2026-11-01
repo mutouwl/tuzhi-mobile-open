@@ -1018,6 +1018,137 @@ export default {
 			},
 		},
 	},
+	/** 拼团（付费插件 group_buy）↓
+	 *  活动详情/在线凑团免登录（商详页那一段只放宽「看」，判据同 api Activity::$noNeedLogin）；
+	 *  「我的拼团」列表与团详情都是本人的东西，要登录态。
+	 *  状态文案（team_label / status_label）由接口逐行下发，前端不写死（W69 / 硬约束 35）。
+	 *  ⚠ `$api` 是 common/request/index.js 默认导出的**函数**，没有 `.post` 这一档：
+	 *   `this.$api.post('app/group_buy/…')` 会在取数那一刻抛 `is not a function`，
+	 *  页面永远停在骨架屏；调用一律写成本表登记过的键（`this.$api('group_buy.team.myList', …)`） **/
+	group_buy: {
+		activity: {
+			detail: {
+				url: 'app/group_buy/activity/detail',
+				auth: false,
+				method: 'POST',
+			},
+			teams: {
+				url: 'app/group_buy/activity/teams',
+				auth: false,
+				method: 'POST',
+			},
+			visit: {
+				url: 'app/group_buy/activity/visit',
+				auth: false,
+				method: 'POST',
+			},
+		},
+		team: {
+			open: {
+				url: 'app/group_buy/team/open',
+				auth: true,
+				method: 'POST',
+			},
+			join: {
+				url: 'app/group_buy/team/join',
+				auth: true,
+				method: 'POST',
+			},
+			detail: {
+				url: 'app/group_buy/team/detail',
+				auth: true,
+				method: 'POST',
+			},
+			// 2026-10-29 拼团开放用券：下单页选券后试算 / 券弹窗的可用清单。
+			// 两者与 `open/join` 共用后端 `OrderBridge` + `TeamService::context*` 同一份参数形状
+			calc: {
+				url: 'app/group_buy/team/calc',
+				auth: true,
+				method: 'POST',
+			},
+			coupons: {
+				url: 'app/group_buy/team/coupons',
+				auth: true,
+				method: 'POST',
+			},
+			myList: {
+				url: 'app/group_buy/team/myList',
+				auth: true,
+				method: 'POST',
+			},
+		},
+	},
+	/** 送好友（付费插件 send_friend）↓
+	 *  七口全部登记在这一份表里，调用一律写成本表的键（`this.$api('send_friend.gift.list', …)`）。
+ *  （2026-10-28 新增 `gift/selfUse`：送礼页【自己使用】，只有购买人本人能调）
+	 *  ⚠ `$api` 是 common/request/index.js 默认导出的**函数**，没有 `.post` 这一档：
+	 *   `this.$api.post('app/send_friend/…')` 会在取数那一刻抛 `is not a function`，
+	 *  页面永远停在骨架屏而接口一条都不发（与本文件 1021-1027 行拼团那一族同一条教训）。
+	 *  礼单状态文案（逐行 `status_label`，四档名称在 `attr.statusList` 里）、领取页那三态的句子（`block_reason`
+	 *  + `status_label`）、有效期那一句（`expire_text`）都由接口下发，前端不写死（W69 / 硬约束 35 / M44）。
+	 *  ⚠ 键名以生产者为准：`GiftRead::decorate()` 交 `status_label`（不是 `status_text`）、
+	 *  `receiver_name`（`receiver` 是整枚用户对象，直接渲染就是 `[object Object]`）、
+	 *  `shared_at_text`/`claimed_at_text`/`expire_time_text`（裸戳是 Unix 秒）；
+	 *  `Gift::info()` 交 `claimable`/`giver_name`（不是 `can_claim`/`giver_nickname`），
+	 *  `other_pending` 是**剩余份数**（只对购买人本人生效），全站从不发 `next_code`。
+	 *  `gift/info` 与 `gift/entry` 是免登录的两口：前者是好友点开领取链接时先让他看见「这是哪门课」
+	 *  再引导登录（§2.3-4，后端对未登录只回商品名与封面 + need_login，判据同 api Gift::$noNeedLogin），
+	 *  后者是商详页那一枚入口 flag（登录与否看到的「能不能送」是同一件事，不该要登录）。
+	 *  ⚠ **`gift/entry` 的调用点是 `components/tz/send-friend-area.vue` 自己**（M-P1 的取数形态逐值照
+	 *  `group-buy-area.vue:151-170` 那一档：插件块自己发自己那条口，**不挤进全站共用的课程详情载荷**，
+	 *  课程详情那张表是核心出口、少一版客户端也在读，为插件块加一列等于把插件的存活性写进核心载荷
+	 *  ——`paid-plugins.md` §4.2 与 §12.1-⑨ 说的「字段缺失回落不显示」正是留给这种老包的）。
+	 *  未装插件 ⇒ 这口一次都不发（闸门在组件 `checkInstall()` 里，`app_isinstall_send_friend` 为假就 return）。 **/
+	send_friend: {
+		gift: {
+			// M-P1 商详页入口 flag：{goods_type, goods_id} → {send_friend_entry, max_per_order, ...}
+			// 免登录；三枚轴（总开关 ∧ 类别勾选 ∧ 商品可送）已由后端 Gate 折成一枚，前端不重判（M36②）
+			entry: {
+				url: 'app/send_friend/gift/entry',
+				auth: false,
+				method: 'POST',
+			},
+			// M-P2 建送礼购买单：{goods_id, goods_type, count, coupon_id} → {order_no, real_price}
+			// **调用点是标准提交订单页的送礼分支**（`sf=1` 时 `components/order/submit-order.vue` 走这一口；
+			//  插件自己的送礼下单页 2026-10-16 已撤，与全站购买流并成一条）
+			create: {
+				url: 'app/send_friend/gift/create',
+				auth: true,
+				method: 'POST',
+			},
+			// M-P4 我的礼单：{status, offset, limit} → {total, rows}（只回 giver_user_id = 当前用户）
+			list: {
+				url: 'app/send_friend/gift/list',
+				auth: true,
+				method: 'POST',
+			},
+			// M-P5 打开分享面板即记「已送出」：{id}，幂等只更新 shared_at（§3.3）
+			share: {
+				url: 'app/send_friend/gift/share',
+				auth: true,
+				method: 'POST',
+			},
+			// M-P6 领取页取数：{code} → 三态 + need_login（免登录那一档只回商品名与封面）
+			info: {
+				url: 'app/send_friend/gift/info',
+				auth: false,
+				method: 'POST',
+			},
+			// M-P6 领取：{code}，一人一领的乐观并发在后端收口（§3.6）
+			receive: {
+				url: 'app/send_friend/gift/receive',
+				auth: true,
+				method: 'POST',
+			},
+			// M-P9 自己使用（2026-10-28 送礼页 P1）：{code} —— 只有购买人本人能调，
+			// 后端跳过「不能领自己」那一条、其余判据与领取同一份；成功后与 receive 同一份回体
+			selfUse: {
+				url: 'app/send_friend/gift/selfUse',
+				auth: true,
+				method: 'POST',
+			},
+		},
+	},
 	/**
 	 * 奖品（标准版核心）↓
 	 *  2026-10-03 自 share_gift.prize 升上来：奖品能力不再只属于分享有礼，任何业务发的奖
@@ -1256,6 +1387,22 @@ export default {
 	/** 课程 ↓ **/
 	course: {
 
+		// 小程序学习引导（课程设置「小程序学习」开启后，H5 付款方要去小程序学习）：
+		// entry 取路径与码图地址；urllink 只有微信外才懒调（URL Link 有配额）；
+		// 码图本身走 <image src>，不经这里（后端免登录，见 api/controller/course/MpStudy::code）
+		mpStudy: {
+			entry: {
+				url: 'course/mp_study/entry',
+				auth: true,
+				method: 'POST',
+			},
+			urllink: {
+				url: 'course/mp_study/urllink',
+				auth: true,
+				method: 'POST',
+			},
+		},
+
 		group: {
 			index: {
 				url: 'course/group/index',
@@ -1329,21 +1476,27 @@ export default {
 			method: 'POST',
 			// desc: '课程详情',
 		},
+		// 阿里云点播播放凭证（H5 的 VID+PlayAuth 那一档）。
+		// auth 给 false 而不是 true：试看是公开内容，未登录也要能取凭证（正片那一支由服务端
+		// 判登录态回 401，走响应拦截的登录引导）——写 true 会让访客的试看直接发不出请求。
+		playAuth: {
+			url: 'course/vod/playAuth',
+			auth: false,
+			method: 'POST',
+			// desc: '课程点播播放凭证',
+		},
 
 		
 
-		columndir: {
-			url: 'course/column/getDir',
-			auth: false,
-			method: 'POST',
-			// desc: '获取专栏目录',
-		},
 		columncourse: {
 			url: 'course/column/getCourse',
 			auth: false,
 			method: 'POST',
 			// desc: '获取专栏包含的课程',
 		},
+		// 这里原来还有一条同名的 columndir → course/column/getDir，被下面这条覆盖掉了
+		// （对象字面量后写的键赢），所以目录页一直是走 getColumnDir 那版批量判据。
+		// 谁清理重复键挑错一个，目录就退回逐条 N+1 那一版，故把那一条删净、只留这一份真源。
 		columndir: {
 			url: 'course/column/getColumnDir',
 			auth: false,

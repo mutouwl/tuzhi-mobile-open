@@ -3,12 +3,12 @@
         <tz-box padding="20px 15px 0" bgColor="none">
 
             <div class="cover">
+                <!-- 小程序端 `:style` 只认字符串：三元里带对象字面量（而且键带引号）时 uni 不会把它
+                     序列化成串，WXML 直接报 `Bad attr style ... unexpected token '` ⇒ 整页 WXML 编译失败 -->
                 <div :class="[
                     'image',
                     { 'spin': isplay }
-                ]" :style="patch ? {
-    'background-image': 'url(' + patch + ')'
-} : {}">
+                ]" :style="patch ? 'background-image:url(' + patch + ')' : ''">
 
                 </div>
             </div>

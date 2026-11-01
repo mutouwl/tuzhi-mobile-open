@@ -1,8 +1,8 @@
 <template>
     <view class="box">
         <!--  #ifdef H5 -->
-        <video-h5 :controlBarVisibility="controlBarVisibility" :showFullscreenButton="showFullscreenButton" :objectFit="objectFit" :pictureOffsetPercent="pictureOffsetPercent" @control-bar-visible-change="handleControlBarVisibleChange" @ended="end" @ready="ready" ref="videoPlayer" :domId="domId" :playauth="playauth" :cover="cover" :height="height" :source="source" :isLive="isLive" :autoplay="autoplay" :views="views"
-            :bulletScreen="bulletScreen" :disableSeek="disableSeek" :resumePlay="resumePlay" :showProgress="showProgress" @stop="stopHandle" @paused="pausedHandle" @play="playHandle" @refresh="refresh" @error="error" @waiting="waitingHandle" @playing="playingHandle" @timeupdate="timeUpdateHandle" @onM3u8Retry="onM3u8RetryHandle"/>
+        <video-h5 :controlBarVisibility="controlBarVisibility" :showFullscreenButton="showFullscreenButton" :objectFit="objectFit" :pictureOffsetPercent="pictureOffsetPercent" @control-bar-visible-change="handleControlBarVisibleChange" @ended="end" @ready="ready" ref="videoPlayer" :domId="domId" :playauth="playauth" :vid="vid" :cover="cover" :height="height" :source="source" :isLive="isLive" :autoplay="autoplay" :views="views"
+            :bulletScreen="bulletScreen" :disableSeek="disableSeek" :resumePlay="resumePlay" :showProgress="showProgress" :preventPageReloadOnRefresh="preventPageReloadOnRefresh" :refreshNeedsNewAuth="refreshNeedsNewAuth" @stop="stopHandle" @paused="pausedHandle" @play="playHandle" @play-intent="playIntentHandle" @refresh="refresh" @error="error" @waiting="waitingHandle" @playing="playingHandle" @timeupdate="timeUpdateHandle" @onM3u8Retry="onM3u8RetryHandle"/>
         <!--  #endif -->
 
         <!--  #ifdef MP -->
@@ -48,6 +48,13 @@ export default {
         },
         //播放凭证
         playauth: {
+            type: String,
+            default: ''
+        },
+        // 阿里云点播视频 ID（与 playauth 成对，只给 H5 那一档吃）。
+        // 必须在本组件声明并往下透传——只写实现层等于调用点传不进来（见本文件 115 行那条教训）；
+        // 也不许转给 video-mp：小程序原生 <video> 只认播流地址，给它 VID 等于换了个坏源
+        vid: {
             type: String,
             default: ''
         },
@@ -118,6 +125,20 @@ export default {
         showProgress: {
             type: Boolean,
             default: true
+        },
+        // 拦截播放器内置错误板那枚「刷新」按钮的默认 location.reload（直播/预览场景整页重载
+        // 会丢房间状态、连麦与播放进度），改为只重载当前视频流。本组件是 video-h5 的包装层，
+        // 必须在**这里**声明并往下透传——只写实现层等于调用点传不进来（同本文件 115 行那条
+        // props 透传的教训）
+        preventPageReloadOnRefresh: {
+            type: Boolean,
+            default: false
+        },
+        // 凭证档刷新时要不要向页面再要一枚播放凭证（同上一条：必须在包装层声明并透传，
+        // 只写实现层等于调用点传不进来）
+        refreshNeedsNewAuth: {
+            type: Boolean,
+            default: false
         }
     },
     watch: {
@@ -153,6 +174,17 @@ export default {
             }
             return false;
         },
+        /**
+         * 有媒体元素且停在暂停态（与 isAwaitingPlay 只差「媒体还没建好那一段不算」）
+         * 同上一条：方法必须逐层转下去，页面隔着这一层才有得问
+         * @return {Boolean} 内层没实现时返回 false（小程序端不受影响）
+         */
+        isPausedWithMedia() {
+            if (this.$refs.videoPlayer && typeof this.$refs.videoPlayer.isPausedWithMedia === 'function') {
+                return this.$refs.videoPlayer.isPausedWithMedia();
+            }
+            return false;
+        },
         play() {
             this.$refs.videoPlayer.play();
         },
@@ -185,6 +217,14 @@ export default {
         },
         playHandle(){
             this.$emit('play', false);
+        },
+        /**
+         * 用户按下播放器播放按钮那一刻（此时还没真正开播）
+         * 本组件是 video-h5 的包装层，事件也要一层层转上去——只写实现层，页面隔着这一层收不到
+         * （同本文件 164 行那条「方法与 props 必须逐层透传」的教训）
+         */
+        playIntentHandle(){
+            this.$emit('play-intent', false);
         },
 
         waitingHandle(){

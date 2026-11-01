@@ -15,14 +15,14 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| course_id | string | 否 | 课程ID | `` |
+| course_id | string | 否 | 课程ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}user/study/getMediaProgress' \
   -H 'Content-Type: application/json' \
-  -d '{"course_id":""}'
+  -d '{"course_id":"xxx"}'
 ```
 
 ## 返回示例

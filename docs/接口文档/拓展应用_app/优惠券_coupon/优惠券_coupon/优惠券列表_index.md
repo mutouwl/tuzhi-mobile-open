@@ -15,7 +15,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| ids | string | 否 | ID集合 | `` |
+| ids | string | 否 | ID集合 | - |
 | list_rows | integer | 否 | 列表rows | `10` |
 
 ## 请求示例
@@ -23,7 +23,7 @@
 ```bash
 curl -X POST '{apiUrl}app/coupon/coupon/index' \
   -H 'Content-Type: application/json' \
-  -d '{"ids":"","list_rows":10}'
+  -d '{"ids":"xxx","list_rows":10}'
 ```
 
 ## 返回示例

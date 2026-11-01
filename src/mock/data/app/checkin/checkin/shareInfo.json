@@ -1,0 +1,11 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344791",
+  "data": {
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "id": 628,
+    "h5_link": "http://127.0.0.1:8099/index.php?i=1&route=#/pages/app/checkin/intro/intro?id=628"
+  }
+}

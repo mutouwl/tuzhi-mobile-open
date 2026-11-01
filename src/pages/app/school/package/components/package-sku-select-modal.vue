@@ -1,10 +1,21 @@
 <template>
-	<u-popup :show="show" mode="bottom" :round="10" :closeable="true" :safeAreaInsetBottom="false" @close="close">
-		<view class="pkg-modal-content">
-				<view class="pkg-header">
+	<u-popup :show="show" mode="bottom" :round="12" :closeable="true" :safeAreaInsetBottom="false" @close="close">
+		<view class="pkg-modal-content" :class="{ 'pkg-modal-content--gb': gbMode }">
+				<view class="pkg-header" :class="{ 'pkg-header--gb': gbMode }">
 					<image class="pkg-image" :src="coverSrc" mode="aspectFill" @error="coverError = true" />
 				<view class="pkg-info">
-					<view class="pkg-price">
+					<!-- 拼团那一趟（2026-10-29）：价格切到这一档的拼团价 + 原价划线 + 「拼团」标；课时/有效期照旧。
+					     用户点名「给规格弹窗增加特殊的背景色 / 特殊的 Tag」⇒ 整块切拼团态（见 `gbMode`） -->
+					<view class="gb-badge" v-if="gbMode">拼团专享</view>
+					<view class="pkg-price" v-if="gbMode">
+						<text class="gb-tag">拼团</text>
+						<text class="price-symbol">¥</text>
+						<text class="price-num">{{ gbPrice }}</text>
+						<text class="price-origin">¥{{ currentSku.price || '0' }}</text>
+						<text class="price-lessons" v-if="skus.length">/ {{ currentSkuLessons }}课时</text>
+						<text class="gb-team" v-if="gbTeam">{{ gbTeam }}</text>
+					</view>
+					<view class="pkg-price" v-else>
 						<text class="price-symbol">¥</text>
 						<text class="price-num">{{ currentSku.price || '0' }}</text>
 						<text class="price-lessons" v-if="skus.length">/ {{ currentSkuLessons }}课时</text>
@@ -55,6 +66,11 @@
 					text="暂无可选套餐"
 				/>
 
+				<!-- 阶梯拼团：人数档就在这一步选（2026-10-29 用户点名「在这个选择商品规格弹窗里面，
+				     增加这个阶梯的选择。注意，不同阶梯对应的价格不同，要进行单独适配」） -->
+				<tz-gb-ladder-picker v-if="gbMode && isLadder" :activity="gb" :spec-id="gbSpecId"
+					:value="ladderId" @input="ladderId = $event" />
+
 				<view class="pkg-section" v-if="currentSku.courses && currentSku.courses.length">
 					<view class="pkg-section-title">套餐包含课程</view>
 					<!-- 课程行复用 tz-school-course（封面缺失/加载失败兜底 + 标题右侧类型标签 + 标题下简介），
@@ -64,13 +80,16 @@
 			</scroll-view>
 
 			<view class="pkg-footer">
-				<button class="pkg-confirm-btn" :class="{ 'pkg-confirm-disabled': !canConfirm }" @tap="onConfirm">确认报名</button>
+				<!-- 参团中（`inTeam`）与不可确认同档：禁用 + 就地写原因，不留一枚点了能下原价单的入口 -->
+				<button class="pkg-confirm-btn" :class="{ 'pkg-confirm-disabled': !canConfirm || inTeamBlocked, 'pkg-confirm-btn--gb': gbMode && !inTeamBlocked }" @tap="onConfirm">{{ confirmText }}</button>
 			</view>
 		</view>
 	</u-popup>
 </template>
 
 <script>
+import { gbSpecOf, gbPriceTextOf, gbTeamText, gbTierId, IN_TEAM_BLOCK_TEXT } from '@/common/utils/group-buy-spec.js';
+import { specBuyable } from '@/common/utils/spec-stock.js';
 export default {
 	name: 'PackageSkuSelectModal',
 	props: {
@@ -92,6 +111,15 @@ export default {
 			type: Array,
 			default: () => []
 		},
+		// 拼团活动本体（2026-10-29 加性）：有它 ⇒ 头部切拼团价、按钮写「立即开团」
+		gb: { type: Object, default: null },
+		/**
+		 * 我在这一场拼团里已有进行中的团（2026-10-30 加性）：宿主传页面那一枚 `gbInTeam`。
+		 * 底栏那枚「立即报名」已经收起，但「选择套餐」那一行是**第二条购买入口**——只收底栏等于只把
+		 * 入口藏起来，从套餐弹层照样能下原价单（用户点名「这应该是一个逻辑漏洞」）。
+		 * 弹层照开（套餐权益 / 校区只有这里看得见），只把确认按钮换成禁用态。
+		 */
+		inTeam: { type: Boolean, default: false },
 		// 当前选中校区 id（.sync 双向同步）
 		campus: {
 			type: [Number, String],
@@ -104,7 +132,9 @@ export default {
 			localActive: this.value,
 			// 封面加载失败占位（与订单商品封面默认图一致）；课程封面兜底由 tz-school-course 自带
 			defaultCover: '/static/image/default-goods.jpg',
-			coverError: false
+			coverError: false,
+			// 选中的拼团人数额（阶梯型；0 = 还没选，按这一档套餐规格的第一档算）
+			ladderId: 0
 		};
 	},
 	computed: {
@@ -113,6 +143,33 @@ export default {
 		},
 		currentSku() {
 			return this.skus[this.localActive] || {};
+		},
+		/** 当前套餐规格 id（`school_package_sku.id` 就是拼团 `spec_id`） */
+		gbSpecId() {
+			return Number(this.currentSku && this.currentSku.id) || 0;
+		},
+		/** 这一档在拼团活动里的价行 */
+		gbRow() {
+			return gbSpecOf(this.gb, this.gbSpecId);
+		},
+		/** 是不是阶梯拼团（只有它才在弹窗里摆人数档） */
+		isLadder() {
+			return !!(this.gb && this.gb.type === 'ladder');
+		},
+		/** 实际生效的档位 id：点过就用点过的，没点过落这一档规格的第一档 */
+		effectiveLadderId() {
+			return gbTierId(this.gb, this.gbSpecId, this.ladderId);
+		},
+		/** 头区拼团价：阶梯型取「规格 + 档位」两轴的价 */
+		gbPrice() {
+			return gbPriceTextOf(this.gb, this.gbSpecId, this.effectiveLadderId);
+		},
+		gbTeam() {
+			return gbTeamText(this.gb, this.gbSpecId, this.effectiveLadderId);
+		},
+		/** 拼团态的整块视觉开关：这一档在活动里有拼团价才切主题，普通报名逐字不变 */
+		gbMode() {
+			return !!this.gbRow;
 		},
 		currentSkuLessons() {
 			return (this.currentSku.courses || []).reduce((sum, c) => sum + parseFloat(c.lessons || 0), 0);
@@ -131,7 +188,22 @@ export default {
 			if (!this.currentSku.id) return false;
 			if (!this.campusList.length) return false;
 			if (this.isSkuDisabled(this.currentSku)) return false;
+			// 拼团那一趟：这一档在活动里卖完 / 限购用尽也不放行（判据同拼团弹窗 `specBuyable`）
+			if (this.gbRow && !this.isGbbuyable) return false;
 			return !!this.campus;
+		},
+		/** 拼团那一趟这一档还能不能买（没有活动时恒 true，不影响普通报名） */
+		isGbbuyable() {
+			return !this.gbRow || specBuyable(this.gbRow);
+		},
+		/** 参团中 ⇒ 这一枚不许下单（文案与判据在 `utils/group-buy-spec.js` 一处，四只规格弹窗同读） */
+		inTeamBlocked() {
+			return !!this.inTeam;
+		},
+		/** 确认按钮文案（参团中优先于拼团那一档，先说清为什么点不了） */
+		confirmText() {
+			if (this.inTeamBlocked) { return IN_TEAM_BLOCK_TEXT; }
+			return this.gbMode ? '立即开团' : '确认报名';
 		},
 		// 商品卡状态文案：套餐级原因（无可上课校区）优先，其次是规格权益失效，最后才是余量文案
 		balanceText() {
@@ -180,6 +252,11 @@ export default {
 			this.$emit('update:value', index);
 		},
 		onConfirm() {
+			// 参团中：按钮已是禁用态，这里兜异步那一拍（活动在弹层打开后才回包 / 历史栈）
+			if (this.inTeamBlocked) {
+				uni.showToast({ title: IN_TEAM_BLOCK_TEXT, icon: 'none' });
+				return;
+			}
 			if (!this.currentSku.id) {
 				uni.showToast({ title: '请选择套餐', icon: 'none' });
 				return;
@@ -195,6 +272,8 @@ export default {
 			}
 			this.$emit('confirm', {
 				sku: this.currentSku,
+				// 阶梯型选中的人数额（普通报名不收，逐字不变）
+				ladderId: this.effectiveLadderId,
 			});
 		},
 		close() {
@@ -222,11 +301,20 @@ export default {
 	/*  #endif  */
 }
 
+/* 顶格也自带上圆角（2026-10-30 与实物/组合/圈子那三只同批）：本容器有 `overflow: hidden` 会裁剪，
+   已经能圆；顶格自己也带上同一档，任一处被改动都不会退回直角。弹层（12）/ 内容（12）/ 顶格（12）同值。 */
 .pkg-header {
 	display: flex;
 	flex-shrink: 0;
 	padding: 13px 16px;
 	border-bottom: 1px solid #f7f8fa;
+	border-radius: 12px 12px 0 0;
+}
+
+/* 拼团态：标题区一层极浅暖红、渐隐到白；正文仍是白底，套餐/校区选项的对比度不变 */
+.pkg-header--gb {
+	background: linear-gradient(180deg, #fff3ee 0%, #ffffff 100%);
+	border-bottom-color: #ffece8;
 }
 
 .pkg-image {
@@ -264,6 +352,48 @@ export default {
 	margin-left: 2px;
 }
 
+/* 拼团那一趟：价格行前的「拼团」标、划线原价、N人团（2026-10-29 补齐）。
+   本页原先没有这三条规则，模板里的 gb-tag / price-origin / gb-team 全吃浏览器默认黑字，
+   只有价格是红的 ⇒ 用户点名「教育培训这个拼团黑色字体，价格红色字体，然后又是黑色字体
+   显示的原价，特别特别丑」。配色与实物/组合/圈子三只规格弹窗同一份，字号按本页 16px 价收一档。 */
+.gb-tag {
+	margin-right: 6px;
+	padding: 0 5px;
+	border-radius: 3px;
+	background: #ffece8;
+	color: #f53f3f;
+	font-size: 10px;
+	line-height: 16px;
+	align-self: center;
+}
+
+/* 「拼团专享」小标：红橙渐变底 + 白字，与商详拼团按钮同一条渐变 */
+.gb-badge {
+	align-self: flex-start;
+	margin-bottom: 4px;
+	padding: 0 6px;
+	border-radius: 3px;
+	background: linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 500;
+	line-height: 17px;
+	letter-spacing: .2px;
+}
+
+.price-origin {
+	margin-left: 6px;
+	font-size: 12px;
+	color: #86909c;
+	text-decoration: line-through;
+}
+
+.gb-team {
+	margin-left: 6px;
+	font-size: 12px;
+	color: #f53f3f;
+}
+
 .price-lessons {
 	font-size: 12px;
 	color: #86909c;
@@ -278,7 +408,9 @@ export default {
 
 .pkg-body {
 	/* 真机兼容：scroll-view 内部依赖 height:100%，无法对 flex 撑高（height:0 + flex-grow）的父级解析，
-	   内容区会塌陷到只显示头部；改用确定高度（165px = 头部 87px + 底部 78px），flex 仅作微调兜底 */
+	   内容区会塌陷到只显示头部；改用确定高度（165px = 头部 87px + 底部 78px），flex 仅作微调兜底。
+	   拼团态头部多一行「拼团专享」标（约 20px），由本区的 flex-shrink 扣回，不改这个常量
+	   （改了普通报名态会空出一截） */
 	height: calc(80vh - 165px);
 	flex: 1 1 auto;
 	min-height: 0;
@@ -333,6 +465,16 @@ export default {
 	color: #0968f6;
 }
 
+/* 拼团态：选中的套餐 / 校区切红系（与 group-buy-config-popup 的 `.gbc-chip--on` 同值） */
+.pkg-modal-content--gb .pkg-option-active {
+	background-color: #fff7f7;
+	border-color: #f53f3f;
+}
+
+.pkg-modal-content--gb .pkg-option-active .option-name {
+	color: #f53f3f;
+}
+
 .option-balance {
 	margin-left: 4px;
 	font-size: 11px;
@@ -374,6 +516,11 @@ export default {
 
 .pkg-confirm-btn::after {
 	border: none;
+}
+
+/* 拼团态的确认按钮：与商详「立即开团」同一条红橙渐变（禁用档由 `.pkg-confirm-disabled` 盖回） */
+.pkg-confirm-btn--gb {
+	background: linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%);
 }
 
 .pkg-confirm-disabled {

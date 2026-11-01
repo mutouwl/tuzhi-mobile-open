@@ -1,6 +1,6 @@
 # 提交评价
 
-> 判断是否全部评价完毕
+> 字段白名单，防止客户端注入任意列（如status绕过审核）
 
 ## 基本信息
 
@@ -17,15 +17,16 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| order_no | string | 否 | 订单号 | `` |
-| item_id | string | 否 | 条目ID | `` |
+| order_no | string | 否 | 订单号 | - |
+| item_id | string | 否 | 条目ID | - |
+| rows | array | 否 | 本页数据行数组 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}order/evaluate/submit' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"","item_id":""}'
+  -d '{"order_no":"xxx","item_id":"xxx","rows":"xxx"}'
 ```
 
 ## 返回示例

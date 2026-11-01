@@ -17,16 +17,16 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| activity_id | string | 否 | 活动ID | `` |
-| name | string | 否 | 名称 | `` |
-| mobile | string | 否 | 手机号 | `` |
+| activity_id | string | 否 | 活动ID | `12` |
+| name | string | 否 | 名称 | - |
+| mobile | string | 否 | 手机号 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/activity/signin/signin' \
   -H 'Content-Type: application/json' \
-  -d '{"activity_id":"","name":"","mobile":""}'
+  -d '{"activity_id":12,"name":"xxx","mobile":"xxx"}'
 ```
 
 ## 返回示例

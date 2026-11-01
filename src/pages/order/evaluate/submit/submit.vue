@@ -10,7 +10,7 @@
 			/>
 			<tz-divider bgColor="#fff" />
 		</tz-box>
-		<tz-divider />
+		<tz-divider bgColor="#fafafa" />
 		<tz-box>
 			<u-form :labelWidth="labelWidth" :model="form">
 

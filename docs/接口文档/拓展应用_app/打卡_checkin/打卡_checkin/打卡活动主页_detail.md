@@ -1,0 +1,695 @@
+# 打卡活动主页
+
+> 头部信息、任务栏与动态流首屏一次给全；能不能打卡的判据与提交校验共用后端 TaskGate 那一份，前端不重复判。
+
+## 基本信息
+
+| 项目 | 内容 |
+| --- | --- |
+| API Key | `checkin.checkin.detail` |
+| 接口地址 | `POST /api/app/checkin/checkin/detail` |
+| 请求方式 | POST |
+| 是否需登录 | 是 |
+| 所属模块 | 拓展应用（app） |
+| 所属控制器 | Checkin（打卡用户端接口（日历打卡 / 闯关打卡）） |
+| 登录方式 | 请求头携带 `token`（登录接口返回） |
+
+## 请求参数
+
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+| --- | --- | --- | --- | --- |
+| checkin_id | integer | 是 | 打卡活动 ID | `628` |
+
+## 请求头
+
+| Header | 说明 |
+| --- | --- |
+| token | 用户登录凭证，登录成功后由 `user/info/login` 返回，前端自动携带 |
+
+## 请求示例
+
+```bash
+curl -X POST '{apiUrl}app/checkin/checkin/detail' \
+  -H 'Content-Type: application/json' \
+  -d '{"checkin_id":628}'
+```
+
+## 返回示例
+
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344781",
+  "data": {
+    "id": 628,
+    "uniacid": 1,
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "detail": "<p>123<img src=\"https://tuzistudy.oss-cn-beijing.aliyuncs.com/uploads/20260924/1790238068591-1.png\" alt=\"\" data-href=\"\" style=\"\"/><img src=\"https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png\" alt=\"\" data-href=\"\" style=\"\"/></p>",
+    "checkin_mode": 2,
+    "task_show_type": 1,
+    "time_type": 1,
+    "frequency_type": 2,
+    "frequency_days": 1,
+    "frequency_time": "08:00:00",
+    "frequency_tasks": 1,
+    "start_date": "2026-09-24",
+    "end_date": null,
+    "total_days": 0,
+    "rest_type": 0,
+    "rest_weeks": "",
+    "rest_dates": "[]",
+    "day_start": "00:00:00",
+    "day_end": "23:59:59",
+    "per_day_type": 2,
+    "per_day": 0,
+    "makeup_total": 0,
+    "join_type": "free",
+    "price": "0.00",
+    "course_id": 0,
+    "join_deadline_type": 1,
+    "join_deadline": 0,
+    "isolation_mode": 1,
+    "allow_user_post": 1,
+    "allow_user_comment": 1,
+    "default_tip": "",
+    "default_template": "",
+    "default_day_start": "00:00:00",
+    "default_day_end": "23:59:59",
+    "default_require": {
+      "preview": 1,
+      "task_max": 1,
+      "allow_image": 1,
+      "allow_audio": 1,
+      "allow_video": 1,
+      "allow_file": 1
+    },
+    "share_title": "",
+    "share_desc": "",
+    "share_cover": "",
+    "status": 1,
+    "createtime": 1790246123,
+    "updatetime": 1790559179,
+    "run_state": "ongoing",
+    "done_days": 14,
+    "join_count": 4,
+    "record_count": 19,
+    "is_member": 1,
+    "is_black": 0,
+    "attr": {
+      "checkin_mode": {
+        "1": "日历打卡",
+        "2": "闯关打卡"
+      },
+      "join_type": {
+        "free": "免费参与",
+        "pay": "付费参与",
+        "password": "****",
+        "student": "指定学员",
+        "course": "绑定课程"
+      },
+      "time_type": {
+        "1": "固定起止时间",
+        "2": "固定天数（随到随学）"
+      },
+      "run_state": {
+        "not_started": "未开始",
+        "ongoing": "进行中",
+        "ended": "已结束"
+      }
+    },
+    "course": null,
+    "has_course": 0,
+    "is_virtual_pay": 0,
+    "member_status": 1,
+    "my_nickname": "冯浩森@凸",
+    "can_submit": 1,
+    "makeup_left": 0,
+    "task_total": 12,
+    "pending_count": 1,
+    "tasks": [
+      {
+        "id": 579,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "123",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 10,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790256314,
+        "updatetime": 1790498901,
+        "level": 1,
+        "done": 1,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "done",
+        "check_text": "已打卡",
+        "check_msg": "今日已完成该任务",
+        "user_count": 2,
+        "pending": 0
+      },
+      {
+        "id": 15222,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 139,
+        "title": "副本-章节1任务1",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 20,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790403096,
+        "updatetime": 1790498901,
+        "level": 2,
+        "done": 1,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "done",
+        "check_text": "已打卡",
+        "check_msg": "今日已完成该任务",
+        "user_count": 2,
+        "pending": 0
+      },
+      {
+        "id": 6785,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 139,
+        "title": "章节1任务1",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 30,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790337875,
+        "updatetime": 1790498901,
+        "level": 3,
+        "done": 1,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "done",
+        "check_text": "已打卡",
+        "check_msg": "今日已完成该任务",
+        "user_count": 2,
+        "pending": 0
+      },
+      {
+        "id": 1925,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "副本-123",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 40,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790303032,
+        "updatetime": 1790498765,
+        "level": 4,
+        "done": 0,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 1,
+        "check_state": "",
+        "check_text": "",
+        "check_msg": "",
+        "user_count": 1,
+        "pending": 1
+      },
+      {
+        "id": 1926,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "副本-123",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 50,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790303034,
+        "updatetime": 1790498765,
+        "level": 5,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 1,
+        "pending": 0
+      },
+      {
+        "id": 6786,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "账务4",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 60,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790337885,
+        "updatetime": 1790498765,
+        "level": 6,
+        "done": 1,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "done",
+        "check_text": "已打卡",
+        "check_msg": "今日已完成该任务",
+        "user_count": 2,
+        "pending": 0
+      },
+      {
+        "id": 3884,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "任务标题",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 70,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0}",
+        "dynamic_scope": "",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790316562,
+        "updatetime": 1790498901,
+        "level": 7,
+        "done": 1,
+        "locked": 0,
+        "lock_msg": "",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "done",
+        "check_text": "已打卡",
+        "check_msg": "今日已完成该任务",
+        "user_count": 2,
+        "pending": 0
+      },
+      {
+        "id": 16401,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "批量创建任务",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 80,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0,\"preview\":1,\"task_max\":1,\"allow_image\":1,\"allow_audio\":1,\"allow_video\":1,\"allow_file\":1}",
+        "dynamic_scope": "admin",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790413200,
+        "updatetime": 1790492629,
+        "level": 8,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 1,
+        "pending": 0
+      },
+      {
+        "id": 16402,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "批量创建任务",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 90,
+        "tip": "",
+        "template": "",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0,\"preview\":1,\"task_max\":1,\"allow_image\":1,\"allow_audio\":1,\"allow_video\":1,\"allow_file\":1}",
+        "dynamic_scope": "admin",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790413200,
+        "updatetime": 1790492629,
+        "level": 9,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 1,
+        "pending": 0
+      },
+      {
+        "id": 23458,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "多个打卡任务",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 100,
+        "tip": "必须按时完成",
+        "template": "你知道吗",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0,\"preview\":1,\"task_max\":1,\"allow_image\":1,\"allow_audio\":1,\"allow_video\":1,\"allow_file\":1}",
+        "dynamic_scope": "auto",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790498765,
+        "updatetime": 1790498765,
+        "level": 10,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 0,
+        "pending": 0
+      },
+      {
+        "id": 23459,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "多个打卡任务",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 110,
+        "tip": "必须按时完成",
+        "template": "你知道吗",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0,\"preview\":1,\"task_max\":1,\"allow_image\":1,\"allow_audio\":1,\"allow_video\":1,\"allow_file\":1}",
+        "dynamic_scope": "auto",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790498765,
+        "updatetime": 1790498765,
+        "level": 11,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 0,
+        "pending": 0
+      },
+      {
+        "id": 23460,
+        "uniacid": 1,
+        "checkin_id": 628,
+        "chapter_id": 0,
+        "title": "多个打卡任务",
+        "start_time": 1790438400,
+        "end_time": 2105884799,
+        "sort": 120,
+        "tip": "必须按时完成",
+        "template": "你知道吗",
+        "rule_day_start": "00:00:00",
+        "rule_day_end": "23:59:59",
+        "require": "{\"text_min\":0,\"images_min\":0,\"videos_min\":0,\"audios_min\":0,\"preview\":1,\"task_max\":1,\"allow_image\":1,\"allow_audio\":1,\"allow_video\":1,\"allow_file\":1}",
+        "dynamic_scope": "auto",
+        "show_type": 1,
+        "status": 1,
+        "createtime": 1790498765,
+        "updatetime": 1790498765,
+        "level": 12,
+        "done": 0,
+        "locked": 1,
+        "lock_msg": "请先完成第 4 关的打卡",
+        "day": "2026-09-27",
+        "show_time": 0,
+        "released": 1,
+        "can_makeup": 0,
+        "can_check": 0,
+        "check_state": "locked",
+        "check_text": "未解锁",
+        "check_msg": "请先完成第 4 关的打卡",
+        "user_count": 0,
+        "pending": 0
+      }
+    ],
+    "chapters": [
+      {
+        "id": 139,
+        "title": "章节12",
+        "sort": 10,
+        "task_count": 2
+      }
+    ],
+    "check_gate": {
+      "allowed": 1,
+      "state": "",
+      "text": "",
+      "msg": ""
+    },
+    "per_day_tip": "",
+    "today_record_count": 0
+  }
+}
+```
+
+## 返回参数说明
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
+| msg | string | 提示信息 |
+| data | object | 业务数据 |
+| data.id | integer | ID |
+| data.uniacid | integer | 应用ID（公众号/uniacid） |
+| data.title | string | 标题 |
+| data.cover | string | 封面图 |
+| data.detail | string | 详情 |
+| data.checkin_mode | integer | 打卡模式：1=日历打卡（统一进度）2=闯关打卡（打完上一关才解锁下一关） |
+| data.task_show_type | integer | 活动级显示设置遗留列，判据已降到任务行，仅随活动行带出 |
+| data.time_type | integer | 时间类型 |
+| data.frequency_type | integer | 打卡频率：1=按周期放量 / 2=自定义逐任务排期（不做放量闸门，缺省档） |
+| data.frequency_days | integer | 按周期档：每 N 天放量一次（≤0 按 1 算），基准日是成员自己窗口的起始日 |
+| data.frequency_time | string | 按周期档：每个周期的解锁时刻 HH:MM:SS（空值按 08:00:00） |
+| data.frequency_tasks | integer | 按周期档：每次累计解锁 M 个任务（≤0 按 1 算） |
+| data.start_date | string | 开始日期（Y-m-d） |
+| data.end_date | null | 结束日期（Y-m-d） |
+| data.total_days | integer | 合计天数 |
+| data.rest_type | integer | 休息日类型：0=不设 / 1=按周 / 2=按日期（补卡不受休息日限制） |
+| data.rest_weeks | string | 按周休息的星期清单（逗号串，0=周日…6=周六） |
+| data.rest_dates | string | 按日期休息的日期清单（JSON 数组串，下发列原值） |
+| data.day_start | string | 活动每日打卡时段开始 HH:MM:SS |
+| data.day_end | string | 活动每日打卡时段结束 HH:MM:SS |
+| data.per_day_type | integer | 每日次数限制方式：1=最多 N 次 / 2=不限制 |
+| data.per_day | integer | 每日最多打卡次数（per_day_type=1 时生效） |
+| data.makeup_total | integer | 允许补卡的总次数，0=不允许补卡 |
+| data.join_type | string | 加入类型 |
+| data.price | string | 价格 |
+| data.course_id | integer | 课程ID |
+| data.join_deadline_type | integer | 参与截止方式：1=无限制 / 2=自定义（只有 2 且时间戳>0 才拦人） |
+| data.join_deadline | integer | 自定义参与截止时间戳，过期拒绝新参与 |
+| data.isolation_mode | integer | 分组隔离：0=关 / 1=开（开=已分组学员只可见本组动态，未分组不受限） |
+| data.allow_user_post | integer | 发布兜底总闸：0=学员既不能提交打卡也不能发普通动态，只有管理员后台能发 |
+| data.allow_user_comment | integer | 活动级评论总闸：0=学员不能评论与回复，管理员点评不受影响 |
+| data.default_tip | string | 默认规则的打卡提示（不选任务的普通动态与建任务预填都用它） |
+| data.default_template | string | 默认规则的打卡范本（提交页预填参考文本） |
+| data.default_day_start | string | 默认规则时段开始 HH:MM:SS——普通动态（task_id=0）判当日时段就用它 |
+| data.default_day_end | string | 默认规则时段结束 HH:MM:SS，与 default_day_start 成对 |
+| data.default_require | object | 默认打卡要求（下限键 text_min/images_min/videos_min/audios_min + 任务规则缺省键） |
+| data.default_require.preview | integer | 预览 |
+| data.default_require.task_max | integer | 本任务当日可提交次数上限，0=不限制，最大 99 |
+| data.default_require.allow_image | integer | 图片上传开关：0=关闭（关则连一条都不收） |
+| data.default_require.allow_audio | integer | 语音上传开关：0=关闭 |
+| data.default_require.allow_video | integer | 视频上传开关：0=关闭 |
+| data.default_require.allow_file | integer | 附件上传开关：0=关闭 |
+| data.share_title | string | 分享标题 |
+| data.share_desc | string | 分享描述 |
+| data.share_cover | string | 分享封面图 |
+| data.status | integer | 状态 |
+| data.createtime | integer | 创建时间（时间戳） |
+| data.updatetime | integer | 更新时间（时间戳） |
+| data.run_state | string | 活动运行状态：not_started=未开始 / ongoing=进行中 / ended=已结束 |
+| data.done_days | integer | 活动到今天已跑掉的有效天数（扣休息日；固定天数档返回 0） |
+| data.join_count | integer | 加入数量 |
+| data.record_count | integer | 本活动动态总条数（软删的不计，官方动态也计） |
+| data.is_member | integer | 1=当前用户已参与本活动（被移除或被拉黑都视同未参与） |
+| data.is_black | integer | 1=我已被本活动拉黑（吸底栏据此换成「已被拉黑」那句，不摆必被拒的参与按钮） |
+| data.attr | object | 枚举文案字典（界面标签的唯一来源，前端禁止写死选项） |
+| data.attr.checkin_mode | object | 打卡模式：1=日历打卡（统一进度）2=闯关打卡（打完上一关才解锁下一关） |
+| data.attr.checkin_mode[] | string | 打卡模式：1=日历打卡（统一进度）2=闯关打卡（打完上一关才解锁下一关） |
+| data.attr.join_type | object | 加入类型 |
+| data.attr.join_type.free | string | 免费参与 |
+| data.attr.join_type.pay | string | 付费参与 |
+| data.attr.join_type.password | string | 密码兑换 |
+| data.attr.join_type.student | string | 指定学员 |
+| data.attr.join_type.course | string | 绑定课程 |
+| data.attr.time_type | object | 时间类型 |
+| data.attr.time_type[] | string | 打卡时间方式：1=固定起止时间 / 2=固定天数随到随学 |
+| data.attr.run_state | object | 活动运行状态：not_started=未开始 / ongoing=进行中 / ended=已结束 |
+| data.attr.run_state.not_started | string | 未开始 |
+| data.attr.run_state.ongoing | string | 进行中 |
+| data.attr.run_state.ended | string | 已结束 |
+| data.course | null | 课程 |
+| data.has_course | integer | 是否有课程 |
+| data.is_virtual_pay | integer | 是否虚拟支付 |
+| data.member_status | integer | 成员状态值（打卡：1=正常 2=暂停可浏览不可提交 0=移除/未参与） |
+| data.my_nickname | string | 我在本活动填的打卡昵称原值（空串=没填） |
+| data.can_submit | integer | 是否可提交 |
+| data.makeup_left | integer | 剩余可补卡次数（活动总次数减已提交的补卡动态，实时算） |
+| data.task_total | integer | 任务栏总行数（含跨日的历史与未来任务） |
+| data.pending_count | integer | 任务栏里待完成的行数 |
+| data.tasks | array | 任务数组 |
+| data.tasks[].id | integer | ID |
+| data.tasks[].uniacid | integer | 应用ID（公众号/uniacid） |
+| data.tasks[].checkin_id | integer | 打卡活动ID |
+| data.tasks[].chapter_id | integer | 章节ID（0=未分章） |
+| data.tasks[].title | string | 标题 |
+| data.tasks[].start_time | integer | 开始时间 |
+| data.tasks[].end_time | integer | 结束时间 |
+| data.tasks[].sort | integer | 排序 |
+| data.tasks[].tip | string | 该任务的打卡提示文本（未解锁且关了提前预习时为空串） |
+| data.tasks[].template | string | 该任务的打卡范本（提交页预填，未解锁且关了预习时为空串） |
+| data.tasks[].rule_day_start | string | 任务自己的每日打卡时段开始 HH:MM:SS，与活动 day_start 取大（任务只能收窄） |
+| data.tasks[].rule_day_end | string | 任务自己的每日打卡时段结束 HH:MM:SS，与活动 day_end 取小；交集为空即时段异常 |
+| data.tasks[].require | string | 打卡要求：这里是列原值 JSON 字符串，taskDetail 与 publishConfig 才解析成对象 |
+| data.tasks[].dynamic_scope | string | 任务级动态可见对象：auto=学员自己选 / all=强制所有人可见 / admin=强制仅管理员可见 |
+| data.tasks[].show_type | integer | 任务级显示设置：1=直接显示 / 2=任务开始打卡后才下发这一行 |
+| data.tasks[].status | integer | 状态 |
+| data.tasks[].createtime | integer | 创建时间（时间戳） |
+| data.tasks[].updatetime | integer | 更新时间（时间戳） |
+| data.tasks[].level | integer | 等级 |
+| data.tasks[].done | integer | 已完成档：任务行 1=本人这一格已打卡；日历段为已完成条数 |
+| data.tasks[].locked | integer | 1=未解锁（上一关未完成，或未到放量时刻） |
+| data.tasks[].lock_msg | string | 未解锁原因：「请先完成第 N 关的打卡」或「该任务将于 Y-m-d H:i 解锁」 |
+| data.tasks[].day | string | 天数 |
+| data.tasks[].show_time | integer | 1=卡片要摆「起 至 止」时间行 / 0=不摆（闯关模式的起止是宽窗口底座） |
+| data.tasks[].released | integer | 1=频率已放量到本任务（活动未启用按周期频率时恒 1，不能当成「都没解锁」） |
+| data.tasks[].can_makeup | integer | 1=待补卡（未打、未锁、目标日早于今天、活动未结束且还有补卡次数） |
+| data.tasks[].can_check | integer | 1=此刻闸门放行可打卡（按钮不置灰，点击给原因） |
+| data.tasks[].check_state | string | 打卡闸门状态：空串=放行 / not_started=未开始 / ended=已截止 / rest_day=今日休息 / out_of_slot=不在时段 / invalid_slot=时段无交集 / daily_limit=次数已满 / locked=未解锁 / done=已打卡 / makeup=待补卡 / closed=发布总闸关闭 |
+| data.tasks[].check_text | string | 闸门状态的右上角中文标签，放行态与总闸关闭档都是空串 |
+| data.tasks[].check_msg | string | 点这张卡时的提示语与提交报错同一句话（含具体时间），放行时为空串 |
+| data.tasks[].user_count | integer | 用户数量 |
+| data.tasks[].pending | integer | 1=此刻待完成（未打 + 已放量 + 今天或跨此刻窗口或可补卡） |
+| data.chapters | array | 章节数组（分章清单，含 id/title/sort/task_count） |
+| data.chapters[].id | integer | ID |
+| data.chapters[].title | string | 标题 |
+| data.chapters[].sort | integer | 排序 |
+| data.chapters[].task_count | integer | 本活动未删除任务数 |
+| data.check_gate | object | 吸底「打卡」按钮的闸门对象，结构 {allowed, state, text, msg} |
+| data.check_gate.allowed | integer | 1=此刻可提交 / 0=不可（按钮不置灰，点击给 check_gate.msg） |
+| data.check_gate.state | string | 活动级闸门状态（总闸关闭时为 closed，TaskGate 状态表里没有这一档） |
+| data.check_gate.text | string | 闸门状态中文短标签，放行与 closed 档都是空串 |
+| data.check_gate.msg | string | 不可提交时的那句原因，放行时为空串 |
+| data.per_day_tip | string | 「每日最多完成：N 项任务」灰字文案，不限制档是空串 |
+| data.today_record_count | integer | 我今天在本活动已发布的动态条数（按条计，不是天数） |
+
+## 备注
+
+- 活动不存在回「打卡活动不存在」，存在但未上架回「打卡活动未上架，暂时无法访问」，两档文案不合并
+- 闯关打卡（checkin_mode=2）与日历打卡（checkin_mode=1）由同一接口下发，界面按 checkin_mode 分支

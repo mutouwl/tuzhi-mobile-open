@@ -37,7 +37,55 @@ curl -X POST '{apiUrl}app/circle/post/commentList' \
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": [
+    {
+      "id": 503,
+      "uniacid": 1,
+      "circle_id": 1,
+      "post_id": 103,
+      "user_id": 1001,
+      "reply_id": 0,
+      "reply_user_id": 0,
+      "content": "建议先做留存，再谈拉新。留存跑不通的拉新只是买流量打水漂，可以先围绕核心使用链路做 3 个关键行为引导，观察次周留存再放大获取。",
+      "media": [],
+      "status": 1,
+      "createtime": 1786482600,
+      "nickname": "圈主小美",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "is_owner": 1,
+      "is_mine": 0,
+      "liked": 0,
+      "like_count": 3,
+      "reply_nickname": ""
+    },
+    {
+      "id": 504,
+      "uniacid": 1,
+      "circle_id": 1,
+      "post_id": 103,
+      "user_id": 1002,
+      "reply_id": 503,
+      "reply_user_id": 1001,
+      "content": "受教了，留存确实比拉新更重要，谢谢圈主",
+      "media": [],
+      "status": 1,
+      "createtime": 1786483000,
+      "nickname": "学员小李",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "is_owner": 0,
+      "is_mine": 1,
+      "liked": 0,
+      "like_count": 0,
+      "reply_nickname": "圈主小美"
+    }
+  ]
+}
+```
 
 ## 返回参数说明
 
@@ -46,3 +94,21 @@ curl -X POST '{apiUrl}app/circle/post/commentList' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data[].id | integer | ID |
+| data[].uniacid | integer | 应用ID（公众号/uniacid） |
+| data[].circle_id | integer | 圈子ID |
+| data[].post_id | integer | 帖子ID |
+| data[].user_id | integer | 用户ID |
+| data[].reply_id | integer | replyID |
+| data[].reply_user_id | integer | reply用户ID |
+| data[].content | string | 内容 |
+| data[].media | array | 媒体 |
+| data[].status | integer | 状态 |
+| data[].createtime | integer | 创建时间（时间戳） |
+| data[].nickname | string | 昵称 |
+| data[].avatar | string | 头像 |
+| data[].is_owner | integer | 是否本人 |
+| data[].is_mine | integer | 是否本人：这一行的作者/发布者是我 |
+| data[].liked | integer | liked |
+| data[].like_count | integer | 点赞数量 |
+| data[].reply_nickname | string | reply昵称 |

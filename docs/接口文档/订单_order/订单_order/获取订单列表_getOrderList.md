@@ -17,8 +17,8 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| status | string | 否 | 状态 | `` |
-| search | string | 否 | search | `` |
+| status | string | 否 | 状态 | - |
+| search | string | 否 | search | - |
 | search_field | string | 否 | searchfield | `order_no` |
 
 ## 请求示例
@@ -26,7 +26,7 @@
 ```bash
 curl -X POST '{apiUrl}order/order/getOrderList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"status":"","search":"","search_field":"order_no"}'
+  -d '{"limit":10,"page":1,"status":"xxx","search":"xxx","search_field":"order_no"}'
 ```
 
 ## 返回示例

@@ -15,18 +15,19 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
+| goodsList | array | 否 | 商品列表 | - |
 | order_type | string | 否 | 订单类型 | `goods` |
-| coupon_id | string | 否 | 优惠券ID | `` |
-| live_id | string | 否 | liveID | `` |
-| live_goods_action_id | string | 否 | live商品操作ID | `` |
-| address_id | string | 否 | 地址ID | `` |
+| coupon_id | string | 否 | 优惠券ID | - |
+| live_id | string | 否 | liveID | - |
+| live_goods_action_id | string | 否 | live商品操作ID | - |
+| address_id | string | 否 | 地址ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}order/order/calculate' \
   -H 'Content-Type: application/json' \
-  -d '{"order_type":"goods","coupon_id":"","live_id":"","live_goods_action_id":"","address_id":""}'
+  -d '{"goodsList":"xxx","order_type":"goods","coupon_id":"xxx","live_id":"xxx","live_goods_action_id":"xxx","address_id":"xxx"}'
 ```
 
 ## 返回示例

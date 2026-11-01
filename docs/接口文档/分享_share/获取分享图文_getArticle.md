@@ -16,8 +16,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| type | string | 否 | 类型 | `` |
-| src | string | 否 | 资源地址 | `` |
+| type | string | 否 | 类型 | - |
+| src | string | 否 | 资源地址 | - |
 | circle_id | integer | 否 | 圈子ID | `0` |
 
 ## 请求示例
@@ -25,7 +25,7 @@
 ```bash
 curl -X POST '{apiUrl}share/getArticle' \
   -H 'Content-Type: application/json' \
-  -d '{"type":"","src":"","circle_id":0}'
+  -d '{"type":"xxx","src":"xxx","circle_id":0}'
 ```
 
 ## 返回示例

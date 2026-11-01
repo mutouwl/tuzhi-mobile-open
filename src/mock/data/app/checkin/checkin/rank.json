@@ -1,0 +1,39 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344786",
+  "data": {
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "period": "total",
+    "rows": [
+      {
+        "rank": 1,
+        "user_id": 486,
+        "num": 12,
+        "nickname": "打**",
+        "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/d8ZCuKyZcgBibBvGgCN44pUDibkmdZbTLD0FtVspibrdS744wMllzoxlmdWibp3o9C68icnZTiagYS0ONu5XvcnP7vBw/132"
+      },
+      {
+        "rank": 2,
+        "user_id": 38,
+        "num": 7,
+        "nickname": "冯**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png"
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "limit": 20,
+    "has_more": 0,
+    "my": {
+      "rank": 2,
+      "user_id": 38,
+      "num": 7,
+      "nickname": "冯**",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png"
+    },
+    "total_users": 4,
+    "total_records": 19
+  }
+}

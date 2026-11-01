@@ -1,3 +1,198 @@
 page{
-    /* background-color: #f5f5f5; */
+    /* background-color: #fff; */
+}
+
+/* ===================== 券领取区（2026-10-27 照参考图） =====================
+   页面样式不带 scoped，号段统一挂 .coupon-hero / .hero-* 前缀：
+   券卡组件 coupon-my 的根节点也叫 .coupon-box，名字撞上会把页头那层橙色底
+   加到卡里那张券上（M11/M12 那一族）。 */
+
+/* 页头：橙色渐变。渐变的百分比按本块自身高度算（不用固定像素的 background-size：
+   券卡加载前后高度会变，写死像素会在加载档里把淡出那一段裁掉、整块变成纯橙）。
+   最后 8% 淡到白，落在卡片下缘之外那一段留白里 */
+.coupon-hero {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 16px 14px 30px;
+    background: linear-gradient(180deg, #FFA61A 0%, #FF9900 60%, #FF8A00 92%, #FFFFFF 100%) no-repeat;
+    background-size: 100% 100%;
+    margin-bottom: 10px;
+}
+
+/* 白卡：米色描边 + 圆角 8（M21：页面卡片只吃封面/缩略图那一档 6–8px，不写投影） */
+.coupon-hero .hero-card {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border: 5px solid #FFECCD;
+    border-radius: 8px;
+}
+
+.coupon-hero .hero-top {
+    padding: 16px 18px 20px;
+}
+
+/* 店铺行：左 logo + 店名，右分享入口；下方 2px 虚线是卡里的第一道分隔 */
+.coupon-hero .hero-head {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #FFE6CC;
+}
+
+.coupon-hero .hero-store {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0;
+}
+
+.coupon-hero .hero-logo {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+    border-radius: 50%;
+    border: 1px solid #EEEEEE;
+    background: #F2F7FF;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+}
+
+.coupon-hero .hero-name {
+    display: block;
+    max-width: 150px;
+    color: #1D2129;
+    font-size: 16px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 分享入口：与右侧那行同底色，图标 + 文字同为业务橙 */
+.coupon-hero .hero-share {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    padding-left: 10px;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+}
+
+.coupon-hero .hero-share-text {
+    margin-left: 4px;
+    color: #FF7E16;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+/* 券卡：coupon-my 自带 10px 外距（它是列表里的一枚），这里再给一层上距对开虚线 */
+.coupon-hero .hero-cardwrap {
+    margin-top: 16px;
+}
+
+/* 操作区：橙色波浪。
+   ::before 是压在波浪上沿的一片白（与白卡同色），下缘做成大圆角的弧——
+   读出来就是白卡底边在中间往下鼓、橙色从两侧包上来（参考图那一道波浪）。
+   波浪上的内容要落在 24px 这条弧线之下，故内衬从 34px 起。
+   -5px 的外距让这一段盖住白卡的米色描边：底边读出来是通栏橙色（参考图那一档），
+   下圆角 8 与白卡外圆角同档，两者在边角处对得上。 */
+.coupon-hero .hero-action {
+    position: relative;
+    margin: 0 -5px -5px;
+    background: linear-gradient(180deg, #FFAC00 0%, #FF7E16 100%) no-repeat;
+    padding: 34px 23px 34px;
+    border-radius: 0 0 8px 8px;
+}
+
+.coupon-hero .hero-action::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 24px;
+    background: #FFFFFF;
+    border-radius: 0 0 50% 50% / 0 0 100% 100%;
+    pointer-events: none;
+}
+
+.coupon-hero .hero-progress-text {
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.coupon-hero .hero-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .35);
+    overflow: hidden;
+}
+
+.coupon-hero .hero-btns {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding-top: 40px;
+}
+
+/* 有余量进度条那一档，按钮紧跟进度条；没有进度条时波浪上多留一段（参考图那个高度） */
+.coupon-hero .hero-action--stock .hero-btns {
+    padding-top: 20px;
+}
+
+/* 主操作：白底橙字。圆角 4（M17：全站按钮只有 4px，不用胶囊） */
+.coupon-hero .hero-btn {
+    width: 100%;
+    height: 46px;
+    line-height: 46px;
+    margin: 0;
+    padding: 0;
+    background: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    color: #FF6A00;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* uni 的 <button> 自带一圈 ::after 描边，不去掉会在白按钮外面套一道灰线 */
+.coupon-hero .hero-btn::after {
+    border: none;
+}
+
+/* 不可领那一档（已领完 / 已达最大领取次数 / 已结束）：保留位置上那句原因，压成半透明白 */
+.coupon-hero .hero-btn--disabled {
+    background: rgba(255, 255, 255, .55);
+    color: #FF9A4D;
 }

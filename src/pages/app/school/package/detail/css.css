@@ -101,7 +101,32 @@
   padding: 6px 0;
 }
 
+/* 拼团价横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   价格卡不再出血摆横幅，`.pd-gb-banner` 随之删净 */
+
+/* ===== 吸底栏（容器/内衬/阴影/安全区走全局 .school-footer，本页只补两项） =====
+   一行内项与项的间距只由容器 gap 给（硬约束 20）：拼团入口与「立即报名」原先贴死。
+   gap 档取 10px，与拼团底栏族同值（`.tbb-bar` / 实物 `.detail-tabbar` / 组合 `.tabbar-right` /
+   圈子 `.footer-btn-group` 都是 10）。
+   双类选择器压过全局 `.school-footer`（页面样式表未 scoped，单类同权重看打包顺序，M21）。 */
+.school-footer.pd-footer {
+  gap: 10px;
+}
+
+/* 并排两枚等分：宿主要 flex:1（小程序端父级里的 flex 项是自定义组件的宿主节点，M73；
+   H5 没有宿主节点、class 并到组件根上，同一套值），`min-width:0` 允许文案长过格子时收缩 */
+.pd-gb-slot,
 .pd-buy-btn {
   flex: 1;
+  min-width: 0;
+}
+
+/* u-button 自带左右各 12px 内衬（`.u-button--normal`）＋ uni-button 的左右 auto 外边距，
+   与旁边那枚 `<view>` 包裹的拼团按钮在 flex-basis 上差一圈（实物商详 2026-10-28 同一处点名
+   「立即开团 与 立即购买按钮应该等宽」时也是这么收的）：内衬与外边距归零，两枚 basis 都是裸的、
+   等分剩余宽度，文字本来就居中、不靠内衬留白 */
+.pd-buy-btn {
+  padding: 0;
+  margin: 0;
   border: none;
 }

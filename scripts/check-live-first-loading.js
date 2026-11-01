@@ -17,6 +17,16 @@
  *   A7 包装层 components/video/video.vue 把 isAwaitingPlay 转下去——页面 ref 指的是这一层，
  *      只在实现层加就等于没加（§4 那条「透传只在包装层声明」的同一个坑）
  *
+ * 2026-10-16 用户实报补 B 组（第一次进直播间：加载一段时间报错 → 画面自己重挂 → 还要再点
+ * 一下播放按钮才播）：
+ *   B1 js.vue 有 videoAutostart（这一屏「应当自动播放」）且初值 true
+ *   B2 live.vue 的 :resumePlay = userPlayRequested || videoAutostart
+ *   B3 错误锁定/解锁两支各翻一次 videoAutostart
+ *   B4 roomData.status 侦听里 videoAutostart 跟在线态翻
+ *   B5 video-h5 的静音续播重试窗口判据确实是 resumePlay（B1~B4 的依据）
+ *   B6 错误板「刷新」不整页重载：调用点传 prop + 包装层声明并透传
+ *   B7 video-h5 在该 prop 下截断 location.reload 改走 refreshPlayer
+ *
  * 用法：node scripts/check-live-first-loading.js   （exit 0 = 全部通过）
  */
 const fs = require('fs');
@@ -110,6 +120,78 @@ tell(
     /\$refs\.videoPlayer\.isAwaitingPlay/.test(wrapAwaiting) &&
     /return false;/.test(wrapAwaiting),
   wrapAwaiting ? wrapAwaiting.slice(0, 200) : '包装层未转发（判据会恒为 false）'
+);
+
+// ===== B 组：降级重建后的自动续播 + 错误板「刷新」不整页重载（2026-10-16 用户点名）=====
+// 症状：第一次进直播间，加载一段时间报错 → 画面自己重挂（降级链换源重建）→ 还要再点一下
+// 播放按钮才播。根因：续播判据只认 userPlayRequested（onPlay 才置位），首屏这一路观众还没
+// 点过 ⇒ video-h5 里那条静音续播重试窗口（判据 resumePlay）没被挂上，只剩单次尝试。
+
+// B1 页面：这一屏「应当自动播放」的状态位存在且进房即为真
+const autostart = slice(js, 'videoAutostart: true,', ['videoUrlSetAt:']);
+tell(
+  'B1 js.vue 有 videoAutostart 且初值为 true（进房即应自动起播）',
+  !!autostart && /videoAutostart:\s*true/.test(autostart),
+  autostart ? autostart.slice(0, 160) : 'videoAutostart 未找到'
+);
+
+// B2 模板：续播判据必须把它并进去（只认用户点过 ⇒ 首屏那一路拿不到）
+tell(
+  'B2 live.vue 的 :resumePlay 判据 = userPlayRequested || videoAutostart',
+  /:resumePlay="userPlayRequested \|\| videoAutostart"/.test(tpl),
+  (tpl.match(/:resumePlay="[^"]*"/) || ['未找到 :resumePlay'])[0]
+);
+
+// B3 复位点：错误锁定/解锁两支各翻一次
+const lockedWatcher = slice(js, 'videoErrorLocked(locked) {', ['"roomData.status"']);
+tell(
+  'B3 错误锁定/解锁两支各翻 videoAutostart（终态不强拉、解锁自动续播）',
+  !!lockedWatcher &&
+    /this\.videoAutostart = false;/.test(lockedWatcher) &&
+    /this\.videoAutostart = true;/.test(lockedWatcher),
+  lockedWatcher ? lockedWatcher.slice(0, 300) : 'videoErrorLocked 未找到'
+);
+
+// B4 在线态翻：只有 online 才强拉
+const statusWatcher = slice(js, '"roomData.status"(val) {', ['loading(open)']);
+tell(
+  'B4 roomData.status 侦听里 videoAutostart 跟在线态翻',
+  !!statusWatcher && /this\.videoAutostart = val === "online";/.test(statusWatcher),
+  statusWatcher ? statusWatcher.slice(0, 200) : 'status 侦听未找到'
+);
+
+// B5 播放器：静音续播重试窗口的判据确实是 resumePlay（B1~B4 只在这一条成立时才有意义）
+const fallback = slice(h5, 'playWithAutoplayFallback() {', ['bindMuteRestore() {']);
+tell(
+  'B5 video-h5 的静音续播重试窗口判据是 resumePlay（并保留补发序列）',
+  !!fallback &&
+    /if \(this\.resumePlay\) \{/.test(fallback) &&
+    /\[800, 1600, 2400, 3600, 4800, 6000\]/.test(fallback),
+  fallback ? fallback.slice(0, 200) : 'playWithAutoplayFallback 未找到'
+);
+
+// B6 错误板「刷新」不整页重载：调用点传 + 包装层声明并透传
+// （只在实现层有 = 调用点传不进来，与 A7 同一个坑）
+tell(
+  'B6a live.vue 传 prevent-page-reload-on-refresh（错误板刷新不整页重载）',
+  /:prevent-page-reload-on-refresh="true"/.test(tpl),
+  (tpl.match(/:prevent-page-reload-on-refresh="[^"]*"/) || ['未找到该 prop'])[0]
+);
+tell(
+  'B6b 包装层 video.vue 声明并透传 preventPageReloadOnRefresh',
+  /preventPageReloadOnRefresh: \{/.test(wrap) &&
+    /:preventPageReloadOnRefresh="preventPageReloadOnRefresh"/.test(wrap),
+  '包装层缺声明或缺透传（调用点传了也到不了 video-h5）'
+);
+
+// B7 拦截点：只有传了该 prop 才截断 SDK 那枚按钮的 location.reload
+const refreshBind = slice(h5, 'bindRefreshButton() {', ['unbindRefreshButton() {']);
+tell(
+  'B7 video-h5 在 preventPageReloadOnRefresh 下截断 location.reload 并改走 refreshPlayer',
+  !!refreshBind &&
+    /if \(this\.preventPageReloadOnRefresh\) \{/.test(refreshBind) &&
+    /this\.refreshPlayer\(\)/.test(refreshBind),
+  refreshBind ? refreshBind.slice(0, 240) : 'bindRefreshButton 未找到'
 );
 
 let failed = 0;

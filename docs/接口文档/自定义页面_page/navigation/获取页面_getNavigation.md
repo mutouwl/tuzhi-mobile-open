@@ -179,12 +179,12 @@ curl -X POST '{apiUrl}page/navigation/getNavigation' \
 | data.config.platform[] | string | 平台 |
 | data.config.navigation | array | navigation |
 | data.config.navigation[].name | string | 名称 |
-| data.config.navigation[].link | object | link |
+| data.config.navigation[].link | object | 连麦 |
 | data.config.navigation[].link.type | string | 类型 |
 | data.config.navigation[].link.src | string | 资源地址 |
 | data.config.navigation[].link.name | string | 名称 |
 | data.config.navigation[].link.selected | string | 是否选中 |
-| data.config.navigation[].icon | object | icon |
+| data.config.navigation[].icon | object | 图标标识 |
 | data.config.navigation[].icon.default | object | 默认 |
 | data.config.navigation[].icon.selected | object | 是否选中 |
 | data.config.status | integer | 状态 |

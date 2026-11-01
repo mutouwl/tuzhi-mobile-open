@@ -220,6 +220,8 @@
 	right: 0;
 	display: flex;
 	align-items: center;
+	/* 一行内按钮与按钮的间距只由容器 gap 给（硬约束 20）：单按钮档无影响 */
+	gap: 10px;
 	padding: 12px 16px;
 	background-color: #fff;
 	box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
@@ -245,20 +247,26 @@
 	flex: 1;
 	height: 44px;
 	line-height: 44px;
+	/* 与拼团按钮**等宽**（2026-10-28 用户点名「立即开团 与 立即购买按钮应该等宽」）：
+	   `uni-button` 自带左右各 14px 内衬，而 `flex-basis: 0%` 算的是内容盒 ⇒ 它比旁边那枚
+	   `<view>` 包裹的拼团按钮实际宽出 28px（实测 160 / 188）。这里是容器内唯一带内衬的
+	   flex 项，内衬归零后两枚 basis 都是 0、等分剩余空间；文字本来就居中，不靠内衬留白 */
+	padding: 0;
 	font-weight: 500;
 	font-size: 15px;
 	background: #0968f6;
 	color: #fff;
 }
 
-.goods-detail .detail-tabbar .buy-btn-full {
-	width: 100%;
-	height: 44px;
-	line-height: 44px;
-	font-weight: 500;
-	font-size: 15px;
-	background: #0968f6;
-	color: #fff;
+/* 拼团横幅不再压进价格卡（2026-10-30）：横幅与玩法/凑团列表一起放在拼团区那张卡里，
+   本页 `title-card` 恢复「价格 + 标题」原样，`.goods-gb-banner` / `.sales-text--gb` 两条随之删净 */
+
+/* 拼团入口的**宿主**也要 flex:1（小程序端父级里的 flex 项是 `<tz-group-buy-btn>` 的宿主节点，
+   子组件根上的 `flex:1` 到不了宿主，M73）：只给 `.buy-btn` 加 `flex:1` 时入口按内容收缩、
+   两枚宽度不等（与上面 2026-10-28 点名的是同一对，H5 没有宿主节点所以浏览器里看不出） */
+.goods-detail .detail-tabbar .goods-gb-slot {
+	flex: 1;
+	min-width: 0;
 }
 
 .goods-detail .detail-tabbar .disabled-btn {

@@ -10,6 +10,51 @@
     margin-left: 10px !important;
 }
 
+/* 首屏骨架屏（M16）：外壳复用真实 tz-box（白底 + 5px 内衬），行几何照真实 u-cell size="large" 反查——
+   上下内衬 13、标题行盒 22（灰块 14 + 上下 4）、说明行盒 18（灰块 12 + 上下 3）、
+   两行之间那 5px 是真实 .u-cell__label 的 margin-top、右侧金额 14 垂直居中。
+   类名统一 rfl-sk- 前缀（本页 css 未加 scoped，防外溢） */
+.rfl-sk-cell {
+    display: flex;
+    align-items: center;
+    padding: 13px 15px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #efefef;
+}
+
+/* 行间分隔照真实 u-cell 的 u-line（0.5px #d6d7d9），末行不出线 */
+.rfl-sk-cell:last-child {
+    border-bottom: none;
+}
+
+/* u-skeleton 的宿主在小程序端是块级标签，外面套一层撑开剩余宽度（同 user/assets 页的 .assets-sk-main） */
+.rfl-sk-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.rfl-sk-line {
+    height: 22px;
+    padding: 4px 0;
+    box-sizing: border-box;
+}
+
+.rfl-sk-line-sub {
+    height: 18px;
+    padding: 3px 0;
+    margin-top: 5px;
+}
+
+/* 金额位：与真实 .u-cell__value（14px 字号）同档，宽度按「¥128.00」那一档量出来 */
+.rfl-sk-value {
+    flex: none;
+    width: 54px;
+    height: 14px;
+    margin-left: 12px;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
 .order-box {
     margin-bottom: 10px;
 }

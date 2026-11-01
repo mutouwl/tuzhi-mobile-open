@@ -116,13 +116,13 @@ curl -X POST '{apiUrl}app/composite/goods/index' \
 | data.data[].id | integer | ID |
 | data.data[].uniacid | integer | 应用ID（公众号/uniacid） |
 | data.data[].name | string | 名称 |
-| data.data[].images | array | images |
-| data.data[].images[] | string | images |
+| data.data[].images | array | 图片地址数组 |
+| data.data[].images[] | string | 图片地址数组 |
 | data.data[].sell_point | string | sellpoint |
 | data.data[].detail | string | 详情 |
 | data.data[].group_id | integer | 分组ID |
 | data.data[].status | integer | 状态 |
-| data.data[].sale_status | integer | sale状态 |
+| data.data[].sale_status | integer | 售卖状态：1上架 0下架 |
 | data.data[].sale_time | null | sale时间 |
 | data.data[].timed_down | integer | timeddown |
 | data.data[].timed_down_time | null | timeddown时间 |

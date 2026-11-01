@@ -1,5 +1,7 @@
 # 获取二维码
 
+> 取码只需要内容口径与归因：第 4 参是来源圈子 ID（0 = 无圈子上下文）。
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -14,8 +16,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| type | string | 否 | 类型 | `` |
-| id | string | 否 | ID | `` |
+| type | string | 否 | 类型 | - |
+| id | string | 否 | ID | - |
 | platform | string | 否 | 平台 | `h5` |
 
 ## 请求示例
@@ -23,7 +25,7 @@
 ```bash
 curl -X POST '{apiUrl}share/getQrcode' \
   -H 'Content-Type: application/json' \
-  -d '{"type":"","id":"","platform":"h5"}'
+  -d '{"type":"xxx","id":"xxx","platform":"h5"}'
 ```
 
 ## 返回示例

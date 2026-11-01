@@ -46,7 +46,10 @@
       
 
       <!-- 2. 视频层 (居中显示) -->
-      <div class="video-layer" :class="{ 'first-loading-hide-playbtn': videoFirstLoading }">
+      <!-- hide-big-play-btn：只要页面正在给「加载中/缓冲中」反馈，播放器的大播放按钮就必须收起。
+           遮罩是 pointer-events:none 的（不拦点击），按钮露在遮罩下面读起来就是
+           「加载中下面还有个能点的播放按钮 ⇒ 再点一下」，2026-10-31 用户实报的第二次点击即此 -->
+      <div class="video-layer" :class="{ 'hide-big-play-btn': videoFirstLoading || showBufferingOverlay }">
         <!-- 清晰度切换加载遮罩 -->
         <div v-if="qualitySwitching" class="quality-switching-overlay">
           <u-loading-icon mode="circle" size="36" color="#fff" inactive-color="rgba(255,255,255,0.35)"></u-loading-icon>
@@ -75,7 +78,8 @@
           :is-live="isCustomVideoLive"
           :autoplay="videoAutoplay"
           :showProgress="!isPseudoLiveOnline"
-          :resumePlay="userPlayRequested"
+          :resumePlay="userPlayRequested || videoAutostart"
+          :prevent-page-reload-on-refresh="true"
           :cover="data.warm_up_cover ? data.warm_up_cover : data.cover"
           :objectFit="linkConnecting ? 'contain' : (data.live_screen_ratio == 1 ? 'contain' : 'cover')"
           :pictureOffsetPercent="livePictureOffsetPercent"
@@ -84,6 +88,7 @@
           @error="liveErrorHandle"
           @ready="videoReady"
           @play="onPlay"
+          @play-intent="onPlayIntent"
           @end="onEnd"
           @paused="onPaused"
           @waiting="onVideoWaiting"
@@ -602,9 +607,11 @@
   color: #fff;
 }
 
-/* 首帧加载期间隐藏播放器大播放按钮：降级换源重建的间隙按钮会闪现一下又回到加载态
-   （线上实证），期间加载反馈由页面遮罩统一给出；起播失败由降级链/看门狗接管出明确结果 */
-.video-layer.first-loading-hide-playbtn .prism-big-play-btn {
+/* 首帧加载/缓冲期间隐藏播放器大播放按钮：降级换源重建的间隙按钮会闪现一下又回到加载态
+   （线上实证），期间加载反馈由页面遮罩统一给出；起播失败由降级链/看门狗接管出明确结果。
+   缓冲遮罩（直播缓冲中…）同样收按钮：遮罩 pointer-events 穿透，露出来的按钮会被当成
+   「还能再点一下播放」，2026-10-31 用户实报的「加载中下面又有播放按钮」即此 */
+.video-layer.hide-big-play-btn .prism-big-play-btn {
   display: none !important;
 }
 
@@ -617,5 +624,37 @@
   /* 仅需高于播放器内部消息条 .prism-info-display(90)；
      与页面浮层的先后由 .ui-layer(z-index:150) 收敛——UI 层及其内的连麦/礼物等弹窗恒在本按钮之上 */
   z-index: 100 !important;
+}
+
+/* ---------- 播放器铺满整屏后的底部安全区（2026-10-31 用户点名 iPhone 17 底部漏一截） ----------
+   视频层现在按整屏 windowHeight 铺（见 js.vue 的 setContainerHeight）：播放器自己的封面模糊底
+   一直画到屏幕底边，页面 .bg-layer 不会再从底栏下面露出来。那么「别压到 Home 指示条」就只剩
+   播放器底栏这一件事——把 .prism-controlbar 抬一个 env(safe-area-inset-bottom)，位置与改前
+   逐像素一致（改前是播放器整体短 34px、底栏贴播放器底 ⇒ 现在播放器长 34px、底栏抬 34px）。
+   底栏 bottom 是 skinLayout 写进内联样式的（blabs ⇒ position:absolute; left:0; bottom:0），
+   只能 !important 盖；::after 把底栏下面那 34px 补成同一档 45% 黑（= .prism-controlbar-bg 渐变
+   最底一色），接缝不可见。无安全区的机型 env() 为 0px，这三条等于没写。 */
+.tiktok-live-room .prism-controlbar {
+  bottom: constant(safe-area-inset-bottom) !important;
+  bottom: env(safe-area-inset-bottom) !important;
+}
+
+.tiktok-live-room .prism-controlbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+/* 伪直播/回放会露出进度条（vendored 样式把它钉在 bottom:40px !important），底栏抬起后要同步抬，
+   否则进度条会落进底栏里压住播放/音量按钮 */
+.tiktok-live-room .prism-progress {
+  bottom: calc(40px + constant(safe-area-inset-bottom)) !important;
+  bottom: calc(40px + env(safe-area-inset-bottom)) !important;
 }
 </style>

@@ -42,6 +42,15 @@ export default {
       autoPlayRetryToken: 0,
       // 静音降级是否由本组件所为（attemptPlay(true) 置位）：据此在用户点击画面时恢复声音
       mutedByFallback: false,
+      // 本次实例是「VID + PlayAuth」凭证档还是「播流地址」档建起来的：
+      // 决定 refreshPlayer() 走重建还是 loadByUrl（地址档 loadByUrl 会重吃同一个一次性签名，
+      // 凭证档必须重新取凭证再重建），并随每次重建重新判定
+      playingWithCredential: false,
+      // 换源重建的「同一拍只排一次」闸门：vid/playauth/source 常常在同一拍里一起变
+      // （页面一次回填凭证），逐个重建会把播放器拆三回、用户看到连续闪
+      rebuildScheduled: false,
+      // 「用户按下播放按钮」那一刻的兜底重试定时器（见 bindPlayIntent）
+      playIntentRetryTimer: null,
     };
   },
   props: {
@@ -57,6 +66,16 @@ export default {
     },
     //播放凭证
     playauth: {
+      type: String,
+      default: "",
+    },
+    // 阿里云点播视频 ID（VID）。
+    // 为什么单独一枚而不是接着复用 source：过去「传了 playauth 就把 source 当 VID」这一约定
+    // 让同一个 prop 在两种档位之间摇摆（`tz/file-preview.vue` 就按那一档写调用点），
+    // 而课程详情这类「地址与 ID 同时要发（小程序吃地址、H5 吃 ID）」的调用点没法表达，
+    // 只能二选一——这正是课程一直停在地址档、电脑端首播报 4400 的形态原因之一。
+    // 传了它且 playauth 非空 ⇒ 凭证档；只传 playauth ⇒ 沿用旧调用点（source 当 VID）
+    vid: {
       type: String,
       default: "",
     },
@@ -124,6 +143,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 凭证档的「重载」要不要改成去要一枚新凭证（课程详情页传 true）。
+    // 默认 false 保住既有调用点（tz/file-preview 那一份只把 @refresh 用来收加载态，
+    // 它不会重取凭证，把重建省掉等于让刷新按钮失灵）。
+    // 过期凭证再吃一次只会换回同一块错误板，所以 opt-in 的这一档把重建交还给 playauth watcher
+    refreshNeedsNewAuth: {
+      type: Boolean,
+      default: false,
+    },
     //禁止拖拽进度条（web 课程设置 progress_seek 关闭时由父级传入）
     disableSeek: {
       type: Boolean,
@@ -155,27 +182,16 @@ export default {
   },
   watch: {
     source() {
-      // 换源即弃用上一轮自动播放重试计划与静音降级标记：旧实例的定时器不再触发，
-      // 新实例的声音状态不沿用（是否静音由新实例的自动播放降级重新决定）
-      this.autoPlayRetryToken++;
-      this.mutedByFallback = false;
-      if (this.player) {
-        this.unbindRefreshButton();
-        this.unbindVideoFullscreenEvents();
-        // 先清空当前实例标识，再销毁旧播放器。旧实例在 dispose 期间仍可能异步派发
-        // waiting/error/liveStreamStop；若仍被当作当前实例处理，会把刚切入的新直播源
-        // 误判为失败并重置播放器。
-        var previousPlayer = this.player;
-        this.player = null;
-        previousPlayer.dispose();
-      }
-      // 切换播放源后重置拖拽检测基准，避免沿用上一视频的播放时间误判
-      this.lastPlayerTime = null;
-      this.seekGuardUntil = 0;
-      this.buildPlayer();
-      if (this.source) {
-        this.playWithAutoplayFallback();
-      }
+      this.rebuildOnMediaChange();
+    },
+    // 视频 ID 与凭证换值 = 换了一档可播的资格（课程详情页重试/续播时重新取一枚凭证就会走到这里）：
+    // 与换源同一档处理——重建实例，让 Aliplayer 拿新凭证重新取址。
+    // 地址档的 loadByUrl 在凭证档是不允许的（SDK 自己会报「不能更新地址」），只能重建。
+    vid() {
+      this.rebuildOnMediaChange();
+    },
+    playauth() {
+      this.rebuildOnMediaChange();
     },
     mute() {
       if (this.mute) {
@@ -305,6 +321,18 @@ export default {
     isAwaitingPlay() {
       const media = this.getMediaElement();
       return !media || !!media.paused;
+    },
+    /**
+     * 有媒体元素、且它停在暂停态（真的什么都没在拉）
+     * 与 isAwaitingPlay 的差别只在一处：媒体元素还没建好（换源重建/首次建播放器的间隙）不算。
+     * 页面用它判断「这一发起播已经被浏览器拒掉/被中断了，加载遮罩可以收」——重建间隙里元素本来
+     * 就没了，按 isAwaitingPlay 判会把「正在重建」误当成「没人拉」，遮罩在换源那一拍闪掉、
+     * 露出的正是那个「再点一下」的大播放按钮（2026-10-31）。
+     * @return {Boolean} true=有媒体元素且 paused
+     */
+    isPausedWithMedia() {
+      const media = this.getMediaElement();
+      return !!media && !!media.paused;
     },
     syncFullScreenState() {
       const fullscreenElement =
@@ -464,6 +492,198 @@ export default {
       this.refreshButtonHandler = null;
     },
     /**
+     * 接管「用户按下播放按钮」这一刻（中央大播放按钮 / 底栏播放键）
+     *
+     * 两件事：
+     * ① 立刻把播放意图抛给页面（`play-intent`）：页面据此点亮「画面加载中…」遮罩、从点击起算
+     *    重挂出画面看门狗。页面原先只能等播放器 `play` 事件，而 Aliplayer 的 `play` 在**真正开播
+     *    那一刻**才抛，首帧没出、这一发起播又被浏览器自动播放策略拒掉时它永远不来；
+     * ② 兜底补发一次播放：这一下 play() 被拒/被内部 load 中断时，媒体停在 paused、大播放按钮
+     *    还挂着，用户必须再点一次（2026-10-31 用户实报的「点播放→加载中→播放按钮又出现→
+     *    再点一下才出画面」）。600ms 后复查仍停在暂停态就补发一次（走静音降级链，无手势时
+     *    只有静音起播能过策略）。
+     * 只在「点下去是要播放」这一侧生效：正在播时同一个按钮是暂停，不能当成播放意图。
+     * 容器（#player-con{domId}）在换源重建时复用，用元素上的标记防重复绑定。
+     */
+    bindPlayIntent() {
+      const playerElement = this.getPlayerElement();
+      if (!playerElement || playerElement.__playIntentBound) {
+        return;
+      }
+      playerElement.__playIntentBound = true;
+      const self = this;
+      playerElement.addEventListener(
+        "click",
+        (event) => {
+          const target = event.target;
+          const button =
+            target && typeof target.closest === "function"
+              ? target.closest(".prism-big-play-btn, .prism-play-btn")
+              : null;
+          if (!button || !playerElement.contains(button)) {
+            return;
+          }
+          // 正在播时这一下是暂停：它不是播放意图，也不进补发窗口
+          const media = self.getMediaElement();
+          if (media && !media.paused) {
+            return;
+          }
+          self.$emit("play-intent", false);
+          clearTimeout(self.playIntentRetryTimer);
+          self.playIntentRetryTimer = setTimeout(function () {
+            self.playIntentRetryTimer = null;
+            if (!self.player) {
+              return;
+            }
+            const pending = self.getMediaElement();
+            // 已经播起来（或已经在拉流）就不再补：补发会把用户刚点出来的播放再打断一次
+            if (pending && !pending.paused) {
+              return;
+            }
+            self.playWithAutoplayFallback();
+          }, 600);
+        },
+        true
+      );
+    },
+    /**
+     * 取消「播放按钮兜底补发」定时器（换源/销毁时调用：旧实例的补发不能打到新实例上）
+     */
+    clearPlayIntentRetry() {
+      if (this.playIntentRetryTimer) {
+        clearTimeout(this.playIntentRetryTimer);
+        this.playIntentRetryTimer = null;
+      }
+    },
+    /**
+     * 接管播放器内置的全屏按钮（iOS/iPadOS）。
+     * 按钮点击落在 Aliplayer 自己的 fullscreenService 上，服务里那套 iOS 判据认不出
+     * iPadOS 的桌面级 UA ⇒ 全屏无反应。这里在容器捕获阶段拦下这一下点击，改走
+     * video 原生全屏（与 iPhone 一致）；没有原生能力时放行给播放器，行为不变。
+     * 容器（#player-con{domId}）在换源重建时复用，用元素上的标记防重复绑定。
+     */
+    bindFullscreenButtonGuard() {
+      if (!this.isIOSFamily()) {
+        return;
+      }
+      const playerElement = this.getPlayerElement();
+      if (!playerElement || playerElement.__iosFullscreenGuardBound) {
+        return;
+      }
+      playerElement.__iosFullscreenGuardBound = true;
+      playerElement.addEventListener(
+        "click",
+        (event) => {
+          const target = event.target;
+          const button =
+            target && typeof target.closest === "function"
+              ? target.closest(".prism-fullscreen-btn")
+              : null;
+          if (!button || !playerElement.contains(button)) {
+            return;
+          }
+          const videoElement = this.getVideoElement();
+          if (!videoElement || typeof videoElement.webkitEnterFullscreen !== "function") {
+            return;
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          if (typeof event.stopImmediatePropagation === "function") {
+            event.stopImmediatePropagation();
+          }
+          if (this.isNativeVideoFullscreenActive(videoElement)) {
+            this.exitNativeVideoFullscreen(videoElement);
+          } else {
+            this.enterNativeVideoFullscreen(videoElement);
+          }
+        },
+        true
+      );
+    },
+    /**
+     * 换了一档可播的东西（地址 / 视频 ID / 凭证）⇒ 拆掉旧实例重建。
+     *
+     * 三枚 watcher 共用这一条：页面回填凭证时 source 与 playauth 往往同一拍一起变，
+     * 逐枚重建会把播放器连拆三回。这一拍已经排过一次就跳过（本拍内 buildPlayer 读的是
+     * 最新值，跳过不会漏掉新参数）。时序保持与原来逐枚同步重建一致，不改成 nextTick 延后——
+     * 直播页在换源后紧接着就调 setCurrentTime，延后一拍拿到的是旧实例。
+     */
+    rebuildOnMediaChange() {
+      if (this.rebuildScheduled) {
+        return;
+      }
+      this.rebuildScheduled = true;
+      this.$nextTick(() => {
+        this.rebuildScheduled = false;
+      });
+
+      // 换源即弃用上一轮自动播放重试计划与静音降级标记：旧实例的定时器不再触发，
+      // 新实例的声音状态不沿用（是否静音由新实例的自动播放降级重新决定）
+      this.autoPlayRetryToken++;
+      this.mutedByFallback = false;
+      this.disposePlayerInstance();
+      // 切换播放源后重置拖拽检测基准，避免沿用上一视频的播放时间误判
+      this.lastPlayerTime = null;
+      this.seekGuardUntil = 0;
+      this.buildPlayer();
+      if (this.playbackTarget()) {
+        this.playWithAutoplayFallback();
+      }
+    },
+
+    /**
+     * 销毁当前播放器实例（先摘掉「当前实例」标识再 dispose，异步事件不再当数）
+     * @return void
+     */
+    disposePlayerInstance() {
+      if (!this.player) {
+        return;
+      }
+      this.unbindRefreshButton();
+      this.unbindVideoFullscreenEvents();
+      // 旧实例的「播放按钮兜底补发」一并作废，不能让它补到新实例上
+      this.clearPlayIntentRetry();
+      // 先清空当前实例标识，再销毁旧播放器。旧实例在 dispose 期间仍可能异步派发
+      // waiting/error/liveStreamStop；若仍被当作当前实例处理，会把刚切入的新直播源
+      // 误判为失败并重置播放器。
+      var previousPlayer = this.player;
+      this.player = null;
+      previousPlayer.dispose();
+    },
+
+    /**
+     * 这一档播放到底拿什么去播：凭证档返回 VID，地址档返回播流地址
+     * 页面只传了 playauth、没传 vid 时沿用旧调用点那一档（source 位放的就是 VID，
+     * 见 `tz/file-preview.vue`），但不许把一条签名地址当 VID 交给 SDK——那一发只会换回
+     * 一句「playauth 解析错误 / 不能更新地址」，所以先用 looksLikeMediaUrl 挡一刀
+     * @return {String} 两者都没有时返回空串
+     */
+    playbackTarget() {
+      var vid = (this.vid || "").trim();
+      if (this.playauth) {
+        if (vid) {
+          return vid;
+        }
+        return this.looksLikeMediaUrl(this.source) ? "" : (this.source || "").trim();
+      }
+      return (this.source || "").trim();
+    },
+
+    /**
+     * 这串是不是「一条要交给媒体元素/浏览器的媒体地址」（含协议头或播放类扩展名）
+     * @param {String} value
+     * @return {Boolean}
+     */
+    looksLikeMediaUrl(value) {
+      var text = (value || "").trim();
+      if (!text) {
+        return false;
+      }
+      return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(text)
+        || /\.(m3u8|mp4|flv|mp3|webm|mov|m4a)(\?|#|$)/i.test(text);
+    },
+
+    /**
      * 重载当前视频（连麦下麦后恢复播放等场景）：
      * 仅重载视频流本身，不刷新页面/不改变直播间状态
      */
@@ -472,18 +692,27 @@ export default {
     },
 
     refreshPlayer() {
-      if (!this.player || !this.source) {
+      var target = this.playbackTarget();
+      if (!this.player || !target) {
         return;
       }
 
       // VID + PlayAuth 播放不是普通 URL，不能用 loadByUrl(raw video id) 重载；
       // 重新创建实例，沿用当前凭证和加密播放参数。
-      if (this.playauth) {
-        this.unbindRefreshButton();
-        this.unbindVideoFullscreenEvents();
-        var previousPlayer = this.player;
-        this.player = null;
-        previousPlayer.dispose();
+      // 凭证那一枚的有效期是阿里云侧的短窗口，页面挂着不动过窗之后这一发重建会失败——
+      // 所以端上「刷新」在凭证档必须由页面重新取一枚凭证（页面收到 refresh 事件后重取，
+      // 新值经 playauth watcher 走到 rebuildOnMediaChange），这里只是把当前凭证再吃一次
+      if (this.playingWithCredential) {
+        if (this.refreshNeedsNewAuth) {
+          // 凭证档的「重载」要的是新的一枚凭证，而不是把手里这枚再吃一次：
+          // 过窗的凭证重建回来还是同一块错误板。这里只出声，页面重取的那一枚到手后
+          // 由 playauth watcher 走 rebuildOnMediaChange —— 那才是「不用刷新整页」的出口
+          this.$emit("refresh", false);
+          return;
+        }
+        this.autoPlayRetryToken++;
+        this.mutedByFallback = false;
+        this.disposePlayerInstance();
         this.buildPlayer();
         if (this.autoplay || this.isLive) {
           this.playWithAutoplayFallback();
@@ -494,9 +723,66 @@ export default {
       if (typeof this.player.loadByUrl !== 'function') {
         return;
       }
-      this.player.loadByUrl(this.source);
+      this.player.loadByUrl(target);
       if (this.autoplay || this.isLive) {
         this.playWithAutoplayFallback();
+      }
+    },
+    /**
+     * 是否 iOS / iPadOS 家族（含 iPadOS 13+ 的桌面级 UA）。
+     * vendored Aliplayer 2.15.2 只按 UA 里的 iPad/iPhone/iPod 认 iOS；iPadOS 13 起
+     * Safari 默认发 Macintosh 桌面 UA，它会走 Fullscreen API / 模拟全屏那条链，
+     * 而 iPad 浏览器与微信内置浏览器要么没有该 API、要么只认 video 原生全屏，
+     * 表现为「全屏按钮点了没反应」。这里补齐 iPadOS 的判据（桌面 UA + 多点触控）。
+     */
+    isIOSFamily() {
+      if (typeof navigator === "undefined") {
+        return false;
+      }
+      var ua = navigator.userAgent || "";
+      if (/iPad|iPhone|iPod/i.test(ua)) {
+        return true;
+      }
+      // iPadOS 13+：UA 与 Mac 相同，但支持多点触控（Mac 笔记本 maxTouchPoints 为 0）
+      return /Macintosh/i.test(ua) && (navigator.maxTouchPoints || 0) > 1;
+    },
+    isNativeVideoFullscreenActive(videoElement) {
+      return !!(videoElement && videoElement.webkitDisplayingFullscreen);
+    },
+    /**
+     * 进入 video 元素的原生全屏（iOS/iPadOS 上唯一稳定可用的一条，iPhone 现有行为即是它）。
+     * 系统播放器铺满整屏，不受页面容器尺寸、层级与模拟全屏 CSS 的影响。
+     * @return {Boolean} 是否已成功发起（无此能力或抛错时返回 false，交回播放器原有链路）
+     */
+    enterNativeVideoFullscreen(videoElement) {
+      if (!videoElement || typeof videoElement.webkitEnterFullscreen !== "function") {
+        return false;
+      }
+      try {
+        // 用户可能在 ready 之前就点全屏：先把 iOS 原生全屏的进出事件挂上，
+        // 否则退出时（系统播放器「完成」按钮）fullScreen 状态收不回来
+        this.bindVideoFullscreenEvents();
+        videoElement.webkitEnterFullscreen();
+        // 原生全屏事件（webkitbeginfullscreen）在部分内核下延迟到达，先同步状态；
+        // 画面垂直偏移只在非全屏态生效，这里要立刻撤掉
+        this.fullScreen = true;
+        return true;
+      } catch (error) {
+        console.warn("请求原生视频全屏失败:", error);
+        return false;
+      }
+    },
+    exitNativeVideoFullscreen(videoElement) {
+      if (!this.isNativeVideoFullscreenActive(videoElement)) {
+        return false;
+      }
+      try {
+        videoElement.webkitExitFullscreen();
+        this.fullScreen = false;
+        return true;
+      } catch (error) {
+        console.warn("退出原生视频全屏失败:", error);
+        return false;
       }
     },
     requestFullScreen() {
@@ -504,12 +790,24 @@ export default {
         return;
       }
 
+      const videoElement = this.getVideoElement();
+
+      // iOS/iPadOS 优先走 video 原生全屏：与手机端（iPhone UA 被判为 iOS 后走同一条链）
+      // 行为一致，也绕开 iPad 上失效的元素全屏 / 模拟全屏链路
+      if (this.isIOSFamily()) {
+        if (this.isNativeVideoFullscreenActive(videoElement)) {
+          return;
+        }
+        if (this.enterNativeVideoFullscreen(videoElement)) {
+          return;
+        }
+      }
+
       if (this.fullScreen) {
         return;
       }
 
       const player = this.player;
-      const videoElement = this.getVideoElement();
 
       try {
         if (
@@ -538,6 +836,12 @@ export default {
     },
     exitFullScreen() {
       if (!this.player) {
+        return;
+      }
+
+      // iOS/iPadOS 的退出同样走原生：requestFullScreen 用的是 video 原生全屏，
+      // document.exitFullscreen 对它无效（页面里没有 fullscreenElement）
+      if (this.isIOSFamily() && this.exitNativeVideoFullscreen(this.getVideoElement())) {
         return;
       }
 
@@ -588,7 +892,9 @@ export default {
      * 在主流移动端浏览器中均被允许，保证直播开始时画面自动拉流。
      */
     playWithAutoplayFallback() {
-      if (!this.player || !this.source) {
+      // 判「有没有得播」要按当前这一档：凭证档的播流资格是 VID，页面只传 vid 时 source 是空的，
+      // 只看 this.source 会让自动首播整条兜底静默不跑（表现就是「进去只有大播放按钮」）
+      if (!this.player || !this.playbackTarget()) {
         return;
       }
       // 仅「期望自动播放」的场景走降级（直播 / 显式 autoplay），普通点播不干预
@@ -914,9 +1220,19 @@ export default {
         controlBarVisibility:this.controlBarVisibility
       };
 
-      if (this.playauth) {
+      // 两档播放形态在这里一次定下来，并把结论记进 playingWithCredential：
+      // refreshPlayer() 与页面都要按这一档决定「重取凭证重建」还是「loadByUrl 同一条地址」
+      var target = this.playbackTarget();
+      this.playingWithCredential = !!(this.playauth && target);
+
+      if (this.playingWithCredential) {
+        // 阿里云官方对私有加密 VID 的播法：SDK 自己拿凭证取址、自己按端解密。
+        // 电脑浏览器没有原生 HLS、MSE 又拿不到阿里云侧的分片密钥，把私有加密 m3u8 直接交给
+        // 媒体元素就是 error_code 4400 / error_msg "4 || "（MEDIA_ERR_SRC_NOT_SUPPORTED，
+        // 且回体里 mediaId/requestId 全空 = 一次网络响应都没发生）；走凭证档由 SDK 链路取址，
+        // 桌面与手机才是同一条链
         props.playauth = this.playauth;
-        props.vid = this.source;
+        props.vid = target;
         props.authTimeout = 7200;
         props.format = "m3u8";
         props.encryptType = 1;
@@ -1027,7 +1343,9 @@ export default {
         ];
       }
 
-      if (this.source) {
+      // 有得播才摆大播放按钮：凭证档的「有得播」是 VID（页面只传 vid、source 留空那一档），
+      // 只看 this.source 会让凭证档点不出第一下
+      if (target) {
         props.skinLayout.push({ name: "bigPlayButton", align: "cc" });
       }
 
@@ -1257,7 +1575,11 @@ export default {
         });
       });
 
-      this.$nextTick(() => this.bindRefreshButton());
+      this.$nextTick(() => {
+        this.bindRefreshButton();
+        this.bindFullscreenButtonGuard();
+        this.bindPlayIntent();
+      });
     },
     fullScreenHandle() {
       this.syncFullScreenState();
@@ -1303,6 +1625,7 @@ export default {
   beforeDestroy() {
     // 组件销毁后静音重试定时器不再触发
     this.autoPlayRetryToken++;
+    this.clearPlayIntentRetry();
     this.unbindRefreshButton();
     this.unbindVideoFullscreenEvents();
     this.unbindFullscreenEvents();

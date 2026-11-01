@@ -1,0 +1,53 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344796",
+  "data": {
+    "show_entry": true,
+    "top": [
+      {
+        "rank": 1,
+        "user_id": 38,
+        "nickname": "冯**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "invite_num": 2,
+        "is_me": false
+      }
+    ],
+    "list": [
+      {
+        "rank": 1,
+        "user_id": 38,
+        "nickname": "冯**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "invite_num": 2,
+        "is_me": false
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "has_more": false,
+    "me": {
+      "rank": 0,
+      "invite_num": 0,
+      "on_board": false,
+      "nickname": "",
+      "avatar": ""
+    },
+    "activity": {
+      "status": 1,
+      "run_state": 1,
+      "run_state_text": "进行中",
+      "run_state_key": "running",
+      "end_time": 1791983424,
+      "end_time_text": "2026-10-14 21:10",
+      "show_rule": 1,
+      "rule_html": "<p>123123</p>",
+      "show_prize": 0,
+      "rewards": []
+    },
+    "attr": {
+      "risk_tip": "邀请达人榜活动存在诱导分享行为，可能会受到微信平台的管控"
+    }
+  }
+}

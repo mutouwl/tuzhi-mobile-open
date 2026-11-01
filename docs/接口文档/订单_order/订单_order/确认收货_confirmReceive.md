@@ -16,7 +16,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| order_no | string | 否 | 订单号 | `` |
+| order_no | string | 否 | 订单号 | - |
 
 ## 请求头
 
@@ -29,7 +29,7 @@
 ```bash
 curl -X POST '{apiUrl}order/order/confirmReceive' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":""}'
+  -d '{"order_no":"xxx"}'
 ```
 
 ## 返回示例

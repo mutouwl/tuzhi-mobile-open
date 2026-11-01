@@ -19,7 +19,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| ticket | string | 否 | 票券 | `` |
+| ticket | string | 否 | 票券 | - |
 
 ## 请求头
 
@@ -32,7 +32,7 @@
 ```bash
 curl -X POST '{apiUrl}app/pc/login/pcLoginCallback' \
   -H 'Content-Type: application/json' \
-  -d '{"ticket":""}'
+  -d '{"ticket":"xxx"}'
 ```
 
 ## 返回示例

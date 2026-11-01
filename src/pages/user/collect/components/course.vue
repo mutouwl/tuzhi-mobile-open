@@ -12,13 +12,9 @@
     }"
     @click="$nav.to(itemId, 'course')"
   >
-    <div
-      class="cover"
-      :style="{
-        'background-image': 'url(' + cover + ')',
-        'background-size': '100% 100%',
-      }"
-    >
+    <div class="cover">
+      <!-- 封面走 `<image>`：背景图没有「加载失败」这一档（2026-10-29 口径 M65）-->
+      <image class="col-cover-img" :src="coverSrc" mode="scaleToFill" @error="onCoverError" />
       <div class="type">
         <span>{{ $t(type) }}</span>
       </div>
@@ -42,13 +38,26 @@
 // #ifdef MP-TOUTIAO
 import i18n from "@/components/language/index.js";
 // #endif
+import { mpKey } from '@/common/utils/mp-data-key.js';
 export default {
   // #ifdef MP-TOUTIAO
   i18n,
   // #endif
   components: {},
   data() {
-    return {};
+    return {
+      // 封面加载失败标记（键 = mpKey(地址)）与全站默认商品图（2026-10-29，口径 M65）
+      coverErrors: {},
+      defaultCover: '/static/image/default-goods.jpg',
+    };
+  },
+  computed: {
+    /** 封面真正摆出去的那一张：地址为空或加载失败都换默认商品图 */
+    coverSrc() {
+      const url = String(this.cover || '');
+      if (!url) { return this.defaultCover; }
+      return this.coverErrors[mpKey(url)] ? this.defaultCover : url;
+    },
   },
   props: {
     cover: {
@@ -102,6 +111,16 @@ export default {
     },
   },
   methods: {
+    /** 图片 `@error` 回调会写到 data 上，入口先过「已销毁」闸门（M26②） */
+    gone() {
+      return this._isDestroyed === true || this._isBeingDestroyed === true;
+    },
+    /** 封面取不到（地址为空或加载失败）：记下这一张并让模板换默认商品图（M65） */
+    onCoverError() {
+      if (this.gone()) { return; }
+      const url = String(this.cover || '');
+      if (url) { this.$set(this.coverErrors, mpKey(url), true); }
+    },
     cancel(id, index) {
       var that = this;
       uni.showModal({
@@ -150,6 +169,17 @@ export default {
   height: 100%;
   width: 160px;
   position: relative;
+}
+
+/* 封面图（2026-10-29，口径 M65）：铺满 `.cover` 的盒子，几何与原来那张
+   `background-size:100% 100%` 一致；圆角继承容器，换写法不改视觉，只为拿到 `@error` */
+.course-item-box .cover .col-cover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .course-item-box .info .time {

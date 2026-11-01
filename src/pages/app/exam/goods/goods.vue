@@ -1,13 +1,11 @@
 <template>
 	<div>
+		<!-- 顶部只保留必需的两种标识：从分类页带 name 进来时给「当前分类名」；
+		     无 group_id 时给一级分类页签。原来的「分类」入口与「全部练习」标题
+		     与下方页签表达的是同一件事（2026-10-28 用户点名冗余，已去掉）。 -->
 		<u-sticky :offsetTop="0" bgColor="#fff">
-			<view class="top-bar">
-				<view class="category-entry" @tap="goCategory">
-					<text class="category-entry-text">分类</text>
-					<tz-icon name="list" :size="14" color="#0968f6"></tz-icon>
-				</view>
-				<view class="top-bar-title" v-if="pageParams.name">{{ pageParams.name }}</view>
-				<view class="top-bar-title" v-else-if="!pageParams.group_id">全部练习</view>
+			<view class="top-bar" v-if="pageParams.name">
+				<view class="top-bar-title">{{ pageParams.name }}</view>
 			</view>
 			<u-tabs v-if="!pageParams.group_id" :list="tabsList" @click="tabsHandle"></u-tabs>
 		</u-sticky>

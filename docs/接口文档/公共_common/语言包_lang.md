@@ -475,7 +475,7 @@ curl -X POST '{apiUrl}common/lang' \
 | data.you are not logged in | string | youare未loggedin |
 | data.you've logged in, do not login again | string | you'veloggedin,do未loginagain |
 | data.profile | string | profile |
-| data.verify email | string | verifyemail |
+| data.verify email | string | 核销email |
 | data.change password | string | 修改密码 |
 | data.captcha is incorrect | string | captcha是否incorrect |
 | data.logged in successful | string | loggedinsuccessful |

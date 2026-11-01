@@ -17,17 +17,18 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| course_id | string | 否 | 课程ID | `` |
-| column_id | string | 否 | 专栏ID | `` |
+| course_id | string | 否 | 课程ID | - |
+| column_id | string | 否 | 专栏ID | - |
 | pause | integer | 否 | pause | `0` |
 | media_progress | integer | 否 | 媒体进度 | `0` |
+| delta_seconds | integer | 否 | deltaseconds | `0` |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}user/study/setLog' \
   -H 'Content-Type: application/json' \
-  -d '{"course_id":"","column_id":"","pause":0,"media_progress":0}'
+  -d '{"course_id":"xxx","column_id":"xxx","pause":0,"media_progress":0,"delta_seconds":0}'
 ```
 
 ## 返回示例

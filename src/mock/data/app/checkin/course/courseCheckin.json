@@ -1,0 +1,28 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344791",
+  "data": {
+    "total": 0,
+    "rows": [],
+    "has_more": 0,
+    "attr": {
+      "join_type": {
+        "free": "免费参与",
+        "pay": "付费参与",
+        "password": "****",
+        "student": "指定学员",
+        "course": "绑定课程"
+      },
+      "run_state": {
+        "not_started": "未开始",
+        "ongoing": "进行中",
+        "ended": "已结束"
+      },
+      "checkin_mode": {
+        "1": "日历打卡",
+        "2": "闯关打卡"
+      }
+    }
+  }
+}

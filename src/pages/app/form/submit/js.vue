@@ -106,6 +106,12 @@ export default {
           if (res.code == 1) {
             // 来自订单流程的表单，提交后返回订单页
             if (that.pageParams.from === 'order') {
+              // 广播给下单页（提交订单页 / 直播间下单弹窗）就地刷新表单状态——
+              // 宿主页 onShow 转发只覆盖提交订单页那一档，这里补「谁填的谁报信」这一路
+              uni.$emit('orderFormSubmitted', {
+                form_id: that.pageParams.id,
+                log_id: res.data.log_id,
+              });
               uni.showToast({
                 title: '提交成功',
                 icon: 'success'

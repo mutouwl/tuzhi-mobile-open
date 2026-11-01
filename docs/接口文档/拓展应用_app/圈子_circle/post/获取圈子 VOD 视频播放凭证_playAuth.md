@@ -18,8 +18,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| post_id | string | 否 | 帖子ID | `$this->request->param('post_id', 0` |
-| video_id | string | 否 | videoID | `$this->request->param('video_id', '` |
+| post_id | string | 否 | 帖子ID | - |
+| video_id | string | 否 | videoID | - |
 
 ## 请求头
 
@@ -32,12 +32,22 @@
 ```bash
 curl -X POST '{apiUrl}app/circle/post/playAuth' \
   -H 'Content-Type: application/json' \
-  -d '{"post_id":"$this->request->param('post_id', 0","video_id":"$this->request->param('video_id', '"}'
+  -d '{"post_id":"xxx","video_id":"xxx"}'
 ```
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "video_id": "demoVodVideoPlayAuth001",
+    "play_auth": "FAKE-PlayAuthStub-DemoOnly"
+  }
+}
+```
 
 ## 返回参数说明
 
@@ -46,3 +56,5 @@ curl -X POST '{apiUrl}app/circle/post/playAuth' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data.video_id | string | videoID |
+| data.play_auth | string | 播放鉴权 |

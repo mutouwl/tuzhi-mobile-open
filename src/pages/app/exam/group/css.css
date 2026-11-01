@@ -10,22 +10,31 @@ page {
 	overflow: hidden;
 }
 
+/* 左右两栏同起点：顶部留 10px（2026-10-28 用户点名「没有上边距」），
+   两栏高度各减这一档，页面不因此多出一段可滚高度 */
 .three-level-wrap {
 	display: flex;
 	align-items: flex-start;
 	width: 100%;
 	max-width: 480px;
 	position: relative;
+	padding-top: 10px;
+	box-sizing: border-box;
 }
 
 .side-menu-wrap {
 	width: 100px;
-	height: 100vh;
+	height: calc(100vh - 10px);
 	padding: 0 0px;
 	background-color: #f6f6f6;
 	position: sticky;
 	top: 0;
 	flex-shrink: 0;
+	box-sizing: border-box;
+}
+
+.side-scroll {
+	height: 100%;
 }
 
 .menu-item {
@@ -94,16 +103,20 @@ page {
 .goods-list-box {
 	background-color: #fff;
 	flex: 1;
+	min-width: 0;
 	padding: 0 10px;
 	box-sizing: border-box;
-	min-height: 100vh;
+}
+
+.goods-list-scroll {
+	height: calc(100vh - 10px);
 }
 
 .empty-box {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 400px;
+	height: calc(100vh - 10px);
 }
 
 .tz-flex {
@@ -118,6 +131,12 @@ page {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+/* 页签行与页面顶、与下方列表各留 8px（与课程分类页 `pages/course/category` 同一档）。
+   内衬给在带内这一层，不复写 uview 的 .u-tabs（M12/§4 禁止透过组件边界改内部类） */
+.eg-tabs-band {
+	padding: 8px 0px;
 }
 
 .sub-category-wrap {
@@ -140,21 +159,21 @@ page {
 	flex: 1;
 }
 
-.loading-box {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-height: 300px;
-	width: 100%;
-}
-
-.loading-text {
-	margin-top: 10px;
-	font-size: 14px;
-	color: #999;
-}
-
 .load-more-box {
 	padding: 15px 0;
+}
+
+/* ===== 首屏骨架（M16）：左栏条目与真实 .menu-item 同盒子（padding 20/10），
+   条块宽 56 高 16（真实名称行高 16）；右栏由 tz-course-mini 自己的骨架档出 ===== */
+.eg-sk-menu {
+	width: 100%;
+	padding: 20px 10px;
+	box-sizing: border-box;
+}
+
+.eg-sk-menu-bar {
+	width: 56px;
+	height: 16px;
+	border-radius: 4px;
+	background: #e5e6eb;
 }

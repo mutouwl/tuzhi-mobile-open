@@ -57,7 +57,7 @@
 					</div>
 				</div>
 			</tz-box>
-			<tz-divider />
+			<tz-divider bgColor="#fafafa" />
 			<tz-title title="学习数据" :more="false" />
 			<tz-box padding="0px 15px 15px">
 				<!-- 日/周/月留在骨架屏之外保持可点（M16），切换档位时下面两块换成骨架 -->

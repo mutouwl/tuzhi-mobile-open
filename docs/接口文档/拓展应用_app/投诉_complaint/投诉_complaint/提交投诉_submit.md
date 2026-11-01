@@ -1,5 +1,7 @@
 # 提交投诉
 
+> 截图地址来源白名单校验（拒绝任意外域/危险协议地址）
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -17,11 +19,11 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | category_id | integer | 否 | 分类ID | `0` |
-| content | string | 否 | 内容 | `` |
-| images | string | 否 | images | - |
-| target_type | string | 否 | target类型 | `` |
+| content | string | 否 | 内容 | - |
+| images | array | 否 | 图片地址数组 | - |
+| target_type | string | 否 | target类型 | - |
 | target_id | integer | 否 | targetID | `0` |
-| target_title | string | 否 | target标题 | `` |
+| target_title | string | 否 | target标题 | - |
 
 ## 请求头
 
@@ -34,7 +36,7 @@
 ```bash
 curl -X POST '{apiUrl}app/complaint/complaint/submit' \
   -H 'Content-Type: application/json' \
-  -d '{"category_id":0,"content":"","images":"xxx","target_type":"","target_id":0,"target_title":""}'
+  -d '{"category_id":0,"content":"xxx","images":"xxx","target_type":"xxx","target_id":0,"target_title":"xxx"}'
 ```
 
 ## 返回示例

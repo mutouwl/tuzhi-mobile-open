@@ -4,6 +4,8 @@ import i18n from '@/components/language/index.js';
 // #endif
 var that;
 import shareModal from "@/components/modal/share-modal.vue";
+// 封面地址这类外部串作 data 的键必过 mpKey（M27/硬约束 25）：只改写点 = 兜底图静默失效
+import { mpKey } from '@/common/utils/mp-data-key.js';
 export default {
 // #ifdef MP-TOUTIAO
     i18n,
@@ -19,14 +21,23 @@ export default {
         sort:'time',
         order:'desc'
       },
-      sortType:[
+      // 排序档（筛弹窗里单选）：value = 排序字段 + '_' + 方向，确认时拆回 form.sort/form.order
+      sortOptions:[
         {
-          type:'time',
-          name:'时间'
+          name:'时间最新',
+          value:'time_desc'
         },
         {
-          type:'price',
-          name:'价格'
+          name:'时间最早',
+          value:'time_asc'
+        },
+        {
+          name:'价格最高',
+          value:'price_desc'
+        },
+        {
+          name:'价格最低',
+          value:'price_asc'
         }
       ],
       list: [],
@@ -38,9 +49,10 @@ export default {
       modal:{
         time:false,
         mode:false,
-        type:false,
         share:false
       },
+      // 筛选弹窗（类型 + 排序，tz-filter-popup）
+      filterVisible:false,
 
       userInfo:{},
 
@@ -86,33 +98,65 @@ export default {
           key:7
         }
       ],
-      typeChecked:0,
       shareGoodsId:'',
       shareGoodsType:'goods',
       // 分享海报用：被分享这一条商品的整行数据（列表接口已下发 name/cover/price，随 shareGoods 一起存下，不再取一次接口）
-      shareGoodsItem:{}
+      shareGoodsItem:{},
+      // 封面加载失败标记（键 = mpKey(地址)）与全站默认商品图（2026-10-29，口径 M65）
+      coverErrors:{},
+      defaultCover:'/static/image/default-goods.jpg'
+    }
+  },
+  computed: {
+    // 类型选项：全站商品类型（含后面按插件追加的几类），'' = 全部
+    typeOptions() {
+      return this.type.map(item => ({ name: item.name, value: item.type }));
+    },
+    // 当前排序在弹窗里的取值（sort + 方向）
+    sortValue() {
+      return this.form.sort + '_' + this.form.order;
+    },
+    // 筛选是否生效（非「全部类型 + 时间最新」），驱动筛选图标主色
+    filterActive() {
+      return this.form.type !== '' || this.form.sort !== 'time' || this.form.order !== 'desc';
     }
   },
   watch: {
   },
   methods: {
 
-    //类型被切换
-    typeSelect(option){
-      this.typeChecked = option.key;
-      this.form.type = option.type;
-      this.refresh();
+    /** 图片 `@error` 回调会写到 data 上，入口先过「已销毁」闸门（M26②） */
+    gone() {
+      return this._isDestroyed === true || this._isBeingDestroyed === true;
+    },
+    /** 卡片封面真正摆出去的那一张（2026-10-29 用户点名「包括这个页面，图片也要有填充」，口径 M65）：
+     *  地址为空或加载失败都换全站默认商品图 `/static/image/default-goods.jpg`
+     *  （套餐卡 / 确认报名页 / 规格弹窗 / 分享海报封面同一张，不为兜底新造图）。
+     *  失败表按 mpKey(地址) 查——模板看不到模块级 import，所以走方法（M27） */
+    coverOf(item) {
+      const url = String((item || {}).cover || '');
+      if (!url) { return this.defaultCover; }
+      return this.coverErrors[mpKey(url)] ? this.defaultCover : url;
+    },
+    /** 封面加载失败：记下这一张（写点同样过 mpKey） */
+    onCoverError(item) {
+      if (this.gone()) { return; }
+      const url = String((item || {}).cover || '');
+      if (url) { this.$set(this.coverErrors, mpKey(url), true); }
     },
 
-    //调整排序
-    changeSort(type){
-      if(type == this.form.sort){
-        this.form.order = this.form.order == 'desc' ? 'asc' : 'desc';
-      }else{
-        this.form.order = 'desc';
-        this.form.sort = type;
-      }
-      this.refresh();
+    //搜索关键词变更（t-search 的 change 事件带回 {value}）
+    onKeywordChange(e){
+      that.form.name = (e && e.value) || '';
+    },
+
+    //筛选弹窗确认：类型 + 排序一次落回 form，再统一刷新
+    onFilterConfirm(e){
+      var sort = (e && e.sort) ? e.sort.split('_') : ['time', 'desc'];
+      that.form.type = (e && e.type) || '';
+      that.form.sort = sort[0] || 'time';
+      that.form.order = sort[1] || 'desc';
+      that.refresh();
     },
 
     shareGoods(id,type,item){

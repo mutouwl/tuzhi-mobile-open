@@ -17,14 +17,14 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| ids | string | 否 | ID集合 | `` |
+| ids | string | 否 | ID集合 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/composite/goods/ids' \
   -H 'Content-Type: application/json' \
-  -d '{"ids":""}'
+  -d '{"ids":"xxx"}'
 ```
 
 ## 返回示例

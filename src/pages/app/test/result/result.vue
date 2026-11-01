@@ -66,7 +66,7 @@
         </div>
       </div>
     </tz-box>
-    <tz-divider />
+    <tz-divider bgColor="#fafafa" />
     <div class="btn-groups">
       <div
         class="btn"
@@ -86,7 +86,7 @@
     </div>
 
     <template v-if="data.grade_status != 0 && data.question_list && data.question_list.length > 0">
-      <tz-divider />
+      <tz-divider bgColor="#fafafa" />
       <tz-title title="答卷" size="small" :more="false" />
       <tz-box padding="0 15px 15px">
         <template v-for="(item, index) in data.question_list">
@@ -106,7 +106,7 @@
             :is_correct="item.is_correct"
             @changeoption="changeOption"
           />
-          <tz-divider v-if="index < data.question_list.length - 1" />
+          <tz-divider bgColor="#fafafa" v-if="index < data.question_list.length - 1" />
         </template>
       </tz-box>
     </template>

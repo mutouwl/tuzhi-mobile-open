@@ -1,5 +1,7 @@
 # 预览证书
 
+> 后端直接渲染证书 PNG 并返回 Base64 图片串；旧包兼容保留，新包改走 layout 由前端出图。
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -14,7 +16,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| id | string | 否 | ID | `21` |
+| id | integer | 是 | 我的证书记录 ID | `21` |
 
 ## 请求示例
 
@@ -43,3 +45,7 @@ curl -X POST '{apiUrl}app/cert/log/preview' \
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
 | data | string | 数据 |
+
+## 备注
+
+- 返回的 data 是整张图的 Base64 字符串，文档中的示例已按规范截断

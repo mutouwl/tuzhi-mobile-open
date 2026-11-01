@@ -129,6 +129,8 @@ curl -X POST '{apiUrl}course/course/detail' \
       ]
     },
     "study_num": 2,
+    "study_num_show": "open",
+    "progress_seek": "open",
     "comment_num": 0,
     "is_virtual_pay": 0
   }
@@ -201,7 +203,7 @@ curl -X POST '{apiUrl}course/course/detail' \
 | data.live_room.config.goods | integer | 商品 |
 | data.live_room.config.redpacket | integer | 红包 |
 | data.live_room.createtime | integer | 创建时间（时间戳） |
-| data.live_room.push_url | object | push链接 |
+| data.live_room.push_url | object | 连麦推流地址（artc，接通后才有） |
 | data.live_room.push_url.rtmp | string | RTMP 拉流地址 |
 | data.live_room.push_url.artc | string | ARTC 拉流地址 |
 | data.live_room.push_url.flv | string | FLV 拉流地址 |
@@ -216,5 +218,7 @@ curl -X POST '{apiUrl}course/course/detail' \
 | data.live_room.qualities[].url.flv | string | FLV 拉流地址 |
 | data.live_room.qualities[].url.hls | string | HLS 拉流地址 |
 | data.study_num | integer | 学习数量 |
+| data.study_num_show | string | 学习数量show |
+| data.progress_seek | string | 进度seek |
 | data.comment_num | integer | 评论数量 |
 | data.is_virtual_pay | integer | 是否虚拟支付 |

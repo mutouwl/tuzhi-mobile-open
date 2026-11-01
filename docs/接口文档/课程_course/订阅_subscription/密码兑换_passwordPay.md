@@ -17,15 +17,15 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| password | string | 否 | 密码 | `` |
-| course_id | string | 否 | 课程ID | `` |
+| password | string | 否 | 密码 | - |
+| course_id | string | 否 | 课程ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}course/subscription/passwordPay' \
   -H 'Content-Type: application/json' \
-  -d '{"password":"","course_id":""}'
+  -d '{"password":"xxx","course_id":"xxx"}'
 ```
 
 ## 返回示例

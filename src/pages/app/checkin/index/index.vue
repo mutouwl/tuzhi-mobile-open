@@ -9,8 +9,9 @@
       <!-- 子页签用分段器 u-subsection：只在第一个页签下出现，第二个页签没有下级。三档口径全在后端：
            最近加入/最近使用是排序、今日任务是筛选（闸门链，M22），前端只把 sort 传下去，
            不本地重排、也不自己判「今天有没有任务」。
-           尺寸与配色一律走 uview 默认（activeColor #0968f6 已在组件默认里），与券包列表
-           pages/app/coupon/my、学习数据 pages/user/study、分销订单页同一档，不在这儿另调一档；
+           尺寸与配色一律走 uview 默认（activeColor #0968f6 已在组件默认里），与学习数据
+           pages/user/study、分销订单页同一档，不在这儿另调一档（券包列表 pages/app/coupon/my
+           2026-10-27 已按订单列表把这一排改成 u-tabs，不再是分段器）；
            list 传对象数组时组件按 keyName（默认 name）取文字，sort 那一列照样跟着行走 -->
       <view class="mck-sub-bar" v-if="current === 0">
         <u-subsection :list="subTabs" :current="subCurrent" @change="subTabChange"></u-subsection>

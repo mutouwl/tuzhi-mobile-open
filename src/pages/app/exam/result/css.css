@@ -16,14 +16,19 @@ page{
     margin-left: 5px;
 }
 
+/* 与练习详情页同一档：子项等分、满宽（2026-10-30 用户点名 exam-property-box「宽度可以等分，
+   现在太集中了」）。这一块在页面级、不在 tz-box 里 ⇒ 左右内衬自己补 15px */
 .exam-property-box{
     display: flex;
-    justify-content: space-between;
-    width: 270px;
-    margin: 30px auto 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 15px;
+    margin: 30px 0 0;
 }
 
 .exam-property-box .exam-property-item{
+    flex: 1 1 0;
+    min-width: 0;
     text-align: center;
 }
 

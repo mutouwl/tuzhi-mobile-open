@@ -4,9 +4,9 @@
 > 数据源：`tuzi-mobile/src/common/request/api_list.js`（Mobile 端接口配置文件）+ 后端 `application/api/controller/**`。
 > 目录与文件按「中文名_变量」命名（文件名前缀即接口标题），由生成器统一维护，重命名请用 `--all` 全量刷新。
 
-- 生成时间：2026/9/21 16:48:00
-- 接口总数：353 个（19 个模块）
-- 已生成文档：353 份
+- 生成时间：2026/11/1 08:40:31
+- 接口总数：422 个（20 个模块）
+- 已生成文档：422 份
 
 ## 通用约定
 
@@ -64,8 +64,8 @@
 | `POST /api/upload/vodUrl` | 获取 VOD 上传地址 | [查看](上传_upload/获取 VOD 上传地址_vodUrl.md) |
 | `POST /api/upload/vodRefresh` | 刷新 VOD 上传凭证 | [查看](上传_upload/刷新 VOD 上传凭证_vodRefresh.md) |
 | `POST /api/upload/vodNotify` | VOD 上传回调 | [查看](上传_upload/VOD 上传回调_vodNotify.md) |
+| `POST /api/upload/ossNotify` | OSS 附件补记 | [查看](上传_upload/OSS 附件补记_ossNotify.md) |
 | `POST /api/upload/image` | 上传文件（后端） | [查看](上传_upload/上传文件_image.md) |
-| `POST /api/upload/ossNotify` | OSS 附件补记（后端） | [查看](上传_upload/OSS 附件补记_ossNotify.md) |
 
 ### 微信（wechat）
 
@@ -90,6 +90,7 @@
 | `POST /api/page/decorate/getPage` | 获取页面 | [查看](自定义页面_page/decorate/获取页面_getPage.md) |
 | `POST /api/page/decorate/isIndex` | 判断是否为默认主页 | [查看](自定义页面_page/decorate/判断是否为默认主页_isIndex.md) |
 | `POST /api/page/navigation/getNavigation` | 获取页面 | [查看](自定义页面_page/navigation/获取页面_getNavigation.md) |
+| `POST /api/page/user_center/getConfig` | 个人中心装修配置 | [查看](自定义页面_page/个人中心_user_center/个人中心装修配置_getConfig.md) |
 
 ### 支付（pay）
 
@@ -211,6 +212,14 @@
 | `POST /api/course/subscription/free` | 免费加入学习 | [查看](课程_course/订阅_subscription/免费加入学习_free.md) |
 | `POST /api/course/subscription/getMySubscription` | 获取我的订阅 | [查看](课程_course/订阅_subscription/获取我的订阅_getMySubscription.md) |
 
+#### 小程序学习（mp_study）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/course/mp_study/entry` | 获取小程序学习入口 | [查看](课程_course/小程序学习_mp_study/获取小程序学习入口_entry.md) |
+| `POST /api/course/mp_study/urllink` | 获取小程序 URL Link（微信外 H5 拉起微信） | [查看](课程_course/小程序学习_mp_study/获取小程序 URL Link（微信外 H5 拉起微信）_urllink.md) |
+| `GET /api/course/mp_study/code` | 小程序码图片（PNG 图片流）（后端） | [查看](课程_course/小程序学习_mp_study/小程序码图片（PNG 图片流）_code.md) |
+
 #### 分组（group）
 
 | 接口 | 说明 | 文档 |
@@ -239,12 +248,18 @@
 | `POST /api/course/course/getBelongsColumn` | 获取课程所属专栏 | [查看](课程_course/课程_course/获取课程所属专栏_getBelongsColumn.md) |
 | `POST /api/course/course/courseDataLimit` | 课程数据限制 根据是否已订阅返回相关数据（后端） | [查看](课程_course/课程_course/课程数据限制 根据是否已订阅返回相关数据_courseDataLimit.md) |
 
+#### 点播（vod）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/course/vod/playAuth` | 获取课程点播播放凭证（VID + PlayAuth） | [查看](课程_course/点播_vod/获取课程点播播放凭证（VID + PlayAuth）_playAuth.md) |
+
 #### 专栏（column）
 
 | 接口 | 说明 | 文档 |
 | --- | --- | --- |
-| `POST /api/course/column/getColumnDir` | 获取专栏目录 新 | [查看](课程_course/专栏_column/获取专栏目录 新_getColumnDir.md) |
 | `POST /api/course/column/getCourse` | 获取专栏所属课程 | [查看](课程_course/专栏_column/获取专栏所属课程_getCourse.md) |
+| `POST /api/course/column/getColumnDir` | 获取专栏目录 新 | [查看](课程_course/专栏_column/获取专栏目录 新_getColumnDir.md) |
 | `POST /api/course/column/getNextCourse` | 获取下一课程 | [查看](课程_course/专栏_column/获取下一课程_getNextCourse.md) |
 | `POST /api/course/column/getDir` | 获取专栏目录（后端） | [查看](课程_course/专栏_column/获取专栏目录_getDir.md) |
 
@@ -336,6 +351,7 @@
 | `POST /api/user/study/finish` | 完成学习 | [查看](用户_user/学习_study/完成学习_finish.md) |
 | `POST /api/user/study/getStudyLog` | 学习记录 | [查看](用户_user/学习_study/学习记录_getStudyLog.md) |
 | `POST /api/user/study/getStatistics` | 学习统计 | [查看](用户_user/学习_study/学习统计_getStatistics.md) |
+| `POST /api/user/study/getStudyTime` | 累计学习时长 | [查看](用户_user/学习_study/累计学习时长_getStudyTime.md) |
 | `POST /api/user/study/getContinuousStudyDays` | 连续学习天数 | [查看](用户_user/学习_study/连续学习天数_getContinuousStudyDays.md) |
 | `POST /api/user/study/getMediaProgress` | 媒体播放进度 | [查看](用户_user/学习_study/媒体播放进度_getMediaProgress.md) |
 
@@ -369,7 +385,7 @@
 | `POST /api/live/red_packet/getActive` | 获取直播间当前红包 | [查看](直播_live/红包_red_packet/获取直播间当前红包_getActive.md) |
 | `POST /api/live/red_packet/grab` | 抢红包 | [查看](直播_live/红包_red_packet/抢红包_grab.md) |
 | `POST /api/live/red_packet/detail` | 获取红包详情 | [查看](直播_live/红包_red_packet/获取红包详情_detail.md) |
-| `POST /api/live/red_packet/getList` | 获取直播间红包列表 | [查看](直播_live/红包_red_packet/获取直播间红包列表_getList.md) |
+| `POST /api/live/red_packet/getList` | 直播间红包列表（红包记录弹层） | [查看](直播_live/红包_red_packet/直播间红包列表（红包记录弹层）_getList.md) |
 | `POST /api/live/red_packet/getMyList` | 获取我的红包记录 | [查看](直播_live/红包_red_packet/获取我的红包记录_getMyList.md) |
 
 #### 商品（goods）
@@ -425,6 +441,103 @@
 | `POST /api/app/composite/goods/index` | 组合商品列表 | [查看](拓展应用_app/组合_composite/商品_goods/组合商品列表_index.md) |
 | `POST /api/app/composite/goods/ids` | 通过 ids 获取组合商品（不分页） | [查看](拓展应用_app/组合_composite/商品_goods/通过 ids 获取组合商品（不分页）_ids.md) |
 | `POST /api/app/composite/goods/detail` | 组合商品详情 | [查看](拓展应用_app/组合_composite/商品_goods/组合商品详情_detail.md) |
+
+#### 打卡（checkin）
+
+##### 打卡活动（checkin/checkin）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/checkin/checkin/myList` | 我的打卡列表 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/我的打卡列表_myList.md) |
+| `POST /api/app/checkin/checkin/discoverList` | 可参与的打卡活动列表 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/可参与的打卡活动列表_discoverList.md) |
+| `POST /api/app/checkin/checkin/detail` | 打卡活动主页 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡活动主页_detail.md) |
+| `POST /api/app/checkin/checkin/taskDetail` | 打卡任务详情 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡任务详情_taskDetail.md) |
+| `POST /api/app/checkin/checkin/publishConfig` | 打卡发表页表单配置 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡发表页表单配置_publishConfig.md) |
+| `POST /api/app/checkin/checkin/feed` | 打卡动态流分页 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡动态流分页_feed.md) |
+| `POST /api/app/checkin/checkin/join` | 免费或绑定课程参与打卡 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/免费或绑定课程参与打卡_join.md) |
+| `POST /api/app/checkin/checkin/passwordPay` | 密码兑换参与打卡 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/密码兑换参与打卡_passwordPay.md) |
+| `POST /api/app/checkin/checkin/calendar` | 我的打卡记录页 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/我的打卡记录页_calendar.md) |
+| `POST /api/app/checkin/checkin/setNickname` | 修改活动内打卡昵称 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/修改活动内打卡昵称_setNickname.md) |
+| `POST /api/app/checkin/checkin/taskCalendar` | 打卡任务日历 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡任务日历_taskCalendar.md) |
+| `POST /api/app/checkin/checkin/rank` | 打卡排行榜 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡排行榜_rank.md) |
+| `POST /api/app/checkin/checkin/memberList` | 打卡成员列表 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡成员列表_memberList.md) |
+| `POST /api/app/checkin/checkin/dayDetail` | 打卡某日动态列表 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡某日动态列表_dayDetail.md) |
+| `POST /api/app/checkin/checkin/submit` | 提交打卡（发表动态） | [查看](拓展应用_app/打卡_checkin/打卡_checkin/提交打卡（发表动态）_submit.md) |
+| `POST /api/app/checkin/checkin/diaryDetail` | 打卡动态详情 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡动态详情_diaryDetail.md) |
+| `POST /api/app/checkin/checkin/like` | 打卡动态点赞 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡动态点赞_like.md) |
+| `POST /api/app/checkin/checkin/comment` | 发表打卡动态评论 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/发表打卡动态评论_comment.md) |
+| `POST /api/app/checkin/checkin/commentList` | 打卡动态评论列表 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡动态评论列表_commentList.md) |
+| `POST /api/app/checkin/checkin/commentLike` | 打卡动态评论点赞 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡动态评论点赞_commentLike.md) |
+| `POST /api/app/checkin/checkin/deleteOwn` | 删除我的打卡动态 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/删除我的打卡动态_deleteOwn.md) |
+| `POST /api/app/checkin/checkin/editOwn` | 编辑我的打卡动态 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/编辑我的打卡动态_editOwn.md) |
+| `POST /api/app/checkin/checkin/shareInfo` | 打卡活动分享信息 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡活动分享信息_shareInfo.md) |
+
+##### 课程关联打卡（checkin/course）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/checkin/course/courseCheckin` | 课程关联的打卡活动列表 | [查看](拓展应用_app/打卡_checkin/课程_course/课程关联的打卡活动列表_courseCheckin.md) |
+
+##### 打卡日记（checkin/diary）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/checkin/diary/myList` | 我发布的打卡日记列表 | [查看](拓展应用_app/打卡_checkin/日记_diary/我发布的打卡日记列表_myList.md) |
+
+##### 打卡介绍页（checkin/intro）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/checkin/intro/detail` | 打卡活动介绍页 | [查看](拓展应用_app/打卡_checkin/活动介绍_intro/打卡活动介绍页_detail.md) |
+
+#### 分享有礼（share_gift）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/share_gift/gift/list` | 直播分享有礼活动列表 | [查看](拓展应用_app/分享有礼_share_gift/活动_gift/直播分享有礼活动列表_list.md) |
+| `POST /api/app/share_gift/gift/detail` | 分享有礼活动详情 | [查看](拓展应用_app/分享有礼_share_gift/活动_gift/分享有礼活动详情_detail.md) |
+| `POST /api/app/share_gift/gift/assist` | 分享有礼助力上报 | [查看](拓展应用_app/分享有礼_share_gift/活动_gift/分享有礼助力上报_assist.md) |
+| `POST /api/app/share_gift/gift/join` | 参与分享有礼活动 | [查看](拓展应用_app/分享有礼_share_gift/活动_gift/参与分享有礼活动_join.md) |
+| `POST /api/app/share_gift/gift/claim` | 领取分享有礼奖品（兼容旧包）（后端） | [查看](拓展应用_app/分享有礼_share_gift/活动_gift/领取分享有礼奖品（兼容旧包）_claim.md) |
+| `POST /api/app/share_gift/prize/myPrizes` | 我的奖品列表（兼容旧包）（后端） | [查看](拓展应用_app/分享有礼_share_gift/奖品_prize/我的奖品列表（兼容旧包）_myPrizes.md) |
+| `POST /api/app/share_gift/prize/addresses` | 收货地址列表（兼容旧包）（后端） | [查看](拓展应用_app/分享有礼_share_gift/奖品_prize/收货地址列表（兼容旧包）_addresses.md) |
+| `POST /api/app/share_gift/prize/prizeCount` | 可领奖品数量（兼容旧包）（后端） | [查看](拓展应用_app/分享有礼_share_gift/奖品_prize/可领奖品数量（兼容旧包）_prizeCount.md) |
+
+#### 拼团（group_buy）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/group_buy/activity/detail` | 商详页拼团区 | [查看](拓展应用_app/拼团_group_buy/拼团活动_activity/商详页拼团区_detail.md) |
+| `POST /api/app/group_buy/activity/teams` | 在线凑团列表 | [查看](拓展应用_app/拼团_group_buy/拼团活动_activity/在线凑团列表_teams.md) |
+| `POST /api/app/group_buy/activity/visit` | 拼团活动访客埋点 | [查看](拓展应用_app/拼团_group_buy/拼团活动_activity/拼团活动访客埋点_visit.md) |
+| `POST /api/app/group_buy/team/open` | 开团下单（返回待支付订单号） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/开团下单（返回待支付订单号）_open.md) |
+| `POST /api/app/group_buy/team/join` | 参团下单（加入已有团） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/参团下单（加入已有团）_join.md) |
+| `POST /api/app/group_buy/team/detail` | 拼团详情（团 + 成员 + 倒计时） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/拼团详情（团 + 成员 + 倒计时）_detail.md) |
+| `POST /api/app/group_buy/team/calc` | 拼团下单试算（选券后重算金额） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/拼团下单试算（选券后重算金额）_calc.md) |
+| `POST /api/app/group_buy/team/coupons` | 拼团单可用优惠券清单 | [查看](拓展应用_app/拼团_group_buy/拼团单_team/拼团单可用优惠券清单_coupons.md) |
+| `POST /api/app/group_buy/team/myList` | 我的拼团列表（全部 / 拼团中 / 已成团 / 已失败） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/我的拼团列表（全部 ／ 拼团中 ／ 已成团 ／ 已失败）_myList.md) |
+| `POST /api/app/group_buy/activity/ladder` | 拼团阶梯档价格表（后端） | [查看](拓展应用_app/拼团_group_buy/拼团活动_activity/拼团阶梯档价格表_ladder.md) |
+| `POST /api/app/group_buy/team/members` | 团成员列表（昵称后端脱敏）（后端） | [查看](拓展应用_app/拼团_group_buy/拼团单_team/团成员列表（昵称后端脱敏）_members.md) |
+
+#### 送好友（send_friend）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/send_friend/gift/entry` | 商详页送好友入口 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/商详页送好友入口_entry.md) |
+| `POST /api/app/send_friend/gift/create` | 建送礼购买单 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/建送礼购买单_create.md) |
+| `POST /api/app/send_friend/gift/list` | 我的礼单列表 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/我的礼单列表_list.md) |
+| `POST /api/app/send_friend/gift/share` | 记「送出」（打开分享面板） | [查看](拓展应用_app/送好友_send_friend/礼单_gift/记「送出」（打开分享面板）_share.md) |
+| `POST /api/app/send_friend/gift/info` | 领取页 / 送礼页详情 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/领取页 ／ 送礼页详情_info.md) |
+| `POST /api/app/send_friend/gift/receive` | 好友领取礼物 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/好友领取礼物_receive.md) |
+| `POST /api/app/send_friend/gift/selfUse` | 购买人自己使用 | [查看](拓展应用_app/送好友_send_friend/礼单_gift/购买人自己使用_selfUse.md) |
+
+#### 邀请达人榜（invite_rank）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/invite_rank/rank/board` | 邀请达人榜榜单 | [查看](拓展应用_app/邀请达人榜_invite_rank/榜单_rank/邀请达人榜榜单_board.md) |
+| `POST /api/app/invite_rank/rank/my` | 我的邀请明细 | [查看](拓展应用_app/邀请达人榜_invite_rank/榜单_rank/我的邀请明细_my.md) |
+| `POST /api/app/invite_rank/rank/report` | 邀请归因上报 | [查看](拓展应用_app/邀请达人榜_invite_rank/榜单_rank/邀请归因上报_report.md) |
 
 #### 圈子（circle）
 
@@ -490,6 +603,7 @@
 | --- | --- | --- |
 | `POST /api/app/cert/log/index` | 证书列表 | [查看](拓展应用_app/证书_cert/log/证书列表_index.md) |
 | `POST /api/app/cert/log/preview` | 预览证书 | [查看](拓展应用_app/证书_cert/log/预览证书_preview.md) |
+| `POST /api/app/cert/log/layout` | 证书绘制元素清单 | [查看](拓展应用_app/证书_cert/log/证书绘制元素清单_layout.md) |
 
 #### 优惠券（coupon）
 
@@ -617,13 +731,13 @@
 | `POST /api/app/agent/recruit/getUserCondition` | 获取用户列表 | [查看](拓展应用_app/分销_agent/recruit/获取用户列表_getUserCondition.md) |
 | `POST /api/app/agent/member/getMember` | 获取成员 | [查看](拓展应用_app/分销_agent/member/获取成员_getMember.md) |
 | `POST /api/app/agent/member/getMemberTotal` | 获取用户统计数据 | [查看](拓展应用_app/分销_agent/member/获取用户统计数据_getMemberTotal.md) |
-| `POST /api/app/agent/config/getConfig` | 获取分销配置 | [查看](拓展应用_app/分销_agent/配置_config/获取分销配置_getConfig.md) |
+| `POST /api/app/agent/config/getConfig` | 获取分销配置 结算这两枚 | [查看](拓展应用_app/分销_agent/配置_config/获取分销配置_getConfig.md) |
 | `POST /api/app/agent/level/getLevelList` | 获取等级列表 | [查看](拓展应用_app/分销_agent/level/获取等级列表_getLevelList.md) |
 | `POST /api/app/agent/wallet/getMoneyLog` | 获取资产信息 | [查看](拓展应用_app/分销_agent/wallet/获取资产信息_getMoneyLog.md) |
 | `POST /api/app/agent/withdraw_card/getCard` | 获取银行卡信息 | [查看](拓展应用_app/分销_agent/withdraw_card/获取银行卡信息_getCard.md) |
 | `POST /api/app/agent/withdraw_card/setCard` | 设置银行卡信息 | [查看](拓展应用_app/分销_agent/withdraw_card/设置银行卡信息_setCard.md) |
 | `POST /api/app/agent/goods/getGoodsList` | 获取分销商品列表 | [查看](拓展应用_app/分销_agent/商品_goods/获取分销商品列表_getGoodsList.md) |
-| `POST /api/app/agent/withdraw/submit` | 提交申请 | [查看](拓展应用_app/分销_agent/提现_withdraw/提交申请_submit.md) |
+| `POST /api/app/agent/withdraw/submit` | 提交申请 提的是分销钱包那一截 | [查看](拓展应用_app/分销_agent/提现_withdraw/提交申请_submit.md) |
 | `POST /api/app/agent/withdraw/getLog` | 获取提现记录 | [查看](拓展应用_app/分销_agent/提现_withdraw/获取提现记录_getLog.md) |
 | `POST /api/app/agent/wallet/getMoney` | 获取金额（后端） | [查看](拓展应用_app/分销_agent/wallet/获取金额_getMoney.md) |
 | `POST /api/app/agent/withdraw/check` | 检查（后端） | [查看](拓展应用_app/分销_agent/提现_withdraw/检查_check.md) |
@@ -687,6 +801,14 @@
 | `POST /api/app/school/user/bookingList` | 我的预约列表 | [查看](拓展应用_app/教务_school/学生端_user/我的预约列表_bookingList.md) |
 | `POST /api/app/school/user/bookingDetail` | 预约详情 | [查看](拓展应用_app/教务_school/学生端_user/预约详情_bookingDetail.md) |
 
+#### AI 开放接口（aiopen）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/aiopen/gateway/call` | AI 开放接口 - 原生调用出口（后端） | [查看](拓展应用_app/AI开放_aiopen/开放网关_gateway/AI 开放接口 - 原生调用出口_call.md) |
+| `POST /api/app/aiopen/gateway/mcp` | AI 开放接口 - MCP 出口（JSON-RPC 2.0）（后端） | [查看](拓展应用_app/AI开放_aiopen/开放网关_gateway/AI 开放接口 - MCP 出口（JSON-RPC 2.0）_mcp.md) |
+| `POST /api/app/aiopen/gateway/media` | AI 开放接口 - 文件上传出口（multipart）（后端） | [查看](拓展应用_app/AI开放_aiopen/开放网关_gateway/AI 开放接口 - 文件上传出口（multipart）_media.md) |
+
 #### pc（pc）
 
 | 接口 | 说明 | 文档 |
@@ -701,6 +823,15 @@
 | `POST /api/app/pc/navigation/mobilePath` | 获取移动端页面（后端） | [查看](拓展应用_app/pc_pc/navigation/获取移动端页面_mobilePath.md) |
 | `POST /api/app/pc/page/index` | 页码列表（后端） | [查看](拓展应用_app/pc_pc/自定义页面_page/页码列表_index.md) |
 | `POST /api/app/pc/page/meta` | meta（后端） | [查看](拓展应用_app/pc_pc/自定义页面_page/meta_meta.md) |
+
+### 奖品（prize）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/prize/prize/myPrizes` | 我的奖品列表 | [查看](奖品_prize/奖品_prize/我的奖品列表_myPrizes.md) |
+| `POST /api/prize/prize/addresses` | 我的收货地址列表 | [查看](奖品_prize/奖品_prize/我的收货地址列表_addresses.md) |
+| `POST /api/prize/prize/prizeCount` | 可领奖品数量 | [查看](奖品_prize/奖品_prize/可领奖品数量_prizeCount.md) |
+| `POST /api/prize/prize/claim` | 领取奖品 | [查看](奖品_prize/奖品_prize/领取奖品_claim.md) |
 
 ### 数据（data）
 
@@ -776,14 +907,15 @@
 | 上传（upload） | 8 | 8 |
 | 微信（wechat） | 4 | 4 |
 | 短信（sms） | 2 | 2 |
-| 自定义页面（page） | 3 | 3 |
+| 自定义页面（page） | 4 | 4 |
 | 支付（pay） | 10 | 10 |
 | 商品（goods） | 1 | 1 |
 | 订单（order） | 20 | 20 |
-| 课程（course） | 20 | 20 |
-| 用户（user） | 49 | 49 |
+| 课程（course） | 24 | 24 |
+| 用户（user） | 50 | 50 |
 | 直播（live） | 28 | 28 |
-| 拓展应用（app） | 172 | 172 |
+| 拓展应用（app） | 231 | 231 |
+| 奖品（prize） | 4 | 4 |
 | 数据（data） | 7 | 7 |
 | 分享（share） | 3 | 3 |
 | 配置（config） | 1 | 1 |
@@ -791,7 +923,7 @@
 | token（token） | 2 | 2 |
 | validate（validate） | 8 | 8 |
 | virtual_pay（virtual_pay） | 8 | 8 |
-| **合计** | **353** | **353** |
+| **合计** | **422** | **422** |
 
 ## 新增接口文档流程
 

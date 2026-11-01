@@ -15,17 +15,17 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| item_id | string | 否 | 条目ID | `` |
+| item_id | string | 否 | 条目ID | - |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| status | string | 否 | 状态 | `` |
+| status | string | 否 | 状态 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}order/evaluate/getList' \
   -H 'Content-Type: application/json' \
-  -d '{"item_id":"","limit":10,"page":1,"status":""}'
+  -d '{"item_id":"xxx","limit":10,"page":1,"status":"xxx"}'
 ```
 
 ## 返回示例

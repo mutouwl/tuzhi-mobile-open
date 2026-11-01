@@ -85,10 +85,7 @@ export default {
     },
     getData() {
       that.loading = true;
-      uni.showLoading({
-        title: '加载中…'
-      })
-      
+      // 加载态由列表首屏骨架屏表达（M16），不再用 uni.showLoading 的黑底转圈 toast
       that.$api('order.list', that.form).then(res => {
         if (res.code === 1) {
           var list = that.list;
@@ -97,11 +94,9 @@ export default {
           }
           that.list = list
         }
-        uni.hideLoading();
         that.loading = false;
       }).catch(() => {
         that.loading = false;
-        uni.hideLoading();
       });
       uni.stopPullDownRefresh();
     },

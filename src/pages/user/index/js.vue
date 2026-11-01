@@ -4,11 +4,45 @@ import serviceModal from "@/components/modal/service-modal.vue";
 import vipCard from "@/pages/user/components/vip-card.vue";
 import userinfoEditModal from "@/components/modal/userinfo-edit-modal.vue";
 import { buildDecorate, vipEntryOpen } from "./decorate.js";
+import { FEATURE_SEND_FRIEND } from '@/common/utils/feature-flags.js';
+import { readPageSnapshot, writePageSnapshot } from '@/common/utils/page-snapshot';
+
+// 快照 key 前缀：这一屏的余额/券/奖品都是「这个人」的，按登录身份（token）分档
+const USER_CENTER_PREFIX = 'user/center:';
+
+function userCenterKey(token) {
+  return USER_CENTER_PREFIX + String(token || '');
+}
+
+/**
+ * 四路取数（user/info、装修配置、客服、学习时长）**全部落地**后才存快照。
+ * 半份快照复原出来会缺块（学习时长永远空白、装修入口没生效），所以缺一路都不存；
+ * user/info 没成功（401 / 网络失败）也不存——下次进来还要重试。
+ * @param {Object} page 取数所属的页面实例（不读模块级 that：切页后它已经指向新实例）
+ */
+function saveUserCenterSnapshot(page) {
+  const ready = (page && page._userCenterReady) || {};
+  if (!ready.user || !ready.decorate || !ready.service || !ready.study) return;
+  if (!page.fetched) return;
+  writePageSnapshot(userCenterKey(page.fetchedToken), {
+    userInfo: page.userInfo,
+    serviceConfig: page.serviceConfig,
+    studyMinutes: page.studyMinutes,
+    assetsNav: page.assetsNav,
+    controllNav: page.controllNav,
+    showAssets: page.showAssets,
+    showFunctions: page.showFunctions,
+    showStudyCenter: page.showStudyCenter,
+    vipEntryInHeader: page.vipEntryInHeader,
+    functionStyle: page.functionStyle,
+    studyCenter: page.studyCenter
+  });
+}
 
 export default {
   components: { serviceModal, vipCard,userinfoEditModal },
   data() {
-    // 「学习中心」这一个去处只存一份定义：资产管理下方那张卡与「常用功能」清单的第一项共用同一对象
+    // 「学习中心」这一个去处只存一份定义：资产管理下方那张卡与「学习工具」（原「常用功能」，2026-10-28 改名）清单的第一项共用同一对象
     const studyCenter = {
       name: "学习中心",
       icon: "barrage",
@@ -208,7 +242,7 @@ export default {
      * 必须返回对象，不能返回空串：u-grid 内部是 uni.$u.deepMerge(style, uni.$u.addStyle(customStyle))，
      * 而 deepMerge 的 source 是字符串时直接返回 false，:style 拿到 false 等于不生效 ——
      * 组件样式表里 .u-grid 的 justify-content:center 就会盖掉 align 默认的 flex-start，
-     * 「常用功能」不满 5 项的末行会被整组居中（看着像水平分布）。
+     * 「学习工具」（原「常用功能」）不满 5 项的末行会被整组居中（看着像水平分布）。
      */
     gridCustomStyle() {
       // #ifdef MP-TOUTIAO
@@ -232,9 +266,54 @@ export default {
     },
   },
   methods: {
+    /**
+     * 复原会话快照（切 tab 回来是新实例；onLoad 已按 systemConfig 重建过入口清单，
+     * 这里用快照覆盖成上一次真正渲染的那一份）。
+     * 只认「当前登录身份」那一份：余额/券/奖品是带用户的，换号后必须重取。
+     * @return {Boolean} 是否复原成功（没有快照/身份不符返回 false）
+     */
+    restoreUserCenter() {
+      const token = uni.getStorageSync("user_token") || "";
+      const snap = readPageSnapshot(userCenterKey(token));
+      if (!snap) return false;
+      that.userInfo = snap.userInfo || {};
+      that.serviceConfig = snap.serviceConfig === undefined ? false : snap.serviceConfig;
+      that.studyMinutes = snap.studyMinutes === undefined ? null : snap.studyMinutes;
+      that.assetsNav = snap.assetsNav || that.assetsNav;
+      that.controllNav = snap.controllNav || that.controllNav;
+      that.showAssets = snap.showAssets !== false;
+      that.showFunctions = snap.showFunctions !== false;
+      that.showStudyCenter = snap.showStudyCenter !== false;
+      that.vipEntryInHeader = snap.vipEntryInHeader !== false;
+      that.functionStyle = snap.functionStyle === "list" ? "list" : "grid";
+      that.studyCenter = snap.studyCenter || that.studyCenter;
+      that.loading = false;
+      that.decorateLoading = false;
+      that.studyLoading = false;
+      that.prizeSk = false;
+      that.fetched = true;
+      that.fetchedToken = token;
+      that._userCenterReady = { user: true, decorate: true, service: true, study: true };
+      return true;
+    },
+
     getData() {
+      // 取数期间切了 tab / 换了页：这一份迟到响应不许写到新实例上（模块级 that 会被新实例改写）
+      const vm = that;
+      // 取数序号：下拉重取 / 换号时，上一轮迟到的 user/info 响应一律丢掉（它带的是上一个人的资料）
+      const fetchId = (that._fetchId || 0) + 1;
+      that._fetchId = fetchId;
       that.modal.userinfoEdit = false;
+      // 四路取数的结算账：全部落地才存快照（装修配置下拉刷新不重取，沿用上一次已落地的那份）
+      const prevReady = that._userCenterReady || {};
+      that._userCenterReady = {
+        decorate: !!prevReady.decorate,
+        user: false,
+        service: false,
+        study: !that.showStudyCenter
+      };
       that.$api("user.info.index", {}).then((res) => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         // 先收起骨架屏再判断业务码：401（未登录）/500 也走 resolve 分支，
         // 若只在 code===1 时收起，头像处会一直停在占位块
         that.loading = false;
@@ -261,6 +340,8 @@ export default {
           // 记的就是写回本地的那一枚，所以同一个人下一次进来相等、不会再取一次
           that.fetched = true;
           that.fetchedToken = res.data.token;
+          that._userCenterReady.user = true;
+          saveUserCenterSnapshot(that);
 
           if(res.data.update_info_modal == 1){
             that.modal.userinfoEdit = true;
@@ -270,6 +351,7 @@ export default {
         // 401/500 也走到这一行：失败同样要收起转圈，否则拉不下去
         uni.stopPullDownRefresh();
       }).catch(() => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         // 网络异常/非 200 会 reject，同样要收起骨架屏，回落为「-」与空头像
         that.loading = false;
         // 取失败不记 fetched/fetchedToken：首屏那一趟要是失败，页面还停在空骨架上，
@@ -304,8 +386,11 @@ export default {
       if (that.prizeLoading || !that.assetsNav.prize) {
         return;
       }
+      const vm = that;
+      const fetchId = that._fetchId;
       that.prizeLoading = true;
       that.$api("prize.prize.count", {}).then((res) => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         that.prizeLoading = false;
         // 装饰配置可能在这一格在飞的时候把这一项收掉，写之前判一次存在
         if (!that.assetsNav.prize) {
@@ -318,12 +403,16 @@ export default {
           that.prizeSk = false;
           that.assetsNav.prize.value = 0;
         }
+        // 这一格是 user/info 之后才补的：落数后重存一次，免得快照停在旧的 0
+        saveUserCenterSnapshot(that);
       }).catch(() => {
+        if (that !== vm) return;
         that.prizeLoading = false;
         that.prizeSk = false;
         if (that.assetsNav.prize) {
           that.assetsNav.prize.value = 0;
         }
+        saveUserCenterSnapshot(that);
       });
     },
 
@@ -334,14 +423,21 @@ export default {
      * 点进去仍是学习数据页，所以不弹提示打扰（M13 的出口由这一行的缺席给）。
      */
     getStudyTime() {
+      const vm = that;
+      const fetchId = that._fetchId;
       that.$api("study.getStudyTime", {}).then((res) => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         that.studyLoading = false;
-        if (!res || res.code !== 1 || !res.data) {
-          return;
+        that._userCenterReady.study = true;
+        if (res && res.code === 1 && res.data) {
+          that.studyMinutes = res.data.study_minutes;
         }
-        that.studyMinutes = res.data.study_minutes;
+        saveUserCenterSnapshot(that);
       }).catch(() => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         that.studyLoading = false;
+        that._userCenterReady.study = true;
+        saveUserCenterSnapshot(that);
       });
     },
 
@@ -349,10 +445,19 @@ export default {
      * 获取客服信息
      */
     getServiceConfig() {
+      const vm = that;
+      const fetchId = that._fetchId;
       that.$api("config.service", {}).then((res) => {
+        if (that !== vm || that._fetchId !== fetchId) return;
         if (res.code === 1) {
           that.serviceConfig = res.data;
         }
+        that._userCenterReady.service = true;
+        saveUserCenterSnapshot(that);
+      }).catch(() => {
+        if (that !== vm || that._fetchId !== fetchId) return;
+        that._userCenterReady.service = true;
+        saveUserCenterSnapshot(that);
       });
     },
 
@@ -364,22 +469,31 @@ export default {
      */
     getDecorate() {
       const vm = this;
+      that._decorateStarted = true;
       vm.$api("page.userCenter.getConfig", {})
         .then((res) => {
+          // 取数期间切了 tab：这份迟到响应不写新实例（vm 是发起这一发时的实例）
+          if (that !== vm) return;
           vm.decorateLoading = false;
-          if (!res || res.code !== 1 || !res.data || !res.data.config) {
-            return;
+          // 没装修（config 为 null）与取失败都走同一件事：保持本文件里写死的老结构。
+          // **但这一路都算「已落地」**——不结算的话，四路凑不齐快照就永远不存，切 tab 又会重拉
+          if (res && res.code === 1 && res.data && res.data.config) {
+            const patch = buildDecorate(
+              res.data.config,
+              res.data.options,
+              vm.assetsNav,
+              (key) => vm.$tools.systemConfig(key)
+            );
+            Object.assign(vm, patch);
           }
-          const patch = buildDecorate(
-            res.data.config,
-            res.data.options,
-            vm.assetsNav,
-            (key) => vm.$tools.systemConfig(key)
-          );
-          Object.assign(vm, patch);
+          vm._userCenterReady.decorate = true;
+          saveUserCenterSnapshot(vm);
         })
         .catch(() => {
+          if (that !== vm) return;
           vm.decorateLoading = false;
+          vm._userCenterReady.decorate = true;
+          saveUserCenterSnapshot(vm);
         });
     },
 
@@ -406,6 +520,9 @@ export default {
     // 与 `that.list = []`，但本页 data() 里根本没有 form / list 两个字段——它从落地起就没被调用过，
     // 一接上下拉刷新就会在第一行抛 undefined.page，接线前先删掉这两行
     refresh() {
+      // 下拉刷新是这一屏唯一的强制重载口：装修配置一起重取（平时它只随首屏取一次，
+      // 不跟着重取的话商家改了装修要等重开应用才看得到；快照也才会换成新的一份）
+      that.getDecorate();
       that.getData();
     },
 
@@ -443,16 +560,29 @@ export default {
     // 想拿最新的余额/奖品/优惠券，用户下拉刷新——onPullDownRefresh 那一支。
     // 代价要说明白：从奖品页领完奖退回、设置里改完头像退回，这一屏要下拉才更新。
     const token = uni.getStorageSync("user_token") || "";
-    if (!that.fetched || that.fetchedToken !== token) {
-      that.getData();
+    // ① 同一个实例（从子页退回）：手上有数据，直接显示
+    if (that.fetched && that.fetchedToken === token) {
+      return;
     }
+    // ② 新实例（切 tab 回来）：本会话的快照按登录身份复原，零请求
+    if (that.restoreUserCenter()) {
+      return;
+    }
+    // ③ 没有可用快照（首次进入 / 换号 / 上次没取成功）：正常取一轮
+    //    装修配置在 onLoad 已经发过就不重复发；快照存在但身份不符时这里补一次
+    if (!that._decorateStarted) {
+      that.getDecorate();
+    }
+    that.getData();
   },
   onPullDownRefresh() {
     // 下拉刷新的收条由 getData 里那两句 uni.stopPullDownRefresh 收（等有回音再收，M4）
     that.refresh();
   },
   onLoad() {
-    var that = this;
+    // 模块级 that 在这里就收回当前实例：onLoad 末尾的 getDecorate() 与它那几个异步回调
+    // 都要靠它判「这一发属于哪个实例」（局部 var 会遮住模块级那一枚，onShow 之前的回调就判错了）
+    that = this;
 
     //评价入口关闭时不显示"待评价"入口
     if (that.$tools.systemConfig("evaluate_entry_status") == "close") {
@@ -475,8 +605,8 @@ export default {
       });
     }
 
-    // 「我的奖品」落个人中心的「资产管理」（形态同余额/积分/优惠券），不落「常用功能」：
-    // 常用功能是纯入口清单，这一项要带一个会变的数值，属于「资产管理」那一档。
+    // 「我的奖品」落个人中心的「资产管理」（形态同余额/积分/优惠券），不落「学习工具」（原「常用功能」）：
+    // 学习工具是纯入口清单，这一项要带一个会变的数值，属于「资产管理」那一档。
     // 2026-10-03 起它**不再是分享有礼的私有项**：奖品能力已升入标准版，跨业务发来的奖都在这一格里，
     // 所以装进初始表、不再看 app_isinstall_share_gift（没装分享有礼也照样显示 0）。
     // 数值随 user/info 的 prize_num 一并下发（2026-10-05 加速这一格），不再另发一次请求。
@@ -510,6 +640,34 @@ export default {
       });
     }
 
+    // 我的拼团：入口显隐只吃「装没装」这一枚轴，不吃「有没有拼团记录」（硬约束 27②/31）——
+    // 拿记录数当判据，新商家永远等不到第一行，读出来就是「明明开了却没有按钮」。
+    // icon 用 addpeople（邀人成团那一档语义），字形在 iconfont.css 里实测存在；
+    // 不复用圈子的 group，两个入口同字形会被读成同一个地方。
+    if (that.$tools.systemConfig("app_isinstall_group_buy")) {
+      that.controllNav.splice(3, 0, {
+        name: "我的拼团",
+        icon: "addpeople",
+        path: "/pages/app/group_buy/index/index",
+      });
+    }
+
+    // 赠送记录（送好友）：与「我的拼团」同一份判据——入口显隐只吃「装没装」这一枚轴，
+    // 不吃「有没有礼单」（硬约束 27②/31：拿记录数当判据，新店永远等不到第一行）。
+    // 2026-10-16 用户追问「我买了没有送出去，记录在哪里查看呢，个人中心没有入口」后补的这一档；
+    // 标题与页面 navigationBarTitleText 同词（赠送记录，竞品 01 第三步同句）。
+    // icon 用 lipin（礼品）：字形实测有墨迹（0.938）；liwu/liwu1 在 css 里有规则、ttf 缺字形会渲染空白。
+    // size 按墨迹归一：本网格入口默认 28px 字号下墨迹 19~23px，lipin 满幅同字号会到 26px 明显大一圈，
+    // 取 22px（墨迹 ≈ 20.6px，正中网格中位）。
+    if (FEATURE_SEND_FRIEND && that.$tools.systemConfig("app_isinstall_send_friend")) {
+      that.controllNav.splice(4, 0, {
+        name: "赠送记录",
+        icon: "lipin",
+        size: 22,
+        path: "/pages/app/send_friend/gift/gift",
+      });
+    }
+
     if (that.$tools.systemConfig("app_isinstall_school")) {
       // 教务模块在个人中心只保留一个聚合入口，内部功能进入"教务中心"聚合页
       // icon 用 peixun（日历）：与教务中心页「我的课表」同一字形，两处入口视觉统一；
@@ -534,7 +692,12 @@ export default {
       });
     }
 
-    that.getDecorate();
+    // 四路取数的结算账（见 saveUserCenterSnapshot）：全部落地才存快照
+    that._userCenterReady = { user: false, decorate: false, service: false, study: !that.showStudyCenter };
+    // 会话里已有这一屏（同一枚 token）⇒ onShow 直接复原，装修配置也不必再取一次
+    if (!readPageSnapshot(userCenterKey(uni.getStorageSync("user_token") || ""))) {
+      that.getDecorate();
+    }
   },
   onShareAppMessage() {
     return this.$nav.share();

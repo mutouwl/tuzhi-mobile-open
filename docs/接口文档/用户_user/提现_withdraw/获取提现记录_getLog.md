@@ -9,7 +9,7 @@
 | 请求方式 | POST |
 | 是否需登录 | 是 |
 | 所属模块 | 用户（user） |
-| 所属控制器 | Withdraw（账户提现 - 用户端 自直播红包模块抽离为通用账户提现： 余额口径统一为 user.money（直播红包收入只是账户收入来源之一），提现不依赖直播红包插件。 说明：提现/收款账户数据存于 user_withdraw / user_withdraw_account 表（与用户关联）； 自动转账由用户余额提现转账服务 WithdrawTransferService 处理。） |
+| 所属控制器 | Withdraw（账户提现 - 用户端） |
 | 登录方式 | 请求头携带 `token`（登录接口返回） |
 
 ## 请求参数
@@ -203,7 +203,7 @@ curl -X POST '{apiUrl}user/withdraw/getLog' \
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
 | data.total | integer | 合计 |
-| data.rows | array | rows |
+| data.rows | array | 本页数据行数组 |
 | data.rows[].id | integer | ID |
 | data.rows[].uniacid | integer | 应用ID（公众号/uniacid） |
 | data.rows[].user_id | integer | 用户ID |

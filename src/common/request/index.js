@@ -1,11 +1,22 @@
 import Request from './request'
 import apiList from './api_list'
+// 付费插件（拼团/送好友）闸门：未安装 / 本会话 init 还没回包时，插件地址一律不发网络请求
+// （用户 2026-10-27 点名「如果没有安装插件前端请求对应的初始化接口会报错。要做好适配」）
+import { pluginOfUrl, canRequestPlugin, markPluginMissing } from '@/common/utils/plugin-guard'
 // import store from '@/common/store/index.js'
 var loginTipShow = false;
 export default function api(url, data = {}, extra = {}) {
 	const request = new Request();
 	console.log("url",url)
 	let api = getApiObj(url);
+	// **发出前先过插件那道闸门**：`app/group_buy/…` / `app/send_friend/…` 只有在
+	// 「本会话 init 已回包 ∧ 那一枚 app_isinstall_* 为真」时才发得出去。
+	// 拦下来的是**一条静默的 reject**（不带 toast）：未安装是「功能不存在」，不是用户操作失败；
+	// 调用方各自的退出分支（组件 hide、页面空态/退回）照旧接管。
+	const pluginTag = pluginOfUrl(api.url);
+	if (pluginTag && !canRequestPlugin(api.url)) {
+		return Promise.reject({ errMsg: 'plugin-not-installed:' + pluginTag, plugin: pluginTag });
+	}
 	request.interceptor.request((config, cancel) => { /* 请求之前拦截器 */
 		if (api.auth) {
 			let token = uni.getStorageSync('user_token');
@@ -32,7 +43,12 @@ export default function api(url, data = {}, extra = {}) {
 			// 2026-10-06 用户点名「被邀请的用户进入直播间后，不要弹出来」；失败的原因改由调用点
 			// 落 console（口径同 invite_rank.rank.report——后端那一发对什么都不 error，天然静默）。
 			// 不带的调用点行为一字不变。
-			if (!(response.config && response.config.custom && response.config.custom.noToast)) {
+			// 付费插件「XX功能未安装」：后端说了这句话 = 插件代码不在盘上（`app.php` 版本号还在的那一档）。
+			// 这一句不是用户操作失败，不许弹全局 toast；就地 mark => 本会话 flags 静默、后续请求由上面的闸门拦掉
+			const pluginMissingMsg = !!pluginTag && /未安装/.test(String(response.data.msg || ''));
+			if (pluginMissingMsg) { markPluginMissing(pluginTag); }
+			if (!pluginMissingMsg
+				&& !(response.config && response.config.custom && response.config.custom.noToast)) {
 				uni.showToast({
 					title: response.data.msg || '请求出错,稍后重试',
 					icon: 'none',
@@ -55,6 +71,9 @@ export default function api(url, data = {}, extra = {}) {
 		// }
 		return response
 	}, (response) => { // 预留可以日志上报
+		// 插件控制器整个目录都不在盘时是 404（ThinkPHP 找不到控制器）：同样按「未安装」收口，
+		// 不再让页面停在「网络异常」那一句。500 不在此列（可能是真的服务故障，不许扩大成「插件不存在」）
+		if (pluginTag && response && Number(response.statusCode) === 404) { markPluginMissing(pluginTag); }
 		return response
 	})
 

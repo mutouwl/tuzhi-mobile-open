@@ -54,6 +54,8 @@ var data = {
   "status.close": "已关闭",
   "status.unpaid": "待付款",
   "status.paid": "已付款",
+  // 拼团挂起单的订单状态（2026-10-28）：后端 `status_text` 有值时优先读它，这一条是兜底词条
+  "status.wait_deal": "待成交",
   "status.unreceive": "待收货",
   "status.unsend": "待发货",
   "status.surereceive": "确认收货",
@@ -283,6 +285,12 @@ var data = {
   "composite": "组合商品",
   "school_package": "课程套餐",
   "checkin": "打卡活动",
+  // 拼团（付费插件 group_buy）：订单来源标识。**两档都要登记**（W69 / 硬约束 35）：
+  // 根级这一档吃 `$t(data.source)` 那种直接翻译，`source.` 命名空间那一档吃 `$t('source.' + 值)`
+  // （订单列表与详情两处各读一档，缺哪档坏哪个页面；头条端 $t 是 CN[key] 查表，缺键直接渲染成空白）。
+  // 与后端 admin/lang/zh-cn/order/order.php 的 source.group_buy、管理端 locale 的根级 + source. 两档同批登记
+  "group_buy": "拼团",
+  "source.group_buy": "拼团",
   // 打卡活动条目卡封面右下角的磨砂标签：文案由后端 attr 下发（状态 attr.run_state、模式 attr.checkin_mode），
   // 卡片走课程列表卡的 $t(type) 渲染，故在此登记恒等映射保证原样透出（H5 与微信走 vue-i18n 缺失键回退本就不改写；
   // 头条端 main.js 把 $t 换成了 CN[key] 查表，缺登记会静默渲染成空白）

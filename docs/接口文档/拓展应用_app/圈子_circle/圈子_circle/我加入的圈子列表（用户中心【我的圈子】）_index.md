@@ -41,41 +41,24 @@ curl -X POST '{apiUrl}app/circle/circle/index' \
 {
   "code": 1,
   "msg": "获取成功",
-  "time": "1786508161",
+  "time": 1786492800,
   "data": {
-    "total": 2,
+    "total": 1,
     "rows": [
       {
-        "member_id": 2955,
-        "expire_time": 1819629584,
+        "member_id": 5001,
+        "expire_time": 1786723200,
         "member_status": 1,
-        "id": 3168,
-        "name": "学习论坛",
-        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260808/f27490ef8b3c3fc362c77644e7c606aa.jpeg",
-        "intro": "简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容简介内容",
-        "member_count": 3,
-        "post_count": 15,
+        "id": 1,
+        "name": "产品运营实战圈",
+        "cover": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+        "intro": "聚焦产品与运营实战，每天分享方法、案例与行业资料，和圈友一起成长",
+        "member_count": 158,
+        "post_count": 12,
         "sell_type": 2,
-        "presale_config": "{\"member_count\":\"show\",\"post_count\":\"show\",\"view_count\":\"hide\",\"post_preview\":\"new\",\"post_preview_num\":5}",
+        "presale_config": "{\"member_count\":\"show\",\"post_count\":\"show\",\"view_count\":\"show\",\"post_preview\":\"new\",\"post_preview_num\":5}",
         "is_expired": 0,
-        "expire_text": "2027-08-30",
-        "show_member_count": 1,
-        "show_post_count": 1
-      },
-      {
-        "member_id": 168,
-        "expire_time": 1785833907,
-        "member_status": 1,
-        "id": 25,
-        "name": "123",
-        "cover": "http://tuzhi.mutouweb.com/uploads/1/20260730/dfca4c4fbff604720c9598890bd04cd2.png",
-        "intro": "123",
-        "member_count": 2,
-        "post_count": 32,
-        "sell_type": 1,
-        "presale_config": "{\"member_count\":\"show\",\"post_preview\":\"essence\",\"post_preview_num\":5}",
-        "is_expired": 0,
-        "expire_text": "永久有效",
+        "expire_text": "2026-08-15",
         "show_member_count": 1,
         "show_post_count": 1
       }
@@ -92,14 +75,14 @@ curl -X POST '{apiUrl}app/circle/circle/index' \
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
 | data.total | integer | 合计 |
-| data.rows | array | rows |
-| data.rows[].member_id | integer | 成员ID |
+| data.rows | array | 本页数据行数组 |
+| data.rows[].member_id | integer | 成员记录ID（我在这一块成员表里的那一行） |
 | data.rows[].expire_time | integer | 过期时间 |
-| data.rows[].member_status | integer | 成员状态 |
+| data.rows[].member_status | integer | 成员状态值（打卡：1=正常 2=暂停可浏览不可提交 0=移除/未参与） |
 | data.rows[].id | integer | ID |
 | data.rows[].name | string | 名称 |
 | data.rows[].cover | string | 封面图 |
-| data.rows[].intro | string | intro |
+| data.rows[].intro | string | 简介 |
 | data.rows[].member_count | integer | 成员数量 |
 | data.rows[].post_count | integer | 帖子数量 |
 | data.rows[].sell_type | integer | sell类型 |

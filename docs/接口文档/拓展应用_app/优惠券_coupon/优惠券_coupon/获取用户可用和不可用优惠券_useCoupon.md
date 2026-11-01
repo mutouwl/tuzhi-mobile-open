@@ -14,17 +14,17 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| goodsList | string | 否 | 商品列表 | - |
+| goodsList | array | 否 | 商品列表 | - |
 | goodsType | string | 否 | 商品类型 | `goods` |
 | type | string | 否 | 类型 | - |
-| coupon_id | string | 否 | 优惠券ID | `` |
+| coupon_id | string | 否 | 优惠券ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/coupon/coupon/useCoupon' \
   -H 'Content-Type: application/json' \
-  -d '{"goodsList":"xxx","goodsType":"goods","type":"xxx","coupon_id":""}'
+  -d '{"goodsList":"xxx","goodsType":"goods","type":"xxx","coupon_id":"xxx"}'
 ```
 
 ## 返回示例

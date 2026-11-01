@@ -17,15 +17,15 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| course_id | string | 否 | 课程ID | `` |
-| column_id | string | 否 | 专栏ID | `` |
+| course_id | string | 否 | 课程ID | - |
+| column_id | string | 否 | 专栏ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}user/study/finish' \
   -H 'Content-Type: application/json' \
-  -d '{"course_id":"","column_id":""}'
+  -d '{"course_id":"xxx","column_id":"xxx"}'
 ```
 
 ## 返回示例

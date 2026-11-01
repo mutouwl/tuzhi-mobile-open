@@ -178,6 +178,16 @@ export default {
       // 用户是否已表达播放意图（onPlay 触发即置位）：降级换源/重建播放器后据此自动续播，
       // 避免换源重建把大播放按钮顶回来、用户必须再点一次；错误锁定（终态）时复位
       userPlayRequested: false,
+      // 这一屏此刻「应当自动播放」：直播进房即自动起播是产品口径（直播分支在播放器内强制
+      // autoplay），起播失败被降级链换源、播放器重建之后同样要自己把画面续上。
+      // 与 userPlayRequested 的分工：后者只认「用户点过播放」，而首屏这一路观众还没点、
+      // 靠自动起播进画面 ⇒ 降级重建后拿不到它 ⇒ video-h5 的静音续播重试窗口
+      // （playWithAutoplayFallback 里 800~6000ms 那一段，判据是 resumePlay）没被挂上，
+      // 只剩单次尝试；微信内置浏览器里重建出来的新 <video> 无手势起播常被拒/被中断，
+      // 于是停在暂停态、大播放按钮重现，观众必须再点一次才播（2026-10-16 用户实报
+      // 「第一次打开加载一段时间报错，页面自动刷新后还要再点一下播放按钮」）。
+      // 复位点：错误锁定（终态）与离开在线态，与 userPlayRequested 同一处翻。
+      videoAutostart: true,
       // 当前 videoUrl 的落盘时间戳：只作临期重签刷新的节流基准（地址还需不需要换签名，
       // 由 playUrlFresh 按地址自带 auth_key 到期时间判定，不看这里）
       videoUrlSetAt: 0,
@@ -188,6 +198,9 @@ export default {
       // 首次出画面（首帧）加载遮罩：用户点击播放按钮后、首个 playing 事件前的转圈加载提示，
       // 参照清晰度切换遮罩（qualitySwitching）视觉，但 pointer-events 穿透不阻挡播放器按钮
       videoFirstLoading: false,
+      // 首帧遮罩的复查定时器：起播被浏览器自动播放策略拒掉（play() reject、媒体回到 paused）时
+      // 「play 事件」永远不来，遮罩只能自己收（见 armFirstLoadingRecheck）
+      firstLoadingRecheckTimer: null,
       // 当前是否为 H5(Web) 环境：仅 H5 可用 LL-HLS(hls_ll) 播流地址与 WebRTC；小程序走原生组件不受影响
       webEnv: (function () {
         return typeof window !== "undefined" && !!window.document;
@@ -348,20 +361,27 @@ export default {
     // 已是终态，换源自动续播的播放意图一并复位（手动重试成功后由 onPlay 重新置位）
     videoErrorLocked(locked) {
       if (locked) {
-        this.videoFirstLoading = false;
+        this.clearFirstLoadingOverlay();
         this.userPlayRequested = false;
+        // 终态（协议全链耗尽/回放加载失败）：不再强拉画面，等状态翻转或用户手动重试
+        this.videoAutostart = false;
       } else {
         // 解锁（手动重试/状态翻起）后播放器重挂：同一 URL 重新给完整观察窗，
         // 避免沿用已过期的看门狗截止时间导致刚重挂就被立即降级
         this.videoLoadDeadlineUrl = "";
+        // 解锁即回到「这一屏应当自动播放」：重挂的播放器要自己续上，不再要用户点一次
+        this.videoAutostart = true;
       }
     },
     // 离开在线态（断流过渡/已结束/回放切换）：播放器被状态框替换或即将卸载，
     // 首帧加载遮罩必须同步收起——否则推流结束后页面已切「主播暂时离开」仍永远显示
     // 「画面加载中」（线上实证）；恢复在线后由 waiting 事件重新置位
     "roomData.status"(val) {
+      // 「这一屏应当自动播放」跟着在线态翻：在线（含开播翻转、断流恢复）才自己续画面，
+      // 离开在线态（未开播/断流过渡/已结束/回放）不再强拉
+      this.videoAutostart = val === "online";
       if (val !== "online") {
-        this.videoFirstLoading = false;
+        this.clearFirstLoadingOverlay();
         // 离开在线态即退出断流缓冲宽限：roomData 已由 getRoomDetail 替换为后端
         // 权威文案（主播暂时离开/直播已结束/回放中），缓冲重试定时器一并停止
         if (this.streamBuffering) {
@@ -1299,11 +1319,17 @@ export default {
      * 此前默认 10s 是「第一次开播等待 10s+ 才出画面」的直接组成部分（开播建流期静默源
      * 白等满窗才降级/重试），缩短到 6s 后配合「流未就绪自动重试」起播明显更快。
      * 截止时间按播放源 URL 记一次：play/ready 事件（含 RTS 重试风暴）重复布防只按剩余
-     * 时间挂定时器，不再重置窗口；换源/错误解锁重挂才重新起算
+     * 时间挂定时器，不再重置窗口；换源/错误解锁重挂才重新起算。
+     * **用户按下播放按钮那一刻要重新起算**（restartWindow）：那一发的语义是「从这一下开始
+     * 观察有没有出画面」，而进房到点击之间可能已经耗掉大半窗口——沿用旧截止时间会让观看者
+     * 刚点完播放就被判超时、走降级链换源重建播放器，大播放按钮再次出现，看起来就是
+     * 「第一次点播放没成、要再点一次」（2026-10-31 用户实报；2026-08-28 那轮只补了重新挂定时器，
+     * 同 URL 时截止时间没重置，等于没生效）
      * @param {String} url 值守的播放地址（与当前 videoUrl 不一致时本次值守自动失效）
      * @param {Number} timeoutMs 本次值守的超时窗口，缺省 6s；用户点播后的重新布防传更宽窗口
+     * @param {Boolean} restartWindow 是否把截止时间从现在起重新算（用户播放意图传 true）
      */
-    armVideoLoadWatchdog(url, timeoutMs) {
+    armVideoLoadWatchdog(url, timeoutMs, restartWindow) {
       var that = this;
       this.clearVideoLoadWatchdog();
       this.videoLoadArmedUrl = url || "";
@@ -1313,7 +1339,7 @@ export default {
         return;
       }
       this.videoLoadArmedTimeout = typeof timeoutMs === "number" ? timeoutMs : 6000;
-      if (this.videoLoadDeadlineUrl !== url) {
+      if (restartWindow || this.videoLoadDeadlineUrl !== url) {
         this.videoLoadDeadlineUrl = url;
         this.videoLoadDeadlineAt = Date.now() + this.videoLoadArmedTimeout;
       }
@@ -1649,6 +1675,60 @@ export default {
     },
 
     /**
+     * 用户按下了播放器上的播放按钮（中央大播放按钮 / 底栏播放键，由 video-h5 的 play-intent 上报）
+     *
+     * 页面此前只在播放器 `play` 事件之后才认「用户想播」，而 Aliplayer 的 `play` 是**真正开播那一刻**
+     * 才抛的：首帧没出、这一发起播又被浏览器自动播放策略挡掉（iOS/微信里 play() 被 reject、媒体回到
+     * paused）时它永远不来 —— 遮罩没点亮、大播放按钮也还在，用户看到的就是
+     * 「点了播放只转了个圈，播放按钮还在下面」⇒ 只能再点一次（2026-10-31 用户实报）。
+     * 把「手指按下去」这一刻就当成播放意图：① 点亮首帧遮罩（立刻有反馈）；
+     * ② 从点击起算重挂出画面看门狗（用户档宽窗口）；③ video-h5 那边同一刻起兜底补发 play()。
+     */
+    onPlayIntent() {
+      if (this.everPlayed) {
+        return;
+      }
+      this.userPlayRequested = true;
+      this.videoFirstLoading = true;
+      this.armFirstLoadingRecheck();
+      // 第三个参数 = 窗口从这一刻重新起算：同 URL 的旧截止时间可能只剩零点几秒，
+      // 沿用会让这一下点击刚发出去就被判超时（见 armVideoLoadWatchdog 的说明）
+      this.armVideoLoadWatchdog(this.videoUrl, VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT, true);
+    },
+
+    /**
+     * 首帧遮罩点亮后的复查：1.5s 后仍停在「等用户手势」（媒体 paused、什么都没在拉）说明这一发起播
+     * 已被拒/被中断，遮罩必须自己收起——它是 pointer-events:none 的（不拦按钮），挂在那儿就变成
+     * 「加载中下面还有个能点的播放按钮」，用户会以为没生效再点一次（2026-10-31 用户实报）。
+     * 真在拉流时 media.paused 为 false（LL-HLS 起播偏慢也一样），不会误收；
+     * 判据用 isPausedWithMedia 而不是 isAwaitingPlay —— 后者把「媒体元素还没建好」也算成没在拉，
+     * 换源重建的间隙会把遮罩误收掉，露出来的正是那个大播放按钮。
+     */
+    armFirstLoadingRecheck() {
+      var that = this;
+      clearTimeout(this.firstLoadingRecheckTimer);
+      this.firstLoadingRecheckTimer = setTimeout(function () {
+        that.firstLoadingRecheckTimer = null;
+        if (!that.videoFirstLoading || that.everPlayed) {
+          return;
+        }
+        var box = that.$refs.videoBox;
+        if (box && typeof box.isPausedWithMedia === "function" && box.isPausedWithMedia()) {
+          that.clearFirstLoadingOverlay();
+        }
+      }, 1500);
+    },
+
+    /**
+     * 收起首帧加载遮罩（连同它的复查定时器）
+     */
+    clearFirstLoadingOverlay() {
+      clearTimeout(this.firstLoadingRecheckTimer);
+      this.firstLoadingRecheckTimer = null;
+      this.videoFirstLoading = false;
+    },
+
+    /**
      * 视频缓冲事件
      */
     onVideoWaiting() {
@@ -1666,6 +1746,9 @@ export default {
         !this.videoAwaitingPlay()
       ) {
         this.videoFirstLoading = true;
+        // 这一次 waiting 也可能是「自动播放被拒」那一下（play() 期间 paused 会短暂为 false，
+        // reject 之后又回到 paused）；1.5s 后复查仍在等手势就把遮罩收起
+        this.armFirstLoadingRecheck();
       }
       // 已出画面后的播放中途卡顿：卡顿 2s 内保持原画面不叠层（短暂抖动立即点亮
       // 会高频闪现「直播缓冲中…」），超过 2s 才显示遮罩（保持当前画面，不拆播放器
@@ -1769,7 +1852,7 @@ export default {
         } catch (llhlsCacheErr) {}
       }
       // 已出画面：解除首次加载遮罩与加载看门狗（静默失败兜底不再触发）
-      this.videoFirstLoading = false;
+      this.clearFirstLoadingOverlay();
       this.videoLoadPlayingSinceArm = true;
       this.clearVideoLoadWatchdog();
       this.clearBufferingState();
@@ -3517,7 +3600,9 @@ export default {
       if (!this.everPlayed) {
         this.armVideoLoadWatchdog(
           this.videoUrl,
-          this.userPlayRequested ? VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT : undefined
+          this.userPlayRequested ? VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT : undefined,
+          // 用户已点过播放：这一次重挂就是他要的画面，窗口从挂载这一刻重新起算
+          this.userPlayRequested
         );
       }
       // 同步控制栏状态与清屏状态
@@ -3536,6 +3621,7 @@ export default {
       // 不点亮，见 onVideoWaiting），首个 timeupdate 确认真实出画面后收起
       if (!this.everPlayed) {
         this.videoFirstLoading = true;
+        this.armFirstLoadingRecheck();
       }
       // 结束播放中途卡顿缓冲遮罩（waiting 恢复后 first play 即出画面）
       this.clearVideoBufferTimer();
@@ -3548,7 +3634,7 @@ export default {
       // 几秒再点播放会挤占剩余窗口，正常偏慢的起播缓冲被误判超时 → 降级换源重建
       // 播放器 → 大播放按钮重现，首次点击作废需再点一次
       if (!this.everPlayed) {
-        this.armVideoLoadWatchdog(this.videoUrl, VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT);
+        this.armVideoLoadWatchdog(this.videoUrl, VIDEO_LOAD_WATCHDOG_PLAY_TIMEOUT, true);
       }
       this.fakeVideoJump();
     },
@@ -3615,8 +3701,19 @@ export default {
       // #endif
     },
 
+    /**
+     * 播放区高度与安全区
+     *
+     * 安全区（Home 指示条那条 34px）只约束**交互层**：`.ui-layer` 用 calc(100% - safeAreaBottom)
+     * 抬高，播放器底栏按 env(safe-area-inset-bottom) 抬起（见 live.vue 末尾那三条）。
+     * **不能拿它去截断视频层**——2026-10-31 用户点名 iPhone 17 上「播放、刷新按钮下面那条没被遮罩
+     * 的浅蓝」就是它：视频层原本按 windowHeight - safeAreaBottom 铺，底部正好短掉一个安全区，
+     * 露出来的是页面 `.bg-layer`（封面 blur 80 + opacity .6 叠白底），颜色比播放器自己的底衬浅一档，
+     * 位置又正好从屏幕右下圆角（Home 指示条上沿）开始，看着就是「播放器下面漏了一截」。
+     * 现在视频层（bg-layer / 播放器 / 直播状态盒同吃 videoBoxHeight）铺满整屏，那一截由播放器自己的
+     * 封面模糊底 + 底栏渐变补条填满，接缝不存在；无安全区的机型 env() 为 0，表现与改前逐字一致。
+     */
     setContainerHeight(init = false) {
-      
       uni.getSystemInfo({
         success: function (res) {
           let safeAreaBottom = 0;
@@ -3624,7 +3721,8 @@ export default {
             safeAreaBottom = res.safeAreaInsets.bottom;
           }
           that.safeAreaBottom = safeAreaBottom;
-          that.videoBoxHeight = res.windowHeight - safeAreaBottom;
+          // 视频层铺满整屏（不减安全区）：安全区由 .ui-layer 与播放器底栏各自让开
+          that.videoBoxHeight = res.windowHeight;
           that.messageBoxHeight = res.windowHeight / 3;
         },
       });
@@ -3721,6 +3819,9 @@ export default {
     this.clearVideoBufferTimer();
     // 清理清晰度切换兜底定时器
     clearTimeout(this._qualitySwitchTimer);
+    // 清理首帧遮罩的复查定时器
+    clearTimeout(this.firstLoadingRecheckTimer);
+    this.firstLoadingRecheckTimer = null;
     // 停止断流缓冲恢复探测，避免内存泄露
     this.stopStreamBufferRetry();
     // 停止在线人数轮询

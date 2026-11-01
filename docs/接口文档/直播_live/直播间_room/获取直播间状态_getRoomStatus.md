@@ -18,13 +18,14 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | course_id | string | 否 | 课程ID | - |
+| with_user | string | 否 | with用户 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}live/room/getRoomStatus' \
   -H 'Content-Type: application/json' \
-  -d '{"course_id":"xxx"}'
+  -d '{"course_id":"xxx","with_user":"xxx"}'
 ```
 
 ## 返回示例

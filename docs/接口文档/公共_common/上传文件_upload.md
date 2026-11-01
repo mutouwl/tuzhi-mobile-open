@@ -20,6 +20,8 @@
 | file | File | 否 | 文件流 | - |
 | chunkid | string | 否 | chunkid | - |
 | action | string | 否 | 操作 | - |
+| chunkindex | integer | 否 | chunkindex | - |
+| chunkcount | integer | 否 | chunkcount | - |
 | filename | string | 否 | 文件名 | - |
 
 ## 请求示例
@@ -27,7 +29,7 @@
 ```bash
 curl -X POST '{apiUrl}common/upload' \
   -H 'Content-Type: application/json' \
-  -d '{"file":"xxx","chunkid":"xxx","action":"xxx","filename":"xxx"}'
+  -d '{"file":"xxx","chunkid":"xxx","action":"xxx","chunkindex":"xxx","chunkcount":"xxx","filename":"xxx"}'
 ```
 
 ## 返回示例

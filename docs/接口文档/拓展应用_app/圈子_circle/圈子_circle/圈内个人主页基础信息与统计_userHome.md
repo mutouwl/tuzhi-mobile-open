@@ -37,7 +37,29 @@ curl -X POST '{apiUrl}app/circle/circle/userHome' \
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "user": {
+      "id": 1002,
+      "nickname": "学员小李",
+      "avatar": "https://tuzhi.mutouweb.com/uploads/1/20260613/c0f98523b11b3c70b73401d81cc4533c.jpeg",
+      "is_owner": 0,
+      "join_time": 1786061184,
+      "location": "上海"
+    },
+    "stats": {
+      "post_count": 3,
+      "like_count": 6,
+      "essence_count": 0
+    },
+    "content_protect": 0
+  }
+}
+```
 
 ## 返回参数说明
 
@@ -46,3 +68,15 @@ curl -X POST '{apiUrl}app/circle/circle/userHome' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data.user | object | 用户 |
+| data.user.id | integer | ID |
+| data.user.nickname | string | 昵称 |
+| data.user.avatar | string | 头像 |
+| data.user.is_owner | integer | 是否本人 |
+| data.user.join_time | integer | 成员加入时刻时间戳 |
+| data.user.location | string | 位置 |
+| data.stats | object | 统计数据对象 |
+| data.stats.post_count | integer | 帖子数量 |
+| data.stats.like_count | integer | 点赞数量 |
+| data.stats.essence_count | integer | essence数量 |
+| data.content_protect | integer | 内容protect |

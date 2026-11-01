@@ -1,6 +1,6 @@
 # 删除媒体
 
-> 从动态编辑页删除一个媒体，并同步清理未被其他内容引用的远程附件。 仅允许动态作者操作；动态尚未保存时（id=0）仅删除当前用户刚上传的附件。
+> 从动态编辑页删掉一个媒体，并同步清理未被其它内容引用的远程附件；动态还没保存时（id=0）只清理当前用户刚上传的那一份。
 
 ## 基本信息
 
@@ -18,10 +18,10 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| id | integer | 否 | ID | `0` |
-| type | string | 否 | 类型 | `` |
-| url | string | 否 | 链接 | `` |
-| video_id | string | 否 | videoID | `` |
+| id | integer | 否 | 动态 ID；0=尚未保存的草稿，只清理刚上传的附件 | - |
+| type | string | 是 | 媒体类型：image / video / audio / file，取值不在这四档回「媒体类型错误」 | - |
+| url | string | 否 | 要删除的媒体地址，与 video_id 至少传一个 | - |
+| video_id | string | 否 | VOD 视频标识，与 url 至少传一个 | - |
 
 ## 请求头
 
@@ -34,12 +34,19 @@
 ```bash
 curl -X POST '{apiUrl}app/circle/post/removeMedia' \
   -H 'Content-Type: application/json' \
-  -d '{"id":0,"type":"","url":"","video_id":""}'
+  -d '{"id":"xxx","type":"xxx","url":"xxx","video_id":"xxx"}'
 ```
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "删除成功",
+  "time": 1786492800,
+  "data": null
+}
+```
 
 ## 返回参数说明
 
@@ -48,3 +55,10 @@ curl -X POST '{apiUrl}app/circle/post/removeMedia' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data | null | 数据 |
+
+## 备注
+
+- 仅允许动态作者操作：id 存在时先验作者归属，再从库内原始 media 精确移除目标项，防止客户端伪造 URL 删别人的附件
+- 同一动态内还有相同媒体时保留远程文件，最后一份被删才走统一的本地/OSS/VOD 清理
+- 媒体不存在或已删除、动态不存在都回业务错误

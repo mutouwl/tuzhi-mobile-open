@@ -1,4 +1,6 @@
-# 获取分销配置
+# 获取分销配置 结算这两枚
+
+> 获取分销配置 结算这两枚（延迟天数、是否结算到用户余额）下发的是后端算好的生效值， 分销端只照它决定摆不摆「账户余额提现」那一档，不许自己判缺键。
 
 ## 基本信息
 
@@ -109,7 +111,10 @@ curl -X POST '{apiUrl}app/agent/config/getConfig' \
     "member_recruit_status": "1",
     "member_recruit_condition_paycount_status": "1",
     "member_recruit_condition_paycount_value": "1",
-    "channels": true
+    "channels": true,
+    "settle_days": 7,
+    "settle_days_max": 365,
+    "settle_to_balance": "1"
   }
 }
 ```
@@ -159,3 +164,6 @@ curl -X POST '{apiUrl}app/agent/config/getConfig' \
 | data.member_recruit_condition_paycount_status | string | 成员招募条件paycount状态 |
 | data.member_recruit_condition_paycount_value | string | 成员招募条件paycountvalue |
 | data.channels | boolean | 视频号 |
+| data.settle_days | integer | 佣金结算延迟天数：0=交易完成立即到账，N=交易完成后第 N 天到账（实物单从确认收货那一刻起算） |
+| data.settle_days_max | integer | 结算延迟天数上限，输入框的 max 吃这一枚，前端不许自己写死 |
+| data.settle_to_balance | string | 佣金是否结算到用户余额：1=进账户余额（可在「我的-余额」提现），0=进分销可提现佣金；这一枚开启后不可关闭 |

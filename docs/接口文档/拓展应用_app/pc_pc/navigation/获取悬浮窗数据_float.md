@@ -73,7 +73,7 @@ curl -X POST '{apiUrl}app/pc/navigation/float' \
 | data | object | 业务数据 |
 | data.status | string | 状态 |
 | data.navigation | array | navigation |
-| data.navigation[].icon | object | icon |
+| data.navigation[].icon | object | 图标标识 |
 | data.navigation[].icon.src | string | 资源地址 |
 | data.navigation[].icon.type | string | 类型 |
 | data.navigation[].icon_name | string | icon名称 |
@@ -81,7 +81,7 @@ curl -X POST '{apiUrl}app/pc/navigation/float' \
 | data.navigation[].show_type | string | show类型 |
 | data.navigation[].img | string | 图片 |
 | data.navigation[].discribe | string | discribe |
-| data.navigation[].link | object | link |
+| data.navigation[].link | object | 连麦 |
 | data.navigation[].link.type | string | 类型 |
 | data.navigation[].link.config | array | 配置 |
 | data.navigation[].link.selected | string | 是否选中 |

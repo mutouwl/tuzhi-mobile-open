@@ -40,14 +40,16 @@
     margin-left: 5px;
 }
 
+/* 子项等分、满宽（2026-10-30 与练习详情同一档，用户点名 exam-property-box「宽度可以等分，
+   现在太集中了」）。这一块已在 `tz-box padding="0 15px 15px"` 里 ⇒ 只补满宽，不重复给内衬 */
 .test-property-box{
     display: flex;
-    justify-content: space-between;
-    width: 300px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .test-property-box .test-property-item{
+    flex: 1 1 0;
+    min-width: 0;
     text-align: center;
     padding: 0 0 10px;
 }
@@ -90,6 +92,10 @@
     width: 100%;
     /* height: 50px; */
     /* width: 100%; */
+
+    /* 同活动报名信息页（2026-10-31）：小程序端没有全局 `*{box-sizing:border-box}`，
+       固定整宽条必须自己写，否则右侧主按钮被 10px 右内衬推出屏幕。 */
+    box-sizing: border-box;
 
     padding: 10px 10px 10px;
 

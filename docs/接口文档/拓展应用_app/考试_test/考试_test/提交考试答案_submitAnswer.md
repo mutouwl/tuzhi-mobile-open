@@ -17,7 +17,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| answer | string | 否 | 答案 | - |
+| answer | array | 否 | 答案 | - |
 | id | string | 否 | ID | - |
 | question_id | string | 否 | 题目ID | - |
 

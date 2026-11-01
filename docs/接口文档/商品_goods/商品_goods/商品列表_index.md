@@ -11,7 +11,7 @@
 | 请求方式 | POST |
 | 是否需登录 | 否 |
 | 所属模块 | 商品（goods） |
-| 所属控制器 | Goods（商品列表 区别于课程列表，这里展示的是处理课程外的所有商品，如会员卡、活动） |
+| 所属控制器 | Goods（商品列表） |
 
 ## 请求参数
 
@@ -19,16 +19,16 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `5` |
 | page | integer | 否 | 页码 | `1` |
-| searchKey | string | 否 | 搜索关键词 | `` |
+| searchKey | string | 否 | 搜索关键词 | - |
 | sort | string | 否 | 排序 | `time` |
-| type | string | 否 | 类型 | `` |
+| type | string | 否 | 类型 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}goods/goods/index' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":5,"page":1,"searchKey":"","sort":"time","type":""}'
+  -d '{"limit":5,"page":1,"searchKey":"xxx","sort":"time","type":"xxx"}'
 ```
 
 ## 返回示例

@@ -12,7 +12,23 @@ export default class Request {
 		baseUrl: config.apiUrl,
 		header: {
 			'content-type': 'application/json;charset:utf-8;',
-			'platform': uni.getStorageSync('platform')
+			'platform': uni.getStorageSync('platform'),
+			// 端标识：后端用它判「这门课能不能在本端学」（课程设置里的「小程序学习」闸门）。
+			// 必须编译期写死，不能读上面那枚 platform —— 它是 App.vue 里 getSystemInfo 的异步回调
+			// 才写进 storage 的，首屏第一批请求可能拿到空串；头缺失时后端按「不拦」处理（旧客户端兼容）。
+			// 小程序（含抖音）＝mp（可学）；H5＝h5（可被商家设成只能去小程序学）；App＝app（本期不拦）。
+			// #ifdef MP-WEIXIN
+			'client': 'mp',
+			// #endif
+			// #ifdef MP-TOUTIAO
+			'client': 'mp',
+			// #endif
+			// #ifdef H5
+			'client': 'h5',
+			// #endif
+			// #ifdef APP-PLUS
+			'client': 'app',
+			// #endif
 		},
 		method: 'GET',
 		async: false,

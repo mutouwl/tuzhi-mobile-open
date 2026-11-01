@@ -44,7 +44,7 @@
 				</u-cell>
 			</u-cell-group>
 		</tz-box>
-		<tz-divider />
+		<tz-divider bgColor="#fafafa" />
 		<!-- <tz-box padding="0 10px">
 			<u-cell-group :border="false">
 				<u-cell :border="false" :titleStyle="{ 'font-size': '14px' }" title="关联账号" @click="bindAccount">
@@ -84,7 +84,7 @@
 			</u-cell-group>
 		</tz-box>
 
-		<tz-divider height="30" />
+		<tz-divider bgColor="#fafafa" height="30" />
 
 		<div class="logout" @click="logout">
 			退出登录

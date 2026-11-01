@@ -68,6 +68,10 @@ export default class RateComponent {
           target.className = 'current'
         }
         currentRateEle.innerText = rate + 'x'
+        // 选完给一句回执（2026-10-29 用户点名「选择倍速弹窗确认后，最好弹出一个提示，显示当前倍速」）：
+        // 此前 H5 这里只有控制栏那行小字变，选完没有任何即时反馈；
+        // 文案与小程序端 video-mp.vue 的 switchRate 同一句（「1.5倍速」）
+        uni.$u.toast(rate + '倍速')
       }
       rateListEle.style.display = 'none'
     }

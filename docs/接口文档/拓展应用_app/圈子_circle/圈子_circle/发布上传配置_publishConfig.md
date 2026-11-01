@@ -36,7 +36,28 @@ curl -X POST '{apiUrl}app/circle/circle/publishConfig' \
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": 1786492800,
+  "data": {
+    "media_image_limit": 9,
+    "media_audio_limit": 9,
+    "media_video_limit": 1,
+    "media_file_limit": 9,
+    "media_image_size": 10,
+    "media_audio_size": 20,
+    "media_video_size": 200,
+    "media_file_size": 20,
+    "media_file_types": "doc,docx,xls,xlsx,pdf",
+    "media_image_enable": 1,
+    "media_video_enable": 1,
+    "media_audio_enable": 1,
+    "media_file_enable": 1
+  }
+}
+```
 
 ## 返回参数说明
 
@@ -45,3 +66,16 @@ curl -X POST '{apiUrl}app/circle/circle/publishConfig' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data.media_image_limit | integer | 图片可选张数上限 |
+| data.media_audio_limit | integer | 语音可选条数上限 |
+| data.media_video_limit | integer | 视频可选个数上限 |
+| data.media_file_limit | integer | 附件可选个数上限 |
+| data.media_image_size | integer | 图片单个大小上限 MB，恒为 0=不限制 |
+| data.media_audio_size | integer | 语音单个大小上限 MB，恒为 0=不限制 |
+| data.media_video_size | integer | 视频单个大小上限 MB，恒为 0=不限制 |
+| data.media_file_size | integer | 附件单个大小上限 MB，当前 0=不限制 |
+| data.media_file_types | string | 附件可选扩展名串（大小写不敏感，其余拒） |
+| data.media_image_enable | integer | 图片上传入口开关 1/0（0 时选择器不出这一类，不留「图标在、点了被拒」） |
+| data.media_video_enable | integer | 视频上传入口开关 1/0 |
+| data.media_audio_enable | integer | 语音上传入口开关 1/0 |
+| data.media_file_enable | integer | 附件上传入口开关 1/0 |

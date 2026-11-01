@@ -37,3 +37,133 @@
 .search-field span {
     margin-right: 4px;
 }
+
+/* 订单列表首屏骨架屏：尺寸与 components/order/order.vue 的订单卡、components/order/course.vue 的
+   商品行逐块对齐（.order-box 外衬 10/10/5、tz-box 内衬 10 + 直角（2026-10-28 卡级圆角已撤）、.order-header 行盒 30 + 下边距 5、
+   .course-item-box 高 80 / margin 10 0 / 封面 28% 圆角 6 / 信息列 71% 内衬 5、
+   两条 tz-divider（4 + 10）的合计间距 14、.btns-box 上边距 10 + small 按钮热区 30）。
+   灰块取 uview 静态块口径 #e5e6eb；本页 css 未加 scoped，类名统一 ols-sk- 前缀防外溢 */
+.ols-sk-box {
+    padding: 10px 10px 5px;
+    box-sizing: border-box;
+}
+
+.ols-sk-card {
+    background: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.ols-sk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    margin-bottom: 5px;
+}
+
+.ols-sk-no,
+.ols-sk-status,
+.ols-sk-cover,
+.ols-sk-total,
+.ols-sk-price,
+.ols-sk-num,
+.ols-sk-btn {
+    background: #e5e6eb;
+}
+
+.ols-sk-no {
+    width: 45%;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.ols-sk-status {
+    width: 22%;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.ols-sk-goods {
+    height: 80px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.ols-sk-cover {
+    width: 28%;
+    height: 100%;
+    flex-shrink: 0;
+    border-radius: 6px;
+}
+
+.ols-sk-info {
+    width: 71%;
+    padding: 5px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 灰块高 + 外衬 = 真实行盒：标题 16 + 上 3 = 19（16px 字号那一行），
+   灰字说明 12 + 上 6（真实 .subtitle 的 margin-top）= 18 */
+.ols-sk-line {
+    margin-top: 3px;
+}
+
+.ols-sk-line-sub {
+    margin-top: 6px;
+}
+
+.ols-sk-foot {
+    position: absolute;
+    bottom: 0;
+    left: 5px;
+    right: 5px;
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ols-sk-price {
+    width: 28%;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.ols-sk-num {
+    width: 12%;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.ols-sk-total {
+    width: 30%;
+    height: 18px;
+    margin: 14px 0 0 auto;
+    border-radius: 4px;
+}
+
+.ols-sk-btns {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 按钮块宽度按 small 档那一行的实际内容给：两个字 28 + 内衬 15×2 = 58，
+   四个字 56 + 30 = 86（真实按钮文案由 $t('controll.' + key) 决定，最宽就是四字） */
+.ols-sk-btn {
+    width: 58px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.ols-sk-btn-wide {
+    width: 86px;
+}

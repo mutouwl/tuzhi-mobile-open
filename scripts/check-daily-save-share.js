@@ -143,6 +143,8 @@ const SAVABLE = 'blob:poster-1';
 
 /** 系统 logo（站点配置里那一张）：海报封面取不到时的兜底，与 router.share / wechat sdk 同一份口径 */
 const SITE_LOGO = 'https://cdn.test/site-logo.png';
+/** 封面那一格的末位兜底：全站「暂无图片」那一张（课程卡 / 套餐卡 / 校区卡同一份，本地静态图） */
+const DEFAULT_COVER = '/static/image/default-goods.jpg';
 // 尺寸表/失败表的键一律过 mpKey（组件里那一份，本体与断言必须用同一把钥匙，见 common/utils/mp-data-key）
 const MPKEY = loadUtil('common/utils/mp-data-key.js', true, {}).mpKey;
 /**
@@ -762,18 +764,80 @@ assert('后台配了分享背景图：样式条整排换成这些图（不再混
   bgVm.styleOptions.length === 2 && bgVm.styleOptions[0].kind === 'image' && bgVm.activeImage === 'https://cdn.test/bg1.png',
   JSON.stringify(bgVm.styleOptions));
 const noBgVm = cardVm(false, cardEnv({ log: [], isH5: false }), false, { shareBgs: [] });
-assert('一条背景图都没配：整排回落自带的弥散渐变档（2026-09-27 扩到 12 档、按色相排成一 ramp），日签图不会开出来是空的',
+assert('一条背景图都没配：整排回落自带的弥散渐变档（12 档 = 浅色 6 + 深色 6，2026-10-28 用户口径），日签图不会开出来是空的',
   noBgVm.styleOptions.length === 12 && noBgVm.styleOptions[0].kind === 'gradient' && noBgVm.activeImage === '',
   'styleOptions=' + noBgVm.styleOptions.length + ' 档');
 assert('自带 12 档互不重复：底色两两不同，且都带 1~2 团高光（同一色相出现两次就没有扩档的意义）',
   new Set(THEME.POSTER_THEMES.map((t) => t.base)).size === 12
   && THEME.POSTER_THEMES.every((t) => t.blobs.length >= 1 && t.blobs.length <= 2),
   THEME.POSTER_THEMES.map((t) => t.base).join(' '));
+// 2026-10-28 用户点名「背景色的选项都是比较深的那种，蓝色之类的很老气」→ 浅色与深色并存，
+// 浅色六档排在前面（打开弹层先看到浅色那一族），深色六档在后
+assert('浅色、深色并存：浅底 6 档在前、深底 6 档在后，两族各自成套（不再是清一色深底）',
+  THEME.POSTER_THEMES.filter((t) => t.tone === 'light').length === 6
+  && THEME.POSTER_THEMES.filter((t) => t.tone === 'dark').length === 6
+  && THEME.POSTER_THEMES.slice(0, 6).every((t) => t.tone === 'light')
+  && THEME.POSTER_THEMES.slice(6).every((t) => t.tone === 'dark'),
+  THEME.POSTER_THEMES.map((t) => t.tone.charAt(0) + t.base).join(' '));
+// 字色表：压在底色上的每一档（主字 / 次字 / 引号 / 角标薄片 / 两枚动作 / 白卡 / 头像占位）都在这两套里
+const INK_KEYS = ['text', 'sub', 'mark', 'plate', 'chip', 'chipText', 'card', 'cardText', 'avatar'];
+assert('字色按档成组下发：两族各九档齐全，inkOf 只在浅底档给深字（缺 tone 的老数据按深底白字回落）',
+  INK_KEYS.every((k) => !!THEME.POSTER_INK.light[k] && !!THEME.POSTER_INK.dark[k])
+  && THEME.inkOf(THEME.POSTER_THEMES[0]).text === '#1d2129'
+  && THEME.inkOf(THEME.POSTER_THEMES[6]).text === '#ffffff'
+  && THEME.inkOf(null).text === '#ffffff' && THEME.inkOf({}).text === '#ffffff',
+  '浅=' + THEME.inkOf(THEME.POSTER_THEMES[0]).text + ' 深=' + THEME.inkOf(THEME.POSTER_THEMES[6]).text);
 assert('后台有底图就不出默认颜色：样式条里只剩底图，一档渐变都不掺（2026-09-26 用户定）',
   // 组件与断言各自 loadUtil 一次，拿到的是同一份表但不是同一个对象，按值比
   bgVm.styleOptions.every((o) => o.kind === 'image') && bgVm.activeTheme.base === THEME.POSTER_THEMES[0].base
   && bgVm.activeTheme.blobs.length === THEME.POSTER_THEMES[0].blobs.length,
   JSON.stringify(bgVm.styleOptions.map((o) => o.kind)));
+// 底图档（商家自己上传的 share_bgs）：深浅不可知 ⇒ 由壳读一次像素算平均亮度，判完经 bgInk 下发；
+// 判不出来（跨域污染 / 端不支持 / 超时）一律回 ''，body 按改造前的白字口径收口 —— 不猜、不抛、不挡海报
+const BG_INK = loadUtil('common/utils/poster-bg-ink.js', true, {});
+const lumOf = (rgba) => BG_INK.luminanceOfPixels(rgba, [236, 243, 253]);
+const whitePixels = [];
+const blackPixels = [];
+const clearPixels = [];
+for (let i = 0; i < 16; i++) {
+  whitePixels.push(255, 255, 255, 255);
+  blackPixels.push(12, 14, 18, 255);
+  clearPixels.push(0, 0, 0, 0);
+}
+assert('底图明暗判定：白底图 → 深字（light）、深底图 → 白字（dark），PNG 透明处按海报底下那层渐变合成（不会被当成白底）',
+  BG_INK.inkForLuminance(lumOf(whitePixels)) === 'light'
+  && BG_INK.inkForLuminance(lumOf(blackPixels)) === 'dark'
+  && BG_INK.inkForLuminance(lumOf(clearPixels)) === 'light'
+  && lumOf(whitePixels) > 0.95 && lumOf(blackPixels) < 0.02 && lumOf(clearPixels) > 0.8
+  && BG_INK.inkForLuminance(0.62) === 'light' && BG_INK.inkForLuminance(0.619) === 'dark',
+  '白=' + lumOf(whitePixels).toFixed(3) + ' 黑=' + lumOf(blackPixels).toFixed(3)
+  + ' 透明=' + lumOf(clearPixels).toFixed(3) + ' 阈值=' + BG_INK.LIGHT_LUMINANCE);
+const bgInkSrc = fs.readFileSync(path.join(SRC, 'common/utils/poster-bg-ink.js'), 'utf8');
+const noPixels = BG_INK.luminanceOfPixels([], [255, 255, 255]);
+assert('判不出来一律收口成空串（没有像素 / 端上没有画布 / 换地址那一步同步抛错 / 探测超时都不许把海报卡住）：调用方按白字回落',
+  noPixels === -1 && BG_INK.PROBE_TIMEOUT >= 500 && BG_INK.PROBE_TIMEOUT <= 3000
+  && /function probePosterInk\(src, opts\)/.test(bgInkSrc)
+  && /if \(!src\) return Promise\.resolve\(''\);/.test(bgInkSrc)
+  && /try \{\s*work = isMp \? probeOnMp\(src, under\) : probeOnCanvas\(src, under\);\s*\} catch \(e\) \{\s*work = '';/.test(bgInkSrc)
+  && /setTimeout\(\(\) => fin\(''\), PROBE_TIMEOUT\)/.test(bgInkSrc)
+  && /catch \(e\) \{\s*\/\/ 跨域图没给 CORS 头/.test(bgInkSrc)
+  && /inkOf\(\{ tone: this\.bgInk \}\)/.test(bodySrc),
+  'noPixels=' + noPixels + ' 超时=' + BG_INK.PROBE_TIMEOUT + 'ms');
+// 壳那一侧：探测只跟当前那张底图走，结果进 renderKey（判完重出一张，预览与画布不会两套字色）
+assert('底图字色这一条链接全了：壳里 activeImage 变了才探、带作废号、结果经 bg-ink 下发给两处海报本体，并进 renderKey 触发重画',
+  /activeImage\(\) \{[\s\S]{0,160}kind === 'image' \? o\.url : ''/.test(shellSrc)
+  && /refreshBgInk\(url\) \{[\s\S]{0,260}const seq = \+\+this\.bgInkSeq;[\s\S]{0,200}probePosterInk\(url\)/.test(shellSrc)
+  && /if \(this\.gone\(\) \|\| seq !== this\.bgInkSeq\) return;/.test(shellSrc)
+  && (shellSrc.match(/:bg-ink="bgInk"/g) || []).length === 2
+  && /this\.bgInk, p\.nickname/.test(shellSrc)
+  && /bgInk: \{ type: String, default: '' \}/.test(bodySrc)
+  && /if \(o && o\.kind === 'image'\) return inkOf\(\{ tone: this\.bgInk \}\);/.test(bodySrc),
+  '探测 → bg-ink → ink() → renderKey 四跳都在');
+assert('探测只在海报在场时跑（弹层没开不预读那张图），开场那一刻补探一次（activeImage 没变时它自己的 watcher 不会重跑）',
+  /\|\| !this\.active\) return;/.test(shellSrc)
+  && /this\.refreshBgInk\(this\.activeImage\);/.test(shellSrc)
+  && shellSrc.indexOf('this.refreshBgInk(this.activeImage);') < shellSrc.indexOf('this.scheduleRender();'),
+  'active 门控 + 开场补探');
 // 预览 CSS、色板缩略图、画布三处都由 util 那张表算出来：半径按档宽等比缩，叠法同序
 const th0 = THEME.POSTER_THEMES[0];
 const posterCss = THEME.themeCss(th0, 300);
@@ -785,14 +849,25 @@ assert('弥散渐变三份同源：海报 CSS 用 300 档半径、色板用 40 �
   && radial.length === th0.blobs.length
   && radial[radial.length - 1] === 'radial:' + (th0.blobs[0][0] * 300) + ',' + (th0.blobs[0][1] * 400) + ',' + (th0.blobs[0][2] * 300),
   '海报=' + posterCss.slice(0, 52) + ' / 色板=' + thumbCss.slice(0, 34) + ' / 画布=' + JSON.stringify(radial));
-// 自带档是「一个底色 + 几团高光」，叠出来的最亮处仍要保证白字读得清：
-// 按与 CSS/canvas 同一套叠色逐点算 WCAG 对比度（日期角标那一块要再叠 16% 白底），三块文字区最低值 ≥ 4.5
-const mixOver = (dst, src, a) => dst.map((v, i) => v * (1 - a) + src[i] * a);
+// 自带档是「一个底色 + 几团高光」，压在它上面的字按这一档的字色表取（浅底深字 / 深底白字）：
+// 按与 CSS/canvas 同一套叠色逐点算 WCAG 对比度（日期角标那块要再叠它自己那层薄片、
+// 两枚金句动作要叠它们的底），七块文字区最低值都要 ≥ 4.5
+const parseColor = (s) => {
+  const str = String(s || '');
+  if (str.charAt(0) === '#') return [parseInt(str.slice(1, 3), 16), parseInt(str.slice(3, 5), 16), parseInt(str.slice(5, 7), 16), 1];
+  const n = str.slice(str.indexOf('(') + 1, -1).split(',').map((x) => parseFloat(x.trim()));
+  return [n[0], n[1], n[2], n.length > 3 ? n[3] : 1];
+};
+const mixOver = (dst, src, a) => dst.map((v, i) => (i < 3 ? v * (1 - a) + src[i] * a : 1));
 const relLum = (c) => {
   const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
   return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
 };
-const vsWhite = (c) => 1.05 / (relLum(c) + 0.05);
+const contrastRatio = (a, b) => {
+  const l1 = relLum(a);
+  const l2 = relLum(b);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+};
 const blobInk = (b, x, y) => {
   const r = b[2] * 300;
   const d = Math.hypot(x - b[0] * 300, y - b[1] * 400);
@@ -800,30 +875,61 @@ const blobInk = (b, x, y) => {
   const t = d / r;
   return { c: b[3].split(',').map(Number), a: b[4] * (1 - t) * (1 - t) };
 };
-const zoneContrast = (theme, box, plate) => {
+/**
+ * 这一块文字区的最差对比度
+ * @param {Object} theme    POSTER_THEMES 里的一档
+ * @param {Object} ink      这一档的字色表（inkOf）
+ * @param {String} inkKey   用哪一档字色（text / sub / chipText）
+ * @param {Array}  box      [x0, y0, x1, y1] 采样框
+ * @param {String} [plateKey] 底下还压着一层薄片（'plate' 日期角标 / 'chip' 两枚动作的底）
+ * @returns {Number} 最低对比度
+ */
+const zoneContrast = (theme, ink, inkKey, box, plateKey) => {
   let worst = 99;
   for (let x = box[0]; x <= box[2]; x += 3) {
     for (let y = box[1]; y <= box[3]; y += 3) {
       let c = [1, 3, 5].map((i) => parseInt(theme.base.slice(i, i + 2), 16));
       (theme.blobs || []).forEach((bl) => { const g = blobInk(bl, x, y); if (g) c = mixOver(c, g.c, g.a); });
-      if (plate) c = mixOver(c, [255, 255, 255], plate);
-      worst = Math.min(worst, vsWhite(c));
+      if (plateKey) { const p = parseColor(ink[plateKey]); c = mixOver(c, p, p[3]); }
+      const fg = parseColor(ink[inkKey]);
+      worst = Math.min(worst, contrastRatio(mixOver(c, fg, fg[3]), c));
     }
   }
   return worst;
 };
-// 白字落点两档都要扫：daily 三块按 2026-09-26 那一版几何取（角标 192..273 × 18..93 要再叠 16% 白底、
-// 金句 + 出处 27..273 × 130..215、累计打卡 27..209 × 246..292）；content 三块是邀请头昵称 / 邀请语
-// （左上，头像让位到 x 68）与码下面那句说明（底部居中），卡里那一行标题是深色压在磨砂白上，不在这块门禁里
+// 字色落点两档都要扫：daily 三块按 2026-09-26 那一版几何取（角标 192..273 × 18..93 要再叠它自己那层薄片、
+// 金句 + 出处 27..273 × 130..215、累计打卡 27..209 × 246..292）、两枚金句动作 27..170 × 214..236；
+// content 三块是邀请头昵称 / 邀请语（左上，头像让位到 x 68）与码下面那句说明（底部居中），
+// 卡里那一行标题是深色压在磨砂白上，不在这块门禁里
 const TEXT_ZONES = [
-  ['角标', [192, 18, 273, 93], 0.16], ['金句', [27, 130, 273, 215], 0], ['数字', [27, 246, 209, 292], 0],
-  ['昵称', [68, 18, 250, 40], 0], ['邀请语', [68, 40, 240, 58], 0], ['说明', [60, 366, 240, 382], 0],
+  ['角标', [192, 18, 273, 93], 'text', 'plate'], ['金句', [27, 130, 273, 215], 'text', null], ['数字', [27, 246, 209, 292], 'text', null],
+  ['昵称', [68, 18, 250, 40], 'text', null], ['邀请语', [68, 40, 240, 58], 'sub', null], ['说明', [60, 366, 240, 382], 'sub', null],
+  ['动作', [27, 214, 170, 236], 'chipText', 'chip'],
 ];
-const contrastRows = THEME.POSTER_THEMES.map((t) => TEXT_ZONES.map((z) => zoneContrast(t, z[1], z[2])));
+const contrastRows = THEME.POSTER_THEMES.map((t) => TEXT_ZONES.map((z) => zoneContrast(t, THEME.inkOf(t), z[2], z[1], z[3])));
 const worstInk = Math.min.apply(null, contrastRows.map((r) => Math.min.apply(null, r)));
-assert('自带弥散档每档的白字都读得清：两档海报共六块文字区 WCAG 对比度最低 ≥4.5（高光不许把字吃掉，改配色/扩档要过这一条）',
+assert('两族每一档的字都读得清：两档海报共七块文字区 WCAG 对比度最低 ≥4.5（浅底配深字、深底配白字，高光不许把字吃掉，改配色/扩档要过这一条）',
   worstInk >= 4.5,
-  contrastRows.map((r, i) => THEME.POSTER_THEMES[i].base + ' ' + r.map((v) => v.toFixed(1)).join('/')).join('  ') + '  最低 ' + worstInk.toFixed(2));
+  contrastRows.map((r, i) => THEME.POSTER_THEMES[i].tone.charAt(0) + THEME.POSTER_THEMES[i].base + ' ' + r.map((v) => v.toFixed(1)).join('/')).join('  ') + '  最低 ' + worstInk.toFixed(2));
+// 预览的 :style 与画布读同一份 ink：浅色档不再是一张白字压在浅底上的海报（硬约束 29：底色换成组交付物）
+assert('预览与画布的字色同源：daily 那几块把字色/薄片色放进 :style（daily.xxx），画布走 setFillStyle(ink.xxx)，CSS 里不再留一份写死的白字',
+  /color: ink\.text/.test(bodySrc) && /background: ink\.plate/.test(bodySrc) && /color: ink\.chipText/.test(bodySrc)
+  && /color: ink\.mark/.test(bodySrc) && /color: ink\.sub/.test(bodySrc)
+  && /setFillStyle\(ink\.text\)/.test(bodySrc) && /setFillStyle\(ink\.plate\)/.test(bodySrc)
+  && /setFillStyle\(ink\.mark\)/.test(bodySrc) && /setFillStyle\(ink\.sub\)/.test(bodySrc)
+  && /setFillStyle\(ink\.card\)/.test(bodySrc) && /setFillStyle\(ink\.cardText\)/.test(bodySrc)
+  && !/\.sp-quote \{[^}]*color:/.test(bodySrc)
+  && !/\.sp-count-(label|num|unit) \{[^}]*color:/.test(bodySrc)
+  && !/\.sp-head-name \{[^}]*color:/.test(bodySrc) && !/\.sp-head-invite \{[^}]*color:/.test(bodySrc)
+  && !/\.sp-qr-tip \{[^}]*color:/.test(bodySrc) && !/\.sp-quote-from \{[^}]*color:/.test(bodySrc)
+  && /sp-act[^>]*:style="dailyText\.actChip"/.test(bodyTplRaw.replace(/\s+/g, ' '))
+  && /sp-act-text[^>]*:style="dailyText\.actText"/.test(bodyTplRaw.replace(/\s+/g, ' '))
+  && !!dailyBox.actChip && !!dailyBox.actText && dailyBox.actChip.background === THEME.inkOf(THEME.POSTER_THEMES[0]).chip,
+  'actions=' + JSON.stringify(dailyBox.actChip) + ' 金句色=' + dailyBox.quote.color);
+assert('浅色档打开弹层就是浅色那一张（默认档 tone=light），且样式条缩略图与海报同一份渐变串',
+  noBgVm.ink.text === '#1d2129' && noBgVm.activeTheme.tone === 'light'
+  && noBgVm.thumbStyle({ kind: 'gradient', theme: noBgVm.activeTheme }).background.indexOf(noBgVm.activeTheme.base) !== -1,
+  'ink=' + noBgVm.ink.text + ' 默认=' + noBgVm.activeTheme.base);
 const errBgVm = cardVm(false, cardEnv({ log: [], isH5: false }), false, { shareBgs: ['https://cdn.test/bg1.png', 'https://cdn.test/bad.png'] });
 errBgVm.onBgError('https://cdn.test/bad.png');
 assert('某一张底图取不到：从样式条里摘掉这一张，其余照旧（不留一个点上去是白的的色板）',
@@ -959,10 +1065,13 @@ const cssBlock = (src, sel) => (src.match(new RegExp('\\.' + sel + ' \\{[^}]*\\}
 /** 这一段 CSS 里有没有写死某一条几何（行高 line-height 不算 height:，别被它骗了） */
 const cssHas = (block, prop) => new RegExp('[\\s;]' + prop + ':').test(block);
 assert('内容卡：圆角 8 + 半透明白磨砂，竖排（封面 240×124 在上、标题紧跟其下），四边只 GAP 一档 12',
-  /\.sp-card \{[\s\S]*?background: rgba\(255, 255, 255, 0\.86\);[\s\S]*?border-radius: 8px;[\s\S]*?padding: 12px/.test(bodySrc)
+  // 卡底不写在 CSS 里：它是 POSTER_INK 的 card（深底那档 0.86 / 浅底那档 0.92），
+  // 由 cardStyleText 现拼（预览）与 ink.card（画布）读同一份 —— 2026-10-28 字色成组下发时收进来的
+  /\.sp-card \{[\s\S]*?border-radius: 8px;[\s\S]*?padding: 12px/.test(bodySrc)
   && /\.sp-cover \{[\s\S]*?width: 240px;[\s\S]*?height: 124px;[\s\S]*?border-radius: 6px/.test(bodySrc)
   && /\.sp-name--under \{[\s\S]*?margin-top: 12px/.test(bodySrc)
-  && bodySrc.indexOf("background: rgba(255, 255, 255, 0.86)") !== -1
+  && /background: this\.ink\.card/.test(bodySrc) && /card: 'rgba\(255,255,255,0\.86\)'/.test(themeSrc)
+  && bodySrc.slice(bodySrc.indexOf('<style')).indexOf('background: rgba(255, 255, 255, 0.86)') === -1
   // 顶边与高度都不再写在 CSS 里（写了就有第二份真源，画布那份就会对不上）
   && !cssHas(cssBlock(bodySrc, 'sp-card'), 'height') && !cssHas(cssBlock(bodySrc, 'sp-card'), 'top')
   && !cssHas(cssBlock(bodySrc, 'sp-name'), 'height')
@@ -1031,6 +1140,31 @@ assert('画布那一份的顶边读的就是 contentColumn（与预览 :style �
   && contentLog.indexOf('xy:长按识别小程序码,102,378') !== -1
   && contentLog.indexOf('drawImage:wxfile://usr/code.png,108,274,84x84') !== -1,
   JSON.stringify(contentLog.filter((l) => l.indexOf('fillText') === 0 || l.indexOf('drawImage') === 0 || l.indexOf('xy:【') === 0)));
+// 2026-10-29 用户点名（公共分享弹窗）：「如果获取的是小程序码，能否自动剪切为圆形的」——
+// 小程序端出的是「圆形码本体 + 方形留白」的 PNG，按方形摆就在渐变底上留下四个白角；
+// 预览给 .sp-qr 挂圆角 50%，画布同一刀（arc 内切圆 + clip）——两份必须同一档，否则换帧那一下方↔圆跳一次。
+// H5 出的是方形二维码：裁圆会把三个定位角切掉、直接扫不出来，故那一端两处都不许裁。
+const QR_EDGE = 84;
+const QR_CENTER_X = (THEME.POSTER_W - QR_EDGE) / 2 + QR_EDGE / 2;
+const QR_CENTER_Y = 274 + QR_EDGE / 2;
+const QR_ARC = 'arc:' + QR_CENTER_X + ',' + QR_CENTER_Y + ',' + QR_EDGE / 2;
+const h5CircleLog = [];
+const h5CircleEnv = cardEnv({ log: h5CircleLog, isH5: true });
+const h5CircleVm = cardVm(true, h5CircleEnv, false,
+  { layout: 'content', poster: CONTENT_POSTER, coverSizes: coverSizesOf(CONTENT_POSTER.cover, 200, 200), codeSrc: 'https://cdn.test/code.png' });
+h5CircleVm.paintPoster(h5CircleEnv.makeCtx(), () => true);
+assert('小程序码按圆形裁（预览 border-radius:50% + 画布 arc 内切圆后 clip），两处同一刀；H5 的方形二维码两端都不裁',
+  /:class="codeRound \? 'sp-qr--round' : ''"/.test(bodyTplRaw)
+  && /\.sp-qr--round \{[\s\S]*?border-radius: 50%/.test(bodySrc)
+  && contentDrawVm.codeRound === true && h5CircleVm.codeRound === false
+  && contentLog.indexOf(QR_ARC) !== -1
+  && contentLog.lastIndexOf('clip') < contentLog.indexOf('drawImage:wxfile://usr/code.png,108,274,84x84')
+  // 白圆盘（静区兜底）要落在 clip 之前、码的 drawImage 之前：先 fill 再 clip，最后才画码
+  && contentLog.slice(contentLog.indexOf(QR_ARC), contentLog.indexOf('drawImage:wxfile://usr/code.png,108,274,84x84')).indexOf('fill') !== -1
+  && h5CircleLog.indexOf('drawImage:https://cdn.test/code.png,108,274,84x84') !== -1
+  && h5CircleLog.indexOf(QR_ARC) === -1,
+  'MP arc=' + contentLog.filter((l) => l.indexOf('arc:') === 0 && /,42$/.test(l)).join('|')
+  + ' / H5 有同款 arc=' + (h5CircleLog.indexOf(QR_ARC) !== -1));
 assert('content 画布逐行与预览同一档字重：邀请头昵称 15 bold、卡里标题 13 bold，邀请语与码那句说明 12 normal',
   fontBefore(contentLog, '冯浩森') === 'normal bold 15px sans-serif'
   && fontBefore(contentLog, '【最多人学】《贫穷的本质》视频全集') === 'normal bold 13px sans-serif'
@@ -1085,27 +1219,145 @@ assert('退回系统 logo 后画布画的是 logo 那一枚、并按 logo 自己
 const brokenLogoVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
   { layout: 'content', poster: { nickname: '甲', avatar: AVATAR, name: '只有名字' }, codeSrc: 'x.png' });
 brokenLogoVm.onCoverError();
-assert('系统 logo 自己也加载失败：不再摆它（assetsReady 只等真摆出来的那一格，否则整张永久盖在「加载中」），退回没有封面的 43 高那一档',
-  brokenLogoVm.coverSrc === '' && brokenLogoVm.assetsReady === true
-  && brokenLogoVm.contentColumn.cardH === 43 && brokenLogoVm.contentColumn.nameTop === brokenLogoVm.contentColumn.coverTop,
+assert('内容封面与系统 logo 都取不到：封面那一格填全站默认商品图（2026-10-28 用户点名「如果图片是空白的，还是没有默认填充」），卡高仍是 179、标题照样紧跟封面之下',
+  brokenLogoVm.coverSrc === DEFAULT_COVER && brokenLogoVm.hasCard === true
+  && brokenLogoVm.contentColumn.cardH === 179
+  && brokenLogoVm.contentColumn.nameTop === brokenLogoVm.contentColumn.coverTop + 124 + 12
+  && brokenLogoVm.assetsReady === false,
   'coverSrc=' + brokenLogoVm.coverSrc + ' cardH=' + brokenLogoVm.contentColumn.cardH
-  + ' assetsReady=' + brokenLogoVm.assetsReady);
+  + ' assetsReady（等默认图 load）=' + brokenLogoVm.assetsReady);
 const noLogoVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
   { $tools: { systemConfig: (k) => (k === 'logo' ? '' : true) } , layout: 'content',
     poster: { nickname: '甲', name: '只有名字' }, codeSrc: 'x.png' });
-assert('站点没配 logo（或组件不在 Vue 原型上）：退回改造前那一档，不因兜底本身出问题而让海报画不出来',
-  noLogoVm.coverSrc === '' && noLogoVm.hasCard === true && noLogoVm.contentColumn.cardH === 43,
+assert('站点没配 logo（或组件不在 Vue 原型上）：同样落到默认商品图那一档，不因兜底本身出问题而让海报画不出来，也不留一块白',
+  noLogoVm.coverSrc === DEFAULT_COVER && noLogoVm.hasCard === true && noLogoVm.contentColumn.cardH === 179,
   'coverSrc=' + noLogoVm.coverSrc + ' cardH=' + noLogoVm.contentColumn.cardH);
-assert('封面尺寸表按 mpKey(地址) 存（这一格会在内容封面与 logo 之间换一枚，共用一份尺寸会把 logo 按上一张的比例裁掉）',
+// 三张都摆不出来（默认图自己也 load 失败，本地静态图理论上不会）才回落到「没有封面」那一档：
+// 这一档必须仍然收口，否则 assetsReady 永远等一格摆不出来的图、整张海报永久盖在「加载中」（M18⑨g）
+const deadCoverVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
+  { layout: 'content', poster: { nickname: '甲', avatar: AVATAR, name: '只有名字' }, codeSrc: 'x.png' });
+deadCoverVm.onCoverError(); // 内容没封面，这一次记的是站点 logo
+deadCoverVm.onCoverError(); // 这一次记的是默认商品图
+assert('默认商品图自己也取不到：不再摆它（assetsReady 只等真摆出来的那一格），退回没有封面的 43 高那一档，海报照样出得来',
+  deadCoverVm.coverSrc === '' && deadCoverVm.assetsReady === true
+  && deadCoverVm.contentColumn.cardH === 43 && deadCoverVm.contentColumn.nameTop === deadCoverVm.contentColumn.coverTop,
+  'coverSrc=' + deadCoverVm.coverSrc + ' cardH=' + deadCoverVm.contentColumn.cardH
+  + ' assetsReady=' + deadCoverVm.assetsReady);
+// 画布那一份必须画同一枚（存下来/分享出去的那张图上不能是空的一块）：默认图按自己的宽高居中裁切
+const defCoverLog = [];
+const defCoverEnv = cardEnv({ log: defCoverLog, isH5: false });
+const defCoverVm = cardVm(false, defCoverEnv, false,
+  { $tools: { systemConfig: (k) => (k === 'logo' ? '' : true) }, layout: 'content',
+    poster: { nickname: '甲', avatar: AVATAR, name: '只有名字' },
+    coverSizes: coverSizesOf(DEFAULT_COVER, 400, 400), codeSrc: 'x.png' });
+defCoverVm.paintPoster(defCoverEnv.makeCtx(), () => true);
+assert('默认商品图那一档画布也画它（400×400 铺 240×124 → 240×240、上下各切 58 后落在 30/33），并复用它自己的尺寸表',
+  defCoverVm.coverSrc === DEFAULT_COVER
+  && defCoverLog.indexOf('drawImage:' + DEFAULT_COVER + ',30,33,240x240') !== -1
+  && defCoverLog.filter((l) => l.indexOf('drawImage:' + CONTENT_POSTER.cover) === 0).length === 0,
+  JSON.stringify(defCoverLog.filter((l) => l.indexOf('drawImage') === 0)));
+assert('封面尺寸表按 mpKey(地址) 存（这一格会在内容封面 / 系统 logo / 默认商品图之间换一枚，共用一份尺寸会把后一枚按上一张的比例裁掉）',
   /if \(w && h\) this\.\$set\(this\.coverSizes, mpKey\(this\.coverSrc\)/.test(bodySrc)
   && /this\.coverSizes\[mpKey\(this\.coverSrc\)\]/.test(bodySrc)
   && bodySrc.indexOf('this.coverSize;') === -1 && bodySrc.indexOf('coverFailed = true') === -1,
   'coverSizes 读写两处都过 mpKey(coverSrc)');
-assert('logo 兜底读的是站点配置那一张（与 $nav.share / 微信卡片同一份口径，不在前端写死一张图）',
+assert('封面兜底链顺序：内容封面 → 店铺 logo（$tools.systemConfig 读站点配置，与 $nav.share / 微信卡片同一份口径）→ 全站默认图标；写死的静态图只有头像兜底与这张默认图两张',
   /this\.\$tools\.systemConfig\('logo'\)/.test(bodySrc)
-  // 本组件只许写死头像兜底那一张（DEFAULT_AVATAR，与全站用户卡同一份）；封面这一格不许再写死任何静态图
-  && (bodySrc.match(/'\/static\/[^']*'/g) || []).every((u) => u === "'/static/image/default-avatar.png'"),
-  '走 $tools.systemConfig(\'logo\')；写死的静态图只剩头像兜底那一张');
+  && /\[p\.cover \|\| '', this\.siteLogo, DEFAULT_COVER\]/.test(bodySrc)
+  && /const DEFAULT_COVER = '\/static\/image\/default-goods\.jpg';/.test(bodySrc)
+  && (bodySrc.match(/'\/static\/[^']*'/g) || [])
+    .every((u) => u === "'/static/image/default-avatar.png'" || u === "'/static/image/default-goods.jpg'"),
+  '三级兜底 + 两张静态图');
+// 2026-10-29 用户口径（公共分享弹窗）：「如果图片加载失败，可以使用店铺 logo 填充，
+// 如果店铺 logo 图片也加载失败，再使用当前的 icon 填充」。预览与画布必须读同一份顺序表。
+const chainVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
+  { layout: 'content', poster: { nickname: '甲', name: '只有名字', cover: CONTENT_POSTER.cover }, codeSrc: 'x.png' });
+assert('封面兜底清单只有一份、顺序固定：内容封面 → 店铺 logo → 默认图标（预览 coverSrc 与画布 coverPaint 都从 coverFallbacks 消费）',
+  JSON.stringify(chainVm.coverFallbacks) === JSON.stringify([CONTENT_POSTER.cover, SITE_LOGO, DEFAULT_COVER]),
+  JSON.stringify(chainVm.coverFallbacks));
+// 2026-10-29 用户点名「公共分享弹窗，会出现图片区域空白的问题，如果有空白，要填充默认图片」。
+// 上面那一组三级兜底只管预览那一版 DOM；用户看到的那张是画布出的图（它盖在排版之上），
+// 而画布这一格原先只在「没降档且换得到可绘地址」时才画——跨域封面没给 CORS 头、或出图降档丢了
+// cover 那一层，卡里那 124px 就空着（存下来/分享出去的图也一样）。下面几档钉「画布这一格按同一条
+// 兜底链继续填：内容封面画不进去 → 店铺 logo → 默认图标」。
+const fallbackLog = [];
+const fallbackEnv = cardEnv({ log: fallbackLog, isH5: false });
+const fallbackVm = cardVm(false, fallbackEnv, false,
+  { layout: 'content', poster: { nickname: '甲', avatar: AVATAR, name: '只有名字', cover: CONTENT_POSTER.cover },
+    codeSrc: 'x.png' });
+// H5 跨域图没给 CORS 头时，imgDraw 里记的就是空串（见 poster-render 的 resolvePosterImage）
+fallbackVm.imgDraw = { [CONTENT_POSTER.cover]: '', [DEFAULT_COVER]: 'blob:default-cover' };
+fallbackVm.paintPoster(fallbackEnv.makeCtx(), () => true);
+assert('画布这一格：内容封面换不到可绘地址（跨域图没给 CORS 头）、店铺 logo 也换不到时填默认图标，按默认图自己的 400×400 裁，不留一块白',
+  fallbackVm.coverSrc === CONTENT_POSTER.cover
+  && fallbackLog.indexOf('drawImage:blob:default-cover,30,33,240x240') !== -1
+  && fallbackLog.filter((l) => l.indexOf('drawImage:' + CONTENT_POSTER.cover) === 0).length === 0,
+  JSON.stringify(fallbackLog.filter((l) => l.indexOf('drawImage') === 0)));
+// 用户口径的中间那一档：内容封面在画布上画不进去（预览那张是好的、没走 @error），先退店铺 logo，
+// 不是直接跳默认图标；尺寸按 logo 自己的宽高裁（400×200 铺 240×124 → 248×124、左右各切 4）
+const logoFallbackLog = [];
+const logoFallbackEnv = cardEnv({ log: logoFallbackLog, isH5: false });
+const logoFallbackVm = cardVm(false, logoFallbackEnv, false,
+  { layout: 'content', poster: { nickname: '甲', avatar: AVATAR, name: '只有名字', cover: CONTENT_POSTER.cover },
+    coverSizes: coverSizesOf(SITE_LOGO, 400, 200), codeSrc: 'x.png' });
+logoFallbackVm.imgDraw = {
+  [CONTENT_POSTER.cover]: '', [SITE_LOGO]: 'blob:logo', [DEFAULT_COVER]: 'blob:default-cover',
+};
+logoFallbackVm.paintPoster(logoFallbackEnv.makeCtx(), () => true);
+assert('画布这一格：内容封面画不进去时先填店铺 logo（不是直接跳默认图标），按 logo 自己的宽高居中裁切',
+  logoFallbackVm.coverSrc === CONTENT_POSTER.cover
+  && logoFallbackLog.indexOf('drawImage:blob:logo,26,91,248x124') !== -1
+  && logoFallbackLog.filter((l) => l.indexOf('drawImage:blob:default-cover') === 0).length === 0,
+  JSON.stringify(logoFallbackLog.filter((l) => l.indexOf('drawImage') === 0)));
+const degradeCoverLog = [];
+const degradeCoverEnv = cardEnv({ log: degradeCoverLog, isH5: false });
+const degradeCoverVm = cardVm(false, degradeCoverEnv, false,
+  { layout: 'content', poster: CONTENT_POSTER, coverSizes: coverSizesOf(CONTENT_POSTER.cover, 200, 200), codeSrc: 'x.png' });
+degradeCoverVm.imgDraw = { [CONTENT_POSTER.cover]: 'blob:cover', [DEFAULT_COVER]: 'blob:default-cover' };
+degradeCoverVm.paintPoster(degradeCoverEnv.makeCtx(), () => false);
+assert('画布这一格：出图降档把封面那一层丢了时也填默认图标（logo 换不到的那一档；卡高仍按有封面算，不许空着一块）',
+  degradeCoverLog.indexOf('drawImage:blob:default-cover,30,33,240x240') !== -1
+  && degradeCoverLog.filter((l) => l.indexOf('drawImage:blob:cover') === 0).length === 0,
+  JSON.stringify(degradeCoverLog.filter((l) => l.indexOf('drawImage') === 0)));
+// 降档时「内容封面不画、但这一格仍要填」：候选从店铺 logo 起（内容封面被摘掉），logo 画得进去就画 logo
+const degradeLogoLog = [];
+const degradeLogoEnv = cardEnv({ log: degradeLogoLog, isH5: false });
+const degradeLogoVm = cardVm(false, degradeLogoEnv, false,
+  { layout: 'content', poster: CONTENT_POSTER, coverSizes: coverSizesOf(SITE_LOGO, 400, 200), codeSrc: 'x.png' });
+degradeLogoVm.imgDraw = {
+  [CONTENT_POSTER.cover]: 'blob:cover', [SITE_LOGO]: 'blob:logo', [DEFAULT_COVER]: 'blob:default-cover',
+};
+degradeLogoVm.paintPoster(degradeLogoEnv.makeCtx(), () => false);
+assert('画布这一格：降档丢了内容封面那一层时从店铺 logo 起继续填——封面自己不画，logo 画得进去就画 logo（不直接跳默认图标）',
+  degradeLogoLog.indexOf('drawImage:blob:logo,26,91,248x124') !== -1
+  && degradeLogoLog.filter((l) => l.indexOf('drawImage:blob:cover') === 0).length === 0,
+  JSON.stringify(degradeLogoLog.filter((l) => l.indexOf('drawImage') === 0)));
+// 店铺 logo 的隐形量尺：封面占着卡时也要把 logo 的原始宽高量下来（画布退回 logo 时按它裁，
+// 拿内容封面的宽高去套会把 logo 裁变形）；它自己 @error 时记进 coverErrors，封面真失败就直达默认图标
+const probeVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
+  { layout: 'content', poster: { nickname: '甲', name: '只有名字', cover: CONTENT_POSTER.cover }, codeSrc: 'x.png' });
+assert('店铺 logo 的隐形量尺：卡里摆着内容封面时也在探 logo（coverProbe），模板里那枚 1px 透明图只为量宽高、不参与 assetsReady',
+  probeVm.coverProbe === SITE_LOGO
+  && bodyTplRaw.indexOf('class="sp-cover-probe"') !== -1
+  && !/assetsReady\(\) \{[\s\S]{0,700}coverProbe/.test(bodySrc),
+  'coverProbe=' + probeVm.coverProbe);
+probeVm.onCoverProbeLoad({ detail: { width: 400, height: 200 } });
+assert('量到的 logo 尺寸存进与卡里那张封面同一份 coverSizes（按 mpKey(地址) 分开存，换一枚不串尺寸）',
+  !!probeVm.coverSizes[MPKEY(SITE_LOGO)] && probeVm.coverSizes[MPKEY(SITE_LOGO)].w === 400
+  && probeVm.coverSizes[MPKEY(SITE_LOGO)].h === 200,
+  JSON.stringify(probeVm.coverSizes[MPKEY(SITE_LOGO)]));
+probeVm.onCoverProbeError();
+assert('店铺 logo 自己也加载不出来：记进 coverErrors 并停止探测，封面真失败时直达默认图标（不再摆一张画不出来的 logo）',
+  probeVm.coverErrors[MPKEY(SITE_LOGO)] === true && probeVm.coverProbe === '',
+  'coverErrors=' + probeVm.coverErrors[MPKEY(SITE_LOGO)] + ' coverProbe=' + probeVm.coverProbe);
+assert('H5 那条链把封面这一格的候选一起换好再开画（画布只在 paint 里开、事后换不回来）：按 coverPaintCandidates 逐枚换，降档丢了封面那一层时从店铺 logo 起仍要填',
+  /this\.coverPaintCandidates\(keep\)\.forEach\(\(s\) => srcs\.push\(s\)\);/.test(bodySrc)
+  && /coverPaintCandidates\(keep\) \{[\s\S]{0,700}keep\('cover'\) \|\| s !== own/.test(bodySrc),
+  'pendingDrawSrc 里常备 logo 与默认图标');
+assert('小程序 2d 那条链用同一份候选清单：内容封面 → 店铺 logo → 默认图标逐枚加载，一枚没造出来就换下一枚（coverPaint 按能画的那一枚取）',
+  /self\.coverPaintCandidates\(keep\)\.forEach\(\(s\) => srcs\.push\(s\)\);/.test(bodySrc)
+  && /images && images\.__used/.test(bodySrc),
+  '2d 候选清单 + 用途标记（载图那一层见后面 util2d 那一组）');
 const emptyVm = cardVm(false, cardEnv({ log: [], isH5: false }), false,
   { layout: 'content', poster: { nickname: '甲' }, codeSrc: 'x.png' });
 assert('连名称都没有：整块内容卡不出（logo 是所有内容共用的一枚兜底，不拿它当「这一条有内容」的证据），两个锚点照样在原地（headTop 18 / qrTop 274 / 说明 366，海报不会出现半张空卡，码也不会跟着往上跑）',
@@ -1164,9 +1416,14 @@ assert('推荐语入口：文案在取时整格换成骨架块（区域遮罩那
   && /class="sh-recommend" v-if="showRecommend" @tap="onRecommend"/.test(shellSrc)
   && /onRecommend\(\) \{[\s\S]*?this\.recommendLoading[\s\S]*?推荐语正在获取，请稍候[\s\S]*?\$emit\('recommend'\)/.test(shellSrc),
   '入口在取的时候就在，只是还点不开（M13/M16）');
-assert('推荐语入口的判据收在调用点：有文案或正在取才出，首次就失败整枚不出',
-  /:show-recommend="!!article\.text \|\| articleLoading"/.test(shareSrc)
-  && /:recommend-loading="articleLoading"/.test(shareSrc), '弹窗自己不再判一次');
+assert('分享链接入口（原「推荐语」）的判据收在调用点：微信小程序端整枚不出（2026-10-31 用户口径），其余端有文案或正在取才出、首次就失败整枚不出',
+  /:show-recommend="showRecommend"/.test(shareSrc)
+  && /:recommend-loading="articleLoading"/.test(shareSrc)
+  && /showRecommend\(\) \{[\s\S]*?#ifdef MP-WEIXIN[\s\S]*?return false;[\s\S]*?#endif[\s\S]*?return !!this\.article\.text \|\| this\.articleLoading;/.test(shareSrc)
+  && /showRecommend\(\) \{[\s\S]*?return !!this\.article\.text \|\| this\.articleLoading;/.test(conditional(shareSrc, true))
+  && conditional(shareSrc, true).indexOf('return false;') === -1
+  && /showRecommend\(\) \{[\s\S]*?return false;/.test(conditional(shareSrc, false)),
+  '小程序那份编译结果里没有这枚入口 / H5·App 仍按文案判');
 // 内容档多出来的那一层（封面）也要能丢：外域封面没给 CORS 头会把整条出图路卡住
 const contentFailLog = [];
 const contentFailEnv = cardEnv({ log: contentFailLog, isH5: false, tempFilePath: 'fail' });
@@ -1188,10 +1445,11 @@ assert('推荐语入口在底部样式条右侧（scroll-view 之外，跟着样
   && /class="ck-daily-recommend" v-if="showRecommend"/.test(sheetTpl)
   && sheetTpl.indexOf('ck-daily-recommend') > sheetTpl.indexOf('ck-daily-themes'),
   '一行：左滑样式 + 右固定推荐语');
-assert('推荐语弹窗只吃文案、忽略图片，且带「换一条」与「复制文案」（参照竞品图二）',
-  recSrc.indexOf('article.poster') === -1 && /text: \{ type: String/.test(recSrc)
-  && /\$emit\('change'\)/.test(recSrc) && /text="复制文案"/.test(recTpl) && /tz-button/.test(recTpl),
-  '文案单一入参 + 换一条 + 复制');
+assert('推荐语 / 分享链接弹窗只吃文案与链接、忽略图片，且带「换一条」与复制按钮（参照竞品图二；2026-10-30 起有 link 时走链接档）',
+  recSrc.indexOf('article.poster') === -1 && /text: \{ type: String/.test(recSrc) && /link: \{ type: String/.test(recSrc)
+  && /\$emit\('change'\)/.test(recSrc)
+  && /:text="link \? '复制链接' : '复制文案'"/.test(recTpl) && /tz-button/.test(recTpl),
+  '文案/链接单一入参 + 换一条 + 复制（链接档改叫「复制链接」）');
 assert('推荐语取的是分享图文接口，复制在点击的同步栈里读缓存（H5 的 execCommand 脱离手势就失效）',
   shareSrc.indexOf("share.getArticle") !== -1 && /copyArticle\(\)[\s\S]*?setClipboardData\(\{\s*data: that\.article\.text/.test(shareSrc)
   && /if \(!that\.article\.text\)/.test(shareSrc), '缓存为空要说原因（M13）');
@@ -1226,10 +1484,10 @@ assert('推荐语弹窗整篇可见：不套滚动区，且文案块有 220px �
   'min-height=' + ((recSrc.match(/\.rc-box \{[^}]*?min-height:\s*(\d+)px/) || [])[1] || 0));
 assert('取文案中：加载态只在文案块里，两枚按钮常驻置灰禁用（收掉会让弹层高度跳、也读不出为什么没响应）',
   recTpl.indexOf('v-if="!loading"') === -1 && /:class="loading \? 'rc-change--disabled'/.test(recTpl)
-  && /:disabled="loading"/.test(recTpl) && /v-if="loading \|\| text"/.test(recTpl)
+  && /:disabled="loading"/.test(recTpl) && /v-if="loading \|\| text \|\| link"/.test(recTpl)
   && /onChange\(\)\s*\{[\s\S]*?loading[\s\S]*?推荐语正在获取/.test(recSrc)
   && /\.rc-change--disabled \{[\s\S]*?opacity: 0\.45/.test(recSrc),
-  '禁用态有样式也有出口（M13 不静默）');
+  '禁用态有样式也有出口（M13 不静默；链接档才多一枚 link，加载中同样不收起）');
 assert('推荐语弹窗的标题与关闭走 tz-nickname-modal 同一档（u-popup closeable + 16px/600 左对齐 + 面板内衬 0 16 20）',
   /:closeable="true"/.test(recTpl) && recSrc.indexOf('rc-close') === -1
   && /\.rc-title \{[\s\S]*?padding: 15px 0 12px;[\s\S]*?font-size: 16px;[\s\S]*?font-weight: 600;[\s\S]*?text-align: left/.test(recSrc)
@@ -1259,10 +1517,10 @@ swVm.scheduleRender();
 assert('换档重画期间不清空 renderedSrc：留着上一张海报 + 盖加载遮罩，绝不退回底下那一版 DOM 排版',
   swVm.renderedSrc === 'data:old-poster' && swVm.renderPending === true
   && !/renderKey\(\) \{[\s\S]{0,80}this\.renderedSrc = ''/.test(shellSrc)
-  && (shellSrc.match(/:render-loading="renderPending"/g) || []).length === 2
+  && (shellSrc.match(/:render-loading="(?:pending \|\| )?renderPending"/g) || []).length === 2
   && /if \(this\.renderLoading === true\) return true;[\s\S]*?if \(this\.codeLoading\) return true;[\s\S]*?if \(this\.renderedSrc \|\| this\.renderFailed\) return false;[\s\S]*?return !this\.assetsReady;/.test(bodySrc),
   'renderedSrc=' + swVm.renderedSrc + ' pending=' + swVm.renderPending
-  + ' 弹层与 inline 两处都传=' + (shellSrc.match(/:render-loading="renderPending"/g) || []).length);
+  + ' 弹层与 inline 两处都传=' + (shellSrc.match(/:render-loading="(?:pending \|\| )?renderPending"/g) || []).length);
 const swKey = swVm.renderKey;
 swVm.setRendered(swKey, 'data:new-poster');
 assert('新图回来就整张一次换掉并撤遮罩（两帧不再同屏交替，头像/昵称没有可跳的那一步）',
@@ -1853,27 +2111,37 @@ setTimeout(() => {
   assert('海报的 :style 一律给字符串（posterStyleText / dailyText.xxx），不再把 computed 对象直接绑上去',
     !/:style="posterStyle"/.test(bodyTplRaw) && !/:style="daily\./.test(bodyTplRaw)
     && /:style="posterStyleText"/.test(bodyTplRaw)
-    && (bodyTplRaw.match(/:style="dailyText\./g) || []).length === 7
+    && (bodyTplRaw.match(/:style="dailyText\./g) || []).length === 11
+    && [':style="inkTextText"', ':style="inkSubText"', ':style="inkAvatarText"', ':style="inkCardTextText"',
+      ':style="cardStyleText"', ':style="qrTipStyleText"'].every((b) => bodyTplRaw.indexOf(b) !== -1)
     && /function styleText\(style\)/.test(themeSrc) && /export \{[\s\S]*styleText,/.test(themeSrc),
-    '七块定位 + 背景那一格都走字符串档');
+    '七块定位 + 两枚动作 + 内容档六处（都是返回字符串的 computed）');
   // 实跑一遍：样式串要合法（键名已转 kebab、没有 [object Object]、也没有漏掉的驼峰键）
   const styleVm = cardVm(false, cardEnv({ log: [], isH5: false }), false, { checkinId: 628 });
   const pText = String(styleVm.posterStyleText || '');
   const dText = styleVm.dailyText || {};
+  // 内容档那两处也现拼（顶边由 contentColumn 给、颜色由 ink 给）：同样不许出现驼峰键或 [object Object]
+  const cText = String(styleVm.cardStyleText || '');
+  const qText = String(styleVm.qrTipStyleText || '');
   assert('实跑：posterStyleText / dailyText 给出合法样式串（渐变背景 + scale 在，键名全 kebab，无 [object Object]）',
-    pText.indexOf('[object') === -1 && /^background:radial-gradient\(circle 189px at 18% 12%,/.test(pText)
+    pText.indexOf('[object') === -1
+    && pText.indexOf('background:radial-gradient(circle ' + Math.round(th0.blobs[0][2] * 300) + 'px at ' + (th0.blobs[0][0] * 100) + '% ' + (th0.blobs[0][1] * 100) + '%,') === 0
     && /;transform:scale\(1\)$/.test(pText)
-    && /^left:\d+px;top:18px;width:\d+px$/.test(String(dText.badge))
+    && /^left:\d+px;top:18px;width:\d+px;background:rgba\(255,255,255,0\.62\)$/.test(String(dText.badge))
     && /font-size:16px;line-height:26px/.test(String(dText.quote))
-    && /padding-left:27px;padding-right:27px/.test(String(dText.foot)),
-    pText.slice(0, 52) + ' || badge=' + dText.badge + ' || foot=' + dText.foot);
+    && /padding-left:27px;padding-right:27px/.test(String(dText.foot))
+    && /^top:\d+px;height:\d+px;background:rgba\(255,255,255,0\.92\)$/.test(cText)
+    && /^top:\d+px;color:rgba\(29,33,41,0\.82\)$/.test(qText)
+    && /^background:rgba\(255,255,255,0\.72\)$/.test(String(dText.actChip))
+    && /^color:#1d2129$/.test(String(dText.actText)),
+    pText.slice(0, 52) + ' || badge=' + dText.badge + ' || foot=' + dText.foot + ' || card=' + cText + ' || tip=' + qText);
   const util2d = fs.readFileSync(path.join(SRC, 'common/utils/canvas-2d.js'), 'utf8');
   assert('微信端出图走 type="2d"：模板那一格带 type="2d"，旧版 canvas-id 那一格只给非微信端',
     /#ifdef MP-WEIXIN[\s\S]{0,400}<canvas type="2d" :id="canvasId"/.test(bodyTplRaw)
     && /#ifndef MP-WEIXIN[\s\S]{0,400}<canvas :canvas-id="canvasId"/.test(bodyTplRaw),
     '两端各一格，条件编译分开');
   assert('两端共用同一份场景绘制 paintPoster（不许出现第二份排版），微信端那条链按 2d 三步走',
-    /paintPoster\(ctx, keep\) \{/.test(bodySrc) && bodySrc.indexOf('this.paintPoster(ctx, keep)') !== -1
+    /paintPoster\(ctx, keep, images\) \{/.test(bodySrc) && bodySrc.indexOf('this.paintPoster(ctx, keep)') !== -1
     && bodySrc.indexOf('self.paintPoster(wrap2d(') !== -1
     && /get2dCanvas\(this, this\.canvasId, POSTER_W, POSTER_H\)/.test(bodySrc)
     && bodySrc.indexOf('export2d(r.c.canvas, self)') !== -1, '取节点 → 载图 → 画 → 导出，画的是同一份');
@@ -1890,7 +2158,9 @@ setTimeout(() => {
     /const IMG_TIMEOUT = \d+;/.test(util2d)
     && /timer = setTimeout\(\(\) => settle\(null\), IMG_TIMEOUT\);/.test(util2d)
     && /const cands = \[src\]\.concat\(altMap\[src\] \|\| \[\]\);/.test(util2d)
-    && /if \(missing\.length\) console\.warn\('\[canvas-2d\]/.test(util2d), '超时 / 备选 / 缺失必须出声');
+    && /used: cand/.test(util2d)
+    && util2d.indexOf("Object.defineProperty(map, '__used'") !== -1
+    && /if \(missing\.length\) console\.warn\('\[canvas-2d\]/.test(util2d), '超时 / 备选 / 用途标记 / 缺失必须出声');
   assert('取不到节点 / 导出失败都退回同一份 retryOrTell（按 degradeChain 降档，最后回空让壳撤遮罩）',
     /retryOrTell\(\);/.test(bodySrc) && /\.catch\(\(e\) => \{[\s\S]{0,220}retryOrTell\(\);\s*\}\);/.test(bodySrc)
     && util2d.indexOf("reject(new Error('canvas-2d-node-missing'))") !== -1, '异步那条链也要有确定出口');
@@ -1913,18 +2183,19 @@ setTimeout(() => {
     && /if \(ok\) paint\(\);/.test(drawPosterSlice)
     && (bodySrc.match(/uni\.createCanvasContext\(this\.canvasId, this\)/g) || []).length === 1,
     '画布只在 paint 里开；换地址 → 才 paint；无待换图时同步直画');
-  assert('待换地址的清单与实际画的那几张同一份判据（头像要 load 成功过；码排第一；换过的不重换）',
-    /pendingDrawSrc\(keep\) \{[\s\S]{0,700}this\.avatarLoaded === this\.avatarSrc\) srcs\.push\(this\.avatarSrc\);[\s\S]{0,400}srcs\.push\(this\.codeSrc\);/.test(bodySrc)
+  assert('待换地址的清单与实际画的那几张同一份判据（头像要 load 成功过；底图按档；封面这一格按「内容封面 → 店铺 logo → 默认图标」的候选一起换；码一并换）',
+    /pendingDrawSrc\(keep\) \{[\s\S]{0,1500}this\.avatarLoaded === this\.avatarSrc\) srcs\.push\(this\.avatarSrc\);[\s\S]{0,700}this\.coverPaintCandidates\(keep\)\.forEach\(\(s\) => srcs\.push\(s\)\);[\s\S]{0,200}srcs\.push\(this\.codeSrc\);/.test(bodySrc)
     && /return srcs\.filter\(\(s\) => !map \|\| map\[s\] === undefined\);/.test(bodySrc),
-    '头像 / 底图 / 封面 / 码四层都在');
-  assert('换地址是按层降级的：底图 / 封面 / 头像换不到就少画那一层（留底色不留洞），整张照样导出成功',
-    (bodySrc.match(/= this\.drawSrc\(/g) || []).length === 6
+    '头像 / 底图 / 封面候选（logo + 默认图标）/ 码都在');
+  assert('换地址是按层降级的：底图 / 头像换不到就少画那一层（留底色不留洞），封面这一格画不进去就按候选继续填（店铺 logo → 默认图标），整张照样导出成功',
+    bodySrc.indexOf('const bgSrc = this.drawSrc(this.activeImage);') !== -1
+    && bodySrc.indexOf("const drawable = images ? (images[url] ? url : '') : this.drawSrc(url);") !== -1
     && /if \(!bgSrc\) \{[\s\S]{0,200}这一层不画[\s\S]{0,120}\} else if/.test(bodySrc)
     && (bodySrc.match(/if \(avaSrc\) ctx\.drawImage\(/g) || []).length === 2
-    && (bodySrc.match(/if \(coverSrc\) \{/g) || []).length === 1
+    && (bodySrc.match(/if \(cover\) \{/g) || []).length === 1
     && (bodySrc.match(/if \(codeImg\) \{/g) || []).length === 1
     && (bodySrc.match(/if \(codeImg\) ctx\.drawImage\(/g) || []).length === 1,
-    '少画一层照样导出（M13）；只有码那一层是硬要求');
+    '少画一层照样导出（M13）；封面这一格按候选继续填（coverPaint）；只有码那一层是硬要求');
   assert('换好的地址记在普通实例字段 imgDraw 上（不进 data：key 是地址，见 M27 mpKey 那一族的由来）',
     /if \(!this\.imgDraw\) this\.imgDraw = \{\};/.test(bodySrc) && bodyDataBlock.indexOf('imgDraw') === -1,
     '只出现在实例上，不落 data');

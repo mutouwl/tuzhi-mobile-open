@@ -41,6 +41,8 @@ curl -X POST '{apiUrl}common/init' \
     "logo": "https://tuzhi.mutouweb.com/uploads/1/20260531/395826a3e28838ecd43b3bdf54fe6746.png",
     "copyright": "凸知自建卖课平台",
     "copyright_link": "",
+    "icp": "京ICP备12345678号",
+    "police_record": "京公网安备 11010802000000号",
     "status": "open",
     "register": "open",
     "bind_mobile_modal": "close",
@@ -59,6 +61,7 @@ curl -X POST '{apiUrl}common/init' \
     "dy_mp_ban_pay": "open",
     "apiUrl": "https://tuzhi.mutouweb.com/index.php?i=1&route=api/",
     "app_isinstall_test": true,
+    "app_isinstall_school": "1",
     "app_isinstall_channels": true,
     "app_isinstall_cert": true,
     "app_isinstall_form": true,
@@ -74,7 +77,8 @@ curl -X POST '{apiUrl}common/init' \
       "copyright_status": "1",
       "copyright_text": "【版权声明测试】本课程版权归提供者所有，仅限个人学习，严禁任何形式的录制、传播和账号分享。一经发现，平台将依法保留追究权，情节严重者将承担法律责任"
     },
-    "app_complaint": "1"
+    "app_complaint": "1",
+    "app_complaint_post_route": "home"
   }
 }
 ```
@@ -90,6 +94,8 @@ curl -X POST '{apiUrl}common/init' \
 | data.logo | string | 系统 Logo 地址 |
 | data.copyright | string | 版权信息 |
 | data.copyright_link | string | 版权链接 |
+| data.icp | string | icp |
+| data.police_record | string | policerecord |
 | data.status | string | 站点状态：open=开启 |
 | data.register | string | 注册开关：open=开启 |
 | data.bind_mobile_modal | string | 绑定手机号弹窗开关 |
@@ -108,7 +114,8 @@ curl -X POST '{apiUrl}common/init' \
 | data.dy_mp_ban_pay | string | 抖音小程序禁止支付 |
 | data.apiUrl | string | 接口地址前缀（实际请求地址 = apiUrl + 路由） |
 | data.app_isinstall_test | boolean | 考试插件是否安装 |
-| data.app_isinstall_channels | boolean | 视频号小店插件是否安装 |
+| data.app_isinstall_school | string | Appisinstallschool |
+| data.app_isinstall_channels | boolean | 微信小店插件是否安装 |
 | data.app_isinstall_cert | boolean | 证书插件是否安装 |
 | data.app_isinstall_form | boolean | 表单插件是否安装 |
 | data.app_isinstall_composite | boolean | 组合商品插件是否安装 |
@@ -123,6 +130,7 @@ curl -X POST '{apiUrl}common/init' \
 | data.marquee.copyright_status | string | 版权状态 |
 | data.marquee.copyright_text | string | 版权声明文本 |
 | data.app_complaint | string | App投诉 |
+| data.app_complaint_post_route | string | App投诉帖子route |
 
 ## 备注
 

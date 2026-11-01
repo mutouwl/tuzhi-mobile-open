@@ -135,7 +135,7 @@ curl -X POST '{apiUrl}live/room/getRoomDetail' \
 | data.config.goods | integer | 商品 |
 | data.config.redpacket | integer | 红包 |
 | data.createtime | integer | 创建时间（时间戳） |
-| data.push_url | object | push链接 |
+| data.push_url | object | 连麦推流地址（artc，接通后才有） |
 | data.push_url.rtmp | string | RTMP 拉流地址 |
 | data.push_url.artc | string | ARTC 拉流地址 |
 | data.push_url.flv | string | FLV 拉流地址 |
@@ -153,5 +153,5 @@ curl -X POST '{apiUrl}live/room/getRoomDetail' \
 | data.status_text | string | 状态说明 |
 | data.message_pubkey | string | 消息pubkey |
 | data.message_provider | string | 消息provider |
-| data.message_enabled | integer | 消息enabled |
+| data.message_enabled | integer | 消息服务状态（0 时连麦事件无法实时推达） |
 | data.user_count | integer | 用户数量 |

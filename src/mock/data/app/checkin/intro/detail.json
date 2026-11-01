@@ -1,0 +1,87 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344794",
+  "data": {
+    "id": 628,
+    "uniacid": 1,
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "detail": "<p>123<img src=\"https://tuzistudy.oss-cn-beijing.aliyuncs.com/uploads/20260924/1790238068591-1.png\" alt=\"\" data-href=\"\" style=\"\"/><img src=\"https://tuzhi.mutouweb.com/uploads/1/20260920/19cfbea99b5e379bb767e83d481e6b15.png\" alt=\"\" data-href=\"\" style=\"\"/></p>",
+    "checkin_mode": 2,
+    "task_show_type": 1,
+    "time_type": 1,
+    "frequency_type": 2,
+    "frequency_days": 1,
+    "frequency_time": "08:00:00",
+    "frequency_tasks": 1,
+    "start_date": "2026-09-24",
+    "end_date": null,
+    "total_days": 0,
+    "rest_type": 0,
+    "rest_weeks": "",
+    "rest_dates": "[]",
+    "day_start": "00:00:00",
+    "day_end": "23:59:59",
+    "per_day_type": 2,
+    "per_day": 0,
+    "makeup_total": 0,
+    "join_type": "free",
+    "price": "0.00",
+    "course_id": 0,
+    "join_deadline_type": 1,
+    "join_deadline": 0,
+    "isolation_mode": 1,
+    "allow_user_post": 1,
+    "allow_user_comment": 1,
+    "default_tip": "",
+    "default_template": "",
+    "default_day_start": "00:00:00",
+    "default_day_end": "23:59:59",
+    "default_require": {
+      "preview": 1,
+      "task_max": 1,
+      "allow_image": 1,
+      "allow_audio": 1,
+      "allow_video": 1,
+      "allow_file": 1
+    },
+    "share_title": "",
+    "share_desc": "",
+    "share_cover": "",
+    "status": 1,
+    "createtime": 1790246123,
+    "updatetime": 1790559179,
+    "run_state": "ongoing",
+    "done_days": 14,
+    "join_count": 4,
+    "record_count": 19,
+    "is_member": 0,
+    "is_black": 0,
+    "attr": {
+      "checkin_mode": {
+        "1": "日历打卡",
+        "2": "闯关打卡"
+      },
+      "join_type": {
+        "free": "免费参与",
+        "pay": "付费参与",
+        "password": "****",
+        "student": "指定学员",
+        "course": "绑定课程"
+      },
+      "time_type": {
+        "1": "固定起止时间",
+        "2": "固定天数（随到随学）"
+      },
+      "run_state": {
+        "not_started": "未开始",
+        "ongoing": "进行中",
+        "ended": "已结束"
+      }
+    },
+    "course": null,
+    "has_course": 0,
+    "is_virtual_pay": 0
+  }
+}

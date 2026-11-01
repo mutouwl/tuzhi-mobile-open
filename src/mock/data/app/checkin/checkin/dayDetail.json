@@ -1,0 +1,43 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344787",
+  "data": {
+    "day": "2026-09-28",
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "has_more": false,
+    "records": [
+      {
+        "id": 33827,
+        "user_id": 38,
+        "nickname": "冯**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "is_official": 0,
+        "day": "2026-09-28",
+        "day_seq": 5,
+        "task_id": 15222,
+        "task_title": "副本-章节1任务1",
+        "content": "你好吗？我知道了。",
+        "images": [],
+        "videos": [],
+        "audios": [],
+        "files": [],
+        "link_data": [],
+        "is_makeup": 0,
+        "allow_user_comment": 1,
+        "is_featured": 0,
+        "is_top": 0,
+        "visible_to": 0,
+        "like_count": 0,
+        "comment_count": 0,
+        "comments": [],
+        "is_liked": 0,
+        "createtime": 1790569760,
+        "is_mine": 1
+      }
+    ],
+    "tasks": []
+  }
+}

@@ -86,11 +86,51 @@
                     .then((res) => {
                         uni.hideLoading();
                         if (res.code == 1) {
-                            that.$emit("refresh", false);
+                            // 只改这一条券，不再让宿主页整页重取（2026-10-20 用户点名
+                            // 「自定义页面领取优惠券会触发整个页面刷新，要改为局部」）。
+                            // 判据与后端 Coupon::getGetStatusAttr 同一份：先看领取次数上限，
+                            // 再看库存；两份各算一套就会出现「后端已不能再领、按钮还是继续领」
+                            that.applyReceived(id, res.data);
                         }
 
                         uni.$u.toast(res.msg);
                     });
+            },
+            /**
+             * 领取成功后就地更新那一枚券（用户券、次数上限、库存三格一起走）
+             * @param {Number|String} id
+             * @param {Object} userCoupon 后端回体那一行用户券
+             */
+            applyReceived(id, userCoupon) {
+                const list = Array.isArray(this.coupon) ? this.coupon : [];
+                const item = list.find((coupon) => String(coupon.id) === String(id));
+                if (!item) {
+                    return;
+                }
+                if (!Array.isArray(item.user_coupons)) {
+                    this.$set(item, "user_coupons", []);
+                }
+                item.user_coupons.push(userCoupon || { coupon_id: id });
+                item.received = true;
+                // 领取成功即扣一份库存；这两格不是按钮判据，但留着旧值会让下一次点击
+                // 在本地算错（例如刚好领完最后一张时仍显示「继续领」）
+                item.stock = Math.max(0, (Number(item.stock) || 0) - 1);
+                item.get_num = (Number(item.get_num) || 0) + 1;
+
+                // 与后端 Coupon::getGetStatusAttr 逐句同形：limit_status=1 视作 10000 次，
+                // 其余按 limit_num；判「领满」这一档只在 claimed 达到上限时为真
+                const limitNum = Number(item.limit_status) === 1
+                    ? 10000
+                    : (Number(item.limit_num) || 0);
+                const claimed = item.user_coupons.length;
+                const limited = limitNum > 0 && claimed >= limitNum;
+                if (limited) {
+                    item.get_status = "cannot_get";
+                } else if (Number(item.stock) <= 0) {
+                    item.get_status = "get_over";
+                } else {
+                    item.get_status = "can_get";
+                }
             }
         },
         watch: {},

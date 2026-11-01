@@ -202,14 +202,19 @@
   color: #0968f6;
   flex-shrink: 0;
 }
+/* 页签条取**页面底色**（2026-10-29 用户点名「tabs 的背景与页面背景一致」）：
+   `.circle-index` 的 `#f7f8fa` 与 `App.vue` 的页面底色同值；原来两层都是 `#fff`，
+   在这一页读成一条压在白卡之上的白带。`u-tabs` 自身不写背景（只有分割线用 lineColor），
+   所以白底只来自这两个容器，改这里就够，不用去覆盖组件内部节点。
+   `.sticky-wrap` 必须保持**不透明**：它吸顶之后动态流从下面滚过，透明会让文字穿帮。 */
 .nav-bar {
-  background: #fff;
+  background: #f7f8fa;
 }
 .sticky-wrap {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
+  background: #f7f8fa;
 }
 .sort-box {
   display: flex;
@@ -294,7 +299,8 @@
    外壳复用真实版式那一档的类：.head（含 #8c7668 兜底底与 20/14/16 内衬、.head-body 的 20 上间距、
    .head-members 的 18 上间距）、.nav-bar、.sticky-wrap、.feed，灰块只往容器内部放，
    加载完整体不换版。
-   色值分两档：头部是深色底（封面图模糊后的暗调），压在上面用半透明白；白底上照旧 #e5e6eb。 */
+   色值分两档：头部是深色底（封面图模糊后的暗调），压在上面用半透明白；页签条与动态区是
+   页面底色（`.nav-bar` / `.sticky-wrap` 同为 #f7f8fa），灰块仍取 #e5e6eb（与白卡上那一档同值）。 */
 .ci-sk-head {
   background: #8c7668;
 }

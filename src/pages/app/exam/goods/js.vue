@@ -94,12 +94,6 @@ export default {
 	      } else {
 	      }
 	    },
-	    // 跳转分类浏览页
-	    goCategory() {
-	      uni.navigateTo({
-	        url: '/pages/app/exam/group/group'
-	      });
-	    },
 	  },
   //下拉刷新
   onPullDownRefresh() {

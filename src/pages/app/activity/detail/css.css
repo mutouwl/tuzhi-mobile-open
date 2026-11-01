@@ -156,3 +156,89 @@
 	color: #999999;
 	margin-right: 10px;
 }
+
+/* 拼团价横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   信息卡不再出血摆横幅，`.activity-gb-banner` 随之删净 */
+
+/* ===== 首屏骨架（2026-10-31 用户点名「加载方式调整为骨架屏」）=====
+   外壳走真实版式那一档：封面 16:9（与 banner 兜底占位同一比例）、标题卡内衬 15px、
+   信息行 u-cell 的 10px 15px + 22px 行高、底栏 10px 内衬 + 40px 主按钮；
+   灰块只替换会变的那几格，取骨架灰 #e5e6eb、圆角 4px（与同模块选票页 .tk-sk 同一档）。
+   类名带 adetail-sk- 前缀（本页样式未加 scoped，裸名会外溢到别的页面）。 */
+.adetail-sk-cover {
+	width: 100%;
+	/* 封面比例按 banner 兜底占位那一档（16:9），骨架切真实图时不至于整屏跳高 */
+	padding-top: 56.25%;
+	background: #e5e6eb;
+}
+
+.adetail-sk-block {
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+
+.adetail-sk-title {
+	width: 72%;
+	height: 22px;
+}
+
+.adetail-sk-price {
+	width: 96px;
+	height: 24px;
+	margin-top: 12px;
+}
+
+/* 时间条：真实 live-start-time-bar 自带 8px 上下内衬，整块高 34px */
+.adetail-sk-time {
+	width: 100%;
+	height: 34px;
+	margin-top: 14px;
+}
+
+.adetail-sk-cell {
+	display: flex;
+	align-items: center;
+	padding: 10px 15px;
+	border-bottom: 1px solid #efefef;
+}
+
+.adetail-sk-cell:last-child {
+	border-bottom: none;
+}
+
+/* 标签列＝真实行内「活动时间:」那一格（14px 字 + 10px 右距） */
+.adetail-sk-label {
+	width: 58px;
+	height: 16px;
+	margin-right: 10px;
+	flex-shrink: 0;
+}
+
+.adetail-sk-value {
+	width: 52%;
+	height: 16px;
+}
+
+/* 底栏占位：与真实 .tbb-bar 同位置同尺寸（10px 内衬 + 40px 按钮），数据落地时不至于是「底部弹出一条」 */
+.adetail-sk-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background-color: #fff;
+	box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+	z-index: 10;
+
+	/*  #ifdef  MP-WEIXIN  */
+	padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+	/*  #endif  */
+}
+
+.adetail-sk-btn {
+	width: 100%;
+	height: 40px;
+}

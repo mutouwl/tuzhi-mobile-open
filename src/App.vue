@@ -1,6 +1,9 @@
 <script>
 	import Vue from "vue";
 	import Wechat from "./common/wechat/wechat";
+	// 付费插件（拼团/送好友）安装态闸门：init 回包落库后置「本会话已就绪」并广播，
+	// 之前挂载的商详组件/插件页据此重判一次（详见 common/utils/plugin-guard.js 头注释）
+	import { markSystemConfigReady } from "./common/utils/plugin-guard";
 	export default {
 		onLaunch: function () {
 			/**
@@ -120,6 +123,10 @@
 				that.$api("common.init", {}).then((res) => {
 					if (res.code == 1) {
 						uni.setStorageSync("systemConfig", JSON.stringify(res.data));
+						// **本会话已就绪**：放在落库之后、广播之前（等待中的组件一收到就能读到这一份）。
+						// 失败（res.code != 1 / 网络异常）不置真：付费插件的入口宁可晚一轮出现，
+						// 也不许拿上一轮存下来的 flag 去发一条必然失败的请求（plugin-guard.js ①）
+						markSystemConfigReady();
 						// #ifdef H5
 						that.setSiteIcon(res.data.ico);
 						that.$nav.share();
@@ -215,6 +222,11 @@
 
 	*{
 		box-sizing: border-box;
+	}
+	/* 购买弹幕浮层锚点（2026-10-29）：九类商详页把 tz-group-buy-danmu(overlay) 挂进封面那一格，
+	   这层只提供定位上下文；贴角数值（top 44 / left 15）只存组件 `.gba-danmu--cover` 一处。 */
+	.gbd-anchor {
+		position: relative;
 	}
 	/* uni.showToast 要压在「图片放大预览」那一层之上：uni-app 的 app 外壳里 <toast> 排在
 	   <preview-image> 前面，同 z-index 时预览会把提示盖掉（日签图点「保存」要在放大图的同时
@@ -518,6 +530,37 @@
 		margin-right: auto;
 	}
 	/*  #endif  */
+
+	/* 底栏插槽里的插件入口（拼团 `.tbb-slot` / 送好友 `.sf-control-slot`）的宽度**必须落在全局表**，
+	   不能写进 `components/tz/bottom-btn.vue` 的 `<style>`（2026-10-29 用户第三次点名同一处：
+	   「底部操作栏 收藏、评论、分享、送好友 四个按钮为什么不能等宽」）。
+	   两个端各让那张表"够不着"一次：
+	     · 小程序端：底栏那一行的 flex 项是自定义组件的**宿主节点**（页面所有），组件 wxss 受
+	       样式隔离，`bottom-btn.wxss` 里的 `.control-box .sf-control-slot` 选不中它；
+	     · H5 端：uni-app 把组件样式自动 scoped，`.control-box .sf-control-slot[data-v-底栏]` 要求
+	       子组件根带**底栏的** scope id，而插槽内容是页面渲染的（只带页面的 scope id）⇒ 不命中。
+	   结果就是插件入口按内容收缩、同栏 `.control-btn` 等分 ⇒ 四枚里有一枚窄一截。
+	   全局表（H5 的全局 CSS / 小程序的 `app.wxss`）对这一枚两端都生效，所以口径写在这里，
+	   且沿用 `.control-btn` 那一档 `flex: 1 1 0`（basis 0 + `min-width:0`，三字标签不反撑）。
+	   调用点仍必须在组件标签上点出这两个 class，否则全局表没有抓手。 */
+	.sf-control-slot,
+	.tbb-slot {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	/* 插件入口**这一拍不该出现**时，宿主节点必须不占宽度（`display:none` 连 gap 一起收掉）。
+	   这一档是「入口是动态的」那一半：未装 / 总开关关 / 品类不可送 / 积分商品 / 没进行中活动，
+	   都要把那一格让回去（4 枚变 3 枚，剩下几枚各 1/3，而不是继续各占 1/4）。
+	   · 不许改成 `v-if` 卸载：送好友组件要一直挂着 —— 下拉刷新 / 支付成功回来还要
+	     `$refs.sfArea.reload()` 把它重新点亮，卸载了就再也没有 `$refs` 了；
+	   · 状态由组件 `visible` 事件给（判据落定才抛，取数在途不抛，见 `send-friend-area.vue`）；
+	   · 拼团那一枚是**无状态**的（摘要全由宿主页 `gbEntry` 传进来），所以它走 `v-if="gbEntry"`，
+	     class 这一档只是给「同样是动态、但要保持挂载」的入口留的备用档。 */
+	.sf-control-slot--off,
+	.tbb-slot--off {
+		display: none;
+	}
 
 	// .u-empty {
 	// 	margin: 140px 0 !important;

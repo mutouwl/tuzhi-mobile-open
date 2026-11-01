@@ -17,7 +17,7 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| group | string | 否 | 分组 | `` |
+| group | string | 否 | 分组 | - |
 | search | string | 否 | search | - |
 | sort | string | 否 | 排序 | `desc` |
 | order | string | 否 | 订单 | - |
@@ -27,7 +27,7 @@
 ```bash
 curl -X POST '{apiUrl}app/score/goods/index' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"group":"","search":"xxx","sort":"desc","order":"xxx"}'
+  -d '{"limit":10,"page":1,"group":"xxx","search":"xxx","sort":"desc","order":"xxx"}'
 ```
 
 ## 返回示例

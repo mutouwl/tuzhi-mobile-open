@@ -59,7 +59,7 @@
 		</tz-box>
 
 		<template v-if="data.question_list && data.question_list.length > 0">
-			<tz-divider />
+			<tz-divider bgColor="#fafafa" />
 			<tz-title title="解析" size="small" :more="false" />
 			<tz-box padding="0 15px 15px">
 				<template v-for="(item, index) in data.question_list">
@@ -74,7 +74,7 @@
 						:answer="item.answer"
 						@changeoption="changeOption"
 					/>
-					<tz-divider v-if="index < data.question_list.length - 1" />
+					<tz-divider bgColor="#fafafa" v-if="index < data.question_list.length - 1" />
 				</template>
 			</tz-box>
 		</template>

@@ -18,17 +18,17 @@
 | --- | --- | --- | --- | --- |
 | order_no | string | 否 | 订单号 | - |
 | pay_type | string | 否 | 支付类型 | - |
-| openid | string | 否 | OpenID | `` |
-| code | string | 否 | code | `` |
+| openid | string | 否 | OpenID | - |
+| code | string | 否 | code | - |
 | mode | string | 否 | 模式 | `short_series_coin` |
-| product_id | string | 否 | productID | `` |
+| product_id | string | 否 | productID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}pay/handle' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"xxx","pay_type":"xxx","openid":"","code":"","mode":"short_series_coin","product_id":""}'
+  -d '{"order_no":"xxx","pay_type":"xxx","openid":"xxx","code":"xxx","mode":"short_series_coin","product_id":"xxx"}'
 ```
 
 ## 返回示例

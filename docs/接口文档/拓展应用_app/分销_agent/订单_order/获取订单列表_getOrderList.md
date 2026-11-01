@@ -17,17 +17,17 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| type | string | 否 | 类型 | `` |
+| type | string | 否 | 类型 | - |
 | status | integer | 否 | 状态 | `0` |
-| uid | string | 否 | uid | `` |
-| time | string | 否 | 时间 | `time(` |
+| uid | string | 否 | uid | - |
+| time | string | 否 | 时间 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/agent/order/getOrderList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"type":"","status":0,"uid":"","time":"time("}'
+  -d '{"limit":10,"page":1,"type":"xxx","status":0,"uid":"xxx","time":"xxx"}'
 ```
 
 ## 返回示例

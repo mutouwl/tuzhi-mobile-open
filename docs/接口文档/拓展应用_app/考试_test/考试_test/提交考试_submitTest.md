@@ -18,13 +18,14 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | id | string | 否 | ID | - |
+| answer | array | 否 | 答案 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/test/test/submitTest' \
   -H 'Content-Type: application/json' \
-  -d '{"id":"xxx"}'
+  -d '{"id":"xxx","answer":"xxx"}'
 ```
 
 ## 返回示例

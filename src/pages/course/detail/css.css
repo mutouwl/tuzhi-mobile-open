@@ -96,6 +96,14 @@
     margin-top: 6px;
 }
 
+/* 购买前提示：本课程购买后需去微信小程序学习（判据是后端 mp_study flag） */
+.course-info .mp-study-tip {
+    color: #86909C;
+    font-size: 12px;
+    line-height: 18px;
+    margin-top: 8px;
+}
+
 .evaluate-list{
     background-color: #fff;
     padding: 0 10px;
@@ -196,7 +204,9 @@
     right: 0;
     bottom: 0;
     z-index: 100;
-    background-color: #F7F8FA;
+    /* 与页面底色同值（App.vue `page { background: rgba(250,250,250,1) }` = #fafafa；§1 的 #F7F8FA 是列表灰）：
+       骨架块之间那几条缝显示的就是这一层底，取默认灰会在数据回来的那一刻和真页面的缝跳一次色（M58 ③） */
+    background-color: #fafafa;
     overflow: hidden;
     /*  #ifdef H5  */
     /* H5 页面内容限宽 480px 居中（见 App.vue 的 page 样式），而骨架屏为 fixed 定位会铺满整个窗口，

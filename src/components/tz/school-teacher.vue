@@ -7,10 +7,11 @@
 		课次详情/我的预约的「授课老师」弹窗、DIY 自定义页面老师组件。
 	-->
 	<view class="tz-school-teacher" v-if="list && list.length">
+		<!-- 小程序端 `:style` 只认字符串（三元里带对象会原样写进 style，等于这一格没生效） -->
 		<view
 			class="tz-school-teacher-item"
 			:class="{ 'tz-school-teacher-item-square': !round }"
-			:style="index ? { marginTop: margin + 'px' } : null"
+			:style="index ? 'margin-top:' + margin + 'px' : ''"
 			v-for="(t, index) in list"
 			:key="t.id"
 			@tap="onTap(t)"

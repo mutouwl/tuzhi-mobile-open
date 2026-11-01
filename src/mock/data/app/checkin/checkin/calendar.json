@@ -1,0 +1,33 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344784",
+  "data": {
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "nickname": "冯**",
+    "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+    "nickname_max": 30,
+    "masked": 0,
+    "stats": {
+      "diary": 7,
+      "featured": 1,
+      "liked": 4,
+      "total": 5,
+      "streak": 0
+    },
+    "days": {
+      "2026-09-24": 1,
+      "2026-09-25": 3,
+      "2026-09-26": 1,
+      "2026-09-27": 1,
+      "2026-09-28": 1
+    },
+    "joined_days": 13,
+    "own_start": "2026-09-24",
+    "own_end": "2026-10-20",
+    "makeup_left": 0,
+    "owner_id": 38,
+    "is_self": 1
+  }
+}

@@ -1,6 +1,6 @@
 # 获取分销商品列表
 
-> 部分商品的实际价格依赖关联表或历史同步结果，不能只靠 goods.price 过滤
+> 关联条件必须带商品类型：不同业态的商品 ID 会重号（如课程 536 与教务套餐规格 536），
 
 ## 基本信息
 
@@ -19,8 +19,8 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| type | string | 否 | 类型 | `` |
-| name | string | 否 | 名称 | `` |
+| type | string | 否 | 类型 | - |
+| name | string | 否 | 名称 | - |
 | sort | string | 否 | 排序 | `time` |
 | order | string | 否 | 订单 | `desc` |
 
@@ -29,7 +29,7 @@
 ```bash
 curl -X POST '{apiUrl}app/agent/goods/getGoodsList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"type":"","name":"","sort":"time","order":"desc"}'
+  -d '{"limit":10,"page":1,"type":"xxx","name":"xxx","sort":"time","order":"desc"}'
 ```
 
 ## 返回示例

@@ -1,5 +1,7 @@
 # 获取悬浮窗数据
 
+> PC 端埋点才能自己判断记到哪、以及访问统计开关关掉后不发
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -176,7 +178,7 @@ curl -X POST '{apiUrl}app/pc/navigation/navigation' \
 | data | object | 业务数据 |
 | data.logo | object | Logo |
 | data.logo.img | string | 图片 |
-| data.logo.link | object | link |
+| data.logo.link | object | 连麦 |
 | data.logo.link.type | string | 类型 |
 | data.logo.link.config | array | 配置 |
 | data.quick_access | object | quickaccess |
@@ -199,7 +201,7 @@ curl -X POST '{apiUrl}app/pc/navigation/navigation' \
 | data.navigation | array | navigation |
 | data.navigation[].key | string | 密钥 |
 | data.navigation[].name | string | 名称 |
-| data.navigation[].link | object | link |
+| data.navigation[].link | object | 连麦 |
 | data.navigation[].link.type | string | 类型 |
 | data.navigation[].link.config | array | 配置 |
 | data.navigation[].link.selected | string | 是否选中 |
@@ -211,7 +213,7 @@ curl -X POST '{apiUrl}app/pc/navigation/navigation' \
 | data.navigation[].children[].name | string | 名称 |
 | data.navigation[].children[].parent_index | string | 上级列表 |
 | data.navigation[].children[].type | string | 类型 |
-| data.navigation[].children[].link | object | link |
+| data.navigation[].children[].link | object | 连麦 |
 | data.navigation[].children[].link.type | string | 类型 |
 | data.navigation[].children[].link.config | array | 配置 |
 | data.navigation[].children[].link.selected | string | 是否选中 |

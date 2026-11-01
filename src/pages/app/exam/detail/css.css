@@ -46,14 +46,17 @@
     margin-left: 5px;
 }
 
+/* 子项等分（2026-10-30 用户点名 `#/pages/app/exam/detail/detail?id=5`「exam-property-box 中的子项分布、
+   宽度可以等分，现在太集中了」）：卡内满宽、每项各占一份。原来是写死 300px + space-between，
+   而这一行的枚数会随「是否单独售卖」在 3 / 4 之间变 ⇒ 永远挤在卡中间那一小条 */
 .exam-property-box{
     display: flex;
-    justify-content: space-between;
-    width: 300px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .exam-property-box .exam-property-item{
+    flex: 1 1 0;
+    min-width: 0;
     text-align: center;
 }
 
@@ -94,4 +97,73 @@
     position: absolute;
     right: 0px;
     top: 36%;
+}
+/* 拼团横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   本页不再有卡上方那条独立横幅，`.exam-gb-banner` 随之删净 */
+
+/* ===== 首屏骨架屏（2026-10-30 用户点名 `/pages/app/exam/detail/detail?id=5`「加载的效果给我骨架屏」）=====
+   类名一律带 `exam-sk-` 前缀：本页样式块没有 scoped（M12），裸 `.title` / `.box` 会外溢到别页（M11）。
+   尺寸逐块对齐上方真实类，数据回来只换内容不换版位（M16）：
+     · 封面 230px 走 `.exam-header-box` / `.exam-cover` 同一份几何，只把图片换成灰块；
+     · 标题占位落在真实 `.exam-info-box`（绝对定位在封面下沿 + 15px 内衬）里，位置一致；
+     · 属性卡直接复用真实 `tz-box` 与 `.exam-property-item`，静态文案保持真文字，只把数值盖灰；
+     · 底栏按真实 `tz-bottom-btn` 的「60 filler + 10 内衬 + 40 按钮」占位。
+   灰块取 `#e5e6eb` ＝ 全站白底那一档（M6⑤），本页骨架只压在白卡与页面底上，不涉及有色底。 */
+.exam-sk-cover {
+    background: #e5e6eb;
+}
+
+/* 封面标题条：真实那一格是 20px 白字压在封面图的深色蒙层上 ⇒ 占位块取白色半透明，与它替代的
+   那一档同族；这里换成灰块会读成「封面上糊了一块脏灰」（M6⑤ 压底那条判据）。
+   高度 22px ≈ 20px 字号的真实行盒，宽度 62% 是「四到八个汉字标题」的常见档。 */
+.exam-sk-title {
+    width: 62%;
+    height: 22px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, .72);
+}
+
+/* 数值条：真实 `.exam-property-item-value` 是 18px 字 + `margin-top: 8px`，行盒约 20px ⇒
+   灰块 20px + 上外距 8px ＝ 真实行盒高，三格换真数字时不跳位（M16 灰块高那一档） */
+.exam-sk-value {
+    width: 46px;
+    height: 20px;
+    margin: 8px auto 0;
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+/* 底栏占位：真实 `tz-bottom-btn` 根节点里自带一只 60px 的 `.filler-box`（页面流里让位），
+   这一格与之同高，骨架切真实底栏时页面高度不变 */
+.exam-sk-filler {
+    width: 100%;
+    height: 60px;
+}
+
+/* 吸底条本体，逐值照 `components/tz/bottom-btn.vue` 的 `.box`：白底 + 10px 内衬 +
+   `0 0 8px rgba(0,0,0,.08)` 那一条；`h5-bottom-bar` 管 H5 限宽 480 居中（模板上已挂）。
+   阴影写成 `0 -2px 10px` 这一档（与实物商详骨架、全站吸底栏同一写法）。 */
+.exam-sk-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    z-index: 10;
+    /* #ifdef MP-WEIXIN */
+    /* 微信小程序端与真实 `.box` 同一档：安全区按设计加半（iPhone X 约 17px） */
+    padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+    padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+    /* #endif */
+}
+
+/* 按钮占位：真实 `u-button` 40px 高、4px 圆角（M17：全站按钮只有 4px 这一档） */
+.exam-sk-bar-btn {
+    width: 100%;
+    height: 40px;
+    border-radius: 4px;
+    background: #e5e6eb;
 }

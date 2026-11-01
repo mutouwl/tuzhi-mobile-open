@@ -75,7 +75,8 @@ const IMG_TIMEOUT = 1500;
  * @param {Object} canvas 2d 画布节点
  * @param {Array} srcs 图片地址（本地临时文件 / 已在 downloadFile 白名单里的网络地址）
  * @param {Object} alts 可选：{ 主地址: [备选地址, ...] }
- * @return {Promise<Object>} key = **主地址**，value = 加载好的图片对象；
+ * @return {Promise<Object>} key = **主地址**，value = 加载好的图片对象（非枚举的 `__used` 记着这一格
+ *                            实际用的是哪一枚：主地址本身还是某个备选——尺寸/内容可能不同，调用方按它判）；
  *                            一张都没到手的那些**不在清单里**（调用方据此判「这一层这次能不能画」）
  */
 function load2dImages(canvas, srcs, alts) {
@@ -111,17 +112,27 @@ function load2dImages(canvas, srcs, alts) {
 		const next = () => {
 			if (i >= cands.length) return Promise.resolve(null);
 			const cand = cands[i++];
-			return loadOne(cand).then((img) => (img ? { src: src, img: img } : next()));
+			return loadOne(cand).then((img) => (img ? { src: src, img: img, used: cand } : next()));
 		};
 		return next();
 	};
 	return Promise.all(list.map(loadBySrc)).then((rows) => {
 		const map = {};
+		// 「这一格最后画的是哪一枚」：主地址与备选在内容与尺寸上可能完全不同（如封面退到默认商品图），
+		// 调用方要拿它决定按谁的宽高裁（见 share-poster-body 的 coverPaint）——只记主键会让默认图被
+		// 按内容封面的比例裁掉一块
+		const used = {};
 		const missing = [];
 		rows.forEach((r, i) => {
-			if (r) map[r.src] = r.img;
-			else missing.push(list[i]);
+			if (r) {
+				map[r.src] = r.img;
+				used[r.src] = r.used;
+			} else {
+				missing.push(list[i]);
+			}
 		});
+		// 非枚举属性：drawImage 仍按主地址取图（wrap2d 的 images[src]），不影响任何遍历
+		Object.defineProperty(map, '__used', { value: used, enumerable: false });
 		// 静默缺失正是「海报上少一块」最难查的一类：这里必须留一声（调用方据此决定退档还是重试）
 		if (missing.length) console.warn('[canvas-2d] 这些图没能加载成画布图片对象（含备选都没成的）：', missing);
 		return map;

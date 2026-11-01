@@ -1,0 +1,40 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344782",
+  "data": {
+    "id": 15222,
+    "title": "副本-章节1任务1",
+    "content": "<p>正文内容</p><p><br></p>",
+    "tip": "",
+    "template": "",
+    "require": {
+      "text_min": 0,
+      "images_min": 0,
+      "videos_min": 0,
+      "audios_min": 0
+    },
+    "preview": 1,
+    "day": "2026-09-27",
+    "level": 2,
+    "start_time": 1790438400,
+    "end_time": 2105884799,
+    "show_time": 0,
+    "user_count": 2,
+    "done": 1,
+    "locked": 0,
+    "released": 1,
+    "can_makeup": 0,
+    "can_check": 0,
+    "check_state": "done",
+    "check_text": "已打卡",
+    "check_msg": "今日已完成该任务",
+    "checkin_id": 628,
+    "checkin_mode": 2,
+    "checkin_title": "name",
+    "checkin_cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "is_member": 1,
+    "member_status": 1,
+    "can_submit": 1
+  }
+}

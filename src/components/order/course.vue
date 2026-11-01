@@ -7,10 +7,11 @@
         }
     ]" :style="{ 'margin-bottom': margin + 'px' }" @click="courseHandle">
         <div class="cover" :style="{
-            'background-image': 'url(' + cover + ')',
+            'background-image': 'url(' + currentCover + ')',
             'background-size': '100% 100%'
         }">
-
+        <!-- 背景层与下面那张 `<img>` 读同一个 currentCover（prop 为空或加载失败时已是默认商品图，
+             2026-10-29 口径 M65）：背景层只负责宽高比不一的封面四周那圈模糊底 -->
         <img :src="currentCover" :alt="name" @error="imgError">
             <div class="type">
                 <span>{{ $t(type) }}</span>
@@ -27,7 +28,10 @@
                 {{ sku }}
             </div>
             <div class="footer">
-                <div class="price">
+                <!-- 小程序端只认字符串：三元里带对象字面量时 uni 不会把它序列化成串，WXML 直接报
+                     `unexpected token '`（带引号的键 `'font-weight'` 编进 style 表达式）⇒ 整页 WXML 编译失败。
+                     值语义不变，只是把两格拼成 style 串；H5 的 uni-view 同样吃串。 -->
+                <div class="price" :style="priceColor ? 'color:' + priceColor + ';font-weight:600' : ''">
                     <span class="unit" v-if="!isVirtualPay">¥ </span> {{ price }}<span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
                 </div>
 
@@ -98,6 +102,14 @@ export default {
         isVirtualPay: {
             type: Boolean,
             default: false
+        },
+        /**
+         * 价格那一行的字色：''= 全站既有那一档（#86909c 灰）；送好友提交页传红色那一档。
+         * 走 prop 而不是调用页 `::v-deep` —— 小程序端深穿透进不来组件，规则静默失效（M12）
+         */
+        priceColor: {
+            type: String,
+            default: ''
         },
         //是否有圆角
         round: {

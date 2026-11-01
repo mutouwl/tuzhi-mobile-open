@@ -1,14 +1,10 @@
 <template>
   <div>
     <div class="goods-popover" v-if="show && data && data.goods" @click="order">
-      <div
-        class="cover"
-        :style="{
-          'background-image': 'url(' + data.goods.cover + ')',
-          'background-size': '100% 100%',
-        }"
-      >
-        <img :src="data.goods.cover" :alt="data.goods.name" />
+      <div class="cover" :style="{ 'background-image': 'url(' + coverSrc + ')', 'background-size': '100% 100%' }">
+        <!-- 封面取不到（地址为空/加载失败）换全站默认商品图（2026-10-29，口径 M65）；
+             背景那一层与这张 `<img>` 读同一个 src，失败时两层一起换成默认图 -->
+        <img :src="coverSrc" :alt="data.goods.name" @error="onCoverError" />
         <div class="type">
           <span>{{ $t(data.goods.type) }}</span>
         </div>
@@ -61,6 +57,7 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key.js';
 import liveLibrary from "@/common/utils/live.js";
 import orderModal from "@/pages/course/live/goods/order-modal.vue";
 import detailPopup from "./detail-popup.vue";
@@ -80,7 +77,10 @@ export default {
       // 详情页弹窗相关
       detailUrl: '',
       goodsMessageHandler: null,
-      visibilityChangeHandler: null
+      visibilityChangeHandler: null,
+      // 封面加载失败标记（键 = mpKey(地址)）与全站默认商品图（2026-10-29，口径 M65）
+      coverErrors: {},
+      defaultCover: '/static/image/default-goods.jpg'
     };
   },
   props: {
@@ -89,7 +89,26 @@ export default {
       default: 0
     }
   },
+  computed: {
+    /** 封面真正摆出去的那一张：地址为空或加载失败都换默认商品图 `/static/image/default-goods.jpg`
+     *  （2026-10-29 口径 M65）。失败表按 mpKey(地址) 查，模板看不到模块级 import（M27） */
+    coverSrc() {
+      const url = String(((this.data || {}).goods || {}).cover || '');
+      if (!url) { return this.defaultCover; }
+      return this.coverErrors[mpKey(url)] ? this.defaultCover : url;
+    }
+  },
   methods: {
+    /** 图片 `@error` 回调会写到 data 上，入口先过「已销毁」闸门（M26②） */
+    gone() {
+      return this._isDestroyed === true || this._isBeingDestroyed === true;
+    },
+    /** 封面加载失败：记下这一张（写点同样过 mpKey） */
+    onCoverError() {
+      if (this.gone()) { return; }
+      const url = String(((this.data || {}).goods || {}).cover || '');
+      if (url) { this.$set(this.coverErrors, mpKey(url), true); }
+    },
     getData() {
       this.$api("live.goods.explaining", {
         live_id: this.liveId

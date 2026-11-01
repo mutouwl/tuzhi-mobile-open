@@ -6,7 +6,8 @@ export default {
   components: {banner,liveStartTimeBar},
   data() {
     return {
-      loading:false,
+      // 首屏（还没有详情）铺骨架屏，取数落地后整块换成真实版式
+      loading:true,
       data:{},
       form:{
         name:'',
@@ -36,7 +37,13 @@ export default {
           
 
           that.loading = false;
+        } else {
+          // 业务失败也要收口：停在骨架态读出来是「一直在加载」，原因交给全局那句 toast
+          that.loading = false;
         }
+      }).catch(() => {
+        // 网络异常 / 请求被拦：同样要收口（M22 的退出分支一次写全）
+        that.loading = false;
       });
     },
 

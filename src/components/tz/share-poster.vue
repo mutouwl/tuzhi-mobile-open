@@ -28,7 +28,7 @@
 					     闸门只是兜底，别把它当成这一族报错的解释。
 					     代价只是"点开弹层那一下才开始取海报素材"，弹层自带的加载态盖住这一段。 -->
 					<tz-share-poster-body v-if="posterBodyAlive" ref="body" :layout="layout" :style-options="styleOptions" :theme-index="themeIndex"
-						:poster="poster" :code-src="codeSrc" :code-alt-src="codeAltSrc" :code-loading="codePending" :render-loading="renderPending" :render-failed="renderFailed" :code-caption="codeCaption" :rendered-src="renderedSrc"
+						:poster="poster" :code-src="codeSrc" :code-alt-src="codeAltSrc" :code-loading="codePending" :bg-ink="bgInk" :render-loading="pending || renderPending" :render-failed="renderFailed" :code-caption="codeCaption" :rendered-src="renderedSrc"
 						:scale="posterScale" :bg-sizes="bgSizes"
 						@bg-error="onBgError" @bg-load="onBgLoad" @code-error="onCodeImgError" @next-quote="$emit('next-quote')" @copy-quote="$emit('copy-quote')" />
 				</view>
@@ -55,7 +55,7 @@
 							rows-height="8" :rows-width="[28, 20]"></u-skeleton>
 						<template v-else>
 							<u-icon name="edit-pen" :size="24" color="#1d2129"></u-icon>
-							<text class="sh-recommend-text">推荐语</text>
+							<text class="sh-recommend-text">分享链接</text>
 						</template>
 					</view>
 				</view>
@@ -73,7 +73,7 @@
 		<view v-else class="sh-stage sh-stage--inline">
 			<view class="sh-poster">
 				<tz-share-poster-body ref="body" :layout="layout" :style-options="styleOptions" :theme-index="themeIndex"
-					:poster="poster" :code-src="codeSrc" :code-alt-src="codeAltSrc" :code-loading="codePending" :render-loading="renderPending" :render-failed="renderFailed" :code-caption="codeCaption" :rendered-src="renderedSrc"
+					:poster="poster" :code-src="codeSrc" :code-alt-src="codeAltSrc" :code-loading="codePending" :bg-ink="bgInk" :render-loading="pending || renderPending" :render-failed="renderFailed" :code-caption="codeCaption" :rendered-src="renderedSrc"
 					:scale="1" :bg-sizes="bgSizes" @bg-error="onBgError" @bg-load="onBgLoad" @code-error="onCodeImgError"
 					@next-quote="$emit('next-quote')" @copy-quote="$emit('copy-quote')" />
 			</view>
@@ -85,7 +85,7 @@
 
 <script>
 /**
- * props: show, layout, poster, shareBgs, codeType, codeId, subject, showRecommend, recommendLoading, inline
+ * props: show, layout, poster, shareBgs, codeType, codeId, subject, showRecommend, recommendLoading, inline, pending
  *        layout        = 'daily'（打卡日签图）| 'content'（内容分享海报），透传给 tz-share-poster-body
  *        poster        = 这一张海报要画的内容（见 tz-share-poster-body 的 props 注释）
  *        shareBgs      = 后端下发的分享背景图清单；配了就整排只用底图、一档自带渐变都不掺，
@@ -99,6 +99,9 @@
  *                        取不到又没在取就不出，不留点了没反应的按钮）
  *        recommendLoading = 那份文案正在取：入口整格换成骨架块（区域遮罩那档），点它说「正在获取」
  *        inline        = 只摆一张海报、不套弹层（PC 限制提示页那一处）：出图与取码这一条链照走
+ *        pending       = 调用方那一条链（页面数据/素材）还没收尾：弹层照样点击即开、入口按钮不带 loading，
+ *                        等待只盖在海报那一格（与组件自己的 renderPending 同一档遮罩，M18⑨g/硬约束 21）；
+ *                        默认 false ⇒ 现有三个调用点逐字不变
  * emits: close、recommend（点推荐语入口）、share（只在普通浏览器 / App 那条兜底路上才有意义）、
  *        next-quote、copy-quote（daily 档海报上那两枚金句动作，金句库在调用方手里）、
  *        rendered(src)（图出好了：inline 档调用方要拿这个地址做点击放大 / 长按保存）
@@ -106,6 +109,8 @@
 import { buildStyleOptions, clampIndex, thumbStyle as thumbCss, styleText } from '@/common/utils/poster-theme';
 import { longPressOnly, previewSavablePoster, toSavableSrc } from '@/common/utils/poster-save';
 import { mpKey } from '@/common/utils/mp-data-key';
+// 底图档（商家自己上传的 share_bgs）的字色探测：浅底图配深字、深底图配白字，判不出来按白字收口
+import { probePosterInk } from '@/common/utils/poster-bg-ink';
 
 // 底部面板那一块的高（色板 54 + 按钮 ~40 + 上下内衬 40/20 + 间距），用来把海报舞台算成
 // 「面板顶到页面顶」那一段——段高按这个估算，宁可少算几像素（多算会让整列超出视口、把面板顶出屏）
@@ -151,6 +156,10 @@ export default {
 		recommendLoading: { type: Boolean, default: false },
 		// 只摆一张海报、不套弹层（PC 限制提示页那一处用）：出图与取码这一条链照走
 		inline: { type: Boolean, default: false },
+		// 调用方那一条链还没收尾（页面数据/素材还在取）：弹层照样点击即开，等待只写在海报那一格
+		// （盖的是本体那一只加载遮罩，与组件自己的 renderPending 同一档判据，M18⑨g / 硬约束 21）。
+		// **opt-in、默认 false**：现有三个调用点（分享弹窗、打卡日签图、PC 限制提示页）一个字都不改就逐字不变
+		pending: { type: Boolean, default: false },
 	},
 	data() {
 		return {
@@ -192,6 +201,11 @@ export default {
 			renderSeq: 0,
 			// 出图那一轮的硬上限表（到点强制撤「加载中」，见 onRenderTimeout）：一轮收尾就收掉它
 			renderGuard: 0,
+			// 当前这张底图的明暗判定结果（'light' 浅底配深字 / 'dark' 深底配白字 / '' 判不出来按白字），
+			// 由 refreshBgInk 探测后下发；它进 renderKey，所以判完会重出一张，预览与画布不会两套字色
+			bgInk: '',
+			// 探测的作废号：连点几个底图档时只有最后一张的结果算数
+			bgInkSeq: 0,
 		};
 	},
 	computed: {
@@ -234,6 +248,14 @@ export default {
 			return clampIndex(this.themeIndex, this.styleOptions.length);
 		},
 		/**
+		 * 当前选中的那一档是「商家上传的底图」吗（是的话才有明暗可探，见 refreshBgInk）
+		 * 渐变档不走这一条：它的深浅写在 POSTER_THEMES 的 tone 里，字色由 body 按档直接取
+		 */
+		activeImage() {
+			const o = this.styleOptions[this.activeIndex] || null;
+			return o && o.kind === 'image' ? o.url : '';
+		},
+		/**
 		 * 短屏收档：海报可用高 = 视口高 − 底部面板 − 舞台上下留白。整张按可用高缩放，
 		 * 画布那份恒为 300×400（存下来与分享出去的图不跟着分档）。
 		 * 下限 0.72 是「再小金句就看不清」的档，收在这个档里宁可让面板占满也不缩图。
@@ -263,7 +285,9 @@ export default {
 		 */
 		renderKey() {
 			const p = this.poster || {};
-			return [this.layout, this.activeIndex, this.codeSrc, this.codeFailed, p.nickname, p.avatar, p.name, p.quote,
+			// bgInk 也进 key：底图档的明暗要等像素探测回来才知道，判完必须重出一张，
+			// 否则盖在上面那张画布图还是按「判不出来」的白字画的，与预览不是同一版（M18④ 的镜像）
+			return [this.layout, this.activeIndex, this.codeSrc, this.codeFailed, this.bgInk, p.nickname, p.avatar, p.name, p.quote,
 				p.quoteFrom, p.totalDays, p.cover, p.inviteText].join('|');
 		},
 		/** 码的叫法按端分：小程序端出的是微信「小程序码」，其余端是普通二维码（同一张海报不能两头都写错名字） */
@@ -314,6 +338,8 @@ export default {
 					clearTimeout(this.bodyAliveTimer);
 					this.posterBodyAlive = true;
 					this.loadCode();
+					// 底图档的字色要在开场那一刻补探一次：activeImage 没变时它自己的 watcher 不会重跑
+					this.refreshBgInk(this.activeImage);
 					this.scheduleRender();
 				} else {
 					// 收起：等面板滑下去的动画跑完再卸载本体，避免收起过程中海报先空一块
@@ -322,6 +348,14 @@ export default {
 						this.posterBodyAlive = false;
 					}, 400);
 				}
+			},
+			immediate: true,
+		},
+		// 换到另一张底图（或从渐变切到底图）：重探一次字色。先清空 = 先按白字占位，
+		// 探测回来再切深字（浅底图那一档最多闪一下，不会被白字永远压住）
+		activeImage: {
+			handler(url) {
+				this.refreshBgInk(url);
 			},
 			immediate: true,
 		},
@@ -400,6 +434,27 @@ export default {
 		onBgError(url) {
 			if (this.gone()) return;
 			if (url) this.$set(this.bgErrors, mpKey(url), true);
+		},
+		/**
+		 * 探一次底图的明暗（浅底 → 深字 / 深底 → 白字），结果经 bgInk 下发给海报本体
+		 *
+		 * 为什么在壳这一层做：明暗只跟「当前选中的那张图」有关，而壳本来就握着 styleOptions/activeIndex；
+		 * 结果进 renderKey，判完自动重出一张，预览与画布不会两套字色。
+		 * 判不出来（跨域 / 端不支持 / 超时）回 ''，body 按改造前的白字口径收口 —— 浅底图最多维持原样，
+		 * 不会被猜成深底再压一层深字（那会比白字更糟）。
+		 * @param {String} url 当前选中那一档的底图地址；渐变档给空串（不发探测、结果回到 ''）
+		 */
+		refreshBgInk(url) {
+			const seq = ++this.bgInkSeq;
+			// 先回到「判不出来」这一档：换图那一刻宁可先白字，也不要拿上一张的判定结果套在新图上
+			this.bgInk = '';
+			// 弹层还没开就先不探（省掉一次图片请求）：开了以后由 active 那个 watcher 补探一次
+			if (!url || !this.active) return;
+			probePosterInk(url).then((tone) => {
+				// 晚到的那一次（用户已经换到别的档）整条丢弃，与取码那条 seq 闸门同一口径
+				if (this.gone() || seq !== this.bgInkSeq) return;
+				this.bgInk = tone || '';
+			});
 		},
 		// 底图 load 到手：记下原始宽高，画布按它算居中裁切（与 mode="aspectFill" 同一个结果）
 		onBgLoad(e) {

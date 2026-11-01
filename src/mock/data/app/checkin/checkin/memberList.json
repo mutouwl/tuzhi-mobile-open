@@ -1,0 +1,40 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344786",
+  "data": {
+    "title": "name",
+    "cover": "https://tuzhi.mutouweb.com/uploads/20260924/1790238068591-1.png",
+    "total": 4,
+    "rows": [
+      {
+        "user_id": 486,
+        "nickname": "打**",
+        "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/d8ZCuKyZcgBibBvGgCN44pUDibkmdZbTLD0FtVspibrdS744wMllzoxlmdWibp3o9C68icnZTiagYS0ONu5XvcnP7vBw/132",
+        "streak": 0,
+        "join_time": 1790288916
+      },
+      {
+        "user_id": 1000003992,
+        "nickname": "莎**",
+        "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaEITnAXTIuVibaibNPhNXhRv5pZsL5q5Dclx2S3qAYbT8rA3TWqichUibIlPVKDStNnvZuibjSbaDydqEHcbDW1TTHOrWAqnicVUTGbT9glyEzsNptkg/132",
+        "streak": 0,
+        "join_time": 1790256641
+      },
+      {
+        "user_id": 38,
+        "nickname": "冯**",
+        "avatar": "https://tuzhi.mutouweb.com/uploads/1/20250712/b487136c49fd59a1b1d5e35fe6cdbbfc.png",
+        "streak": 0,
+        "join_time": 1790247653
+      },
+      {
+        "user_id": 1000003993,
+        "nickname": "D**",
+        "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaELTVwA9Qry7j8ydfDmVvqykOjRAEQkBOyibahjJNHH7jcUGDKluKhqAU1J437smJMyiaXNMnLibRj6WPsAC5BuTk2kT97ozTR23aZd8jFOFPXGBQ/132",
+        "streak": 0,
+        "join_time": 1790246239
+      }
+    ]
+  }
+}

@@ -19,7 +19,7 @@
 | --- | --- | --- | --- | --- |
 | form_id | string | 否 | 表单ID | - |
 | log_id | string | 否 | 记录ID | - |
-| row | string | 否 | row | - |
+| row | array | 否 | row | - |
 
 ## 请求示例
 

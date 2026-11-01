@@ -571,12 +571,12 @@ curl -X POST '{apiUrl}app/pc/page/index' \
 | data.components[].config.autoPlay | boolean | auto播放 |
 | data.components[].config.showTitle | boolean | show标题 |
 | data.components[].config.swiper | array | swiper |
-| data.components[].config.swiper[].link | object | link |
+| data.components[].config.swiper[].link | object | 连麦 |
 | data.components[].config.swiper[].image | string | 图片 |
 | data.components[].config.swiper[].title | string | 标题 |
 | data.components[].config.navigation | array | navigation |
 | data.components[].config.navigation[].name | string | 名称 |
-| data.components[].config.navigation[].link | object | link |
+| data.components[].config.navigation[].link | object | 连麦 |
 | data.components[].config.navigation[].type | string | 类型 |
 | data.components[].config.navigation[].children | array | 下级 |
 | data.components[].config.showNavigation | boolean | showNavigation |
@@ -592,8 +592,8 @@ curl -X POST '{apiUrl}app/pc/page/index' \
 | data.components[].config.title_common.bgType | string | bg类型 |
 | data.components[].config.title_common.bgColor | string | bg颜色 |
 | data.components[].config.title_common.bgImage | string | bg图片 |
-| data.components[].config.title_common.linkType | string | link类型 |
-| data.components[].config.title_common.link | array | link |
+| data.components[].config.title_common.linkType | string | 连麦类型 |
+| data.components[].config.title_common.link | array | 连麦 |
 | data.components[].config.background_common | object | backgroundcommon |
 | data.components[].config.background_common.bgXPadding | integer | bgXPadding |
 | data.components[].config.background_common.bgYPadding | integer | bgYPadding |

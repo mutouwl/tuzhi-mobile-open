@@ -11,17 +11,6 @@
     background-color: #fff;
 }
 
-.category-entry {
-    display: flex;
-    align-items: center;
-    color: #0968f6;
-}
-
-.category-entry-text {
-    margin-right: 4px;
-    font-size: 14px;
-}
-
 .top-bar-title {
     flex: 1;
     text-align: center;

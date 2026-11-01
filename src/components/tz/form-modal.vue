@@ -19,7 +19,7 @@
                             </template>
                         </u-form-item>
                     </u-form>
-                    <tz-bottom-btn @handle="submit"  btnTitle="确定"/>
+                    <tz-bottom-btn @handle="submit" btnTitle="确定" :theme="theme"/>
                 </tz-box>
             </div>
         </u-popup>
@@ -54,6 +54,14 @@ export default {
             default: function(){
                 return {}
             }
+        },
+        /**
+         * 配色档（2026-10-31）：'group-buy' = 拼团那一趟（红橙渐变，与拼团提交页同一档）；
+         * 缺省空串 = 全站既有那一档，别处调用点零改动
+         */
+        theme: {
+            type: String,
+            default: ''
         },
     },
     watch: {

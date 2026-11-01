@@ -12,6 +12,8 @@
         'size-mid':size == 'mid',
         'size-large':size == 'large',
         'long':long,
+        'theme-send-friend':theme == 'send-friend',
+        'theme-group-buy':theme == 'group-buy',
         'disabled':disabled
     }
     
@@ -29,6 +31,17 @@
         props: {
             text: {
                 type: [String],
+                default: ""
+            },
+            // 业务主题：'' = 全站默认配色；'send-friend' = 送好友那一档的深钢蓝（#004C8B，
+            // 与 `bottom-btn` 的 theme 同名同值，两个组件读的是同一档业务色）；
+            // 'group-buy' = 拼团业务色（2026-10-30 用户点名「这个页面中的主题色是蓝色的，那最好可以
+            // 同步一下平台的主题色」——拼团模块自己的主题色是红橙，取 `group-buy-btn` /
+            // `group-buy-banner` 那一条 `linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%)`，
+            // 与商详底栏「立即开团」逐字同值，页面不再自己拼一条渐变）。
+            // 只换底色、不换圆角与尺寸 —— 圆角仍吃 4px（M17）。
+            theme: {
+                type: String,
                 default: ""
             },
             type: {
@@ -113,6 +126,22 @@
     .tuzi-btn.primary{
         color:  #fff;
         background-color: #0968f6;
+    }
+
+    /* 送好友主题：底色取 `bottom-btn` 同一档深钢蓝（#004C8B），白字；
+       只作用于显式传 theme="send-friend" 的调用点，其余按钮逐字不变 */
+    .tuzi-btn.primary.theme-send-friend{
+        background-color: #004C8B;
+        border-color: #004C8B;
+    }
+
+    /* 拼团主题：底色取 `group-buy-btn` / `group-buy-banner` 那一条红橙渐变（逐字同值，
+       与商详底栏「立即开团」同一套配色）；白字 3.34:1（渐变浅端 2.28，与模块内既有按钮同一档）。
+       只作用于显式传 theme="group-buy" 的调用点，其余按钮的蓝底逐字不变 —— 拼团详情页
+       `pages/app/group_buy/detail/detail.vue` 的动作区四枚主按钮走这一档 */
+    .tuzi-btn.primary.theme-group-buy{
+        background: linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%);
+        border-color: transparent;
     }
 
     .tuzi-btn.success{

@@ -79,8 +79,9 @@
 							]"
 						></view>
 					</view>
-					<!-- 普通操作按钮 -->
-					<view class="use-btn" v-else-if="!cantUseMsg && data.status != 'expired' && data.status != 'used'" @click="handleAction(data.id)">
+					<!-- 普通操作按钮：详情页（券使用页）把主操作统一放到卡外那一枚大按钮上，
+						 一屏只留一个主操作（M17），那里传 hide-action 收掉这一枚；picker 选框不受影响 -->
+					<view class="use-btn" v-else-if="!hideAction && !cantUseMsg && data.status != 'expired' && data.status != 'used'" @click="handleAction(data.id)">
 						{{ btnText }}
 					</view>
 				</view>
@@ -143,6 +144,12 @@ export default {
 			default: "coupon",
 		},
 		picker: {
+			type: Boolean,
+			default: false,
+		},
+		// 行内操作按钮不出：券使用页（pages/app/coupon/use）的主操作是卡外那一枚大按钮，
+		// 卡里再摆一枚就成了两个入口（且那一枚在未领的券上写的是「使用」，与「点击领取」打架）
+		hideAction: {
 			type: Boolean,
 			default: false,
 		},

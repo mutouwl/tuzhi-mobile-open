@@ -19,8 +19,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| order_no | string | 否 | 订单号 | `` |
-| wx_order_id | string | 否 | 微信订单ID | `` |
+| order_no | string | 否 | 订单号 | - |
+| wx_order_id | string | 否 | 微信订单ID | - |
 | auto_complete | integer | 否 | autocomplete | `0` |
 
 ## 请求头
@@ -34,7 +34,7 @@
 ```bash
 curl -X POST '{apiUrl}virtual_pay/queryOrder' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"","wx_order_id":"","auto_complete":0}'
+  -d '{"order_no":"xxx","wx_order_id":"xxx","auto_complete":0}'
 ```
 
 ## 返回示例

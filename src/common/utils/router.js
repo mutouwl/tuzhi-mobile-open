@@ -116,6 +116,14 @@ export default {
                     case 'circle':
                         url = '/pages/app/circle/presale/presale?id=' + src;
                         break;
+                    // 拼团商品（付费插件 group_buy）：值形如 `123_physical` —— 前段商品 id、后段商品大类
+                    // （与选择课程弹窗那套混合列表 id 同形）。**落点仍是那件商品的详情页**：拼团区由商详
+                    // 自己渲染（`tz-group-buy-area`，无进行中的活动就整段不出），拼团详情页要的是 team_id，
+                    // 活动本身没有独立落地页。九个大类→页面的映射只走本 switch 这一处（硬约束 11），
+                    // 这里再拆一次而不在调用点另拼路径 —— 十处 `$nav.to(link.src, link.type)` 一个都不用改。
+                    case 'group_buy':
+                        url = this.groupBuyPath(src);
+                        break;
                     // 打卡活动：落地页是活动主页（参与/购买入口在该页吸底栏），与后端 share Links 的 checkin 链路同一目标
                     case 'checkin':
                         url = '/pages/app/checkin/detail/detail?id=' + src;
@@ -124,6 +132,52 @@ export default {
             }
         }
         return url;
+    },
+
+    /**
+     * 拼团商品链接（`<商品 id>_<商品大类>`）→ 那件商品的详情页
+     *
+     * 拆出大类后**复用本表同一份 type→页面映射**，不在这一档再写一遍路径；
+     * 大类不认识（或老数据只存了商品 id）时与后端 `GoodsSpec::handleTypeOf()` 同口径回落课程详情。
+     *
+     * 分界取**第一个**下划线：商品 id 是数字、不含下划线，而大类里有 `school_package` 这种
+     * 自带下划线的档（按最后一个下划线拆会把 id 拆成 `123_school`、大类拆成 `package`，
+     * 落点直接指错页面 —— 这条是实跑矩阵抓出来的，别改回 lastIndexOf）。
+     * @param {*} src
+     * @returns {String}
+     */
+    groupBuyPath(src) {
+        var value = String(src == null ? '' : src);
+        var at = value.indexOf('_');
+        var goodsId = at < 0 ? value : value.slice(0, at);
+        var goodsType = at < 0 ? 'course' : value.slice(at + 1);
+        if (!goodsId) {
+            return '';
+        }
+        var url = '';
+        if (goodsType !== 'group_buy') {
+            url = this.groupBuyGoodsPath(goodsId, goodsType);
+        }
+        return url || this.getPagePath(goodsId, 'course');
+    },
+
+    /**
+     * 拼团商品的**落地页**（团详情「立即加入」与 `group_buy` 分享链接共用这一份映射）
+     *
+     * 与 `getPagePath` 只差 `checkin` 一档：打卡的拼团区挂在**介绍页** `checkin/intro`
+     * （那里才是「参与/购买」的商详形态），而通用 `checkin` 链接落的是打卡主页 `checkin/detail`
+     * —— 拿通用映射去拼 join 链接，受邀人会被送到一个没有拼团区的页面。
+     * 九个大类 → 页面的**唯一一份拼团口径**就长在这里；调用点只给 id 与大类。
+     * @param {Number|String} goodsId
+     * @param {String} goodsType
+     * @return {String} 空串 = 这一档没有可落的商品页
+     */
+    groupBuyGoodsPath(goodsId, goodsType) {
+        var type = String(goodsType || 'course');
+        if (type === 'checkin') {
+            return goodsId ? '/pages/app/checkin/intro/intro?id=' + goodsId : '';
+        }
+        return this.getPagePath(goodsId, type);
     },
 
 
@@ -204,10 +258,16 @@ export default {
     },
 
     /**
-     * 分享 
+     * 分享
+     * @param {String} title 卡片标题（空串＝页面的默认分享，可被后续内容页覆盖）
+     * @param {String} desc 描述行（只有微信 H5 链接卡片有这一行）
+     * @param {String} logo 卡片封面（空串回退站点 logo）
      * @param {*} type  time_line=用户点击右上角转发到朋友圈  app_message=用户点击右上角转发
+     * @param {String} landingLink H5 落地链接（可选）：分享**不是落在本页**时才给这一参
+     *   （送礼页必须落领取页 —— 本页只有购买人能看，转给好友点开会被「不是你购买的」挡住）。
+     *   取值一律吃后端出链（`Links::getLink` 随接口下发），端上不自己拼域名/路由（硬约束 33）。
      */
-    share(title = '',desc='',logo='', type = 'app_message') {
+    share(title = '',desc='',logo='', type = 'app_message', landingLink = '') {
 
         var shareParams = {};
 
@@ -278,7 +338,8 @@ export default {
         var baseUrl = idx > 0 ? url.substring(0, idx) : url.split('#')[0];
 
 
-        var link = baseUrl + "#" + shareParams.path;
+        // 落地链接：调用方给了就用它（后端出的整条链接，已带全参数），缺省按当前页拼
+        var link = landingLink || (baseUrl + "#" + shareParams.path);
 
         wxsdk.share({
             title: (title ? title : tools.systemConfig('name')),

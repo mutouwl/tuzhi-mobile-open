@@ -11,6 +11,9 @@
     "price_invite": 0,
     "order_count": 0,
     "price_total": 0,
-    "sales_total": 0
+    "sales_total": 0,
+    "price_balance": 0,
+    "next_settle_time": 0,
+    "next_settle_text": ""
   }
 }

@@ -18,8 +18,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| order_no | string | 否 | 订单号 | `` |
-| express_no | string | 否 | 物流号 | `` |
+| order_no | string | 否 | 订单号 | - |
+| express_no | string | 否 | 物流号 | - |
 
 ## 请求头
 
@@ -32,7 +32,7 @@
 ```bash
 curl -X POST '{apiUrl}app/physical/express/detail' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"","express_no":""}'
+  -d '{"order_no":"xxx","express_no":"xxx"}'
 ```
 
 ## 返回示例

@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<u-alert type="primary" title="选中一个账号作为主账号，另外的账号将被注销" description="账号合并后，被合并的账号权益（包括课程、账户、资产、订单等）将被迁移至新账号中。"></u-alert>
-		<tz-divider />
+		<tz-divider bgColor="#fafafa" />
 		<tz-title title="当前账号" :more="false" size="sm" />
 		<tz-box padding="5 10 15">
 			<div class="user-header" @click="radioChange('main')">
@@ -26,7 +26,7 @@
 				</div>
 			</div>
 		</tz-box>
-		<tz-divider />
+		<tz-divider bgColor="#fafafa" />
 		<tz-title title="冲突账号" :more="false" size="sm" />
 		<tz-box padding="5 10 15">
 			<div class="user-header" @click="radioChange('sub')">

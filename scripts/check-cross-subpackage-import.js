@@ -1,12 +1,22 @@
 /**
  * 跨分包组件引用扫描 —— 不构建、不开浏览器
  *
- * 微信的分包边界：**分包之间不能互相引用组件**，只有主包组件能被任意分包用。
+ * 微信的分包边界，两头都算违规：
+ *  · **分包 → 另一个分包**：不能互相引用组件；
+ *  · **主包 → 分包**：主包组件被任意分包引用时，那个分包未必已下载 ⇒ 同样不合法
+ *    （微信只保证「分包能用主包的组件」，反向不成立）。
  * uni-app 编译期不报这条（H5 端也一切正常），但产物里页面 json 的 `usingComponents`
- * 会写下另一个分包的路径 ⇒ mp-weixin 运行时 `Component is not found in path "..."`。
- * 丢的不是样式，是**该页自定义组件的实例化**，所以症状长得像 CSS 回归
- * （「卡片没间隔、圆角没了、弹窗停在骨架屏」），照着 CSS 查会白跑一轮 —— 2026-09-19 与 2026-09-28 各踩过一次
- * （后者是 `pages/course/detail` 引 `pages/app/form/components/custom-form.vue`，组件已挪 `src/components/tz/`）。
+ * 会写下另一个分包的路径 ⇒ mp-weixin 运行时
+ * `Component is not found in path "..." (using by "...")`。
+ * 丢的不是样式，是**该页自定义组件的实例化**：轻则「卡片没间隔、圆角没了、弹窗停在骨架屏」，
+ * 重则**在冷分包首帧把整棵初始创建流程打断**（`Framework inner error (expect FLOW_INITIAL_CREATION
+ * end but get FLOW_CREATE_NODE)` + `webviewScriptError`，整页白屏）—— 2026-09-19 / 2026-09-28 /
+ * 2026-10-31 共踩过三次：
+ *  · 前两次是「分包 → 分包」（`pages/course/detail` 引 `pages/app/form/components/custom-form.vue`）；
+ *  · 2026-10-31 是**主包 → 分包**（`components/order/submit-order.vue` 引
+ *    `pages/app/activity/components/form-modal.vue`）：下单页冷启白屏，automation 复现 4/5 次；
+ *    组件已挪 `src/components/tz/form-modal.vue`。**旧版脚本对 `from === MAIN` 直接 continue，
+ *    对这条最常见的「主包组件引分包组件」整片漏报**，这就是它第三次漏过的原因。
  *
  * 判 `@/` 绝对路径时必须先把前缀剥掉再判分包根：早先那版脚本把 `path.join(dir, ...)`
  * 也用在 `@/pages/...` 上，分包根判定成了引用方自己，**对最常见的 `@/` 写法整片漏报**（曾报「已清零」）。
@@ -70,13 +80,16 @@ files.forEach((rel) => {
     else continue;
     const fromRoot = rootOf(rel);
     const toRoot = rootOf(target);
-    if (fromRoot === toRoot || toRoot === 'MAIN' || fromRoot === 'MAIN') continue;
+    // 同包、或「分包 → 主包」都合法（主包资源一定先于分包就绪）；
+    // **「主包 → 分包」不合法**——主包组件被任意分包页面引用时，那个分包未必已下载（见文件头 2026-10-31 那条）
+    if (fromRoot === toRoot || toRoot === 'MAIN') continue;
+    const kind = fromRoot === 'MAIN' ? '主包→分包' : '分包→分包';
     if (isComment) {
       commented++;
-      console.log('[注释,可忽略] ' + rel + '  ->  ' + target);
+      console.log('[注释,可忽略][' + kind + '] ' + rel + '  ->  ' + target);
     } else {
       real++;
-      console.log('[真跨分包] ' + rel + '  ->  ' + target);
+      console.log('[真跨分包][' + kind + '] ' + rel + '  ->  ' + target);
     }
   }
 });

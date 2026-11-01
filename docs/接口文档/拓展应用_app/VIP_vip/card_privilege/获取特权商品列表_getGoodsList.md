@@ -19,8 +19,8 @@
 | --- | --- | --- | --- | --- |
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| type | string | 否 | 类型 | `` |
-| name | string | 否 | 名称 | `` |
+| type | string | 否 | 类型 | - |
+| name | string | 否 | 名称 | - |
 | sort | string | 否 | 排序 | `time` |
 | order | string | 否 | 订单 | `desc` |
 | privilege_type | string | 否 | 权益类型 | `free` |
@@ -31,7 +31,7 @@
 ```bash
 curl -X POST '{apiUrl}app/vip/card_privilege/getGoodsList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"type":"","name":"","sort":"time","order":"desc","privilege_type":"free","card_id":"xxx"}'
+  -d '{"limit":10,"page":1,"type":"xxx","name":"xxx","sort":"time","order":"desc","privilege_type":"free","card_id":"xxx"}'
 ```
 
 ## 返回示例

@@ -20,7 +20,7 @@ export function vipEntryOpen(systemConfig) {
 }
 
 /**
- * 按装修配置重算资产项与常用功能
+ * 按装修配置重算资产项与学习工具（原「常用功能」，2026-10-28 改名）
  * @param {Object} config 后端下发的装修配置
  * @param {Object} options 可配置项清单
  * @param {Object} assetsNav 页面现有的资产项（含接口回填的 value，按引用保留）
@@ -40,7 +40,7 @@ export function buildDecorate(config, options, assetsNav, systemConfig) {
     if (!meta || !assetsNav[key]) {
       return;
     }
-    // 与常用功能同一道闸门：带 app_tag 的付费插件项未安装时配置说了不算。
+    // 与学习工具同一道闸门：带 app_tag 的付费插件项未安装时配置说了不算。
     // 2026-10-03：「我的奖品」不再带 app_tag（奖品能力已升入标准版），
     // 所以这一格与余额/积分/优惠券走同一条路——装修配了就在，没配就不出
     if (meta.app_tag && !systemConfig("app_isinstall_" + meta.app_tag)) {

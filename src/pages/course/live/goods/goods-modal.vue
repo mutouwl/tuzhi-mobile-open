@@ -50,11 +50,13 @@
                 <div
                   class="cover"
                   :style="{
-                    'background-image': 'url(' + item.goods.cover + ')',
+                    'background-image': 'url(' + coverOf(item) + ')',
                     'background-size': '100% 100%',
                   }"
                 >
-                  <img :src="item.goods.cover" :alt="item.goods.name" />
+                  <!-- 封面取不到（地址为空/加载失败）换全站默认商品图（2026-10-29，口径 M65）；
+                       背景那一层与这张 `<img>` 读同一份 src，失败时两层一起换成默认图 -->
+                  <img :src="coverOf(item)" :alt="item.goods ? item.goods.name : ''" @error="onCoverError(item)" />
                   <div class="type">
                     <span>{{ $t(item.goods.type) }}</span>
                   </div>
@@ -131,6 +133,7 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key.js';
 var that;
 // const liveLibrary = require("@/common/utils/live.js");
 import liveLibrary from "@/common/utils/live.js";
@@ -149,7 +152,10 @@ export default {
       orderParams: {},
       loading: false,
       // 详情页弹窗相关
-      detailUrl: ''
+      detailUrl: '',
+      // 封面加载失败标记（键 = mpKey(地址)）与全站默认商品图（2026-10-29，口径 M65）
+      coverErrors: {},
+      defaultCover: '/static/image/default-goods.jpg'
     };
   },
   props: {
@@ -171,6 +177,23 @@ export default {
     },
   },
   methods: {
+    /** 图片 `@error` 回调会写到 data 上，入口先过「已销毁」闸门（M26②） */
+    gone() {
+      return this._isDestroyed === true || this._isBeingDestroyed === true;
+    },
+    /** 卡片封面真正摆出去的那一张：地址为空或加载失败都换默认商品图（2026-10-29，口径 M65）。
+     *  失败表按 mpKey(地址) 查——模板看不到模块级 import，所以走方法（M27） */
+    coverOf(item) {
+      const url = String(((item || {}).goods || {}).cover || '');
+      if (!url) { return this.defaultCover; }
+      return this.coverErrors[mpKey(url)] ? this.defaultCover : url;
+    },
+    /** 封面加载失败：记下这一张（写点同样过 mpKey） */
+    onCoverError(item) {
+      if (this.gone()) { return; }
+      const url = String(((item || {}).goods || {}).cover || '');
+      if (url) { this.$set(this.coverErrors, mpKey(url), true); }
+    },
     /**
      * 获取课程绑定的作业考试
      */

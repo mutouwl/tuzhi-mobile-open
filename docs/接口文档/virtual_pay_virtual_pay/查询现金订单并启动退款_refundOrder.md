@@ -18,9 +18,9 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | order_no | string | 否 | 订单号 | - |
-| refund_fee | string | 否 | 退款fee | `null` |
-| refund_reason | integer | 否 | 退款原因 | `0` |
-| req_from | integer | 否 | reqfrom | `3` |
+| refund_fee | string | 否 | 退款fee | - |
+| refund_reason | string | 否 | 退款原因 | `0` |
+| req_from | string | 否 | reqfrom | `3` |
 
 ## 请求头
 
@@ -33,7 +33,7 @@
 ```bash
 curl -X POST '{apiUrl}virtual_pay/refundOrder' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"xxx","refund_fee":"null","refund_reason":0,"req_from":3}'
+  -d '{"order_no":"xxx","refund_fee":"xxx","refund_reason":"0","req_from":"3"}'
 ```
 
 ## 返回示例

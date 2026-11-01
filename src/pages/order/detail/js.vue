@@ -5,6 +5,7 @@ import evaluateItems from '../components/evaluate-items.vue';
 import PackageGoodsCard from '@/components/tz/package-goods-card.vue';
 import orderStatus from '@/common/order/status.js'
 import { handleOrder } from '@/common/order/handle.js'
+import { FEATURE_SEND_FRIEND } from '@/common/utils/feature-flags.js';
 var that;
 // #ifdef MP-TOUTIAO
 import i18n from '@/components/language/index.js';
@@ -18,6 +19,8 @@ export default {
   },
   data() {
     return {
+      // 送好友未开发完毕 ⇒ 订单里的礼单段整段不出现（用户 2026-10-22 点名）
+      featureSendFriend: FEATURE_SEND_FRIEND,
       labelWidth: 70,
       labelStyle: {
         'text-align': 'right'
@@ -66,6 +69,18 @@ export default {
   },
 
   methods: {
+    /** 点拼团状态标 → 那一团的详情（M-P7）。team_id 缺失就不跳，不摆点了没反应的行 */
+    toGroupBuyTeam() {
+      const id = Number(this.data && this.data.group_buy && this.data.group_buy.team_id) || 0;
+      if (!id) { return; }
+      this.$nav.to('/pages/app/group_buy/detail/detail?team_id=' + id);
+    },
+    /** 点「送礼记录」→ 赠送记录页，并只列这一张购买单的礼单（2026-10-20 M-P8） */
+    toSendFriendGifts() {
+      const orderNo = (this.data && this.data.order_no) || '';
+      if (!orderNo) { return; }
+      this.$nav.to('/pages/app/send_friend/gift/gift?order_no=' + orderNo);
+    },
     subGoodsTypeName(type) {
       const map = { course: '视频', audio: '音频', article: '图文', live: '直播', vipcard: '会员卡', exercises: '练习', column: '专栏', physical: '实物商品' };
       return map[type] || type;

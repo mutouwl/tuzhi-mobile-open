@@ -49,11 +49,11 @@ export default {
   },
   methods: {
 
-    //状态被切换
-    tabChange(index) {
-      if (that.current === index) return;
-      that.current = index;
-      that.form.type = that.tabs[index].type;
+    //状态被切换（u-tabs 的 change 回的是整条页签对象 + index，取法与订单列表 pages/order/list/js.vue 同一份）
+    tabChange(tab) {
+      if (that.current === tab.index) return;
+      that.current = tab.index;
+      that.form.type = tab.type;
       that.refresh();
     },
 

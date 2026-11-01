@@ -1,0 +1,257 @@
+/* 送好友「礼盒」视觉的共用档（送礼页 M-P9 / 领取页 M-P6 共用）：
+   蓝色礼盒面板 + 彩带 + 商品卡外框 + 终局白卡（已领取 / 已失效）+ 页首大标题 + 正文居中骨架。
+   ⚠ 这一份只放**两页同形**的东西；送礼页自己的动作区/骨架按钮仍在
+   `pages/app/send_friend/send/css.css`，领取页自己的白色卡版式仍在
+   `pages/app/send_friend/receive/css.css`。
+   ⚠ **页面底色不在这里、也不在任一页 css 里**：两页都走全站默认 #f7f8fa（App.vue 的
+   `.school-page`）；2026-10-28 用户先点名领取页、再点名送礼页「背景色恢复为默认」，
+   暖米底 #FDF5E4 整族下线 —— 只留面板/白卡/文字这套主题档。
+   颜色取参考页实测：面板 #234A9A→#2453AB、金字 #ECD3A4、彩带 #D9BC86、
+   大标题 #134D9D、领取人昵称 #3F6699、日期 #888888；单位只用 px（禁 rpx）。 */
+
+/* 正文那一格：送礼页靠它把礼盒推到剩余空间的中线；领取页（终局态）靠它把内容从上往下排 */
+.sfs-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 16px 4px;
+  box-sizing: border-box;
+}
+
+/* ── 蓝色礼盒面板 ─────────────────────────────────────────────────────────── */
+.sfs-hero {
+  padding: 24px 16px 20px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #234A9A 0%, #2453AB 100%);
+  box-sizing: border-box;
+}
+
+/* ── 彩带（纯 CSS 装饰：两段金线 + 中间一只蝶结）────────────────────────── */
+/* 金色只作装饰，不承载信息；对比度按「非文本」一档（≥3:1）取舍，故取偏亮一档 #D9BC86 */
+.sfs-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  gap: 8px;
+}
+
+.sfs-ribbon-line {
+  width: 56px;
+  height: 1px;
+}
+
+.sfs-ribbon-line--l {
+  background: linear-gradient(90deg, rgba(217, 188, 134, 0) 0%, #D9BC86 100%);
+}
+
+.sfs-ribbon-line--r {
+  background: linear-gradient(90deg, #D9BC86 0%, rgba(217, 188, 134, 0) 100%);
+}
+
+.sfs-ribbon-bow {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+/* 两只耳朵：14 × 10 的椭圆、1px 金线，各向外倾斜 —— 与参考页那只丝带比例同档 */
+.sfs-ribbon-loop {
+  width: 14px;
+  height: 10px;
+  border: 1px solid #D9BC86;
+  border-radius: 50%;
+  box-sizing: border-box;
+  flex: none;
+}
+
+.sfs-ribbon-loop--l {
+  transform: rotate(-18deg);
+  margin-right: -2px;
+}
+
+.sfs-ribbon-loop--r {
+  transform: rotate(18deg);
+  margin-left: -2px;
+}
+
+.sfs-ribbon-knot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid #D9BC86;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  background: #234A9A;
+  flex: none;
+  z-index: 1;
+}
+
+/* ── 标题与商品卡 ─────────────────────────────────────────────────────────── */
+.sfs-hero-title {
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #ECD3A4;
+}
+
+/* 商品卡：白卡自带 10px 圆角（`round` prop）。2026-10-28 用户点名「商品卡片的右侧文字信息区域
+   是白色的，在蓝色心意卡片背景下很不协调，最好给商品卡片增加半透的边框过渡一下」：
+   **卡外补一圈半透明白边** —— 2px 内衬 + 1px 描边（外圆角 13 = 卡 10 + 内衬 2 + 描边 1），
+   白卡与深蓝面板之间多一档过渡，不是硬切口。这一层只管「压在色块上」的用法，
+   浅底上的调用点不挂 `.sfs-gift`；也不许改卡片本体背景（白卡是 `tz-course-mini` 的档）。 */
+.sfs-gift {
+  margin-top: 18px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+
+/* ── 骨架灰块（两页共用）─────────────────────────────────────────────────── */
+/* 彩带条 / 标题条压在蓝面板上，用半透明白；主按钮块与 `tz-button size="normal"` 实高 41 同高 */
+.sfs-sk-ribbon {
+  width: 160px;
+  height: 10px;
+  margin: 5px auto 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.sfs-sk-title {
+  width: 60%;
+  height: 18px;
+  margin: 13px auto 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.sfs-sk-btn {
+  height: 41px;
+  margin-top: 24px;
+  border-radius: 4px;
+  background: #E5E6EB;
+}
+
+/* ── 终局那一档（已领取 / 已失效，2026-10-28 用户给的参考图）──────────────── */
+/* 终局不再垂直居中：参考图是「页首大标题 → 蓝面板 → 白卡」从上往下排，下方留白 */
+.sfs-main--result {
+  justify-content: flex-start;
+  padding-top: 64px;
+}
+
+/* 页首大标题「礼物已领取」：28px / 深蓝 #134D9D（参考图实测），与下面的蓝面板拉开 40px */
+.sfs-result-title {
+  display: block;
+  margin-bottom: 40px;
+  text-align: center;
+  font-size: 28px;
+  line-height: 38px;
+  font-weight: 600;
+  color: #134D9D;
+}
+
+/* 白卡：标题居中 + 一行「谁 / 领取了你的赠送 / 日期」；圆角 10（与蓝面板同档，M21 的页面卡例外） */
+.sfs-claim-card {
+  margin-top: 24px;
+  padding: 18px 12px 20px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.sfs-claim-head {
+  display: block;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+/* 一行排开、整行居中：头像 → 昵称 → 「领取了你的赠送」→ 日期（参考图那一行） */
+.sfs-claim-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.sfs-claim-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: none;
+  background: #F2F3F5;
+}
+
+/* 没有头像时画一个灰人形（参考图那只灰剪影），不引入新图片资源 */
+.sfs-claim-avatar--default {
+  position: relative;
+  background: transparent;
+}
+
+.sfs-claim-avatar-head {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #C9CDD4;
+}
+
+.sfs-claim-avatar-body {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  width: 16px;
+  height: 8px;
+  margin-left: -8px;
+  border-radius: 8px 8px 0 0;
+  background: #C9CDD4;
+}
+
+/* 昵称用钢蓝（参考图那一行）、正文黑、日期灰；昵称过长截断，整行不换行 */
+.sfs-claim-name {
+  min-width: 0;
+  max-width: 80px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #3F6699;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sfs-claim-text {
+  flex: none;
+  font-size: 13px;
+  line-height: 18px;
+  color: #1D2129;
+  white-space: nowrap;
+}
+
+.sfs-claim-date {
+  flex: none;
+  font-size: 12px;
+  line-height: 18px;
+  color: #888888;
+  white-space: nowrap;
+}
+
+/* 已失效那一档：白卡里只摆一句原因，居中、灰字 */
+.sfs-claim-reason {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909C;
+}

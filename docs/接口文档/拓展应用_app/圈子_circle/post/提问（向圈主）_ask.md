@@ -32,7 +32,16 @@ curl -X POST '{apiUrl}app/circle/post/ask' \
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "发布成功",
+  "time": 1786492800,
+  "data": {
+    "id": 112
+  }
+}
+```
 
 ## 返回参数说明
 
@@ -41,3 +50,4 @@ curl -X POST '{apiUrl}app/circle/post/ask' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data.id | integer | ID |

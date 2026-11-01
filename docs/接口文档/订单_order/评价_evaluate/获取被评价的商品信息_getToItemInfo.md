@@ -15,15 +15,15 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| order_no | string | 否 | 订单号 | `` |
-| item_id | string | 否 | 条目ID | `` |
+| order_no | string | 否 | 订单号 | `202605404545609185003800` |
+| item_id | string | 否 | 条目ID | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}order/evaluate/getToItemInfo' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"","item_id":""}'
+  -d '{"order_no":"202605404545609185003800","item_id":"xxx"}'
 ```
 
 ## 返回示例

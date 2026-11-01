@@ -40,6 +40,16 @@
     color: #86909C;
     text-decoration:line-through;
 }
+
+/* 开启新账本后压在白底上的那一句说明：字号与颜色走 §1「辅助灰」那一档（12px / #86909C），
+   与上面的金额留 10px，左右内衬跟 .settle-header 的居中版式对齐 */
+.settle-note{
+    margin-top: 10px;
+    padding: 0 24px;
+    font-size: 12px;
+    line-height: 18px;
+    color: #86909C;
+}
 /* ===== 提现结算页首屏骨架屏（M16）=====
    占位块复用真实那一格的容器类（.settle-header 居中 + padding-top 30 / .settle-icon 50×50 /
    .settle-tip 14px 且上留 20 / .settle-balance 26px 且上留 6），行高由这些真实类给，

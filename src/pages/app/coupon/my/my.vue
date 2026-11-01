@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <u-sticky bgColor="#fff" :offsetTop="0">
-      <div class="nav-bar">
-        <u-subsection :list="tabs" :current="current" @change="tabChange"></u-subsection>
-      </div>
+    <!-- 状态页签吸顶：照订单列表页 pages/order/list 那一档（裸 u-tabs + uview 默认配色，页面不写页面级覆写），
+         原来这一排是分段器 u-subsection，2026-10-27 按订单列表改成页签 -->
+    <u-sticky bgColor="#fff" style="padding-bottom: 2px;" :offsetTop="0">
+      <u-tabs :list="tabs" :current="current" :scrollable="true" @change="tabChange"></u-tabs>
     </u-sticky>
 
     <!-- 首屏骨架屏（ui-baseline-mobile M16，替代原来的 uni.showLoading 黑底转圈 toast）：

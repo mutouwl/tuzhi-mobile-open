@@ -1,5 +1,7 @@
 <script>
 import { detailTitle, applyH5Share, mpCard } from "@/common/utils/checkin-share";
+// 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
+import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
 var that;
 export default {
   data() {
@@ -12,9 +14,31 @@ export default {
       password: "",
       // 参与请求进行中：防连点（成功后要跳主页，连点会开两份主页）
       joining: false,
+      // 拼团区「这一趟是被送去下单/支付的」那本账：回本页时只静默重取拼团区那两条
+      // （开团付完款要看见自己那一行、活动结束要把那一段收掉），本页本体仍按原有判据取
+      // 购买弹幕素材（拼团区 @ready 上抛的 `activity.buyers`），只喂封面左上角那一枚
+      gbBuyers: [],
+      gbPending: false,
+      // 拼团区经 @ready 上抛的活动摘要（{ text } / null）：底栏那枚拼团按钮的显隐与文案吃它
+      gbEntry: null,
+      // 「我在这一场拼团里已有进行中的团」：底栏那枚「立即购买」收不收吃它（PRD 2026-10-27）。
+      // 判据只认拼团区 @ready 上抛的 inTeam（后端 GoodsArea::myTeam），页面不读 my_team 自己拼
+      gbInTeam: false,
+      // 受邀参团（2026-10-30）：URL 带 gb_team 时进 join 态，底栏只留「加入拼团」
+      gbJoinCtx: null,
+      gbJoinMode: false,
     };
   },
   computed: {
+    /**
+     * 宿主价格行显不显示（2026-10-30 第五轮，用户第二次点名「拼团价要复制覆盖原来的价格」）：
+     * 拼团进行中（拼团区 `@ready` 上抛的 `gbEntry.activity` 非空）⇒ 本页价格行收起，
+     * 价格只由拼团卡第一行的横幅给 —— 一屏只有一个价；没有活动 / 活动结束抛 null ⇒ 照常显示。
+     * 判据只此一处（与底栏那枚拼团按钮、封面弹幕同一份 `gbEntry`）。
+     */
+    gbPriceShown() {
+      return !(this.gbEntry && this.gbEntry.activity);
+    },
     // 分享卡片（详情页口径）：标题取活动名称、封面取活动封面，与打卡主页/教务详情页同口径；
     // 活动名要等 detail 接口回来，未回来时用「打卡」占位，不能让卡片标题空着
     shareTitle() {
@@ -132,11 +156,20 @@ export default {
       return;
     }
     that.id = Number(options.id || 0);
+    // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
+    that.gbJoinCtx = readGroupBuyJoin(options);
+    that.gbJoinMode = !!that.gbJoinCtx;
     that.getData();
   },
   onShow() {
     // 模块级 that 停在最后 onLoad 的实例上；本页重新可见先收回绑定（同路由多实例时交互会改到销毁的实例上）
     that = this;
+    // 拼团区那一条链（开团/参团 → 支付面板 → 团详情）退回来：只有「这一趟是被拼团区送出去的」
+    // 才静默重取它自己那两条（硬约束 16：退回哪一页由那一页自己重取，取的是那一块、不是替它整页取）
+    if (that.gbPending) {
+      that.gbPending = false;
+      if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
+    }
     // 购买/参与链路回到本页（如反悔退出下单页）：静默刷新一次成员态与统计，不整页闪骨架
     if (that && that.id && !that.loading) that.getData();
   },
@@ -145,8 +178,29 @@ export default {
       () => uni.stopPullDownRefresh(),
       () => uni.stopPullDownRefresh()
     );
+    // 下拉是本块唯一的强制重载出口：拼团区跟着重取它自己那两条（活动结束就把整段收掉）
+    if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
   },
   methods: {
+    /**
+     * 拼团区（`components/tz/group-buy-area.vue`）要把人带去开团/参团：
+     * 导航由组件自己发（它才知道选了哪一档、凑的是哪一个团），本页只记这一枚「去过了」的账，
+     * 回来由 onShow 兑。用 `this` 不用模块级 `that`：这一枚是模板上的事件处理器。
+     */
+    gbGoPay() {
+      this.gbPending = true;
+    },
+    /** 拼团区 @ready：活动摘要收下来喂给底栏那枚拼团按钮（摘要字符串由组件算好，本页不加工） */
+    gbReady(entry) {
+      this.gbEntry = entry;
+      this.gbInTeam = !!(entry && entry.inTeam);
+      this.gbJoinMode = !!(entry && entry.join);
+      this.gbBuyers = (entry && entry.activity && entry.activity.buyers) || [];
+    },
+    /** 底栏「¥xx 拼团」按钮：就地开拼团区那只凑团弹层（壳挂在拼团区组件里，不走页面导航） */
+    openGb() {
+      if (this.$refs.gbArea) { this.$refs.gbArea.openPopup(); }
+    },
     // 分享卡片口径见 common/utils/checkin-share：H5 走 JSSDK，小程序端走下面的 onShare* 钩子
     applyShare() {
       applyH5Share(this.$nav, this.shareTitle, this.shareCover);

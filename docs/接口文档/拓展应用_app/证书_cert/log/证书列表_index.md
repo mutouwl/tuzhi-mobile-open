@@ -1,5 +1,7 @@
 # 证书列表
 
+> 打卡证书的懒发放：发放时间=活动结束的证书，没有定时任务，进证书列表这一刻把已到发放时机的补上
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -273,7 +275,7 @@ curl -X POST '{apiUrl}app/cert/log/index' \
 | data[].cert.issue_date_display_text | string | issue日期displaytext |
 | data[].cert.number_display_text | string | numberdisplaytext |
 | data[].cert.qr_code_display_text | string | qrcodedisplaytext |
-| data[].cert.qr_code_link_text | string | qrcodelinktext |
+| data[].cert.qr_code_link_text | string | qrcode连麦text |
 | data[].cert.bind_content | object | 绑定内容 |
 | data[].cert.bind_content.id | integer | ID |
 | data[].cert.bind_content.cover | string | 封面图 |

@@ -1,10 +1,18 @@
 <template>
   <view>
-    <!-- 筛选弹窗（排序 + 时间）：圈子首页/圈子搜索页与教务流水/上课记录页共用。
-         排序选项由 sortOptions 配置，传空数组隐藏排序组（仅时间筛选场景） -->
+    <!-- 筛选弹窗（类型 + 排序 + 时间）：圈子首页/圈子搜索页与教务流水/上课记录页共用。
+         类型由 typeOptions 配置、排序由 sortOptions 配置，传空数组即隐藏该组（全站搜索/流水各取所需） -->
     <u-popup :show="visible" mode="bottom" :round="16" closeable :safeAreaInsetBottom="false" @close="onClose">
       <view class="sort-popup">
         <view class="sort-popup-title">{{ title }}</view>
+
+        <template v-if="typeOptions.length">
+          <view class="filter-group-title">类型</view>
+          <view class="type-options">
+            <view v-for="option in typeOptions" :key="option.value" class="type-option"
+              :class="{ active: pendingType == option.value }" @tap="pendingType = option.value">{{ option.name }}</view>
+          </view>
+        </template>
 
         <template v-if="sortOptions.length">
           <view class="filter-group-title">排序</view>
@@ -23,6 +31,7 @@
           </view>
         </view>
 
+        <view class="sort-gap"></view>
         <view class="sort-confirm" @tap="onConfirm">确认</view>
       </view>
     </u-popup>
@@ -40,12 +49,12 @@
 import TCalendar from '@tdesign/uniapp/calendar/calendar.vue';
 
 /**
- * 筛选弹窗（排序 + 时间）
+ * 筛选弹窗（类型 + 排序 + 时间）
  *
- * 受控组件：visible/sort/timeFilter/customRange 由父页面持有，
+ * 受控组件：visible/typeValue/sort/timeFilter/customRange 由父页面持有，
  * 打开时以当前生效筛选作为待选项；确认后通过 confirm 事件返回待应用的值，由父页面应用并刷新列表。
  * 自定义时间范围（日历）的交互闭环在组件内部完成：点自定义 → 关弹窗开日历 → 确认 → 回到弹窗。
- * sortOptions 传空数组时隐藏排序组，用于仅时间筛选的页面（教务流水/上课记录）。
+ * typeOptions / sortOptions 传空数组即隐藏对应组：只筛时间（教务流水/上课记录）、只筛类型+排序（全站搜索）各取所需。
  */
 const DEFAULT_SORT_OPTIONS = [
   { name: '最新发布', value: 'new' },
@@ -76,6 +85,16 @@ export default {
       type: Array,
       default: () => DEFAULT_SORT_OPTIONS,
     },
+    // 当前生效的内容类型（取值须在 typeOptions 内，'' = 全部）
+    typeValue: {
+      type: String,
+      default: '',
+    },
+    // 类型选项（name/value），空数组隐藏类型组
+    typeOptions: {
+      type: Array,
+      default: () => [],
+    },
     // 当前生效时间筛选（all/7/30/custom）
     timeFilter: {
       type: String,
@@ -96,6 +115,7 @@ export default {
     return {
       pendingSort: 'new',
       pendingTime: 'all',
+      pendingType: '',
       pendingCustomRange: { start: '', end: '' },
       calendarVisible: false,
       fromCalendar: false, // 从日历返回弹窗的标志：回弹窗时不重置 pending 待选项
@@ -130,6 +150,7 @@ export default {
           // 首次打开：以当前生效筛选作为待选项
           this.pendingSort = this.sort;
           this.pendingTime = this.timeFilter;
+          this.pendingType = this.typeValue;
           this.pendingCustomRange = { start: this.customRange.start, end: this.customRange.end };
         }
         this.fromCalendar = false;
@@ -152,6 +173,7 @@ export default {
       this.$emit('confirm', {
         sort: this.pendingSort,
         timeFilter: this.pendingTime,
+        type: this.pendingType,
         customRange: this.pendingCustomRange,
       });
       this.$emit('update:visible', false);
@@ -224,7 +246,26 @@ export default {
 .sort-options { display: flex; gap: 7px; margin-top: 9px; }
 .sort-option { flex: 1; padding: 9px 0; border-radius: 6px; background: #f6f7f9; color: #5e6670; font-size: 13px; text-align: center; }
 .sort-option.active { background: #eaf3ff; color: #0968f6; font-weight: 600; }
-.time-options { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; margin-bottom: 20px; }
+/* 类型组：选项多（全站搜索 9 类）按 4 列换行，短名等宽、长名（实物商品）自动占位不挤字；
+   高度与排序组同档 36px，选中态配色与排序组逐值相同 */
+.type-options { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.type-option {
+  flex: 0 1 auto;
+  min-width: calc(25% - 7px);
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 6px;
+  background: #f6f7f9;
+  color: #5e6670;
+  font-size: 13px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.type-option.active { background: #eaf3ff; color: #0968f6; font-weight: 600; }
+.time-options { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
 /* 高度固定（选中态不因内容变高）；短选项按 min-width 等宽一行四个，内容超长的选项（自定义日期范围）自动换行独占下一行 */
 .time-option {
   flex: 0 1 auto;
@@ -244,8 +285,12 @@ export default {
 }
 .time-option.active { background: #eaf3ff; color: #0968f6; font-weight: 600; }
 .time-option-extra { margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; opacity: 0.75; }
+/* 收口间距：占位块「可增长但有下限」——面板没占满 min-height 时由它吸收剩余空间把按钮压到底，
+   占满时仍保底 20px。只写 margin-top:auto 时内容一旦撑过 min-height，auto 间距就归零，
+   最后一组选项直接贴住确认按钮（2026-10-27 全站搜索筛选弹窗点名） */
+.sort-gap { flex: 1 0 20px; }
 /* 大按钮样式对齐全 App 惯例（44px 高/15px/字重500/主题蓝 #0968f6/4px 圆角） */
-.sort-confirm { margin-top: auto; padding: 11px 0; border-radius: 4px; background: #0968f6; color: #fff; font-size: 15px; font-weight: 500; text-align: center; }
+.sort-confirm { padding: 11px 0; border-radius: 4px; background: #0968f6; color: #fff; font-size: 15px; font-weight: 500; text-align: center; }
 /* TDesign 日历：选中态/区间色对齐项目主题蓝 */
 .t-calendar {
   --td-calendar-active-color: #0968f6;

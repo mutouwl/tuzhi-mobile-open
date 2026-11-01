@@ -17,7 +17,7 @@
 					</u-cell>
 				</tz-box>
 
-				<tz-divider />
+				<tz-divider bgColor="#fafafa" />
 
 				<tz-title title="退款信息" :more="false" size="sm" />
 				<tz-box padding="0px 15px 15px">
@@ -49,7 +49,7 @@
 					</u-cell-group>
 				</tz-box>
 				<template v-if="data.service == 1 || data.service == 3">
-					<tz-divider />
+					<tz-divider bgColor="#fafafa" />
 					<tz-box padding="10px 15px">
 						<div class="order-footer">
 							<u-button class="order-btn" @click="cancel" text="撤销申请" style="width: 70px;"></u-button>

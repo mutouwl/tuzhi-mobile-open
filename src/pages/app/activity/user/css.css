@@ -5,80 +5,259 @@
 }
 /*  #endif  */
 
-.ticket-item{
-  padding: 15px 0;
-  background-color: #fff;
-  border-bottom: 1px solid #F2F3F5;
+/* ===== 列表区：左侧时间轴 + 右侧票券卡（时间轴轨道/圆点由共用组件 tz-school-timeline 渲染），
+   左右留边 10 与预约列表同档 ===== */
+.tk-list{
+  padding: 10px 10px 10px;
 }
 
-.ticket-item:last-child{
+/* ===== 卡片顶部：标题 / 活动时间 / 地点 + 右侧封面与状态 ===== */
+.tk-top{
+  display: flex;
+  align-items: flex-start;
+}
+
+.tk-top-main{
+  flex: 1;
+  min-width: 0;
+}
+
+.tk-title{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1D2129;
+  line-height: 22px;
+}
+
+.tk-start{
+  margin-top: 6px;
+  font-size: 13px;
+  color: #86909C;
+  line-height: 18px;
+}
+
+.tk-location{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  font-size: 13px;
+  color: #86909C;
+  line-height: 18px;
+}
+
+.tk-location-text{
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 右侧竖排：封面 + 状态标签（参考图封面在右上，状态落在封面下方，不挤压标题与时间行） */
+.tk-top-side{
+  flex-shrink: 0;
+  width: 74px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.tk-cover{
+  display: block;
+  width: 74px;
+  height: 74px;
+  border-radius: 6px;
+  background: #F2F3F5;
+}
+
+.tk-cover--empty{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tk-status{
+  margin-top: 6px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* 状态配色：待审核橙 / 待使用蓝 / 已签到绿 / 作废灰（与预约列表同一档） */
+.tk-status.orange{
+  color: #FF7D00;
+  background: #FFF3E8;
+}
+
+.tk-status.blue{
+  color: #0968F6;
+  background: #EEF6FF;
+}
+
+.tk-status.green{
+  color: #00B42A;
+  background: #E8FFEA;
+}
+
+.tk-status.gray{
+  color: #86909C;
+  background: #F2F3F5;
+}
+
+/* ===== 信息行：label 定宽浅灰 + 值深灰（对齐预约列表卡） ===== */
+.tk-row{
+  display: flex;
+  align-items: flex-start;
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.tk-top + .tk-row{
+  margin-top: 10px;
+}
+
+.tk-label{
+  flex-shrink: 0;
+  min-width: 52px;
+  color: #86909C;
+}
+
+.tk-value{
+  flex: 1;
+  min-width: 0;
+  color: #4E5969;
+  word-break: break-all;
+}
+
+/* 票档行：票种名自适应省略，价格贴右且固定宽度（¥ 币种单位小一号） */
+.tk-ticket-row{
+  display: flex;
+  align-items: baseline;
+}
+
+.tk-ticket-name{
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tk-price{
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #F53F3F;
+  line-height: 18px;
+}
+
+.tk-price-unit{
+  margin-right: 1px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #F53F3F;
+}
+
+/* 更多信息行：查看动作贴右（「更多信息」在左、查看在最右侧） */
+.tk-link{
+  color: #0968F6;
+}
+
+.tk-value--end{
+  text-align: right;
+}
+
+/* ===== 首屏骨架屏（M16）：左侧日期灰块与轨道灰点由 tz-school-timeline 渲染，
+   卡内灰块与真实卡逐块同尺寸（标题 / 时间 / 地点 / 封面 / 状态 / 票档票号参加人三行；
+   「更多信息」是按数据才出的行，不占灰块也不预留空位） ===== */
+.tk-sk-bar{
+  background: #E5E6EB;
+  border-radius: 4px;
+}
+
+.tk-sk-title{
+  width: 78%;
+  height: 16px;
+}
+
+.tk-sk-sub{
+  width: 62%;
+  height: 12px;
+  margin-top: 10px;
+}
+
+.tk-sk-loc{
+  width: 52%;
+  height: 12px;
+  margin-top: 8px;
+}
+
+.tk-sk-cover{
+  width: 74px;
+  height: 74px;
+  border-radius: 6px;
+  background: #E5E6EB;
+}
+
+.tk-sk-status{
+  width: 48px;
+  height: 18px;
+  margin-top: 6px;
+}
+
+.tk-sk-row{
+  height: 12px;
+  margin-top: 10px;
+}
+
+.tk-sk-row.w1{
+  width: 70%;
+}
+
+.tk-sk-row.w2{
+  width: 52%;
+}
+
+/* ===== 报名信息弹层（M6/M18）：圆角由面板自己给
+   （.u-popup__content 只有 border-radius 没有 overflow:hidden，
+   只写 :round 会被面板方角盖住）；标题与内衬走全局 .school-popup / .school-popup-title，
+   字段行沿用信息行档 .school-cell-*，只把左右内衬收掉与标题左缘对齐 ===== */
+.tk-info-popup{
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  /* 面板最低高度（300px）走内联 style，这里让内衬算进最低高度：
+     字段少时面板正好 300、多时按列表区高度继续长 */
+  box-sizing: border-box;
+}
+
+.school-cell-item.tk-info-row{
+  padding-left: 0;
+  padding-right: 0;
+  align-items: flex-start;
+}
+
+.school-cell-item.tk-info-row .school-cell-label{
+  line-height: 20px;
+}
+
+.school-cell-item.tk-info-row--last{
   border-bottom: none;
 }
 
-.ticket-item-header{
-  display: flex;
-  justify-content: space-between;
-}
-
-.ticket-item-name{
+/* 报名信息的值可能是长文本（自定义表单字段）：右对齐并允许折行，
+   不沿用 .school-cell-value-text 的单行省略（弹层里省略后无处可看全文） */
+.tk-info-value{
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
   font-size: 14px;
-  font-weight: 600;
   color: #1D2129;
-}
-
-.ticket-item-num{
-  font-size: 12px;
-  color: #86909C;
-  margin-left: 5px;
-}
-
-.ticket-item-status{
-  font-size: 14px;
-  color: #4E5969;
-  font-weight: 600;
-}
-
-.ticket-item-list{
-  margin-top: 5px;
-  font-size: 14px;
-  color: #86909C;
-  display: flex;
-  justify-content: space-between;
-}
-
-.ticket-item-value{
-  color: #1D2129;
-  margin: 0 3px;   
-}
-
-.ticket-price-value{
-  font-size: 14px;
-  font-weight: 600;
-  color: #F53F3F;
-}
-
-.ticket-price-unit{
-  font-size: 12px;
-  color: #F53F3F;
-  margin-right: 2px;
-}
-
-.ticket-coin-name{
-  font-size: 10px;
-  color: #F53F3F;
-  font-weight: 500;
-  margin-left: 2px;
-}
-
-.more-btn{
-  color: #0968f6;
-  border-bottom: 1px solid #0968f6;
-}
-
-::v-deep .u-modal__content{
-  padding: 5px;
-}
-
-::v-deep .u-modal__title{
-  padding-top: 14px;
+  line-height: 20px;
+  text-align: right;
+  word-break: break-all;
 }

@@ -36,7 +36,14 @@ curl -X POST '{apiUrl}app/circle/post/delComment' \
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "删除成功",
+  "time": 1786492800,
+  "data": null
+}
+```
 
 ## 返回参数说明
 
@@ -45,3 +52,4 @@ curl -X POST '{apiUrl}app/circle/post/delComment' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data | null | 数据 |

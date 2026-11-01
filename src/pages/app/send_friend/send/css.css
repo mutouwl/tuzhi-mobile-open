@@ -1,0 +1,87 @@
+/* 送礼页（M-P9）页面私有类：一律 sfs- 前缀（M11）。
+   这一页是「礼盒」场景：蓝色礼盒面板与深钢蓝主按钮沿用送好友下单页那一档
+   （#234A9A→#2453AB / #004C8B），金色文字取参考页实测 #ECD3A4；
+   终局态（已领取/已失效）另取参考图实测 #134D9D（页首大标题）/ #3F6699（领取人昵称）
+   / #888888（日期），同属这一页主题档。
+   页面底色走全站默认 #f7f8fa（App.vue 的 `.school-page`）：2026-10-28 用户先点名领取页、
+   再点名这一页「背景色恢复为默认」，暖米底 #FDF5E4 整族下线，本文件不再写 background。
+   单位只用 px（禁 rpx）；几何按参考页 393 CSS 宽逐段折算。 */
+
+/* 整页：把「三步条 → 正文 → 页脚」排成一根竖轴，正文那一格 `flex: 1`，
+   于是礼盒面板落在剩余空间的垂直中线上（2026-10-28 用户点名「礼物已备好的元素可以靠近垂直方向中心」）。
+   覆盖全局 `.school-page` 必须用双类（App.vue 与页面 css 同权重，谁生效看打包顺序）；
+   但这一条只覆盖排版、不覆盖底色 —— 底色回全站默认 #f7f8fa。 */
+.school-page.sfs-page {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+
+/* 待赠送那一档：礼盒面板在版心里往上让 50px，主按钮一个像素都不动
+   （2026-10-29 用户点名「礼物已备好的卡片往上移动 50px，去分享送礼按钮保持不变」）。
+   实现走相对定位偏移：面板的布局盒仍占原来的位置 ⇒ 下面的 `.sfs-actions`（去分享送礼 /
+   自己使用）与整块的居中判据全都不动，只有面板画在上一格；两枚之间因此空出 50px。
+   ⚠ 首屏骨架挂同一个类（M16：骨架与真实版式逐块对齐，数据回来面板不跳这 50px）。
+   ⚠ 只作用于送礼页的待赠送档：领取页与终局态（已领取 / 已失效）走 `.sfs-main--result`，
+   不会命中这一条。 */
+.sfs-main--send .sfs-hero {
+  position: relative;
+  top: -50px;
+}
+
+/* 整页那一句（未装 / 没带凭据 / 不是本人 / 取不到）不参与居中：贴在上面一段给出去，不压到页脚上 */
+.sfs-main--notice {
+  justify-content: flex-start;
+  padding-top: 72px;
+}
+
+/* 首屏骨架面板那一档：真实面板的样式在 common/styles/send-friend-gift.scss（两页共用）；
+   高度取真实面板逐段之和（24 + 20 彩带 + 8 间距 + 26 标题 + 18 + 80 商品卡 + 20），
+   数据回来那一刻面板不跳高（M16：骨架与真实版式逐块对齐） */
+.sfs-hero--sk {
+  min-height: 196px;
+}
+
+/* ── 动作区 ───────────────────────────────────────────────────────────────── */
+/* 「去分享送礼」要整宽（2026-10-29 用户点名「去分享送礼按钮没有 100%」）：
+   ⚠ 这里**不能写 `align-items: center`**。小程序端自定义组件（`<tz-button>`）的**宿主节点**
+   才是这一行 flex 的项，子组件根类 `.tuzi-btn.long{width:100%}` 的 100% 是相对宿主算的；
+   宿主在 `align-items:center` 下按内容收缩 ⇒ 按钮只剩文字那么宽（H5 没有宿主节点，
+   所以在浏览器里看着是整宽的，只有真机/小程序端短一截）。
+   改成 `stretch`：宿主撑满整行，里面的 `.long` 才真的是 100%；
+   第二入口「自己使用」自己 `align-self: center` 保持居中，不跟着被拉成一整条。 */
+.sfs-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 24px;
+}
+
+/* 「自己使用」是第二入口、不是主按钮：14px 深钢蓝文字、上下各 8px 热区（M17：一页只一处主操作） */
+.sfs-self {
+  align-self: center;
+  margin-top: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1D4988;
+}
+
+/* 不可分享那一档：一句灰字占住主按钮的位置（不摆一枚点了没反应的按钮，硬约束 27②） */
+.sfs-status {
+  font-size: 14px;
+  line-height: 20px;
+  color: #86909C;
+  text-align: center;
+}
+
+/* ── 骨架（彩带条 / 标题条 / 主按钮块在 common/styles/send-friend-gift.scss，两页共用）── */
+.sfs-sk-self {
+  width: 72px;
+  height: 20px;
+  margin: 14px auto 0;
+  border-radius: 4px;
+  background: #E5E6EB;
+}
+
+/* 终局那一档的标题/白卡样式与领取页共用：见 common/styles/send-friend-gift.scss */

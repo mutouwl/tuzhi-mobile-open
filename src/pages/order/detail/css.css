@@ -323,10 +323,11 @@
 /* 订单详情首屏骨架屏：尺寸与真实内容逐块对齐（状态行 36px 圆图标 + 标题/描述两行、
    商品行 80px 高 / 28% 封面与 course 组件同口径、信息行对齐 u-cell large 5px 上下内边距 + 14px 字号行）；
    灰块颜色取 uview 骨架屏静态块口径 #e5e6eb（与提交订单页 / 报名信息弹层骨架屏一致）。
-   本页 css 未加 scoped，类名统一 detail-sk- 前缀防外溢 */
+   本页 css 未加 scoped，类名统一 detail-sk- 前缀防外溢。
+   卡级直角：2026-10-28 用户点名「去掉box圆角」，真实卡（tz-box round）撤了圆角，骨架卡必须同档，
+   否则数据回来那一刻四角会跳一次形（M16 逐块同几何） */
 .detail-sk-card {
     background: #fff;
-    border-radius: 10px;
     padding: 15px;
     box-sizing: border-box;
 }
@@ -424,3 +425,23 @@
     border-radius: 4px;
     background: #e5e6eb;
 }
+
+/* 拼团状态标（M-P7）：主色字 + 主色浅底 + 4px 圆角（M17：卡片内标签不做起胶囊/圆形）。
+   这一页自带一份，不依赖 components/order/order.vue 那一份全局类 —— 两处共用一个全局类名，
+   改列表那一处会连带改掉详情页，读的人看不见来源。
+   2026-10-16 两轮点名后的最终落位：不进状态栏、也不是独立一行，而是**订单信息列表的第一行**
+   「拼团状态」（u-cell 行：title + 本标放 value 位 + isLink 箭头），点它进团详情。
+   本类只描标本体，行的版式全走 u-cell 既有档 */
+.order-gb-tag,
+.order-sf-tag {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(9, 104, 246, 0.08);
+    color: #0968f6;
+    font-size: 11px;
+    line-height: 16px;
+}
+
+/* 商品行发货状态（2026-10-28 加、2026-10-29 用户点名去掉）：订单状态栏已经说明「待发货/已发货」，
+   商品行与组合子商品行都不再挂「发货状态」小字；后端 `send_status_text` 仍下发，管理端与 AI 在用，
+   这里连同三档样式一起删净，留一条空样式就会有人把它接回来 */

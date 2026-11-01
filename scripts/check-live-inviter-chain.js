@@ -98,6 +98,9 @@ function makeEnv() {
       getStorageSync: (k) => (storage[k] === undefined ? '' : storage[k]),
       setStorageSync: (k, v) => { storage[k] = v; },
       removeStorageSync: (k) => { delete storage[k]; },
+      // 详情页 onLoad 现在要注册「支付成功」监听（回收购买态那一条链），桩要有这一对面才装得起来
+      $on: () => {},
+      $off: () => {},
       showToast: () => {},
       showModal: () => {},
       hideLoading: () => {},
@@ -135,9 +138,15 @@ const detailVm = (opts, env) => {
     finish() {},
     setStudyLog() {},
     playHandle() {},
-    $nav: { to() {}, parsePageParams: (p) => Object.assign({}, p) },
+    $nav: { to() {}, share() {}, parsePageParams: (p) => Object.assign({}, p) },
     $tools: env.tools,
   };
+  // 2026-10-09 刷新分层：getData 现在从 fetchDetail 这一个出口打 course.detail，
+  // 只挂原来那几个方法会报 TypeError（而不是红在断言上，看不出是接线掉了还是判据错了），
+  // 所以这里把 methods 全量绑上——已经单独绑过的那几条保持不动
+  Object.keys(opts.methods).forEach((name) => {
+    if (!vm[name]) vm[name] = opts.methods[name].bind(vm);
+  });
   vm.onLoad = opts.onLoad.bind(vm);
   vm.startLearning = () => opts.methods.startLearning.call(vm);
   // 2026-10-05 起归因上报住在**详情页**（判据 = tuzhi_live_user 有无行进过 live_user，而那张行

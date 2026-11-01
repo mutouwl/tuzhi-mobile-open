@@ -132,10 +132,10 @@
                 "api/" : {
                     // "target" : "https://tuzhi.mutouweb.com/index.php?route=",
                     // "target" : "https://tuzhi.mutouweb.com/index.php?route=",
-                    // 本地 phpStudy 的 tuzhi.mutouweb.com 站点实际监听 8088（端口 80 被 IIS/http.sys 占用），
-                    // 若 Apache 恢复 80 端口监听，去掉下面 :8088 即可
-                    // macOS phpStudy：nginx 直接监听 80（vhost tuzhi.mutouweb.com_80.conf → fastcgi 9001），所以不带 :8088
-                    "target" : "http://tuzhi.mutouweb.com/index.php?route="
+                    // 本机（macOS）后端 nginx 只监听 8088：自备配置 /tmp/selfbuild_nginx.conf → fastcgi 127.0.0.1:9001。
+                    // phpStudy 自带的 tuzhi.mutouweb.com_80.conf 是 0 字节空文件，且非 root 绑不了 80，
+                    // 所以 target 必须带 :8088（去掉会 ECONNREFUSED）。
+                    "target" : "http://tuzhi.mutouweb.com:8088/index.php?route="
                 },
                 // "target": "http://14.103.253.40/index.php?route="
                 // "target" : "http://wei.mutouweb.com/app/index.php?i=1&c=entry&m=tuzi_v1&do=index&route="

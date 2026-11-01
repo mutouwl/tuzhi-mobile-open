@@ -1,9 +1,21 @@
 <template>
   <div class="container">
 
-    <u-loading-page :loading="loading"></u-loading-page>
+    <!-- 首屏骨架（2026-10-31 用户点名「加载方式调整为骨架屏」，与活动详情 / 报名信息两页同批）：
+         外壳走真实 .activity-box（94% 宽 / 白底 / 圆角 10 / 阴影），灰块只替换会变的那几格
+         （封面 / 活动名 / 浏览次数 / 时间条）；下方那张表单的标签与输入框是静态的，
+         骨架期间照常显示，不铺灰块 -->
+    <view class="activity-box" v-if="loading">
+      <view class="asign-sk-cover"></view>
 
-    <div class="activity-box">
+      <tz-box padding="15px 15px 15px">
+        <view class="asign-sk-block asign-sk-title"></view>
+        <view class="asign-sk-block asign-sk-subtitle"></view>
+        <view class="asign-sk-block asign-sk-time"></view>
+      </tz-box>
+    </view>
+
+    <div class="activity-box" v-else>
       <banner :cover="data.cover" type="activity" />
 
       <tz-box padding="15px 15px 15px">

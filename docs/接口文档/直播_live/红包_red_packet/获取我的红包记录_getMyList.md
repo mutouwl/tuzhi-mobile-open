@@ -186,7 +186,7 @@ curl -X POST '{apiUrl}live/red_packet/getMyList' \
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
 | data.total | integer | 合计 |
-| data.rows | array | rows |
+| data.rows | array | 本页数据行数组 |
 | data.rows[].id | integer | ID |
 | data.rows[].uniacid | integer | 应用ID（公众号/uniacid） |
 | data.rows[].redpacket_id | integer | 红包ID |

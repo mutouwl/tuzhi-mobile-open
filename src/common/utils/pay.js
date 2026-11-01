@@ -229,6 +229,13 @@ export default class PayHandle {
 
 	goOrder() {
 
+		// 各端支付成功的统一收口就在这一句之前：所有走到这里的分支都是「已经付完钱」
+		// （wx.requestPayment / requestVirtualPayment / chooseWXPay:ok / 抖音 / 余额 code==1 / App 支付宝
+		//  的 success 回调），取消与失败都另有出口。把这一件事广播一次，让栈里那些不再靠
+		// 「每次 onShow 整页重取」的页面按需回收用户态——
+		// 监听方：pages/course/detail/js.vue（判据②，购买/订阅专栏/开会员后回到详情页要显示已订阅）
+		uni.$emit('orderPaid', { order_no: this.orderNo });
+
 		if(!this.isGoOrder){
 			this.callback(this.pay_type, 'success');
 			return;

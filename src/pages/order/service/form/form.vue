@@ -30,7 +30,7 @@
 
 				</u-form>
 			</tz-box>
-			<tz-divider />
+			<tz-divider bgColor="#fafafa" />
 			<tz-box padding="5px 15px">
 				<u-form :labelWidth="labelWidth">
 					<u-form-item label="退款金额">

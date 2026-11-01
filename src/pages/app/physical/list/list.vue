@@ -1,13 +1,15 @@
 <template>
   <view class="goods-list-page">
     <view class="search-bar">
+      <!-- 右侧搜索按钮已下线：回车 / 键盘「搜索」键即触发（confirm-type 让两端键盘都出「搜索」键），
+           与 u-search 组件同一套写法，不再另摆一枚按钮占掉输入框宽度 -->
       <input
         class="search-input"
         v-model="keyword"
         placeholder="搜索商品"
+        confirm-type="search"
         @confirm="onSearch"
       />
-      <button class="search-btn" @tap="onSearch">搜索</button>
     </view>
 
     <view class="tab-bar">

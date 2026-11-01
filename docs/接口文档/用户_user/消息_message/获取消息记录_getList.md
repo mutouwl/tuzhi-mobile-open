@@ -103,6 +103,6 @@ curl -X POST '{apiUrl}user/message/getList' \
 | data[].btn_text | string | btntext |
 | data[].createtime | integer | 创建时间（时间戳） |
 | data[].status | integer | 状态 |
-| data[].link | object | link |
+| data[].link | object | 连麦 |
 | data[].link.type | string | 类型 |
 | data[].link.src | string | 资源地址 |

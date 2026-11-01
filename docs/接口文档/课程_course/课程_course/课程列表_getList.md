@@ -19,16 +19,16 @@
 | page | integer | 否 | 页码 | `1` |
 | group | string | 否 | 分组 | - |
 | is_deep | integer | 否 | 是否递归子分类 | `1` |
-| searchKey | string | 否 | 搜索关键词 | `` |
+| searchKey | string | 否 | 搜索关键词 | - |
 | sort | string | 否 | 排序 | `time` |
-| type | string | 否 | 类型 | `` |
+| type | string | 否 | 类型 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}course/course/getList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"group":"xxx","is_deep":1,"searchKey":"","sort":"time","type":""}'
+  -d '{"limit":10,"page":1,"group":"xxx","is_deep":1,"searchKey":"xxx","sort":"time","type":"xxx"}'
 ```
 
 ## 返回示例

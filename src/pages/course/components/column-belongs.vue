@@ -30,7 +30,9 @@
                 </div>
             </div>
         </tz-box>
-        <tz-divider />
+        <!-- 块间间隔条取页面底色（2026-10-27 同 M58）：默认 #f5f5f5 比页面底 #fafafa 深一档，读成浅灰条。
+             本组件只被课程详情页与课程直播页引用，两页底色同为 #fafafa -->
+        <tz-divider bgColor="#fafafa" />
     </div>
 </template>
 

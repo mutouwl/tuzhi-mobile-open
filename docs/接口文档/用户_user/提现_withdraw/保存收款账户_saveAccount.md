@@ -11,7 +11,7 @@
 | 请求方式 | POST |
 | 是否需登录 | 是 |
 | 所属模块 | 用户（user） |
-| 所属控制器 | Withdraw（账户提现 - 用户端 自直播红包模块抽离为通用账户提现： 余额口径统一为 user.money（直播红包收入只是账户收入来源之一），提现不依赖直播红包插件。 说明：提现/收款账户数据存于 user_withdraw / user_withdraw_account 表（与用户关联）； 自动转账由用户余额提现转账服务 WithdrawTransferService 处理。） |
+| 所属控制器 | Withdraw（账户提现 - 用户端） |
 | 登录方式 | 请求头携带 `token`（登录接口返回） |
 
 ## 请求参数
@@ -22,7 +22,7 @@
 | type | string | 否 | 类型 | - |
 | name | string | 否 | 名称 | - |
 | account | string | 否 | 账号 | - |
-| ext | string | 否 | ext | `` |
+| ext | string | 否 | ext | - |
 
 ## 请求头
 
@@ -35,7 +35,7 @@
 ```bash
 curl -X POST '{apiUrl}user/withdraw/saveAccount' \
   -H 'Content-Type: application/json' \
-  -d '{"id":0,"type":"xxx","name":"xxx","account":"xxx","ext":""}'
+  -d '{"id":0,"type":"xxx","name":"xxx","account":"xxx","ext":"xxx"}'
 ```
 
 ## 返回示例

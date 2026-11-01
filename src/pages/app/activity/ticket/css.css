@@ -33,6 +33,49 @@
     margin-top: 10px;
 }
 
+/* 单价 + 划线原价（2026-10-31 拼团价适配）：两个数并排、基线对齐 */
+.ticket-price-box{
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* 划线原价：取拼团活动快照的 `origin_price`，灰字删除线（白底 12px 灰在 4.5:1 以上） */
+.ticket-origin{
+    color: #86909C;
+    font-size: 12px;
+    text-decoration: line-through;
+}
+
+/* 首屏骨架（2026-10-31 用户点名「改为骨架屏加载」）：外壳走真实 `.ticket-item` 那一档，
+   灰块只替换会变的那四格（票种名 / 步进器 / 单价 / 余量），色值跟所在白卡取骨架灰 #e5e6eb、
+   圆角 4px（M16/M18）；静态文案一个不放 */
+.tk-sk{
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.tk-sk-name{
+    width: 120px;
+    height: 16px;
+}
+
+.tk-sk-step{
+    width: 84px;
+    height: 28px;
+}
+
+.tk-sk-price{
+    width: 80px;
+    height: 22px;
+}
+
+.tk-sk-num{
+    width: 96px;
+    height: 14px;
+}
+
 .ticket-price{
     font-weight: 700;
     font-size: 22px;
@@ -97,6 +140,11 @@
     /* width: calc(100% - 20px); */
     /* height: 50px; */
     width: 100%;
+
+    /* 与活动报名信息页同一根因（2026-10-31）：小程序端没有全局 `*{box-sizing:border-box}`，
+       100% 宽 + 左右 10px 内衬在 content-box 下比屏幕宽 20px，右侧「下一步」被推出屏幕；
+       H5 有全局 * 所以看不出来。 */
+    box-sizing: border-box;
 
     padding: 10px 10px 10px;
 

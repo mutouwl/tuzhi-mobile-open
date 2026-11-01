@@ -20,9 +20,9 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | order_no | string | 否 | 订单号 | - |
-| code | string | 否 | code | `` |
+| code | string | 否 | code | - |
 | mode | string | 否 | 模式 | `short_series_coin` |
-| product_id | string | 否 | productID | `` |
+| product_id | string | 否 | productID | - |
 
 ## 请求头
 
@@ -35,7 +35,7 @@
 ```bash
 curl -X POST '{apiUrl}virtual_pay/handle' \
   -H 'Content-Type: application/json' \
-  -d '{"order_no":"xxx","code":"","mode":"short_series_coin","product_id":""}'
+  -d '{"order_no":"xxx","code":"xxx","mode":"short_series_coin","product_id":"xxx"}'
 ```
 
 ## 返回示例

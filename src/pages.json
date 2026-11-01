@@ -813,6 +813,15 @@
 					}
 				},
 				{
+					"path": "activity/ticketdetail/ticketdetail",
+					"style": {
+						"navigationBarTitleText": "票券详情",
+						"h5": {
+							"titleNView": false
+						}
+					}
+				},
+				{
 					"path": "activity/index/index",
 					"style": {
 						"navigationBarTitleText": "活动列表",
@@ -1099,7 +1108,42 @@
 						}
 					}
 				}
-		]
+,
+				{
+					"path": "group_buy/detail/detail",
+					"style": {
+						"navigationBarTitleText": "拼团详情",
+						"h5": { "titleNView": false },
+						"enablePullDownRefresh": true,
+						"app-plus": { "pullToRefresh": { "support": true }, "usingStrictBounce": false }
+					}
+				},
+				{
+					"path": "group_buy/index/index",
+					"style": {
+						"navigationBarTitleText": "我的拼团",
+						"h5": { "titleNView": false },
+						"enablePullDownRefresh": true,
+						"app-plus": { "pullToRefresh": { "support": true }, "usingStrictBounce": false }
+					}
+				},
+				{
+					"path": "send_friend/gift/gift",
+					"style": {
+						"navigationBarTitleText": "赠送记录",
+						"h5": { "titleNView": false },
+						"enablePullDownRefresh": true,
+						"app-plus": { "pullToRefresh": { "support": true }, "usingStrictBounce": false }
+					}
+				},
+				{
+					"path": "send_friend/send/send",
+					"style": { "navigationBarTitleText": "赠送好友", "h5": { "titleNView": false } }
+				},
+				{
+					"path": "send_friend/receive/receive",
+					"style": { "navigationBarTitleText": "领取赠送", "h5": { "titleNView": false } }
+				}		]
 	},
 		{
 			"root": "pages/user",

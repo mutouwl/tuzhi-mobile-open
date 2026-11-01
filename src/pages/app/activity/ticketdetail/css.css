@@ -1,0 +1,405 @@
+/* 票券详情：一张白纸分块（活动头 / 电子票码 / 场馆地址 / 订单详情 / 票券信息），
+   块间分隔用项目统一的 `tz-divider`（取页面底色 #fafafa，M58/M87），不自绘主色虚线；
+   白纸通栏、直角、无投影（M21），页面底色沿用全站 page 背景 #fafafa */
+.tkd-page{
+  min-height: 100vh;
+  padding-bottom: 10px;
+}
+
+.tkd-sheet{
+  background: #fff;
+}
+
+/* ===== 活动头：封面 + 活动名 / 地点 / 时间 ===== */
+.tkd-head{
+  display: flex;
+  padding: 16px;
+}
+
+.tkd-cover{
+  display: block;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #F2F3F5;
+}
+
+.tkd-cover--empty{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tkd-head-main{
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+}
+
+.tkd-title{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1D2129;
+  line-height: 22px;
+}
+
+.tkd-meta{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #86909C;
+  line-height: 18px;
+}
+
+.tkd-meta-text{
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== 电子票码 ===== */
+.tkd-code{
+  padding: 18px 16px 20px;
+}
+
+/* 标题居中、状态标签贴右（参考图右侧那枚计数位，这里换成更有用的票券状态） */
+.tkd-code-head{
+  position: relative;
+  text-align: center;
+}
+
+.tkd-code-title{
+  font-size: 18px;
+  font-weight: 600;
+  color: #1D2129;
+  line-height: 24px;
+}
+
+/* 状态标签：贴右居中，配色与列表时间轴圆点同一档（blue/green/orange/gray） */
+.tkd-status{
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.tkd-status.orange{
+  color: #FF7D00;
+  background: #FFF3E8;
+}
+
+.tkd-status.blue{
+  color: #0968F6;
+  background: #EEF6FF;
+}
+
+.tkd-status.green{
+  color: #00B42A;
+  background: #E8FFEA;
+}
+
+.tkd-status.gray{
+  color: #86909C;
+  background: #F2F3F5;
+}
+
+.tkd-code-tip{
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: #86909C;
+  line-height: 18px;
+}
+
+/* 码位：条码与二维码共用同一块位置（点一下互相切换），左右各留 16px 静区；
+   条码只用深色条 + 白底，二维码只用深色块 + 白底，都保证扫得出来，不跟随主题色 */
+.tkd-code-body{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  margin: 18px 16px 0;
+}
+
+/* 条码：每段按 Code128 模块数分宽度（flex-basis:0 + flex-grow） */
+.tkd-barcode{
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 84px;
+}
+
+/* 二维码：一行一个 view，行高＝模块边长的整数像素，颜色由行内渐变给（见 js 的 qrRowGradients） */
+.tkd-qr{
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.tkd-qr-row{
+  width: 100%;
+  background-repeat: no-repeat;
+}
+
+/* 条码/二维码切换提示：只有两种码都出得来时才摆 */
+.tkd-code-switch{
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909C;
+}
+
+.tkd-bar{
+  flex-basis: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  height: 100%;
+  background: transparent;
+}
+
+.tkd-bar--on{
+  background: #1D2129;
+}
+
+/* 票号行：整行可点复制（票号长也不折行、不吃掉右侧标签，超长自己省略——复制走的是完整值） */
+.tkd-code-num{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 20px;
+  color: #4E5969;
+}
+
+.tkd-code-num-text{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+/* 「复制」只做这枚点击的提示：浅灰同档，不跟条码/价格抢视觉（M13：点了必有回音） */
+.tkd-code-copy{
+  flex-shrink: 0;
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: 3px;
+  background: #F2F3F5;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909C;
+}
+
+.tkd-ticket-name{
+  margin-top: 14px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1D2129;
+  line-height: 24px;
+}
+
+.tkd-price{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.tkd-price-value{
+  font-size: 16px;
+  font-weight: 600;
+  color: #F53F3F;
+}
+
+.tkd-price-unit{
+  margin-right: 1px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #F53F3F;
+}
+
+/* ===== 场馆地址 / 订单详情 / 票券信息 ===== */
+.tkd-block{
+  padding: 16px;
+}
+
+.tkd-block-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tkd-block-title{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tkd-block-title-text{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+.tkd-block-sub{
+  margin-top: 6px;
+  font-size: 12px;
+  color: #86909C;
+  line-height: 18px;
+}
+
+.tkd-venue{
+  margin-top: 8px;
+  font-size: 14px;
+  color: #4E5969;
+  line-height: 20px;
+  word-break: break-all;
+}
+
+/* 块头的「导航」提示：与「复制」标签同一档浅灰，只说明这枚整块可点 */
+.tkd-venue-nav{
+  display: flex;
+  align-items: center;
+}
+
+.tkd-venue-nav-text{
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909C;
+}
+
+/* 信息行沿用全局 .school-cell-*：只把左右内衬收掉与块标题左缘对齐 */
+.school-cell-item.tkd-row{
+  padding-left: 0;
+  padding-right: 0;
+  align-items: flex-start;
+}
+
+.school-cell-item.tkd-row .school-cell-label{
+  line-height: 20px;
+}
+
+.school-cell-item.tkd-row--last{
+  border-bottom: none;
+}
+
+.tkd-block-head + .school-cell-item{
+  margin-top: 8px;
+}
+
+/* 报名信息可能是长文本：允许折行，不沿用 .school-cell-value-text 的单行省略 */
+.tkd-row-value{
+  display: block;
+  white-space: normal;
+  text-align: left;
+  word-break: break-all;
+  line-height: 20px;
+}
+
+/* 页脚提示 */
+.tkd-foot{
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #86909C;
+}
+
+/* ===== 加载骨架：与详情页逐块同尺寸（头图 / 电子票 / 信息块），灰块取 #e5e6eb + 4px 圆角 ===== */
+.tkd-sk-bar{
+  background: #E5E6EB;
+  border-radius: 4px;
+}
+
+.tkd-sk-cover{
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #E5E6EB;
+}
+
+.tkd-sk-title{
+  width: 78%;
+  height: 16px;
+}
+
+.tkd-sk-meta{
+  width: 62%;
+  height: 12px;
+  margin-top: 10px;
+}
+
+.tkd-sk-meta.short{
+  width: 46%;
+}
+
+.tkd-sk-code-title{
+  width: 38%;
+  height: 18px;
+  margin: 0 auto;
+}
+
+.tkd-sk-tip{
+  width: 60%;
+  height: 12px;
+  margin: 10px auto 0;
+}
+
+.tkd-sk-barcode{
+  height: 84px;
+  margin: 18px 16px 0;
+  border-radius: 4px;
+  background: #E5E6EB;
+}
+
+/* 切换提示与票号行：真实版式里各占一行（18+10、20+10），骨架按同一档高度占位，数据回来不跳 */
+.tkd-sk-switch{
+  width: 46%;
+  height: 18px;
+  margin: 10px auto 0;
+}
+
+.tkd-sk-num{
+  width: 40%;
+  height: 20px;
+  margin: 10px auto 0;
+}
+
+.tkd-sk-ticket-name{
+  width: 34%;
+  height: 18px;
+  margin: 14px auto 0;
+}
+
+.tkd-sk-price{
+  width: 20%;
+  height: 16px;
+  margin: 10px auto 0;
+}
+
+.tkd-sk-row-title{
+  width: 30%;
+  height: 16px;
+}
+
+.tkd-sk-row{
+  width: 70%;
+  height: 12px;
+  margin-top: 12px;
+}

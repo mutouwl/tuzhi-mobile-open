@@ -57,7 +57,7 @@ curl -X POST '{apiUrl}live/gift/getGiftOptions' \
 | data[].uniacid | integer | 应用ID（公众号/uniacid） |
 | data[].name | string | 名称 |
 | data[].price | string | 价格 |
-| data[].icon | string | icon |
+| data[].icon | string | 图标标识 |
 | data[].status | integer | 状态 |
 | data[].weigh | integer | 权重（排序值） |
 | data[].createtime | integer | 创建时间（时间戳） |

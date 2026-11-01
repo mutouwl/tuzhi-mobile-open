@@ -29,8 +29,9 @@
     <template v-else>
       <template v-if="info">
         <!-- 顶部封面：打卡封面按 16:9 上传（后台提示 750*420），容器等比例铺满，与教务详情页顶部主图同档 -->
-        <view class="cdi-banner-wrap">
+        <view class="cdi-banner-wrap gbd-anchor">
           <image class="cdi-banner" :src="info.cover || '/static/image/empty.png'" mode="aspectFill" @error="onCoverError" />
+          <tz-group-buy-danmu v-if="gbBuyers.length" :buyers="gbBuyers" overlay />
         </view>
         <!-- 标题卡：名称 + 状态/参与方式标签 + 参与数据；付费才有价格行。
              「打卡时间/打卡模式」不在页头出现，只在下方「打卡信息」卡出一处（2026-09-25 用户点名
@@ -42,8 +43,27 @@
             <text class="cdi-tag" v-if="joinTypeText">{{ joinTypeText }}</text>
           </view>
           <view class="cdi-stats" v-if="statsText">{{ statsText }}</view>
-          <view class="cdi-price" v-if="isPay"><text class="rmb" v-if="!isVirtualPay">￥</text><text class="num">{{ info.price }}</text><text class="coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
+          <!-- 拼团价横幅回拼团区（2026-10-30 用户点名「gba-rule 拼团玩法都应该放在 gba-banner 下面，
+               也包括正在拼团的列表，让拼团连成一个整体」+「上下挨在一起，不要拆分放」）：
+               横幅与玩法、凑团列表在同一张卡里连着排，拼团进行中本卡参与价收起（第五轮）。 -->
+          <view class="cdi-price" v-if="gbPriceShown && isPay"><text class="rmb" v-if="!isVirtualPay">￥</text><text class="num">{{ info.price }}</text><text class="coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
         </view>
+        <!-- 拼团区（M-P1）：压在「名称 + 标签 + 参与数据 + 参与价」那张标题卡正下方，拼团价与售卖价同一屏可比
+             （写法照实物详情页）。两条入参：① `goods-type` 取后端 `ActivityForm::GOODS_TYPES` 里那一档
+             `checkin`，与本页吸底「立即购买」那份 goodsList 里的 goodsType 逐字相同；
+             ② `goods-id` 用本页真实的打卡活动 id（data 里的 `id`，onLoad 由 options.id 写入，
+             v-if 挂在这枚上 ⇒ 首屏不带着 0 去取数）。
+             「已参与」这一档不在这儿另判：后端 `Gate` 自己有「你已参与该团」那一句（同一条判据只存一处，M22），
+             本页不重判一遍，也不拿它当隐藏条件（硬约束 27②：入口显隐不许依赖只有该入口自己能产生的数据）。
+             `@go-pay` 只记账：导航由组件自己发，见 js.vue 的 gbGoPay -->
+        <tz-group-buy-area v-if="id" ref="gbArea" goods-type="checkin" :goods-id="id" hide-danmu
+          :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
+          :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
+          :join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
+          :join-spec="gbJoinCtx ? gbJoinCtx.specId : 0"
+          :join-ladder="gbJoinCtx ? gbJoinCtx.ladderId : 0"
+          :join-price="gbJoinCtx ? gbJoinCtx.price : 0"
+          @go-pay="gbGoPay" @ready="gbReady" />
         <!-- 打卡信息：标题条 + 信息行，版式照教务教师详情页 pages/app/school/teacher/detail
              （tz-title 50px 标题条与行同压一张白卡）；行用全局 .school-cell-* 档，不抄教师页的私有类名 -->
         <view class="school-block">
@@ -88,7 +108,7 @@
          已参与给「进入打卡」，活动结束或已过参与截止给只读提示 —— 同屏只出一个主操作。
          绑定课程分两态：已购关联课程 → 加入打卡；未购 → 跳课程详情看课/购课（回来时 onShow 已刷新成前一态）。
          版式照教务详情页 package/detail 的 .school-footer + u-button type=primary -->
-    <view class="school-footer h5-bottom-bar" v-if="!loading && info">
+    <view class="school-footer cdi-footer h5-bottom-bar" v-if="!loading && info">
       <!-- 被拉黑：只出后端那一句原因（逐字同 checkin.checkin.join 被拒时的文案），不再摆任何可点的参与按钮
            ——拉黑只能由后台解除，这里留着「免费参与/立即购买」就是一枚点了必被拒的死按钮 -->
       <view class="cdi-join-tip" v-if="isBlack">你已被拉黑，无法参与本打卡活动</view>
@@ -97,7 +117,14 @@
       <u-button class="cdi-main-btn" type="primary" text="免费参与" @click="doJoin" v-else-if="joinType == 'free'"></u-button>
       <block v-else-if="joinType == 'pay'">
         <view class="cdi-join-price"><text v-if="!isVirtualPay">¥</text><text>{{ info.price }}</text><text class="cdi-join-coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
-        <u-button class="cdi-main-btn" type="primary" text="立即购买" @click="goBuy"></u-button>
+        <!-- 拼团档：与「立即购买」并排（竞品 07 图：售卖 + 发起拼团）。
+             `gbEntry` 空（无活动/未装插件）时不出这一枚，本行与改造前逐字相同；
+             按钮本体是全站共用的 `tz-group-buy-btn`（两行：立即开团 + 拼团价；
+             底色那条红橙渐变只存组件一处，不在页面里另写色值）。
+             **我正在这一场拼团里已有进行中的团（`gbInTeam`）→ 「立即购买」收起**（PRD 2026-10-27）：
+             底栏只留「查看拼团详情」这一个出口，不留一枚点了会被后端拒的死按钮 -->
+        <tz-group-buy-btn v-if="gbEntry" class="cdi-main-btn" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+        <u-button class="cdi-main-btn" type="primary" text="立即购买" @click="goBuy" v-if="!gbInTeam && !gbJoinMode"></u-button>
       </block>
       <u-button class="cdi-main-btn" type="primary" text="输入密码参与" @click="pwdVisible = true" v-else-if="joinType == 'password'"></u-button>
       <u-button class="cdi-main-btn" type="primary" text="加入打卡" @click="doJoin" v-else-if="joinType == 'course' && hasCourse"></u-button>

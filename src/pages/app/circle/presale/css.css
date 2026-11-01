@@ -328,6 +328,13 @@
 .footer-btn-group .footer-btn {
   flex: 1;
 }
+/* 拼团入口的**宿主**也要 flex:1（小程序端父级里的 flex 项是 `<tz-group-buy-btn>` 的宿主节点，
+   子组件根上的 `flex:1` 到不了宿主，M73）：只给 `.footer-btn` 加 `flex:1` 时入口按内容收缩、
+   与旁边的续费/立即购买不等宽（H5 没有宿主节点所以浏览器里看不出） */
+.presale-gb-slot {
+  flex: 1;
+  min-width: 0;
+}
 .footer-btn {
   height: 44px;
   line-height: 44px;
@@ -345,96 +352,9 @@
   color: #fff;
 }
 
-/* 规格弹层（参照实物商品 SKU 弹窗结构：规格区块 + 底部独立按钮区）
-   label 沿用圈子筛选弹窗规范 13px/600/#1d2129，间距逻辑对齐 sku-section-title（标题上、选项下） */
-.spec-popup {
-  display: flex;
-  flex-direction: column;
-  min-height: 300px;
-  max-height: 70vh;
-}
-/* 价格头部（参照实物商品 SKU 弹窗 sku-header：价格 + 已选规格文本，切换规格实时更新） */
-.spec-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px 16px;
-  border-bottom: 1px solid #F7F8FA;
-}
-.spec-price {
-  display: flex;
-  align-items: baseline;
-}
-.spec-price-symbol {
-  font-size: 12px;
-  font-weight: 700;
-  color: #F53F3F;
-}
-.spec-price-num {
-  font-size: 24px;
-  font-weight: 700;
-  color: #F53F3F;
-  margin-left: 2px;
-}
-.spec-price-marking {
-  font-size: 12px;
-  color: #86909c;
-  text-decoration: line-through;
-  margin-left: 6px;
-}
-.spec-coin-name {
-  font-size: 12px;
-  font-weight: 500;
-  color: #F53F3F;
-  margin-left: 2px;
-}
-.spec-body {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 20px 16px;
-}
-.spec-label {
-  color: #1d2129;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-.spec-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.spec-item {
-  padding: 7px 18px;
-  background: #f2f3f5;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #1d2129;
-  border: 1px solid transparent;
-}
-.spec-item.active {
-  background: #e8f1ff;
-  border-color: #0968f6;
-  color: #0968f6;
-}
-.spec-renew-tip {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #ff7d00;
-}
-.spec-footer {
-  padding: 16px;
-  border-top: 1px solid #f2f3f5;
-}
-.spec-confirm {
-  width: 100%;
-  height: 46px;
-  line-height: 46px;
-  text-align: center;
-  background: #0968f6;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 4px;
-}
+/* 规格弹层的样式随组件走：2026-10-28 抽成 `components/tz/circle-spec-popup.vue`
+   （成员端圈子首页「送好友」也用同一只），`.spec-*` 这一整组不再留在页面里 —— 
+   留着就是第二份会分叉的配色/间距（硬约束 11）。 */
+
+/* 拼团价横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   信息卡不再出血摆横幅，`.presale-gb-banner` 随之删净 */

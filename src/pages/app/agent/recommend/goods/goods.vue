@@ -1,33 +1,19 @@
 <template>
 	<view class="container">
 
-		<u-sticky bgColor="#fff" :offsetTop="0">
+		<!-- 搜索栏走共用「搜索框 + 右侧筛选按钮」档（M7①，与圈子搜索页同一组件），
+		     类型与排序收进筛选弹窗，原来那一行「类型下拉 + 两个排序字」不再占位 -->
+		<tz-search-filter-bar :value="form.name" placeholder="请输入要搜索的商品" :filter-active="filterActive"
+			@change="onKeywordChange" @submit="refresh" @filter="filterVisible = true" />
 
-			<tz-box padding="15px 15px 5px">
-				<u-search  borderColor="#fff" @search="refresh()" v-model="form.name" :showAction="false" placeholder="请输入要搜索的商品" shape="square"></u-search>
-			</tz-box>
-
-			<div class="filter">
-
-				<div class="type" @click="modal.type = true">
-					<span>{{ type[typeChecked].name }}</span>
-					<span><tz-icon :name="modal.type ==false ? 'unfold' : 'packup'" :size="16" color="#4E5969" /></span>
-				</div>
-				<div class="sort">
-					<span :class="{
-						'active': form.sort == item.type
-					}" @click="changeSort(item.type)" v-for="(item, index) in sortType">
-						{{ item.name }}
-						<tz-icon v-if="form.sort == item.type" :name="form.order == 'asc' ? 'zhengxu2' : 'daoxu'"
-							:size="12" />
-					</span>
-				</div>
-			</div>
-		</u-sticky>
+		<!-- 商品筛选弹窗（类型 + 排序）：排序把原来的「时间/价格 × 正序/倒序」四态收成四档单选 -->
+		<tz-filter-popup :visible="filterVisible" title="商品筛选" :type-value="form.type" :type-options="typeOptions"
+			:sort="sortValue" :sort-options="sortOptions" :show-time="false" @update:visible="filterVisible = $event"
+			@confirm="onFilterConfirm" />
 
 
 		<!-- 首屏骨架屏：占位块逐块对齐真实商品卡（140 封面 + 两行标题 + 底部价格与「预计得」那一排），
-		     吸顶搜索栏与类型/排序留在骨架屏外保持可点；翻页追加列表不闪骨架（M16） -->
+		     吸顶搜索栏留在骨架屏外保持可点；翻页追加列表不闪骨架（M16） -->
 		<div class="goods-list gd-sk" v-if="loading">
 			<div class="goods-item" v-for="i in 4" :key="i">
 				<div class="goods-item-cover gd-sk-block"></div>
@@ -43,10 +29,13 @@
 		</div>
 		<div class="goods-list" v-else-if="list.length > 0">
 			<div class="goods-item" v-if="item.prop" v-for="(item, index) in list" @click="$nav.to(item.link_id, item.type)">
-				<div class="goods-item-cover" :style="{
-					'background-image': 'url(' + item.cover + ')',
-					'background-size': '100% 100%'
-				}">
+				<!-- 封面走 `<image>` 而不是 `background-image`：背景图没有「加载失败」这一档，
+				     地址失效 / CDN 掉图 / 域名没进小程序白名单时那一格永远是白的。
+				     取不到（含地址为空）就换全站默认商品图 `/static/image/default-goods.jpg`
+				     —— 2026-10-29 用户点名「包括这个页面，图片也要有填充」（口径 M65） -->
+				<div class="goods-item-cover">
+					<image class="goods-item-cover-img" :src="coverOf(item)" mode="scaleToFill"
+						@error="onCoverError(item)" />
 					<div class="goods-item-type">
 						<span>{{ $t(item.type) }}</span>
 					</div>
@@ -71,12 +60,6 @@
 			</div>
 		</div>
 		<u-empty icon="/static/image/empty.png" width="70" height="70" v-else/>
-
-
-		<!-- 类型筛选 -->
-		<u-action-sheet :round="10" :safeAreaInsetBottom="true" cancelText="取消" :show="modal.type" :actions="type"
-			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="modal.type = false" @select="typeSelect">
-		</u-action-sheet>
 
 
 		<!-- 分享弹窗 -->

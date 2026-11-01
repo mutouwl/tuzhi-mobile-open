@@ -28,14 +28,16 @@
 				</view>
 			</view>
 		</template>
+		<!-- 卡级直角（2026-10-28 用户点名「去掉box圆角」）：本页所有卡片 tz-box 都不再传 round，
+		     与 M21「页面里不给卡片写圆角」同档；内衬/白底不变，只有四角从 10px 收成直角 -->
 		<template v-else-if="!error">
-			<tz-box round>
-				<status-bar :status="data.status" :describe="data.describe" />
+			<tz-box>
+				<status-bar :status="data.status" :status-text="data.status_text || ''" :describe="data.describe" />
 			</tz-box>
 
 
 		<!-- 收货地址 - 实物商品或规格含实物商品的组合商品显示 -->
-		<tz-box v-if="data.address"  padding="15px 15px" :marginTop="10" round>
+		<tz-box v-if="data.address"  padding="15px 15px" :marginTop="10">
 			<view class="address-detail">
 				<view class="user-info">
 					<text class="name">{{ data.address.consignee }}</text>
@@ -47,13 +49,16 @@
 			</view>
 		</tz-box>
 
-		<tz-box padding="5px 15px 10px" :marginTop="10" round>
+		<tz-box padding="5px 15px 10px" :marginTop="10">
 				<!-- <div  v-for="(item, index) in data.goodsList" :key="index" :id="item.item_id">{{ item.snapshoot.count }}--</div> -->
 				<template v-for="(item, index) in data.goodsList">
 					<view :key="index" v-if="item.snapshoot">
 						<course :itemId="item.item_id" :packageId="item.snapshoot.package_id || ''" :name="item.snapshoot.name" :cover="item.snapshoot.cover"
 							:type="item.snapshoot.type" :price="item.snapshoot.price" :count="item.count" :more="true"
 							:is-virtual-pay="isVirtualPay"/>
+						<!-- 商品行发货状态（2026-10-29 用户点名去掉）：订单状态栏已经说明「待发货/已发货」，
+						     商品行再挂一次「发货状态 待发货」是同一句话讲两遍。后端 `send_status_text` 仍下发
+						     （管理端订单列表/详情与 AI 订单查询在用），只在学员端不再展示 -->
 						<!-- 组合商品内含子商品 -->
 						<view class="sub-goods-list" v-if="item.snapshoot.type === 'composite' && item.snapshoot.sub_goods_list && item.snapshoot.sub_goods_list.length">
 							<view class="sub-goods-item" v-for="(sub, si) in item.snapshoot.sub_goods_list" :key="si">
@@ -67,13 +72,15 @@
 									<view class="sub-goods-bottom">
 										<text class="sub-goods-price">¥{{ sub.sub_goods_price }}</text>
 										<text class="sub-goods-validity" v-if="subGoodsValidity(sub)">{{ subGoodsValidity(sub) }}</text>
+										<!-- 子商品发货状态：2026-10-29 用户点名去掉（与父行同一条：状态栏已说明，不再重复） -->
 									</view>
 								</view>
 							</view>
 						</view>
 					</view>
 				</template>
-				<tz-divider bgColor="#fff" />
+				<!-- 块间只留一条间隔条（2026-10-30 用户口径「这个最多只能出现一个相邻」）：虚线已注释掉，
+				     原先一上一下两条 10px 并排 = 20px 白缝，留一条即可 -->
 				<!-- <u-line dashed></u-line> -->
 				<tz-divider bgColor="#fff" />
 				<div class="total-box">
@@ -104,7 +111,33 @@
 				</div>
 			</tz-box> -->
 
-			<tz-box :marginTop="10" round>
+			<!-- 拼团状态（M-P7）：后端 `group_buy.label` 有值才出（普通单/未装是空对象）。
+			     **单独一块**（独立白卡、上下各 10px 边距——本卡自己 `:marginTop="10"` 管上距、
+			     下方订单信息卡自己的 `:marginTop="10"` 管下距），压在订单信息列表正上方。
+			     2026-10-16 用户对同一枚标连调四版定稿：独立行 → 状态栏 value 位 → 信息列表第一行 →
+			     本轮原话「拼团 cell 单独一个行，也就是说上下要有边距」；点它进那一团的详情
+			     —— 订单详情说不清「还差几人、什么时候到期」，那一屏说得出 -->
+			<tz-box v-if="data.group_buy && data.group_buy.label" :marginTop="10">
+				<u-cell size="large" :border="false" title="拼团状态" :isLink="true" @click="toGroupBuyTeam">
+					<template #value>
+						<text class="order-gb-tag">{{ data.group_buy.label }}</text>
+					</template>
+				</u-cell>
+			</tz-box>
+
+			<!-- 赠送记录（2026-10-20 用户点名：送礼单要像拼团单那样在订单详情显示记录入口与进度）。
+			     后端 `send_friend.label` 有值才出（普通单 / 领取单 / 未装都是空对象，整段不渲染）。
+			     版式与上一块拼团状态逐字同档：独立白卡、上下各 10px、行 value 位色标 + isLink 箭头；
+			     点它进「赠送记录」页，并带 order_no 只列这一张购买单的礼单 -->
+			<tz-box v-if="featureSendFriend && data.send_friend && data.send_friend.label" :marginTop="10">
+				<u-cell size="large" :border="false" title="赠送记录" :isLink="true" @click="toSendFriendGifts">
+					<template #value>
+						<text class="order-sf-tag">{{ data.send_friend.label }}</text>
+					</template>
+				</u-cell>
+			</tz-box>
+
+			<tz-box :marginTop="10">
 				<u-cell-group :border="false" :customStyle="{ fontSize: '12px' }">
 					<u-cell size="large" :border="false" title="备注"
 						:value="data.buyer_remark ? data.buyer_remark : '-'"></u-cell>
@@ -123,7 +156,7 @@
 			</tz-box>
 			<!-- <tz-divider /> -->
 			<!-- 底部操作卡：无任何可展示按钮时整卡不渲染，避免详情页底部留一张空白卡片 -->
-			<tz-box v-if="hasOrderAction" padding="10px 15px" :marginTop="10" round >
+			<tz-box v-if="hasOrderAction" padding="10px 15px" :marginTop="10">
 				<div class="order-footer">
 					<!-- <u-button v-if="showRefundLogBtn"
 						@click="$nav.to('/pages/order/service/refundlog/refundlog?order_no='+data.order_no)"

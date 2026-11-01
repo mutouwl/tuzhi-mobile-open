@@ -68,6 +68,14 @@
         </view>
       </view>
 
+      <!-- 送好友：本页**不摆**（2026-10-29 用户点名「/pages/app/circle/index/index?id=3168 中，
+           不要显示送好友卡片」）。圈子这一类的送礼入口收在售前页 `circle/presale` 那一处
+           （选有效期 → `sf=1` 下单页）；入圈之后的成员首页只做浏览/发布，不再放一枚买来送人的长条。
+           组件与规格弹层一起撤净：`tz-circle-spec-popup` 在本页只有送礼这一条路会开，
+           留着一只没人开的弹层（连带 `specs`/`currentSpec`/`showSpec`/`giftMax`/`isVirtualPay`/`coinName`
+           六枚 data 与 `onGiftOpen`/`onSpecPick`/`closeGiftSpec`/`confirmGiftSpec` 四个方法）就是死代码；
+           组件那枚只为这一页存在的 `inset` prop 也同批删掉。 -->
+
       <!-- 黑名单状态提示：可浏览内容但限制互动 -->
       <view class="ban-banner" v-if="myMember.status == 2">
         <text>你已被限制互动，请联系圈主</text>

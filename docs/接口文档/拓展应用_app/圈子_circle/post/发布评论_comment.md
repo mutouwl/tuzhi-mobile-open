@@ -19,9 +19,9 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | post_id | integer | 否 | 帖子ID | `0` |
-| content | string | 否 | 内容 | `` |
+| content | string | 否 | 内容 | - |
 | reply_id | integer | 否 | replyID | `0` |
-| media | string | 否 | 媒体 | `` |
+| media | string | 否 | 媒体 | - |
 
 ## 请求头
 
@@ -34,12 +34,21 @@
 ```bash
 curl -X POST '{apiUrl}app/circle/post/comment' \
   -H 'Content-Type: application/json' \
-  -d '{"post_id":0,"content":"","reply_id":0,"media":""}'
+  -d '{"post_id":0,"content":"xxx","reply_id":0,"media":"xxx"}'
 ```
 
 ## 返回示例
 
-> 暂无真实返回数据。
+```json
+{
+  "code": 1,
+  "msg": "评论成功",
+  "time": 1786492800,
+  "data": {
+    "id": 506
+  }
+}
+```
 
 ## 返回参数说明
 
@@ -48,3 +57,4 @@ curl -X POST '{apiUrl}app/circle/post/comment' \
 | code | integer | 状态码：1=成功，0=业务错误，401=未登录 |
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
+| data.id | integer | ID |

@@ -1,0 +1,27 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344797",
+  "data": {
+    "invite_num": 2,
+    "rows": [
+      {
+        "user_id": 1000013618,
+        "nickname": "1**",
+        "avatar": "",
+        "count_time": 1791281920,
+        "count_time_text": "2026-10-06 18:18"
+      },
+      {
+        "user_id": 486,
+        "nickname": "冯**",
+        "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/d8ZCuKyZcgBibBvGgCN44pUDibkmdZbTLD0FtVspibrdS744wMllzoxlmdWibp3o9C68icnZTiagYS0ONu5XvcnP7vBw/132",
+        "count_time": 1791281890,
+        "count_time_text": "2026-10-06 18:18"
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "has_more": false
+  }
+}

@@ -161,8 +161,12 @@
 }
 .tabbar-right {
   flex: 1;
+  /* 一行内按钮与按钮的间距只由容器 gap 给（硬约束 20）：单按钮档无影响 */
+  display: flex;
+  gap: 10px;
 }
 .buy-btn {
+  flex: 1;
   width: 100%;
   height: 44px;
   line-height: 44px;
@@ -177,3 +181,77 @@
 .buy-btn::after {
   border: none;
 }
+/* 拼团价横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   价格卡不再出血摆横幅，`.cmp-gb-banner` 随之删净 */
+
+/* 拼团入口的**宿主**也要 flex:1（小程序端父级里的 flex 项是 `<tz-group-buy-btn>` 的宿主节点，
+   子组件根上的 `flex:1` 到不了宿主，M73）：只给 `.buy-btn` 加 `flex:1` 时入口按内容收缩、
+   两枚宽度不等（H5 没有宿主节点所以浏览器里看不出） */
+.cmp-gb-slot {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== 首屏骨架灰块（M16）：取全站那一档灰 #e5e6eb，几何逐块对着真实元素给 =====
+   口径：灰块只占**文字内容高**，上下外衬由行盒包装补齐 —— 灰块高 + 上下外衬 = 真实行盒高
+   （价格 32 / 16 下边距、标题 18/26 + 8 下边距、规格行 14/20），数据到手换真文字时才不跳位。
+   容器一律复用真实类（`.detail-content` / `.title-card` / `.price-box` / `.detail-cell-card` /
+   `.cell-item` / `.cell-value` / `.cell-arrow` / `.detail-tabbar` / `.tabbar-right`），
+   本文件未加 scoped，新增类名统一带 cmp-sk- 前缀，避免外溢到其他页面（M11/M12）。 */
+.cmp-sk {
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+.cmp-sk-line {
+  display: flex;
+  align-items: center;
+}
+/* 封面：真实封面 `mode="widthFix"`，高度由图片算 ⇒ 先按同族实物商详那一档占
+   （100vw / 480 上限，`pages/app/physical/detail` 同值），数据到手换真图 */
+.cmp-sk-cover {
+  width: 100%;
+  height: 100vw;
+  max-height: 480px;
+  background: #e5e6eb;
+}
+/* 价格行：与真实 `.price-text` 的 32 行高 + `.price-box` 的 16 下边距同档
+   （本页价格区只有价格一段，没有实物商详那枚「已售」，故右侧不给灰块） */
+.cmp-sk-line--price {
+  height: 32px;
+}
+.cmp-sk-price {
+  width: 110px;
+  height: 32px;
+}
+/* 标题行：真实 `.title-text` 18px/26 + 8 下边距；示例商品名普遍一行，宽度取 78% */
+.cmp-sk-line--title {
+  height: 26px;
+  margin-bottom: 8px;
+}
+.cmp-sk-title {
+  width: 78%;
+  height: 18px;
+}
+/* 规格行两格（左侧「选择」是写死文案，照常摆真文字，不盖灰）：
+   值「请选择规格」五字 70、右侧计数「共N种规格可选」13px 给 76；
+   两格行盒 20 / 19 与真实 14px、13px 文字的行盒同档，行总高仍是 16+20+16+1=53 */
+.cmp-sk-line--value {
+  height: 20px;
+}
+.cmp-sk-value {
+  width: 70px;
+  height: 14px;
+}
+.cmp-sk-line--count {
+  height: 19px;
+}
+.cmp-sk-count {
+  width: 76px;
+  height: 13px;
+}
+/* 底栏按钮：与真实 `.buy-btn` 同 44 高、撑满 `.tabbar-right`（内衬与安全区吃 `.detail-tabbar`） */
+.cmp-sk-btn {
+  width: 100%;
+  height: 44px;
+}
+

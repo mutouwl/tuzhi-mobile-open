@@ -32,7 +32,7 @@
 					</div>
 				</div>
 			</tz-box>
-			<tz-divider />
+			<tz-divider bgColor="#fafafa" />
 			<tz-box>
 				<div class="rct-sk-poster rct-sk-block"></div>
 			</tz-box>
@@ -88,7 +88,7 @@
 							</u-cell-group>
 						</div>
 					</tz-box>
-					<tz-divider />
+					<tz-divider bgColor="#fafafa" />
 				</template>
 
 				<tz-box>

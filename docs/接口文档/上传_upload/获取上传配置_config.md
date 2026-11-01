@@ -1,6 +1,6 @@
 # 获取上传配置
 
-> 上传分流配置（白名单过滤，严禁透传 accessKeySecret/accessKeyId） 移动端据此判断：oss.client 直传 / vod 直传 / 服务器上传
+> 上传分流配置（白名单过滤，严禁透传 accessKeySecret/accessKeyId） 移动端据此判断：oss.client 直传 / vod 直传 / 服务器上传 读库内最新值：后台关闭云存储后必须立即停止下发直传参数，否则客户端仍会直传
 
 ## 基本信息
 
@@ -11,7 +11,7 @@
 | 请求方式 | POST |
 | 是否需登录 | 是 |
 | 所属模块 | 上传（upload） |
-| 所属控制器 | Upload（上传接口 image/uploadBase64 为无需登录的服务器直传（既有）； config/ossParams/vodUrl/vodRefresh/vodNotify/ossNotify 为 App 登录态直传端点（新增）： - OSS 直传回调复用 addons/alioss/index/notify（aliosstoken 校验，无 admin 锁），   回调不可达的部署场景由 ossNotify 客户端补记（幂等） - VOD 上传凭证由阿里云 CreateUploadVideo 签发（STS 临时凭证，自动过期），   上传成功后由 vodNotify 补记 Attachment（storage=alivod, url=videoId） - 客户端不接触主 AK/Secret） |
+| 所属控制器 | Upload（上传接口） |
 | 登录方式 | 请求头携带 `token`（登录接口返回） |
 
 ## 请求参数

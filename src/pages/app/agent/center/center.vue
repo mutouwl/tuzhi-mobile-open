@@ -161,6 +161,14 @@
 							<tz-icon name="enter" color="#86909C" :size="13" />
 						</template>
 					</u-cell>
+					<!-- 商家开启「结算到用户余额」后，新佣金不再进分销钱包，这一本账也得在这页有个门；
+					     显隐只吃后端下发的那枚开关，不许前端自己判「有没有余额」（硬约束 27②/M36） -->
+					<u-cell :border="false" v-if="config.settle_to_balance == 1" style="padding: 0;" title="账户余额"
+						label="佣金到账后并入这里" value="去提现" @click="$nav.to('/pages/user/balance/index')">
+						<template #right-icon>
+							<tz-icon name="enter" color="#86909C" :size="13" />
+						</template>
+					</u-cell>
 				</tz-box>
 				<tz-divider bgColor="none" />
 				<tz-box padding="10px 15px">

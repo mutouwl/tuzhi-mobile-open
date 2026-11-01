@@ -59,10 +59,10 @@
 			<template v-else>
 				<!-- 邀请头：谁在分享（头像 + 昵称 + 一句邀请语），与日签图共用 avatar 那一份兜底 -->
 				<view class="sp-head" :style="{ top: contentColumn.headTop + 'px' }">
-					<image class="sp-head-avatar" :src="avatarSrc" mode="aspectFill" @load="onAvatarLoad" @error="onAvatarError" />
+					<image class="sp-head-avatar" :src="avatarSrc" mode="aspectFill" :style="inkAvatarText" @load="onAvatarLoad" @error="onAvatarError" />
 					<view class="sp-head-text">
-						<text class="sp-head-name">{{ nickname }}</text>
-						<text class="sp-head-invite">{{ inviteText }}</text>
+						<text class="sp-head-name" :style="inkTextText">{{ nickname }}</text>
+						<text class="sp-head-invite" :style="inkSubText">{{ inviteText }}</text>
 					</view>
 				</view>
 				<!-- 内容卡（圆角 + 半透明白）：封面在上、标题在下（2026-09-26 用户点名「图片与标题上下排列、
@@ -71,19 +71,29 @@
 				     卡高由 contentColumn 现算：四边都是 GAP，标题只占一行（超出一档由 nameLines 截掉补省略号，
 				     2026-09-27 用户口径），卡里因此不会剩下那一行下面白摊着的 19px（上一版预留两行的空，
 				     正是用户点名的「内容区域上下间距不一致」）；封面取不到就退回没有封面的那一档 -->
-				<view class="sp-card" v-if="hasCard" :style="{ top: contentColumn.cardTop + 'px', height: contentColumn.cardH + 'px' }">
+				<view class="sp-card" v-if="hasCard" :style="cardStyleText">
 					<image class="sp-cover" v-if="coverSrc" :src="coverSrc" mode="aspectFill" @load="onCoverLoad" @error="onCoverError" />
-					<view class="sp-name" v-if="nameLines.length" :class="coverSrc ? 'sp-name--under' : ''">
+					<view class="sp-name" v-if="nameLines.length" :class="coverSrc ? 'sp-name--under' : ''" :style="inkCardTextText">
 						<text class="sp-name-line" v-for="(line, i) in nameLines" :key="i">{{ line }}</text>
 					</view>
 				</view>
-				<!-- 码：与日签图同一张接口、同一档判据（没到手就不出这一格，也不写那句说明） -->
+				<!-- 码：与日签图同一张接口、同一档判据（没到手就不出这一格，也不写那句说明）。
+				     小程序码是「圆形码 + 方形留白」，按方形摆会在渐变底上留下四个白角 ⇒ 按 codeRound
+				     裁成圆的（画布那一份同一刀，见 drawContent）；H5 的方码不裁，裁了定位角就扫不出来 -->
 				<view class="sp-codebox" v-if="codeSrc" :style="{ top: contentColumn.qrTop + 'px' }">
-					<image class="sp-qr" :src="codeSrc" mode="aspectFit" @error="onCodeError" />
+					<image class="sp-qr" :class="codeRound ? 'sp-qr--round' : ''" :src="codeSrc" mode="aspectFit" @error="onCodeError" />
 				</view>
-				<text class="sp-qr-tip" v-if="codeSrc" :style="{ top: contentColumn.tipTop + 'px' }">{{ codeCaption }}</text>
+				<text class="sp-qr-tip" v-if="codeSrc" :style="qrTipStyleText">{{ codeCaption }}</text>
 			</template>
 		</view>
+		<!-- 兜底那一枚（站点配置里的店铺 logo）的隐形量尺：卡内封面还没轮到它时它不出现在卡里，
+		     这里挂一枚 1px 的透明图只为把它的原始宽高量下来 —— 画布退回 logo 时要按它自己的比例
+		     aspectFill（拿内容封面的宽高去套，logo 会被裁掉一块，见 coverPaint）：
+		     它的 @error 同时把「这一枚 logo 加载不出来」记进 coverErrors，封面真失败时直接跳到默认图标，
+		     不再摆一张永远画不出来的 logo。
+		     不参与 assetsReady：它只是「量尺寸」，等它会把整张海报多盖一格遮罩（见 assetsReady） -->
+		<image class="sp-cover-probe" v-if="coverProbe" :src="coverProbe" mode="aspectFill"
+			@load="onCoverProbeLoad" @error="onCoverProbeError" />
 		<!-- 已经渲染出来的那一张海报图：弹层一显示就把画布出好的图盖在这里，长按这一张才存得下图
 		     （底下那一版 DOM 是排版，长按它没有「保存图片」；画布没出来之前显示的就是那一版排版） -->
 		<image class="sp-rendered" v-if="renderedSrc" :src="renderedSrc" mode="scaleToFill" show-menu-by-longpress />
@@ -95,13 +105,13 @@
 		     挂在海报根节点这一层是因为它要压在上面那张渲染图之上才点得到；位置与挂在 .sp-layer 里
 		     完全一样（两个盒子同尺寸同原点） -->
 		<view class="sp-acts" v-if="layout === 'daily'" :style="dailyText.acts">
-			<view class="sp-act" v-if="quote" @tap="$emit('next-quote')">
-				<u-icon class="sp-ic-mid" name="reload" :size="14" color="#fff"></u-icon>
-				<text class="sp-act-text">换一条</text>
+			<view class="sp-act" v-if="quote" :style="dailyText.actChip" @tap="$emit('next-quote')">
+				<u-icon class="sp-ic-mid" name="reload" :size="14" :color="ink.chipText"></u-icon>
+				<text class="sp-act-text" :style="dailyText.actText">换一条</text>
 			</view>
-			<view class="sp-act" v-if="quote" @tap="$emit('copy-quote')">
-				<u-icon class="sp-ic-mid" name="file-text" :size="14" color="#fff"></u-icon>
-				<text class="sp-act-text">复制金句</text>
+			<view class="sp-act" v-if="quote" :style="dailyText.actChip" @tap="$emit('copy-quote')">
+				<u-icon class="sp-ic-mid" name="file-text" :size="14" :color="ink.chipText"></u-icon>
+				<text class="sp-act-text" :style="dailyText.actText">复制金句</text>
 			</view>
 		</view>
 		<!-- 素材还没取齐的加载遮罩（2026-09-26 用户口径：海报里零散的骨架块太丑，换成盖满整张海报的
@@ -149,9 +159,12 @@
  *                                库里只有一句时点了切不动，那句原因由调用方说出口——见 M13）
  *                       content：inviteText 邀请语、cover 内容封面（2026-09-26 用户定：内容卡只画封面 + 标题，
  *                                类型 / 现价 / 划线原价 / 店铺名都不再上海报，故这些字段本组件不读）。
- *                                cover 没下发或加载失败时填系统 logo（见 coverSrc），logo 也取不到才不画那一格
+ *                                cover 没下发或加载失败时依次填店铺 logo、全站默认图标（见 coverFallbacks /
+ *                                coverSrc；2026-10-29 用户口径：「图加载失败用店铺 logo，logo 也失败再用 icon」）
  *        codeSrc      = 右下角那张码（H5 二维码 / 小程序码，按端取，见 tz-share-poster 的 loadCode）
-	 *        codeLoading  = 那张码还在取（弹层已发请求、没回来也没失败）：这一格先按到位的那一档留好位置，
+	 *        bgInk        = 底图档的字色档（'light' 浅底配深字 / 'dark' 深底配白字 / '' 判不出来按白字），
+ *                       由壳探测当前那张 share_bgs 后下发；渐变档不看它
+ *        codeLoading  = 那张码还在取（弹层已发请求、没回来也没失败）：这一格先按到位的那一档留好位置，
 	 *                       整张海报盖加载遮罩（shadeLoading → .sp-shade），到手那一刻版式不跳、
 	 *                       也不用用户对着一个空方块猜
  *        codeCaption  = 码下面那句说明（'长按识别' + 码名）
@@ -163,7 +176,7 @@
  * emits: bg-error(url)、bg-load(url,{width,height})、next-quote、copy-quote
  * 对外方法：drawPoster(done, level) —— 由 tz-share-poster 的「保存 / 分享」经 $refs 调（画布在本组件这一层）
  */
-import { POSTER_THEMES, POSTER_W, POSTER_H, themeCss, drawTheme, roundRect, aspectFill, setFont, clampIndex, textWidth, fitText, wrapText, styleText } from '@/common/utils/poster-theme';
+import { POSTER_THEMES, POSTER_W, POSTER_H, themeCss, drawTheme, roundRect, aspectFill, setFont, clampIndex, textWidth, fitText, wrapText, styleText, inkOf } from '@/common/utils/poster-theme';
 import { mpKey } from '@/common/utils/mp-data-key';
 // H5 出图前先把这一批地址换成本机地址（小程序端那条 2d 链自己会加载图片对象，用不着）
 import { resolvePosterImages } from '@/common/utils/poster-render';
@@ -173,6 +186,15 @@ import { get2dCanvas, load2dImages, wrap2d, export2d } from '@/common/utils/canv
 
 // 头像兜底图（与日签图、各页用户卡同一张）：抽成一处，avatarSrc 与「它自己也取不到」那一判读同一个值
 const DEFAULT_AVATAR = '/static/image/default-avatar.png';
+// 封面那一格的末位兜底（全站「暂无图片」那一张图标：课程卡 / 套餐卡 / 校区卡用的是同一份）：
+// 内容没封面、店铺 logo 也没配或加载失败时填它，卡里不留白。2026-10-28 用户点名「如果图片是空白的，
+// 还是没有默认填充」；2026-10-29 再点名它是这条链的末位（「店铺 logo 图片也加载失败，再使用当前的 icon」）。
+// 它是本地静态图，正常不会加载失败；真失败一次就按「没有封面」收口（不重复摆一张摆不出来的图，见 coverSrc）
+const DEFAULT_COVER = '/static/image/default-goods.jpg';
+// 默认商品图的原始宽高（400×400，文件自带这一档尺寸）：画布这一份按它做与预览 mode="aspectFill"
+// 同一刀居中裁切。为什么不读 coverSizes：DOM 那一格摆的是内容封面时，没人量过默认图；
+// 而「封面这一层画不进去」正是要用它的那一档（见 coverPaint），那一刻再去等一次 load 就会空一拍
+const DEFAULT_COVER_SIZE = { w: 400, h: 400 };
 
 // —— 两档版式的镜像数值：下面样式块里每一块的 top / 高度 / 字号 / 字重都在这张表里有一份，改视觉两处一起改 ——
 //    content 这一档的顶边与高度不写死在 CSS 里，全部由 contentColumn 现算（标题几行、码在不在都影响版式），
@@ -220,7 +242,8 @@ const HEAD_AVATAR = 40;    // content：邀请头头像
 const HEAD_H = 44;         // content：邀请头那一行的高（昵称 22 + 间距 4 + 邀请语 18，40 的头像在其中垂直居中）
 const GAP = 12;            // content：列内唯一的留边档 —— 块与块之间、卡的四边都只存这一个值
 const CARD_R = 8;          // content：卡的圆角（§1 封面/缩略图档 6–8；这块不贴海报边，圆了不会漏底图）
-const CARD_BG = 'rgba(255,255,255,0.86)'; // content：磨砂白底（靠透明度，不用 backdrop-filter——小程序不认）
+// content：卡底不在这里写死 —— 它是 POSTER_INK 的 card（深层那档 0.86 / 浅底那档 0.92，
+// 两档都要靠透明度透出底下那层渐变，不能用 backdrop-filter：小程序不认）
 const COVER_W = 240;       // content：卡内封面（卡宽 264 − 左右内衬 12×2），标题与它同宽
 const COVER_H = 124;
 const COVER_R = 6;         // content：封面圆角（卡内再一档，比卡的 8 小）
@@ -250,6 +273,9 @@ export default {
 		// 画布那一条链也把它当备选一起加载——两枚在 <image> 与画布图片对象两处的可加载性不等价
 		codeAltSrc: { type: String, default: '' },
 		codeLoading: { type: Boolean, default: false },
+		// 底图档的明暗判定（'light' 浅底配深字 / 'dark' 深底配白字 / '' 判不出来按白字）：
+		// 由 tz-share-poster 探完下发，本组件只管照着取字色（渐变档不看它，走 theme.tone）
+		bgInk: { type: String, default: '' },
 		// 壳那一次重画还在路上（换新图之前先留着上一张 + 盖遮罩，见 shadeLoading）
 		renderLoading: { type: Boolean, default: false },
 		// 壳那一次出图失败了（连退档都没画出图）：遮罩要撤，让人看到底下那一版排版
@@ -314,6 +340,36 @@ export default {
 			return { background: themeCss(this.activeTheme, POSTER_W), transform: 'scale(' + this.scale + ')' };
 		},
 		/**
+		 * 这一档的「压在上面的字色」：浅色底配深字、深色底配白字（表在 poster-theme 的 POSTER_INK）
+		 *
+		 * 2026-10-28 用户口径「浅色、深色并存」：底色分了两族，字色就必须跟着这一档走——
+		 * 海报上压在渐变上的每一档（日期角标 / 金句 / 出处 / 累计打卡 / 两枚动作 / 邀请头 / 码说明）
+		 * 原先全写死白字，浅底会把字吃掉（硬约束 29：加有色底是成组交付物）。
+		 * 预览的 :style 与画布 drawDaily / drawContent 读的都是这一个对象，两处不各存一份。
+		 * 底图档（商家自己传的图）的明暗由 `common/utils/poster-bg-ink` 探测后经 `bgInk` 下发：
+		 * 浅底图配深字、深底图配白字；判不出来（跨域 / 端不支持 / 超时）按改造前的白字口径收口。
+		 */
+		ink() {
+			const o = this.activeOption;
+			// 底图档的深浅要问那张图本身（壳探测后经 bgInk 下发）；判不出来（''）按改造前的白字收口
+			if (o && o.kind === 'image') return inkOf({ tone: this.bgInk });
+			return inkOf(this.activeTheme);
+		},
+		/** 内容档那几块的字色/卡底（字符串档，理由同 posterStyleText：小程序端 :style 绑对象会变成 [object Object]） */
+		inkTextText() { return styleText({ color: this.ink.text }); },
+		inkSubText() { return styleText({ color: this.ink.sub }); },
+		inkAvatarText() { return styleText({ background: this.ink.avatar }); },
+		inkCardTextText() { return styleText({ color: this.ink.cardText }); },
+		/** 内容卡：顶边与高度由 contentColumn 现算（与画布同一份），底色这个档的 card（磨砂靠透明度） */
+		cardStyleText() {
+			const col = this.contentColumn;
+			return styleText({ top: col.cardTop + 'px', height: col.cardH + 'px', background: this.ink.card });
+		},
+		/** 码下面那句说明：顶边由 contentColumn 给，颜色走这个档的次字 */
+		qrTipStyleText() {
+			return styleText({ top: this.contentColumn.tipTop + 'px', color: this.ink.sub });
+		},
+		/**
 		 * 上面那两份样式给模板用的字符串档（posterStyle / daily 的每一个子块）
 		 *
 		 * ⚠ 小程序端 `:style` 绑变量（computed 返回的对象）会原样进 setData，wxml 把 style 属性
@@ -334,6 +390,8 @@ export default {
 				count: styleText(d.count),
 				foot: styleText(d.foot),
 				acts: styleText(d.acts),
+				actChip: styleText(d.actChip),
+				actText: styleText(d.actText),
 			};
 		},
 		// —— daily 档 ——
@@ -350,6 +408,7 @@ export default {
 		 */
 		daily() {
 			const w = POSTER_W - DAILY_X * 2;
+			const ink = this.ink;
 			const lines = wrapText(this.quote, QUOTE_SIZE, w, QUOTE_MAX_LINES);
 			// 角标宽 = 最宽那一行的实测墨迹 + 左右内衬各一档（预览 text-align:center 与画布取中同一个结果）
 			const widest = Math.max(
@@ -365,12 +424,16 @@ export default {
 				userW: USER_W,
 				badgeW: badgeW,
 				badgeH: DATE_PAD_Y * 2 + DATE_LINES.reduce((s, l) => s + l[1], 0),
-				badge: { left: POSTER_W - DAILY_X - badgeW + 'px', top: PAD + 'px', width: badgeW + 'px' },
-				mark: { left: MARK_X + 'px', top: MARK_TOP + 'px', fontSize: MARK_SIZE + 'px' },
-				quote: { left: DAILY_X + 'px', top: QUOTE_TOP + 'px', width: w + 'px', fontSize: QUOTE_SIZE + 'px', lineHeight: QUOTE_LINE + 'px' },
-				from: { left: DAILY_X + 'px', top: QUOTE_TOP + lines.length * QUOTE_LINE + QUOTE_FROM_GAP + 'px', width: w + 'px', lineHeight: FROM_LINE + 'px' },
+				// 颜色同样进这一份：预览的 :style 与画布读同一个对象（硬约束 29：底色一换，压在它上面的
+				// 每一档字色与标签都要成组换，单改底色就是半成品）
+				badge: { left: POSTER_W - DAILY_X - badgeW + 'px', top: PAD + 'px', width: badgeW + 'px', background: ink.plate },
+				mark: { left: MARK_X + 'px', top: MARK_TOP + 'px', fontSize: MARK_SIZE + 'px', color: ink.mark },
+				quote: { left: DAILY_X + 'px', top: QUOTE_TOP + 'px', width: w + 'px', fontSize: QUOTE_SIZE + 'px', lineHeight: QUOTE_LINE + 'px', color: ink.text },
+				from: { left: DAILY_X + 'px', top: QUOTE_TOP + lines.length * QUOTE_LINE + QUOTE_FROM_GAP + 'px', width: w + 'px', lineHeight: FROM_LINE + 'px', color: ink.sub },
 				acts: { right: DAILY_X + 'px', top: ACT_TOP + 'px' },
-				count: { left: DAILY_X + 'px', top: COUNT_TOP + 'px' },
+				actChip: { background: ink.chip },
+				actText: { color: ink.chipText },
+				count: { left: DAILY_X + 'px', top: COUNT_TOP + 'px', color: ink.text },
 				foot: { height: FOOT + 'px', paddingLeft: DAILY_X + 'px', paddingRight: DAILY_X + 'px' },
 			};
 		},
@@ -379,8 +442,8 @@ export default {
 		/**
 		 * 系统 logo（站点配置里那一张，全站分享卡片缺封面时的同一份兜底，见 router.share / wechat sdk）
 		 *
-		 * 取不到（站点没配 / 组件没挂到 Vue 原型上）当空串：下面那一步会因此退回「没有封面」的版式，
-		 * 与改造前的行为一致，不会因为兜底本身出问题而让海报画不出来。
+		 * 取不到（站点没配 / 组件没挂到 Vue 原型上）当空串：这一枚就从封面兜底清单里让开，
+		 * 后面还有全站默认图标兜着（见 coverFallbacks），不会因为兜底本身出问题而让海报画不出来。
 		 */
 		siteLogo() {
 			try {
@@ -390,13 +453,34 @@ export default {
 			}
 		},
 		/**
-		 * 卡内那一格封面：内容自己的封面 → 取不到就填系统 logo → logo 自己也取不到才不画（不留一块白）
+		 * 卡内封面这一格的三级兜底清单（顺序即用户口径，2026-10-29）：
+		 * **内容自己的封面 → 店铺 logo → 全站默认图标（`/static/image/default-goods.jpg`）**
 		 *
-		 * 2026-10-05 用户口径（直播间分享弹窗）：「如果图片加载失败或没有，可以使用系统 logo 填充」。
+		 * 用户原话：「如果图片加载失败，可以使用店铺 logo 填充，如果店铺 logo 图片也加载失败，
+		 * 再使用当前的 icon 填充」。预览（coverSrc）与画布（coverPaint）都从这一份清单消费，
+		 * 顺序只写在这里一处 —— 两处各写一遍就会分叉（改了预览忘了画布，存下来的图又是另一档）。
+		 *
+		 * 「加载失败」在两端不是一回事：预览那边图 404 / 解码失败才走 @error；
+		 * 画布那边同一张图还可能因为跨域没给 CORS 头、小程序 2d 造不出图片对象而画不进去，
+		 * 所以画布这一份不能只信 coverSrc（它只看得到 @error），必须按同一份清单再逐枚试画。
+		 */
+		coverFallbacks() {
+			if (this.layout !== 'content') return [];
+			const p = this.poster || {};
+			const list = [p.cover || '', this.siteLogo, DEFAULT_COVER].filter((s) => !!s);
+			// 同一张图只留一次（内容封面恰好就是店铺 logo 时，不然「换一枚」会换到同一张上原地打转）
+			return list.filter((s, i) => list.indexOf(s) === i);
+		},
+		/**
+		 * 卡内那一格封面：按清单取第一枚「没加载失败」的（内容封面 → 店铺 logo → 默认图标）
+		 *
+		 * 2026-10-05 用户口径（直播间分享弹窗）：「如果图片加载失败或没有，可以使用系统 logo 填充」；
+		 * 2026-10-29 再补末位：「店铺 logo 也失败就用当前的 icon」。
 		 * 与头像那一档同一套三态（见 avatarSrc）：内容封面没下发、或地址加载失败（coverErrors 记着）
-		 * 都落到系统 logo 这一枚；logo 自己加载失败时不再摆它 —— assetsReady 只等「这一格真摆了图」，
-		 * 留一张永不回音的图会把整张海报永久盖在「加载中」（那是这一族最典型的症状）。
-		 * 三态按 mpKey(地址) 分别记，换一条内容时不必手动重置（旧的一枚只影响它自己）。
+		 * 都落到店铺 logo；logo 自己加载失败时再落到默认图标；三枚全失败才不画封面那一格
+		 * —— assetsReady 只等「这一格真摆了图」，留一张永不回音的图会把整张海报永久盖在「加载中」
+		 * （那是这一族最典型的症状）。三态按 mpKey(地址) 分别记，换一条内容时不必手动重置
+		 * （旧的一枚只影响它自己）。
 		 *
 		 * poster 由调用点下发（日签图弹层关闭时可能是 null，父级数据未到时也会短暂为 null）：
 		 * 这里直接取属性会抛 `Cannot read properties of null (reading 'cover')`，
@@ -407,19 +491,30 @@ export default {
 			// daily（打卡日签图）那一档压根没有内容卡，也没有封面这一格：logo 只填 content 档的卡内封面，
 			// 不然 assetsReady 会去等一枚日签图上根本不画的图，整张海报被盖在「加载中」（见 assetsReady）
 			if (this.layout !== 'content') return '';
-			const p = this.poster || {};
-			const own = p.cover || '';
-			if (own && !this.coverErrors[mpKey(own)]) return own;
-			const logo = this.siteLogo;
-			if (logo && logo !== own && !this.coverErrors[mpKey(logo)]) return logo;
+			const list = this.coverFallbacks;
+			for (let i = 0; i < list.length; i++) {
+				if (!this.coverErrors[mpKey(list[i])]) return list[i];
+			}
 			return '';
+		},
+		/**
+		 * 店铺 logo 的隐形量尺（模板里那枚 1px 的图）：卡里已经摆着它、或已经知道它加载不出来时不出
+		 *
+		 * 只在 content 档、logo 与此刻摆着的那一枚不是同一张时才探：目的是把它的原始宽高量进 coverSizes，
+		 * 画布万一从内容封面退到 logo（跨域换不到可绘地址 / 2d 造不出图片对象）时能按 logo 自己的比例裁。
+		 */
+		coverProbe() {
+			if (this.layout !== 'content') return '';
+			const logo = this.siteLogo;
+			if (!logo || logo === this.coverSrc) return '';
+			return this.coverErrors[mpKey(logo)] ? '' : logo;
 		},
 		/**
 		 * 这一块内容卡出不出
 		 *
-		 * 判据看**内容自己有没有东西**（封面或标题），不看 coverSrc：系统 logo 是所有内容共用的
-		 * 那一枚兜底，拿它当「这一条有内容」的证据，等于连名称都没有的一条也摆出一张只有 logo 的空卡
-		 * ——那正是 2026-09-26 用户点名要避免的「半张空卡」。logo 只在卡已经因为内容而出时填封面那一格。
+		 * 判据看**内容自己有没有东西**（封面或标题），不看 coverSrc：默认商品图与系统 logo 都是所有内容共用的
+		 * 兜底，拿它们当「这一条有内容」的证据，等于连名称都没有的一条也摆出一张只有占位图的空卡
+		 * ——那正是 2026-09-26 用户点名要避免的「半张空卡」。兜底图只在卡已经因为内容而出时填封面那一格。
 		 */
 		hasCard() {
 			const p = this.poster || {};
@@ -440,6 +535,27 @@ export default {
 		/** 这一张海报最后会不会有码（在取的要按有的那一档排版，到手才不会跳） */
 		codePlanned() {
 			return !!(this.codeSrc || this.codeLoading);
+		},
+		/**
+		 * 这张码要不要按圆形裁（预览与画布的同一道判据）
+		 *
+		 * 2026-10-29 用户点名（公共分享弹窗）：「如果获取的是小程序码，能否自动剪切为圆形的」。
+		 * 小程序端 `share/getQrcode` 走 `mkMpCode`（`wxacode.getUnlimited`），回的是
+		 * **圆形码本体 + 方形留白**的 PNG：按方形摆，四角那圈留白就在渐变底上留下四个白角。
+		 * 按画框内切圆裁（直径 = 边长）只削掉那圈留白，码本体一个模块都不动。
+		 * H5 端走 `mkQrcode`（`PhpQrcode`），回的是**方形二维码**：裁圆会把三个定位角切掉、直接扫不出来，
+		 * 所以只在微信端裁。判据按端而不是按像素/按图：这张码的来源只有 `share/getQrcode` 一处，
+		 * 形状由它的 `platform` 参数决定（小程序 = 小程序码、其余端 = 方码）。
+		 *
+		 * ⚠ 预览这一份（模板上的 `sp-qr--round`）与画布那一份（`drawContent` 的 arc + clip）必须同时成立：
+		 *   画布出的那张图会盖在排版之上、长按保存与分享出去的都是它，只改一处就是两帧之间「方 ↔ 圆」跳一下。
+		 */
+		codeRound() {
+			let round = false;
+			// #ifdef MP-WEIXIN
+			round = true;
+			// #endif
+			return round;
 		},
 		/**
 		 * content 档那一列的版式：邀请头钉在海报顶部、那张码钉在底部，内容卡在中间那一段里垂直居中
@@ -596,6 +712,31 @@ export default {
 			// （见 coverSrc），拿上一枚的宽高裁这一张，画布上就是「logo 被按课程封面的比例裁掉一块」
 			if (w && h) this.$set(this.coverSizes, mpKey(this.coverSrc), { w: w, h: h });
 		},
+		/**
+		 * 兜底 logo 那枚隐形量尺 load 到手：把它的原始宽高记进同一份 coverSizes
+		 *
+		 * 为什么要提前量（2026-10-29）：画布退回 logo 的那一档，卡里摆着的一直是内容封面，
+		 * DOM 从没量过 logo —— 那一刻才去等一次 load 就空了一拍，画布上要么留白、要么按封面的比例把 logo 裁掉。
+		 * 与 onCoverLoad 同一把钥匙（mpKey），画布那边按「实际画的那一枚」取尺寸（见 coverPaint）。
+		 */
+		onCoverProbeLoad(e) {
+			if (this.gone()) return;
+			const url = this.coverProbe;
+			const w = e && e.detail && e.detail.width;
+			const h = e && e.detail && e.detail.height;
+			if (url && w && h) this.$set(this.coverSizes, mpKey(url), { w: w, h: h });
+		},
+		/**
+		 * 兜底 logo 自己也加载不出来：记进 coverErrors（与卡里那张封面同一份判据）
+		 *
+		 * 记下来之后 coverProbe 立刻变空、coverSrc 直接跳过这一枚 —— 封面真失败时落到默认图标，
+		 * 不会摆一张永远画不出来的 logo（那会把 assetsReady 钉死，整张海报永久盖在「加载中」，M18⑨g）。
+		 */
+		onCoverProbeError() {
+			if (this.gone()) return;
+			const bad = this.coverProbe;
+			if (bad) this.$set(this.coverErrors, mpKey(bad), true);
+		},
 		/** 这一层此刻画不画（lv 还没走到它被丢掉的那一档，且它确实有东西可画） */
 		keepLayer(lv, name) {
 			const i = this.degradeChain.indexOf(name);
@@ -616,6 +757,72 @@ export default {
 			return lv;
 		},
 		/**
+		 * 内容卡封面这一格这一档要按顺序试画的候选（内容封面 → 店铺 logo → 默认图标）
+		 *
+		 * 预览那一份按 coverSrc 只摆一枚（它只看得到 @error），而画布还可能「图在预览是好的、却画不进去」
+		 * （跨域没给 CORS 头 / 2d 造不出图片对象），所以候选从**此刻摆着的那一枚**起往后取：
+		 * 已经 @error 的那几枚不重复试。降档丢了封面那一层时把内容自己的封面摘掉 —— 它正是把画布卡住的那张，
+		 * 但这一格仍要填，于是从店铺 logo 起继续（同一条用户口径：图不行用 logo，logo 不行再用默认图标）。
+		 * @param {Function} keep 这一档这一层画不画（degradeChain 的判据）
+		 * @returns {Array<String>}
+		 */
+		coverPaintCandidates(keep) {
+			if (this.layout !== 'content' || !this.coverSrc) return [];
+			const list = this.coverFallbacks;
+			const start = Math.max(0, list.indexOf(this.coverSrc));
+			const own = (this.poster || {}).cover || '';
+			return list.slice(start).filter((s) => keep('cover') || s !== own);
+		},
+		/**
+		 * 内容卡封面这一格这一次画哪一张、按哪一份原图尺寸裁（画布这一份的唯一判定点）
+		 *
+		 * 2026-10-29 用户点名「公共分享弹窗会出现图片区域空白，如果有空白，要填充默认图片」，
+		 * 同一天又补了兜底顺序：「如果图片加载失败，可以使用店铺 logo 填充，如果店铺 logo 图片也
+		 * 加载失败，再使用当前的 icon 填充」。预览那一版的三级兜底（内容封面 → 店铺 logo → 默认图标，
+		 * 见 coverSrc）只管 DOM，而用户看到的那张是画布出的图（它盖在排版之上）——下面三条路都会让
+		 * 画布这一格空着，而卡高仍按「有封面」预留了 124px：
+		 *   ① H5：内容封面是跨域图且没给 CORS 头，换不到可绘地址（drawSrc 回空，硬喂原址会污染画布）；
+		 *   ② 出图降档（degradeChain）把 cover 这一层丢了：卡里那一块直接没人画；
+		 *   ③ 小程序 2d：主地址没造出图片对象（超时 / 这一端认不了那个地址）。
+		 * 三条都收口到这一处：按同一份候选清单逐枚试画，第一枚画得进去的就是这一格，
+		 * 全都画不进去才留空（本地默认图标哪一端都画得进去，正常不会走到）。
+		 * @param {Function} keep 这一档这一层画不画（降档判据）
+		 * @param {Object}   [images] 小程序 2d 那条链的图片对象表（带 __used：这一格主地址最后用的是哪一枚
+		 *                            备选，见 canvas-2d 的 load2dImages）；H5 不传，按 drawSrc 换好的地址判
+		 * @returns {Object|null} { src, size }；这一格这次没有任何可画的图时给 null
+		 */
+		coverPaint(keep, images) {
+			const list = this.coverPaintCandidates(keep);
+			if (!list.length) return null;
+			// 默认图自己的宽高：DOM 摆过它就用量到的那一份，没摆过（正是这一格画不进去的那一档）用文件自带的常数
+			const defSize = this.coverSizes[mpKey(DEFAULT_COVER)] || DEFAULT_COVER_SIZE;
+			for (let i = 0; i < list.length; i++) {
+				const url = list[i];
+				// 这一端「这一枚此刻能画吗」：2d 是图片对象表里有它（主地址本身就是 wrap2d 的取图键）；
+				// H5 是换好的地址（imgDraw 里的值，换不到就是空串——硬喂原址会污染画布）
+				const drawable = images ? (images[url] ? url : '') : this.drawSrc(url);
+				if (!drawable) continue;
+				// 2d 那条链：主地址没成、备选顶上时，这一格画的是备选本身，尺寸要按备选自己的取
+				// （拿内容封面的宽高去套会把 logo / 默认图压扁）
+				const used = images && images.__used ? (images.__used[url] || url) : url;
+				// 尺寸按「实际画的那一枚」取：DOM 量过就用它的（coverSizes 按地址存），2d 的图片对象自带宽高也认；
+				// 默认图标永远有文件自带的 400×400，不需要等 load 一回。
+				let size = null;
+				if (used === DEFAULT_COVER) {
+					size = defSize;
+				} else {
+					size = this.coverSizes[mpKey(used)] || this.coverSizes[mpKey(url)]
+						|| (images && images[url] && images[url].width && images[url].height
+							? { w: images[url].width, h: images[url].height } : null);
+				}
+				// H5 画的是换好的地址（blob / 同源原址），2d 画的是图片对象表里按主地址登记的那一枚
+				return { src: drawable, size: size };
+			}
+			// 候选一枚都画不进去：缺件不许静默（M13 的反面），真机再报「图片区域空白」时先看这一行
+			console.warn('[tz-share-poster-body] 封面这一格一枚都换不到可绘地址（内容封面 / 店铺 logo / 默认图标），这一格留空：', list);
+			return null;
+		},
+		/**
 		 * 这一档这一轮要交给画布的地址里，还有哪些没换过（本机地址）——H5 出图前先换再画（见 drawPoster）
 		 *
 		 * 判据与 2d 那条链收集图片的地方同一份（degradeChain 的 keep + 头像要 load 成功过才画），
@@ -627,7 +834,11 @@ export default {
 			const srcs = [];
 			if (keep('avatar') && this.avatarSrc && this.avatarLoaded === this.avatarSrc) srcs.push(this.avatarSrc);
 			if (keep('bg') && this.activeImage) srcs.push(this.activeImage);
-			if (keep('cover') && this.coverSrc) srcs.push(this.coverSrc);
+			// 内容卡封面这一格：把这一档**还可能要画**的几枚一起换好（内容封面 → 店铺 logo → 默认图标）。
+			// 画布是同步画的，开画之后换不回来：漏一枚就会在「封面换不到可绘地址」时直接退成空白
+			// （2026-10-29 用户口径：图不行先用店铺 logo 填，logo 也不行再用默认图标）。
+			// 挂 coverPaintCandidates 而不挂 keep('cover')：降档丢了封面那一层时这一格仍要填 logo / 默认图标
+			this.coverPaintCandidates(keep).forEach((s) => srcs.push(s));
 			if (this.codeSrc) srcs.push(this.codeSrc);
 			const map = this.imgDraw;
 			return srcs.filter((s) => !map || map[s] === undefined);
@@ -750,7 +961,9 @@ export default {
 				const srcs = [];
 				if (keep('avatar') && self.avatarSrc && self.avatarLoaded === self.avatarSrc) srcs.push(self.avatarSrc);
 				if (keep('bg') && self.activeImage) srcs.push(self.activeImage);
-				if (keep('cover') && self.coverSrc) srcs.push(self.coverSrc);
+				// 封面：按「内容封面 → 店铺 logo → 默认图标」把这一档还可能要画的几枚一起加载成图片对象
+				// （2d 只吃 createImage() 出来的对象，一枚没造出来就画不了那一枚；见 coverPaint 的逐枚试画）
+				self.coverPaintCandidates(keep).forEach((s) => srcs.push(s));
 				const alts = {};
 				if (self.codeSrc) {
 					srcs.push(self.codeSrc);
@@ -769,7 +982,7 @@ export default {
 					return { c: c, images: images };
 				});
 			}).then((r) => {
-				self.paintPoster(wrap2d(r.c.ctx, r.c.canvas, r.images), keep);
+				self.paintPoster(wrap2d(r.c.ctx, r.c.canvas, r.images), keep, r.images);
 				return export2d(r.c.canvas, self);
 			}).then((src) => finish(src)).catch((e) => {
 				console.warn('[tz-share-poster-body] 2d 出图这一档没成，按降档重画：', (e && e.message) || e);
@@ -787,8 +1000,10 @@ export default {
 		 * 预览里 bold 的那几行会在画布图盖上来那一刻细一档（2026-09-27 用户点名「切换预览选项时昵称先变粗再变细」）。
 		 * @param {Object} ctx  旧版上下文或 wrap2d 包出来的那一份
 		 * @param {Function} keep 这一档这一层画不画
+		 * @param {Object} [images] 小程序 2d 的图片对象表（带 __used；H5 不传，封面那一格按 drawSrc 判，
+		 *                         画不进去就按「店铺 logo → 默认图标」继续填，见 coverPaint）
 		 */
-		paintPoster(ctx, keep) {
+		paintPoster(ctx, keep, images) {
 			const w = POSTER_W;
 			const h = POSTER_H;
 			// 底：当前这一档弥散渐变（与预览、色板同一张表算出来）
@@ -811,11 +1026,13 @@ export default {
 				}
 			}
 			if (this.layout === 'daily') this.drawDaily(ctx, w, h, keep);
-			else this.drawContent(ctx, w, h, keep);
+			else this.drawContent(ctx, w, h, keep, images);
 		},
 		/** daily 档画布：每一块的左边/顶边都读 this.daily（预览那些 :style 用的同一个对象），两处不许各算一遍 */
 		drawDaily(ctx, w, h, keep) {
 			const d = this.daily;
+			// 字色同样按档取（浅底配深字 / 深底配白字，见 computed ink）：与预览那份 :style 同一个来源
+			const ink = this.ink;
 			const x = d.x;
 			const footTop = h - FOOT;
 			// 左列三行（头像行 26 + 打卡名称 16 + 识别说明 12，含 6/4 行距）= 64；没有码时第三行不出 = 48
@@ -826,10 +1043,10 @@ export default {
 			// （与 drawContent 同一推法）。
 			// 2026-09-26 用户点名「日期背景现在是一个方形的、没有圆角」——预览那一版一直是 4px，
 			// 漏的是这一份画布：它用的还是 fillRect，圆角要自己拼路径（H5 画布没有 drawRoundedRect）
-			ctx.setFillStyle('rgba(255,255,255,0.16)');
+			ctx.setFillStyle(ink.plate);
 			roundRect(ctx, w - x - d.badgeW, PAD, d.badgeW, d.badgeH, DATE_R);
 			ctx.fill();
-			ctx.setFillStyle('#ffffff');
+			ctx.setFillStyle(ink.text);
 			const dateLines = [this.nowTime, this.nowMD, this.nowW];
 			let dateLineTop = PAD + DATE_PAD_Y;
 			dateLines.forEach((txt, i) => {
@@ -840,22 +1057,24 @@ export default {
 			});
 			// 引号：落在金句首字的左上角（x 比正文左内衬再往左一档），不再与首字同一头对齐成「压在文字上」
 			setFont(ctx, MARK_SIZE, false);
-			ctx.setFillStyle('rgba(255,255,255,0.35)');
+			ctx.setFillStyle(ink.mark);
 			ctx.fillText('“', MARK_X, MARK_TOP + MARK_BASELINE);
 			// 金句：折几行由 daily 那一份 wrapText 决定（预览把同一个数组一行一个 <text> 排出来），
 			// 基线 = 行顶 + 行高/2 + 字号×0.36，与角标 / 出处同一推法；
 			// 上一版这里按「一行 15 字」自己切、预览交给 -webkit-line-clamp，两份只要字号或内衬一动就会分叉
 			setFont(ctx, QUOTE_SIZE, false);
-			ctx.setFillStyle('#ffffff');
+			ctx.setFillStyle(ink.text);
 			d.lines.forEach((l, idx) => ctx.fillText(l, x, QUOTE_TOP + idx * QUOTE_LINE + QUOTE_LINE / 2 + QUOTE_SIZE * 0.36));
 			// 出处跟着实际行数走，并与预览同一侧对齐（预览 text-align: right → 画布收到右内衬那一头）；
 			// 出处为空时这一行两份都不画（与模板上那句 v-if 同一判据，画布不会自己留出预览上没有的一行）
 			if (this.quoteFrom) {
 				setFont(ctx, FROM_SIZE, false);
+				ctx.setFillStyle(ink.sub);
 				const fromText = '—— ' + this.quoteFrom;
 				const fromTop = QUOTE_TOP + d.lines.length * QUOTE_LINE + QUOTE_FROM_GAP;
 				ctx.fillText(fromText, Math.max(x, w - x - textWidth(fromText, FROM_SIZE)), fromTop + FROM_LINE / 2 + FROM_SIZE * 0.36);
 			}
+			ctx.setFillStyle(ink.text);
 			setFont(ctx, 13, false);
 			ctx.fillText('累计打卡', x, COUNT_TOP + 22);
 			// 天数与 .sp-count-num 同一档 bold
@@ -903,8 +1122,11 @@ export default {
 		 * 每一块的顶边与高度都取自 contentColumn（预览的 :style 读同一个对象），行内基线按
 		 * 「块顶 + 行高/2 + 字号×0.36」推——改任何一行的高度、行距、字号只改那一处常量，两份一起动。
 		 */
-		drawContent(ctx, w, h, keep) {
+		drawContent(ctx, w, h, keep, images) {
 			const col = this.contentColumn;
+			// 与 drawDaily 同一份字色（浅底深字 / 深底白字，见 computed ink）；
+			// 卡里那一行标题压在白卡上，仍吃 cardText（白底上的文字不跟着底换，硬约束 29④）
+			const ink = this.ink;
 			// 邀请头：头像 40 圆（在 44 高那一行里垂直居中，比行顶低 2）+ 右边两行（昵称 15 加粗、邀请语 12），
 			// 基线 = 行顶 +17 / +39
 			// 头像顶边此前钉在行顶，与预览差的那 2px 在换帧那一刻就是「头像又跳一下」
@@ -914,7 +1136,7 @@ export default {
 				ctx.beginPath();
 				ctx.arc(PAD + HEAD_AVATAR / 2, avaTop + HEAD_AVATAR / 2, HEAD_AVATAR / 2, 0, Math.PI * 2, true);
 				ctx.clip();
-				ctx.setFillStyle('rgba(255,255,255,0.2)');
+				ctx.setFillStyle(ink.avatar);
 				ctx.fillRect(PAD, avaTop, HEAD_AVATAR, HEAD_AVATAR);
 				if (this.avatarSrc && this.avatarLoaded === this.avatarSrc) {
 					const f = aspectFill(this.avatarSizes[mpKey(this.avatarSrc)], HEAD_AVATAR);
@@ -923,45 +1145,43 @@ export default {
 				}
 				ctx.restore();
 			}
-			ctx.setFillStyle('#ffffff');
+			ctx.setFillStyle(ink.text);
 			// 昵称与 .sp-head-name 同一档 bold（15）
 			setFont(ctx, 15, true);
 			ctx.fillText(fitText(this.nickname, 15, w - PAD * 2 - HEAD_AVATAR - 10), PAD + HEAD_AVATAR + 10, col.headTop + 17);
 			setFont(ctx, 12, false);
-			ctx.setFillStyle('rgba(255,255,255,0.85)');
+			ctx.setFillStyle(ink.sub);
 			ctx.fillText(this.inviteText, PAD + HEAD_AVATAR + 10, col.headTop + 39);
 			// 内容卡（圆角 + 磨砂白底，封面在上、标题在下）：与预览 .sp-card 同一个 contentColumn
 			if (this.hasCard) {
 				// 圆角要自己拼路径（H5 画布没有 drawRoundedRect），底色用半透明白——
 				// 小程序不认 backdrop-filter，这一档磨砂只能靠透明度透出底下那层渐变
-				ctx.setFillStyle(CARD_BG);
+				ctx.setFillStyle(ink.card);
 				roundRect(ctx, PAD, col.cardTop, w - PAD * 2, col.cardH, CARD_R);
 				ctx.fill();
-				if (keep('cover') && this.coverSrc) {
+				// 封面这一格：内容自己的封面 → 画不进去就依次退店铺 logo、默认图标（见 coverPaint）。
+				// 卡高按「有封面」留了这一格（contentColumn.hasCover 看 coverSrc），所以这一块绝不能空着——
+				// 原先只在「没降档且换得到可绘地址」时才画，其余的路径全被静默跳过，就是用户读到的「图片区域空白」
+				const cover = this.coverPaint(keep, images);
+				if (cover) {
 					const cx = PAD + GAP;
 					const cy = col.coverTop;
-					// 尺寸按「此刻摆着的那一枚」取（内容封面或系统 logo，见 coverSrc），
-					// 不按 poster.cover 取：退到 logo 那一档时拿着的是内容封面的宽高
-					const size = this.coverSizes[mpKey(this.coverSrc)];
-					// 封面换不到可绘地址就只留那块圆角底（少画一层照样导出成功，见 pendingDrawSrc）
-					const coverSrc = this.drawSrc(this.coverSrc);
-					if (coverSrc) {
-						ctx.save();
-						roundRect(ctx, cx, cy, COVER_W, COVER_H, COVER_R);
-						ctx.clip();
-						if (size && size.w && size.h) {
-							// 与预览 mode="aspectFill" 同一刀：等比放大到盖满画框，多出来的两边均分切掉
-							const k = Math.max(COVER_W / size.w, COVER_H / size.h);
-							const dw = size.w * k;
-							const dh = size.h * k;
-							ctx.drawImage(coverSrc, cx + (COVER_W - dw) / 2, cy + (COVER_H - dh) / 2, dw, dh);
-						} else {
-							ctx.drawImage(coverSrc, cx, cy, COVER_W, COVER_H);
-						}
-						ctx.restore();
+					ctx.save();
+					roundRect(ctx, cx, cy, COVER_W, COVER_H, COVER_R);
+					ctx.clip();
+					const size = cover.size;
+					if (size && size.w && size.h) {
+						// 与预览 mode="aspectFill" 同一刀：等比放大到盖满画框，多出来的两边均分切掉
+						const k = Math.max(COVER_W / size.w, COVER_H / size.h);
+						const dw = size.w * k;
+						const dh = size.h * k;
+						ctx.drawImage(cover.src, cx + (COVER_W - dw) / 2, cy + (COVER_H - dh) / 2, dw, dh);
+					} else {
+						ctx.drawImage(cover.src, cx, cy, COVER_W, COVER_H);
 					}
+					ctx.restore();
 				}
-				ctx.setFillStyle('#1d2129');
+				ctx.setFillStyle(ink.cardText);
 				// 标题与 .sp-name 同一档 bold
 				setFont(ctx, NAME_SIZE, true);
 				// 逐行画 nameLines：预览那一份就是把这一个数组一行一个 <text> 排出来的，两份必然同字同位
@@ -972,8 +1192,24 @@ export default {
 				// 码换不到可绘地址说明这张海报不能认：这一档由 drawPoster 那句守卫收口（不画一张没码的出去）
 				const codeImg = this.drawSrc(this.codeSrc);
 				if (codeImg) {
-					ctx.drawImage(codeImg, (w - QR) / 2, col.qrTop, QR, QR);
-					ctx.setFillStyle('#ffffff');
+					const qrX = (w - QR) / 2;
+					// 小程序码按圆形裁，与预览 .sp-qr--round 的 border-radius:50% 同一刀（2026-10-29 用户点名）：
+					// 内切圆直径 = 画框边长，只削掉码外那圈方形留白，码本体一个模块都不动。
+					// H5 的方形二维码不进这一支（裁圆会切掉三个定位角，扫不出来）。
+					// 2d 那条链也走这里（wrap2d 把 save/beginPath/arc/clip/restore 原样透传给标准 2d 上下文）
+					if (this.codeRound) {
+						ctx.save();
+						ctx.beginPath();
+						ctx.arc(qrX + QR / 2, col.qrTop + QR / 2, QR / 2, 0, Math.PI * 2, true);
+						// 白圆盘先铺一次：码外那圈静区必须是白的（小程序码的 PNG 背景按白底出，透明档也不能
+						// 让码环直接落在渐变上——静区被吃掉就扫不动）。fill 不消耗当前路径，紧接着的 clip 仍用它
+						ctx.setFillStyle('#ffffff');
+						ctx.fill();
+						ctx.clip();
+					}
+					ctx.drawImage(codeImg, qrX, col.qrTop, QR, QR);
+					if (this.codeRound) ctx.restore();
+					ctx.setFillStyle(ink.sub);
 					setFont(ctx, 12, false);
 					// 预览里说明那一行顶边 = 码底 + QR_TIP_GAP（.sp-qr-tip 的 top 同一档），12px 字的基线再往下 12
 					const tipText = this.codeCaption;
@@ -1034,26 +1270,24 @@ export default {
    （2026-09-26 用户点名「右侧的间距比左侧小」「引号压在文字上方」「日期背景是方的」三条都出在
    这两份各写一遍：预览 left:18、画布 fillText x=24/22） */
 /* 日期角标：上下内衬 8、左右内衬 13（各自翻倍），三行的行高写死（16/28/15）与 DATE_LINES 逐值镜像，
-   宽由「最宽一行 + 左右内衬」现算 —— 原先是写死 68 + 只有上下内衬，用户读出来就是「底部边距与上方不同」 */
+   宽由「最宽一行 + 左右内衬」现算 —— 原先是写死 68 + 只有上下内衬，用户读出来就是「底部边距与上方不同」。
+   底色与三行字色不在这里写：由 daily.badge / daily 那一份按档下发（浅底配深字、深底配白字） */
 .sp-datebox {
 	position: absolute;
-	background: rgba(255, 255, 255, 0.16);
 	border-radius: 4px;
 	text-align: center;
 	padding: 8px 0;
 }
-.sp-time { display: block; font-size: 12px; line-height: 16px; color: #fff; }
-.sp-date { display: block; font-size: 22px; line-height: 28px; color: #fff; font-weight: bold; }
-.sp-week { display: block; font-size: 11px; line-height: 15px; color: #fff; }
+.sp-time { display: block; font-size: 12px; line-height: 16px; }
+.sp-date { display: block; font-size: 22px; line-height: 28px; font-weight: bold; }
+.sp-week { display: block; font-size: 11px; line-height: 15px; }
 .sp-quote-mark {
 	position: absolute;
-	color: rgba(255, 255, 255, 0.35);
 }
 /* 金句：一行 16px × 15 字 = 240 ≤ 可用宽 246（左右各收到 27 之后剩下的那一档），
    两行 = 30 字，与后台 Quote::CONTENT_MAX 那根上限逐字对得上（字号一动这一档就要重算） */
 .sp-quote {
 	position: absolute;
-	color: #fff;
 }
 /* 一行一个块：折行由 wrapText 算，行高继承容器那一档 26，与画布的「行顶 + 行高/2 + 字号×0.36」同一盒 */
 .sp-quote-line {
@@ -1065,16 +1299,15 @@ export default {
 	position: absolute;
 	text-align: right;
 	font-size: 12px;
-	color: #fff;
 }
-/* 换一条 / 复制金句：同一行、同一档尺寸（一个容器 + 共用一枚 chip 类，字号/内衬/圆角只存这一处） */
+/* 换一条 / 复制金句：同一行、同一档尺寸（一个容器 + 共用一枚 chip 类，字号/内衬/圆角只存这一处；
+   底色与字色走 daily.actChip / daily.actText，按档下发） */
 .sp-acts {
 	position: absolute;
 	display: flex;
 	align-items: center;
 }
 .sp-act {
-	background: rgba(0, 0, 0, 0.18);
 	border-radius: 4px;
 	padding: 3px 8px;
 	display: flex;
@@ -1086,7 +1319,6 @@ export default {
 .sp-act-text {
 	font-size: 12px;
 	line-height: 16px;
-	color: #fff;
 	margin-left: 4px;
 }
 /* 与文字配对的行内图标光学垂直居中（uview file-text 实测墨迹中心在其行盒中心，12px 中文低约 0.44px ⇒ 补 0.5px） */
@@ -1098,9 +1330,9 @@ export default {
 	display: flex;
 	align-items: baseline;
 }
-.sp-count-label { font-size: 13px; color: #fff; }
-.sp-count-num { font-size: 34px; color: #fff; font-weight: bold; margin: 0 4px; }
-.sp-count-unit { font-size: 12px; color: #fff; }
+.sp-count-label { font-size: 13px; }
+.sp-count-num { font-size: 34px; font-weight: bold; margin: 0 4px; }
+.sp-count-unit { font-size: 12px; }
 /* 白底用户区：左三行（头像+昵称 / 打卡名称 / 长按识别说明），右下角是那张码。
    80 高 = 三行的 64 + 上下各 8，与画布那一份的 FOOT/userTop 同一组数值；
    左右内衬由 :style 绑 daily.foot（与金句那几块同一档 27），不在这儿写死 */
@@ -1178,7 +1410,6 @@ export default {
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.2);
 	margin-right: 10px;
 	flex-shrink: 0;
 }
@@ -1189,7 +1420,6 @@ export default {
 .sp-head-name {
 	font-size: 15px;
 	line-height: 22px;
-	color: #fff;
 	font-weight: bold;
 	max-width: 200px;
 	overflow: hidden;
@@ -1199,7 +1429,6 @@ export default {
 .sp-head-invite {
 	font-size: 12px;
 	line-height: 18px;
-	color: rgba(255, 255, 255, 0.85);
 	margin-top: 4px;
 }
 /* 内容卡：圆角 8 + 半透明白（磨砂），竖排——封面在上、标题在下。
@@ -1210,7 +1439,6 @@ export default {
 	position: absolute;
 	left: 18px;
 	width: 264px;
-	background: rgba(255, 255, 255, 0.86);
 	border-radius: 8px;
 	padding: 12px;
 	box-sizing: border-box;
@@ -1223,11 +1451,22 @@ export default {
 	background: rgba(255, 255, 255, 0.5);
 	display: block;
 }
-/* 标题：行高 19 与 contentColumn 里的 NAME_LINE 同一档，几行就是几个 19 */
+/* 兜底 logo 的隐形量尺：只为了让 @load 带回原始宽高（与识别它自己加载失败），不占版面、不接点击。
+   1px + 透明而不是 display:none —— 后者在部分端不会触发图片加载，量不到尺寸 */
+.sp-cover-probe {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+/* 标题：行高 19 与 contentColumn 里的 NAME_LINE 同一档，几行就是几个 19。
+   颜色由 inkCardTextText 下发（压在白卡上的深灰，与画布 ink.cardText 同一份） */
 .sp-name {
 	font-size: 13px;
 	line-height: 19px;
-	color: #1d2129;
 	font-weight: bold;
 }
 /* 紧跟在封面下面才有这一档间距（没有封面时它就是卡里的第一块，靠卡的内衬就够） */
@@ -1323,6 +1562,13 @@ export default {
 	height: 84px;
 	flex-shrink: 0;
 }
+/* 小程序码裁圆：内切圆直径 = 画框边长，只削掉码外那圈方形留白（见 codeRound 的注释）。
+   白底是码外那圈静区的兜底（码 PNG 背景透明时也不能让它直接落在渐变上）。
+   与画布 drawContent 的 arc + 白圆盘 + clip 同一刀；H5 的方形二维码不加这个类 */
+.sp-qr--round {
+	border-radius: 50%;
+	background: #fff;
+}
 .sp-qr-tip {
 	position: absolute;
 	left: 0;
@@ -1330,7 +1576,6 @@ export default {
 	text-align: center;
 	font-size: 12px;
 	line-height: 16px;
-	color: #fff;
 }
 /* 画布恒为 300×400：预览在短屏上整体缩放，存下来与分享出去的图不跟着分档 */
 .sp-canvas {

@@ -17,8 +17,8 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
+| avatar | string | 否 | 头像 | - |
 | nickname | string | 否 | 昵称 | - |
-| avatar | string | 否 | 头像 | `', 'trim,strip_tags,htmlspecialchars` |
 | username | string | 否 | 用户名 | - |
 | bio | string | 否 | bio | - |
 
@@ -27,7 +27,7 @@
 ```bash
 curl -X POST '{apiUrl}user/info/profile' \
   -H 'Content-Type: application/json' \
-  -d '{"nickname":"xxx","avatar":"', 'trim,strip_tags,htmlspecialchars","username":"xxx","bio":"xxx"}'
+  -d '{"avatar":"xxx","nickname":"xxx","username":"xxx","bio":"xxx"}'
 ```
 
 ## 返回示例

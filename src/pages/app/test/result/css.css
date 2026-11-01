@@ -16,14 +16,16 @@ page{
     margin-left: 5px;
 }
 
+/* 子项等分、满宽（2026-10-30 与练习详情同一档）。这一块在 `tz-box`（默认 15px 内衬）里 ⇒ 只补满宽 */
 .test-property-box{
     display: flex;
-    justify-content: space-between;
-    width: 270px;
-    margin: 30px auto 0;
+    width: 100%;
+    margin: 30px 0 0;
 }
 
 .test-property-box .test-property-item{
+    flex: 1 1 0;
+    min-width: 0;
     text-align: center;
 }
 

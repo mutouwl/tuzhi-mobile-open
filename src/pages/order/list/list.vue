@@ -15,16 +15,49 @@
 			<u-tabs :list="tabs" :current="current" :scrollable="true" @change="tabChange"></u-tabs>
 		</u-sticky>
 
-		<order :orderIndex="index" :price="item.real_price" :status="item.status" :orderNo="item.order_no"
-			:controll="item.controll" :isVirtualPay="item.is_virtual_pay == 1"
-			v-for="(item, index) in list" :key="index" v-if="list.length > 0"
-			@handle="orderHandle">
-			<course v-if="option.snapshoot" v-for="(option, key) in item.item" :key="key" :name="option.snapshoot.name"
-				:cover="option.snapshoot.cover" :type="option.snapshoot.type" :price="option.snapshoot.price"
-				:count="option.count" :can_use="false" :is-virtual-pay="item.is_virtual_pay == 1" />
-		</order>
+		<!-- 首屏骨架屏（M16，替代 uni.showLoading 的黑底转圈）：灰块与订单卡逐块对齐——
+		     卡片外壳 10 内衬 / 10 圆角、头行 30 行盒（左订单号、右状态）、商品行 80 高
+		     （28% 封面 + 71% 信息列，价格与数量分列两端）、合计行右对齐、按钮行右侧两枚。
+		     判据 loading && !list.length：上拉翻页由已有列表顶着，不闪骨架；
+		     切页签 / 换搜索字段 / 下拉刷新走 refresh() 清空列表，会重新铺骨架而不是闪空态。 -->
+		<block v-if="loading && !list.length">
+			<view class="ols-sk-box" v-for="i in 3" :key="'ols-sk-' + i">
+				<view class="ols-sk-card">
+					<view class="ols-sk-header">
+						<view class="ols-sk-no"></view>
+						<view class="ols-sk-status"></view>
+					</view>
+					<view class="ols-sk-goods">
+						<view class="ols-sk-cover"></view>
+						<view class="ols-sk-info">
+							<u-skeleton class="ols-sk-line" :loading="true" :animate="true" :title="false" :rows="1" :rows-width="['72%']" :rows-height="[16]"></u-skeleton>
+							<u-skeleton class="ols-sk-line ols-sk-line-sub" :loading="true" :animate="true" :title="false" :rows="1" :rows-width="['46%']" :rows-height="[12]"></u-skeleton>
+							<view class="ols-sk-foot">
+								<view class="ols-sk-price"></view>
+								<view class="ols-sk-num"></view>
+							</view>
+						</view>
+					</view>
+					<view class="ols-sk-total"></view>
+					<view class="ols-sk-btns">
+						<view class="ols-sk-btn"></view>
+						<view class="ols-sk-btn ols-sk-btn-wide"></view>
+					</view>
+				</view>
+			</view>
+		</block>
 
-
+		<block v-else>
+			<order :orderIndex="index" :price="item.real_price" :status="item.status" :orderNo="item.order_no"
+				:controll="item.controll" :isVirtualPay="item.is_virtual_pay == 1"
+				:status-text="item.status_text || ''"
+				v-for="(item, index) in list" :key="index"
+				@handle="orderHandle">
+				<course v-if="option.snapshoot" v-for="(option, key) in item.item" :key="key" :name="option.snapshoot.name"
+					:cover="option.snapshoot.cover" :type="option.snapshoot.type" :price="option.snapshoot.price"
+					:count="option.count" :can_use="false" :is-virtual-pay="item.is_virtual_pay == 1" />
+			</order>
+		</block>
 
 		<u-empty icon="/static/image/empty.png" width="70" height="70" v-if="list.length == 0 && !loading" />
 

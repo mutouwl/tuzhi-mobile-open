@@ -9,16 +9,20 @@
 	  两只弹层平级放（不套在可点容器里，见 M19）。
 	-->
 	<div>
-		<!-- 推荐语入口的判据：有文案才出，文案正在取也出（入口换成骨架块，见 tz-share-poster 的 recommendLoading），
-		     首次就失败时两者都不成立 → 整枚不出，不留点了没反应的按钮 -->
+		<!-- 底部样式条右侧那枚「分享链接」入口（2026-10-30 由「推荐语」改名）的判据收在 computed showRecommend：
+		     微信小程序端整枚不出（2026-10-31 用户口径「不要显示分享链接按钮了」——这一端的分享走微信的图片
+		     分享面板与海报上的小程序码，不摆复制链接这一档），其余端有文案才出、文案正在取也出（入口换成骨架块，
+		     见 tz-share-poster 的 recommendLoading），首次就失败时两者都不成立 → 整枚不出，不留点了没反应的按钮 -->
 		<tz-share-poster :show="show" layout="content" :poster="poster" :share-bgs="shareBgs"
-			:code-type="type" :code-id="shareSrc" subject="分享海报" :show-recommend="!!article.text || articleLoading"
+			:code-type="type" :code-id="shareSrc" subject="分享海报" :show-recommend="showRecommend"
 			:recommend-loading="articleLoading"
 			@close="close" @share="copyArticle" @recommend="recommendVisible = true"></tz-share-poster>
 
-		<!-- 推荐语：文案与「换一条」都走 share/getArticle（后端每次随机换一套），复制在点击的同步栈里做 -->
-		<tz-recommend-modal :show="recommendVisible" :text="article.text" :loading="articleLoading"
-			@close="recommendVisible = false" @change="getArticle"></tz-recommend-modal>
+		<!-- 分享链接：文案与「换一条」都走 share/getArticle（后端每次随机换一套），复制在点击的同步栈里做。
+		     link 是后端新下发的纯链接（2026-10-30 用户口径「推荐语调整为分享链接」）：有它时弹窗标题与
+		     复制内容都走链接那一档，没有时回落整段文案，老接口不下发也不会空屏 -->
+		<tz-recommend-modal :show="recommendVisible" :text="article.text" :link="article.link || ''"
+			:loading="articleLoading" @close="recommendVisible = false" @change="getArticle"></tz-recommend-modal>
 	</div>
 </template>
 
@@ -33,7 +37,8 @@
  *        circleId = 来源圈子 ID：从圈子课程列表进入课程详情后分享，链接需带该参数
  *        title    = 内容名称（与全站课程卡同一份口径，课程详情传 data.name）——海报内容卡上就画这一行字
  *        cover    = 内容封面（没传就退回 share/getArticle 给的那一张；两个都没有或都加载不出来，
- *                  由 tz-share-poster-body 填系统 logo，见那里的 coverSrc——所以这里不用再兜一层）
+ *                  由 tz-share-poster-body 依次填站点 logo 与全站默认商品图，见那里的 coverSrc / coverPaint
+ *                  ——画布那一份也同一条兜底，所以这里不用再兜一层）
  *        inviteText = 邀请头那句（默认「邀请你一起学习」）
  *        shareBgs = 后台配置的分享底图清单；目前只有打卡模块有这一项配置（2026-09-27 起那项暂时下线，
  *                   后端恒下发空清单），内容分享本就暂无配置项，两种都是整排回落共用组件自带的弥散渐变档
@@ -113,6 +118,19 @@ export default {
 		articleCover() {
 			const rows = this.article.poster;
 			return rows && rows.length ? rows[0] : '';
+		},
+		/**
+		 * 出不出底部样式条右侧那枚「分享链接」入口（2026-10-30 由「推荐语」改名）
+		 *
+		 * 微信小程序端整枚不出（2026-10-31 用户口径「不要显示分享链接按钮了」）：这一端的分享走微信的
+		 * 图片分享面板与海报上的小程序码，不摆复制链接这一档；其余端照旧——有文案才出、文案正在取也出
+		 * （入口换成骨架块），首次就失败时整枚不出。
+		 */
+		showRecommend() {
+			// #ifdef MP-WEIXIN
+			return false;
+			// #endif
+			return !!this.article.text || this.articleLoading;
 		},
 	},
 	watch: {

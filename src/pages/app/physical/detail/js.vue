@@ -3,6 +3,11 @@ import SkuSelectModal from '../components/sku-select-modal.vue';
 import ServiceModal from '../components/service-modal.vue';
 import GuaranteeModal from '../components/guarantee-modal.vue';
 import ParamsModal from '../components/params-modal.vue';
+// 多属性分维的唯一一份判据（`规格1` / `规格2` 那两节）：拼团规格弹窗读的是同一份，
+// 两处各拆一次就会出现「商详两节、拼团一排组合文案」那种分叉（2026-10-29 用户点名）
+import { specGroupsOf } from '@/common/utils/spec-stock.js';
+// 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
+import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
 
 var that;
 
@@ -26,6 +31,26 @@ export default {
       selectedSkuPrice: {},
       selectedSkus: {},
       goodsNum: 1,
+      // 「这一次打开规格弹窗是为了拼团」（2026-10-29）：确认时把选中的规格交给拼团区，
+      // 而不是走普通购买；关弹窗/走普通购买时复位，避免下一次购买被当成拼团
+      gbPicking: false,
+      // 拼团区「这一趟是被送去下单的」那本账：回本页时只静默重取拼团区那两条，
+      // 不在 onShow 里顺手重取商品本体（这一页商品本体只随 onLoad 与下拉刷新取，动它是另一件事）
+      // 拼团活动本体（拼团区 @ready 上抛）：规格弹窗按它出拼团价与档位，2026-10-30 起横幅不在价格格
+      gbActivity: null,
+      gbBuyers: [],
+      gbPending: false,
+      // 拼团区经 @ready 上抛的活动摘要（{ text } / null）：底栏那枚拼团按钮的显隐与文案吃它
+      gbEntry: null,
+      // 受邀参团（2026-10-30）：URL 带 gb_team 时进 join 态 —— 底栏只留「加入拼团」，
+      // 规格入口也改开拼团那只有锁定规格的弹窗；退出本页就没了（不落 storage）
+      gbJoinCtx: null,
+      gbJoinMode: false,
+      // 「我在这一场拼团里已有进行中的团」：底栏那枚「立即购买」收不收吃它（PRD 2026-10-27）。
+      // 判据只认拼团区 @ready 上抛的 inTeam（后端 GoodsArea::myTeam），页面不读 my_team 自己拼
+      gbInTeam: false,
+      // 受邀链接上的 `share`（邀请人 id）：拼团区访客埋点用它区分「分享访客数」
+      share: 0,
       guaranteeList: [
         {
           icon: 'checkmark-circle-fill',
@@ -50,6 +75,15 @@ export default {
     }
   },
   computed: {
+    /**
+     * 宿主价格行显不显示（2026-10-30 第五轮，用户第二次点名「拼团价要复制覆盖原来的价格」）：
+     * 拼团进行中（拼团区 `@ready` 上抛的 `gbEntry.activity` 非空）⇒ 本页价格行收起，
+     * 价格只由拼团卡第一行的横幅给 —— 一屏只有一个价；没有活动 / 活动结束抛 null ⇒ 照常显示。
+     * 判据只此一处（与底栏那枚拼团按钮、封面弹幕同一份 `gbEntry`）。
+     */
+    gbPriceShown() {
+      return !(this.gbEntry && this.gbEntry.activity);
+    },
     hasMultipleSku() {
       return this.goodsInfo && this.goodsInfo.sku_prices && this.goodsInfo.sku_prices.length > 1;
     },
@@ -80,6 +114,12 @@ export default {
     that = this;
 
     let id = options.id;
+    // 受邀链接上的邀请人（`?share=<userId>`）：只用于拼团访客埋点，不参与商品取数
+    this.share = Number(options.share) || 0;
+    // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真（底栏单独购买立刻收起），
+    // 拼团区取到活动后由 `@ready.join` 校准
+    this.gbJoinCtx = readGroupBuyJoin(options);
+    this.gbJoinMode = !!this.gbJoinCtx;
 
     if (!id) {
       // #ifdef MP-WEIXIN
@@ -118,7 +158,42 @@ export default {
   onPullDownRefresh() {
     that.refresh();
   },
+  /**
+   * 从下单页退回来：只有「这一趟是被拼团区送出去的」才静默重取拼团区（硬约束 16 的正半句
+   * 「退回哪一页，就由那一页自己在 onShow 重取」，取的是那一块、不是整页）。
+   * 开团/参团付完款要看见自己那一行，活动结束或名额满了要把那一段收掉，都只靠拼团区自己那两条；
+   * 商品本体、已选规格、数量一律不动 —— 那三样在这一页只随 onLoad 与下拉刷新取。
+   */
+  onShow() {
+    // M23 硬要求：用了模块级 that 的页面，onShow 的第一条语句必须把它收回当前实例
+    that = this;
+    if (!that.gbPending) { return; }
+    that.gbPending = false;
+    if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
+  },
   methods: {
+    /**
+     * 拼团区（`components/tz/group-buy-area.vue`）要把人带去下单：
+     * 导航由组件自己发（它才知道选了哪一档、凑的是哪一个团，`extend.group_buy` 挂在它那一行上），
+     * 本页只记这一枚「去过了」的账，回来由 onShow 兑。
+     */
+    gbGoPay() {
+      this.gbPending = true;
+    },
+    /** 拼团区 @ready：活动摘要收下来喂给底栏那枚拼团按钮（摘要字符串由组件算好，本页不加工） */
+    gbReady(entry) {
+      this.gbEntry = entry;
+      this.gbInTeam = !!(entry && entry.inTeam);
+      // join 态校准：活动不在/不是团上那一场时放回单独购买入口
+      this.gbJoinMode = !!(entry && entry.join);
+      // 原价行与横幅共用这一枚：活动到期/失败时拼团区抛 null ⇒ 原价行自动回来
+      this.gbActivity = (entry && entry.activity) || null;
+      this.gbBuyers = (entry && entry.activity && entry.activity.buyers) || [];
+    },
+    /** 底栏「¥xx 拼团」按钮：就地开拼团区那只凑团弹层（壳挂在拼团区组件里，不走页面导航） */
+    openGb() {
+      if (this.$refs.gbArea) { this.$refs.gbArea.openPopup(); }
+    },
     previewImage(index) {
       uni.previewImage({
         current: index,
@@ -135,6 +210,8 @@ export default {
         that.skeletonLoading = true;
       }
       that.getGoodsDetail(that.goodsId);
+      // 下拉是本块唯一的强制重载出口：拼团区跟着重取它自己那两条（活动结束就把整段收掉）
+      if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
     },
     onSelectSku(skuIndex, option) {
       that.$set(that.selectedSkus, skuIndex, option);
@@ -196,7 +273,37 @@ export default {
         icon: 'none',
       });
     },
+    /** 拼团入口点的「立即开团」：规格交给本页这只 `sku-select-modal` 选（复用实物自己的规格树/数量） */
+    openGbSpec() {
+      that.gbPicking = true;
+      that.showSelectSku = true;
+    },
+    /**
+     * 页内「选择」那一行 / 底栏单独购买：join 态一律改开拼团那只有锁定规格的弹窗。
+     * 不这样改就是同一屏上的第二个购买入口（用户 2026-10-30 点名「规格弹窗里面也可以单独购买」那一族）。
+     */
+    openSkuPicker() {
+      if (that.gbJoinMode) {
+        that.openGb();
+        return;
+      }
+      that.showSelectSku = true;
+    },
+    /** 规格弹窗关闭：不管是取消还是确认，那一枚拼团标记都复位（下一次「立即购买」不会被当成拼团） */
+    closeSkuPicker() {
+      that.showSelectSku = false;
+      that.gbPicking = false;
+    },
     onSkuConfirm(data) {
+      // 拼团那一趟：规格/份数收完直接交回拼团区（阶梯档与份数上限由它那一层接着问），不落普通下单链
+      if (that.gbPicking) {
+        that.gbPicking = false;
+        that.showSelectSku = false;
+        const spec = (data && data.skuPrice) || {};
+        // 阶梯型的人数额也在规格弹窗里选掉了（2026-10-29）：一并交回拼团区，不再开第二步弹窗
+        that.$refs.gbArea.afterSpec({ specId: spec.id, count: (data && data.goodsNum) || 1, ladderId: (data && data.ladderId) || 0 });
+        return;
+      }
       that.goodsNum = data.goodsNum;
       that.showSelectSku = false;
       
@@ -240,42 +347,16 @@ export default {
       };
       return descMap[service] || service;
     },
+    /**
+     * 规格树（`[{ name:'规格1', children:[{name:'红色'},…] }, …]`）
+     *
+     * **不再在本页拆一份**（2026-10-29）：分维判据收进 `common/utils/spec-stock.js` 的
+     * `specGroupsOf()` 一处，拼团规格弹窗（`components/tz/group-buy-config-popup.vue`）读同一份 ——
+     * 用户点名的正是「拼团弹窗把组合文案平铺一排，商详却是分节」这种分叉。
+     * 读点传 `goods_sku_text`：实物 SKU 价行那一列（`红色,大`），与后端 `PhysicalSpec::rows()` 同源。
+     */
     buildSkuTree(skuPrices) {
-      if (!skuPrices || skuPrices.length === 0) return [];
-      
-      const firstSku = skuPrices[0];
-      if (!firstSku.goods_sku_text) return [];
-      
-      const skuTexts = firstSku.goods_sku_text.split(',');
-      const skuTree = [];
-      
-      skuTexts.forEach((text, index) => {
-        const skuName = `规格${index + 1}`;
-        const children = [];
-        
-        const uniqueOptions = new Set();
-        skuPrices.forEach(sku => {
-          if (sku.goods_sku_text) {
-            const parts = sku.goods_sku_text.split(',');
-            if (parts[index]) {
-              uniqueOptions.add(parts[index].trim());
-            }
-          }
-        });
-        
-        uniqueOptions.forEach(option => {
-          children.push({ name: option });
-        });
-        
-        if (children.length > 0) {
-          skuTree.push({
-            name: skuName,
-            children: children
-          });
-        }
-      });
-      
-      return skuTree;
+      return specGroupsOf(skuPrices, (row) => row && row.goods_sku_text);
     },
     buildGuaranteeList(data) {
       const list = [];
@@ -327,10 +408,15 @@ export default {
 
           if (res.data.sku_prices && res.data.sku_prices.length > 0) {
             const inStockSku = res.data.sku_prices.find(sku => Number(sku.stock) > 0);
-            that.selectedSkuPrice = inStockSku || res.data.sku_prices[0];
+            // 受邀参团：页面上「选择」那一行先落到团上那一档（不然进来看的是第一档、点加入却拼另一档）
+            const joinSku = that.gbJoinCtx
+              ? res.data.sku_prices.find(sku => Number(sku.id) === Number(that.gbJoinCtx.specId))
+              : null;
+            that.selectedSkuPrice = joinSku || inStockSku || res.data.sku_prices[0];
 
-            if (inStockSku && inStockSku.goods_sku_text) {
-              const skuTexts = inStockSku.goods_sku_text.split(',');
+            const pickedSku = joinSku || inStockSku;
+            if (pickedSku && pickedSku.goods_sku_text) {
+              const skuTexts = pickedSku.goods_sku_text.split(',');
               skuTexts.forEach((text, index) => {
                 if (cleanedData.sku_tree && cleanedData.sku_tree[index]) {
                   const option = cleanedData.sku_tree[index].children.find(child => child.name === text);

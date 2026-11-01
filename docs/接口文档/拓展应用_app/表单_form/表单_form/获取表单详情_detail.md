@@ -200,7 +200,7 @@ curl -X POST '{apiUrl}app/form/form/detail' \
 | data.form.bind_type | string | 绑定类型 |
 | data.form.status | integer | 状态 |
 | data.form.createtime | integer | 创建时间（时间戳） |
-| data.form.end_time_text | string | end时间text |
+| data.form.end_time_text | string | 截止时间文案（后端格式化好的文本，前端不自己比时间戳） |
 | data.form.bind_type_text | string | 绑定类型text |
 | data.form.status_text | string | 状态说明 |
 | data.form.is_recycle | boolean | 是否recycle |

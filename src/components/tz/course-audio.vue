@@ -539,6 +539,11 @@ export default {
         },
         speedSelect(option) {
             this.checked.speed = option.key;
+            // 选完即收起弹层（2026-10-14 用户点名「每次点击一个倍率之后，自动关闭弹窗并生效」）。
+            // u-action-sheet 那个 closeOnClickAction 只管它自带的那一列 actions，本弹窗用插槽把那一列
+            // 换成了横排选择条，selectHandler 根本走不到 ⇒ 必须在本组件自己的 handler 里收这一层。
+            // 收在应用倍率之前：选中态与弹层状态先落地，播放器那一腿即使没就绪也不会把弹窗留在屏上
+            this.modal.speed = false;
             // #ifdef H5
             this.$refs.audioPlayer.setSpeed(option.value);
             // #endif
@@ -550,6 +555,11 @@ export default {
             // #ifdef MP-WEIXIN
             if (this.managerMatchesPath()) this.backgroundAudioManager.playbackRate = option.value;
             // #endif
+            // 选完给一句回执（2026-10-29 用户点名「选择倍速弹窗确认后，最好弹出一个提示，显示当前倍速」）：
+            // 弹层一收，控制栏那行小字在迷你态（scrollTop > 400）与全屏滚动后都看不到，
+            // 按下去没有任何即时反馈。口径与小程序端 video-mp.vue 的 switchRate 同一句（「1.5倍速」），
+            // 只有「正常」那一档 value=1，说成「正常速度」而不是「正常倍速」
+            uni.$u.toast(option.value === 1 ? '已切换至正常速度' : '已切换至' + option.name + '速');
         },
         audioLoaded(e) {
             // 加载元数据后设置总时长；0/NaN 视为时长尚未就绪，保留原值
@@ -822,12 +832,27 @@ export default {
    未选中走辅助灰 #86909c（§1 主色 / 辅助灰档）。圆角一律 999px（胶囊由高度决定实际半径），
    不写 12~39px 的单值圆角（M21 卡片圆角档、M17 按钮圆角档都不适用于这一档选择控件）。
    弹层外壳与底部「关闭」行是 u-action-sheet 自带的，这里只画选择条本身。 */
+/* 内容块给 250px 的最低高度（2026-10-14 用户点名「增加一个最低的高度 250px」）：
+   按内容撑开只有 90px（20 上内衬 + 46 选择条 + 24 下内衬），整只弹层读起来贴着屏幕底部一坨。
+   与 tz-recommend-modal 的 .rc-box（220px）同一档做法——最低高度落在弹层的内容块上、
+   由它把外壳顶高，u-action-sheet / u-popup 都没有高度档，不去 ::v-deep 够 uview 内部节点
+   （小程序端 style isolation 会静默吃掉那条选择器，写了也看不见效果）。
+   高度富余出来那一段让选择条垂直居中，不留在下方一片空白（同 M18③ 舞台居中、硬约束 18 那一族）。 */
 .ca-speed-panel {
     padding: 20px 15px 24px;
+    min-height: 250px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
 }
 .ca-speed-track {
     display: flex;
     align-items: center;
+    /* 挂进 flex 容器后必须自己声明占满一行：不写宽度时这一条会按内容收缩，
+       里面每一档的 flex:1 就退化成「按文字宽度等分」，灰底胶囊不再与弹层同宽。
+       box-sizing 一并给 border-box，否则 5px 内衬落在 100% 之外，整条溢出右缘 5px */
+    width: 100%;
+    box-sizing: border-box;
     background-color: #f2f3f5;
     border-radius: 999px;
     padding: 5px;

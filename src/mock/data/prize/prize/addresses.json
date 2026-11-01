@@ -1,0 +1,19 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344795",
+  "data": {
+    "rows": [
+      {
+        "id": 2,
+        "name": "冯浩森",
+        "mobile": "176****2595",
+        "province": "河北省",
+        "city": "秦皇岛市",
+        "district": "北戴河区",
+        "address": "123",
+        "is_default": 1
+      }
+    ]
+  }
+}

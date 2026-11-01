@@ -247,3 +247,179 @@
     line-height: 50px!important;
 }
 /*  #endif  */
+
+/* ── 首屏骨架屏（M16，2026-10-28）──────────────────────────────────────────────
+   原位复用真实版式：用户头 / 会员卡 / 规格卡 / 页签 / 正文 / 吸底按钮。
+   灰块只替换会变的那几格（头像、昵称、到期时间、卡标题/副标题/权益、规格价、正文行、主按钮），
+   外壳与容器一律沿用真实元素那一档的类，撤掉骨架屏后不整体换版。
+   色值：白底上 #F1F2F4 → #E6E6E6（与 u-skeleton 同族同节奏）；压在浅灰卡壳 #F2F3F5 上的
+   块加深一档 #E5E6EB → #D6D8DE。新增类一律 vip-sk 前缀（M11），不污染其它页面。 */
+
+.vip-sk-block{
+    background-image: linear-gradient(90deg, #F1F2F4 25%, #E6E6E6 37%, #F1F2F4 50%);
+    background-size: 400% 100%;
+    animation: vip-sk-animate 1.8s ease infinite;
+}
+
+.vip-sk-deep{
+    background-image: linear-gradient(90deg, #E5E6EB 25%, #D6D8DE 37%, #E5E6EB 50%);
+    background-size: 400% 100%;
+    animation: vip-sk-animate 1.8s ease infinite;
+}
+
+@keyframes vip-sk-animate{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+}
+
+/* 占位条：默认按 12px 辅助信息行高，标题/价格/昵称用 vip-sk-h-* 抬到与真实字号同档 */
+.vip-sk-line{
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.vip-sk-h-10{ height: 10px; }
+.vip-sk-h-12{ height: 12px; }
+.vip-sk-h-14{ height: 14px; }
+.vip-sk-h-15{ height: 15px; }
+.vip-sk-h-16{ height: 16px; }
+.vip-sk-h-22{ height: 22px; }
+
+.vip-sk-w-18{ width: 18%; }
+.vip-sk-w-25{ width: 25%; }
+.vip-sk-w-30{ width: 30%; }
+.vip-sk-w-35{ width: 35%; }
+.vip-sk-w-40{ width: 40%; }
+.vip-sk-w-45{ width: 45%; }
+.vip-sk-w-50{ width: 50%; }
+.vip-sk-w-60{ width: 60%; }
+.vip-sk-w-65{ width: 65%; }
+.vip-sk-w-85{ width: 85%; }
+.vip-sk-w-95{ width: 95%; }
+.vip-sk-w-100{ width: 100%; }
+
+.vip-sk-mt-6{ margin-top: 6px; }
+.vip-sk-mt-8{ margin-top: 8px; }
+.vip-sk-mt-10{ margin-top: 10px; }
+.vip-sk-mt-12{ margin-top: 12px; }
+
+.vip-sk-center{ margin-left: auto; margin-right: auto; }
+
+/* 会员身份标签：与真实 .viptag 同尺寸（12px 字 + 上下 2px 内衬） */
+.vip-sk-tag{
+    width: 64px;
+    height: 20px;
+    margin-right: 6px;
+    border-radius: 2px;
+}
+
+/* 会员卡卡壳：真实卡是黑/主题色，骨架期用中性浅灰壳 + 深一档灰块，撤屏时不与整页白底糊成一片 */
+.vip-sk-card{
+    position: relative;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 25px 20px 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #F2F3F5;
+}
+
+/* 右下角那枚 77×67 装饰图的位置占位（真实图 opacity .1，这里半透明，不抢视线） */
+.vip-sk-card-icon{
+    position: absolute;
+    right: 15px;
+    bottom: 34px;
+    width: 77px;
+    height: 67px;
+    border-radius: 6px;
+    opacity: .55;
+}
+
+/* 权益两枚：真实 u-grid col=4 ⇒ 每枚占 25% 宽、内容居中 */
+.vip-sk-privilege{
+    display: flex;
+    margin-top: 20px;
+}
+
+.vip-sk-privilege-item{
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.vip-sk-circle{
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
+.vip-sk-privilege-item .vip-sk-line{
+    margin-top: 8px;
+}
+
+/* 规格卡：外壳沿用真实 .cell-item 的内衬/圆角/投影，里面三行按真实字号档给高 */
+.vip-sk-cells{
+    display: flex;
+    overflow: hidden;
+}
+
+.vip-sk-cell{
+    width: 112px;
+    flex: none;
+}
+
+/* 页签行：与 H5 u-tabs 行高同档（下方 ::v-deep 那条 50px） */
+.vip-sk-tabs{
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 0 15px;
+    background-color: #fff;
+}
+
+.vip-sk-tabs .vip-sk-line + .vip-sk-line{
+    margin-left: 40px;
+}
+
+/* 吸底栏占位：与真实 .box 同档（内衬 10 + 按钮 40、白底、同 z-index） */
+.vip-sk-footer{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    /* 真底栏那条投影写在共用组件 .box 上，这里只做骨架期的一线分隔（M21 不让页面自造投影卡片） */
+    border-top: 1px solid #F2F3F5;
+}
+
+/*  #ifdef MP-WEIXIN  */
+.vip-sk-footer{
+    padding-bottom: calc(constant(safe-area-inset-bottom) / 2);
+    padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+}
+/*  #endif  */
+
+.vip-sk-btn{
+    height: 40px;
+    border-radius: 4px;
+}
+
+.vip-sk-filler{
+    height: 60px;
+}
+
+/* 会员卡价卡：有进行中的拼团时，卡面价旁边那枚划线的原价（2026-10-29 统一口径） */
+.cell-price-origin {
+  margin-left: 4px;
+  font-size: 11px;
+  color: #c9cdd4;
+  text-decoration: line-through;
+}

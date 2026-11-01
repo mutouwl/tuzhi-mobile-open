@@ -1,0 +1,23 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344782",
+  "data": {
+    "media_image_limit": 9,
+    "media_video_limit": 9,
+    "media_audio_limit": 1,
+    "media_file_limit": 9,
+    "media_image_video_limit": 9,
+    "media_image_size": 0,
+    "media_video_size": 0,
+    "media_audio_size": 0,
+    "media_file_size": 0,
+    "media_file_types": "doc,docx,xls,xlsx,pdf",
+    "media_image_enable": 1,
+    "media_video_enable": 1,
+    "media_audio_enable": 1,
+    "media_file_enable": 1,
+    "visible_locked": 0,
+    "visible_to": null
+  }
+}

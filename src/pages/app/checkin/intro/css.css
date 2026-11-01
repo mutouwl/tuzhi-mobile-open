@@ -85,11 +85,17 @@
 }
 
 /* ===== 吸底参与栏：容器/内衬/阴影/安全区走全局 .school-footer，本页只补主按钮、价格行与只读提示 ===== */
+/* 一行内项与项的间距只由容器 gap 给（硬约束 20）：本页付费档同行有三项（¥价格 + 拼团入口 + 立即购买），
+   原先靠 `.cdi-join-price` 自己的 `margin-right` 撑价格那一档 ⇒ **两枚按钮之间是 0 间距（贴死）**；
+   改成容器 gap 后价格档不再自带 margin（12px 由 gap 给，与改造前价格↔按钮那一档逐值相同），
+   拼团入口与「立即购买」也不再贴在一起（2026-10-16 用户点名底栏并排按钮那一族） */
+.cdi-footer {
+  gap: 12px;
+}
 .cdi-join-price {
   font-size: 18px;
   font-weight: bold;
   color: #f53f3f;
-  margin-right: 12px;
   line-height: 40px;
 }
 .cdi-join-coin {
@@ -107,3 +113,5 @@
   font-size: 13px;
   color: #86909c;
 }
+/* 拼团价横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
+   标题卡不再出血摆横幅，`.cdi-gb-banner` 随之删净 */

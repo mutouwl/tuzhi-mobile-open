@@ -1,42 +1,28 @@
 <template>
 	<div class="container">
 
-		<u-sticky bgColor="#fff" :offsetTop="0">
-
-			<tz-box padding="10px 10px 5px">
-				<u-search @search="search" v-model="pageParams.content" borderColor="#fff" :showAction="false"
-					placeholder="请输入要搜索的内容" shape="square" ></u-search>
-			</tz-box>
-
-			<div class="filter">
-				<div class="type" @click="showModel('type')">
-					<span>{{ type[typeChecked].name }}</span>
-					<span><tz-icon name="unfold" :size="14" color="#4E5969" /></span>
-				</div>
-				<div class="sort">
-					<span :class="{
-						'active': form.sort == 'time'
-					}" @click="sortChange('time')">最近</span>
-					<span :class="{
-						'active': form.sort == 'view'
-					}" @click="sortChange('view')">热门</span>
-				</div>
-			</div>
-		</u-sticky>
+		<!-- 顶部搜索栏：搜索框 + 右上角筛选按钮，与圈子搜索同一份共用组件（自身吸顶白底通栏） -->
+		<tz-search-filter-bar :value="pageParams.content" placeholder="请输入要搜索的内容" :focus="searchFocus"
+			:maxlength="-1" :filter-active="filterActive" @change="onKeywordChange" @submit="search"
+			@filter="modal.filter = true" />
 
 		<tz-box bgColor="none">
-			<tz-course :round="true" :list="list" v-if="list.length > 0"></tz-course>
-			<u-empty icon="/static/image/empty.png" width="70" height="70" v-else-if="!loading" />
-			<view class="load-more-box" v-if="list.length > 0">
-				<u-loadmore :status="loadStatus" />
-			</view>
+			<!-- 骨架屏：首屏与换筛选/搜索共用这一支，判据 loading && !list.length（翻页追加不闪骨架）。
+			     灰块套在 tz-course 真实卡同一只外壳类里，页面不再单抄一份卡尺寸 -->
+			<tz-course v-if="listLoading" :skeleton="true" :skeleton-count="4" :round="true" :list="[]" />
+			<template v-else>
+				<tz-course :round="true" :list="list" v-if="list.length > 0"></tz-course>
+				<u-empty icon="/static/image/empty.png" width="70" height="70" v-else :text="loadMsg" />
+				<view class="load-more-box" v-if="list.length > 0">
+					<u-loadmore :status="loadStatus" />
+				</view>
+			</template>
 		</tz-box>
 
-
-		<!-- 类型 -->
-		<u-action-sheet :round="10" :safeAreaInsetBottom="true" title="筛选内容类型" :show="modal.type" :actions="type"
-			:closeOnClickOverlay="true" :closeOnClickAction="true" @close="showModel('type')" @select="typeSelect">
-		</u-action-sheet>
+		<!-- 筛选弹窗：类型与排序都收进这一处（页面不再摆行内类型/排序条） -->
+		<tz-filter-popup :visible="modal.filter" title="筛选" :type-value="form.type" :type-options="typeOptions"
+			:sort="form.sort" :sort-options="sortOptions" :show-time="false" @update:visible="modal.filter = $event"
+			@confirm="onFilterConfirm" />
 
 		<tz-footer />
 

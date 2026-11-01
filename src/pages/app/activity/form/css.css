@@ -32,6 +32,11 @@
     /* height: 50px; */
     width: 100%;
 
+    /* 小程序端没有全局 `*{box-sizing:border-box}`（App.vue 那条通配符在 WXSS 编译期整条丢掉）：
+       100% 宽 + 左右 10px 内衬在 content-box 下会比屏幕宽 20px，右侧「提交订单」被顶到
+       屏幕边缘/裁掉（2026-10-31 用户点名）。H5 有全局 * 所以看不出来。 */
+    box-sizing: border-box;
+
     padding: 10px 10px 10px;
 
     background-color: #fff;
@@ -81,4 +86,77 @@
     font-size: 11px;
     font-weight: 500;
     margin-left: 2px;
+}
+
+/* ===== 首屏骨架（2026-10-31 用户点名「加载方式调整为骨架屏」）=====
+   行高照真实 u-cell（上下内衬 10px + 标题 22 + 张数/取值 18），灰块只替换会变的那几格，
+   取骨架灰 #e5e6eb、圆角 4px（与同模块选票页 .tk-sk 同一档）。
+   类名带 adform-sk- 前缀（本页样式未加 scoped，裸名会外溢到别的页面）。 */
+.adform-sk-block {
+    border-radius: 4px;
+    background: #e5e6eb;
+}
+
+.adform-sk-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #efefef;
+}
+
+.adform-sk-cell:last-child {
+    border-bottom: none;
+}
+
+.adform-sk-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+/* 票种名 / 报名信息标题：真实 14px、行盒 22 */
+.adform-sk-name {
+    width: 120px;
+    height: 16px;
+}
+
+/* 张数 / 报名信息取值：真实 12px、行盒 18 */
+.adform-sk-label {
+    width: 44px;
+    height: 12px;
+    margin-top: 6px;
+}
+
+/* 票券单价：真实 15px 加粗 */
+.adform-sk-price {
+    width: 70px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* 行尾两枚操作图标（编辑 24 / 删除 24，真实间距走 .form-contro-btn 的 5px） */
+.adform-sk-icons {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.adform-sk-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* 底栏左侧合计（真实字号 14 + 数值 22） */
+.adform-sk-total {
+    width: 110px;
+    height: 22px;
+}
+
+/* 底栏右侧主按钮：真实 u-button 宽度 200、高 40 */
+.adform-sk-submit {
+    width: 200px;
+    height: 40px;
+    flex-shrink: 0;
 }

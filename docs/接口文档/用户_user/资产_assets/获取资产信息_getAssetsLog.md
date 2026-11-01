@@ -18,7 +18,7 @@
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
 | mode | integer | 否 | 模式 | `0` |
-| time | string | 否 | 时间 | `time(` |
+| time | string | 否 | 时间 | - |
 | type | string | 否 | 类型 | `money` |
 
 ## 请求示例
@@ -26,7 +26,7 @@
 ```bash
 curl -X POST '{apiUrl}user/assets/getAssetsLog' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"mode":0,"time":"time(","type":"money"}'
+  -d '{"limit":10,"page":1,"mode":0,"time":"xxx","type":"money"}'
 ```
 
 ## 返回示例

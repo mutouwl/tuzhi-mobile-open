@@ -110,6 +110,16 @@
 							:round="data.compontents[index].config.round"
 							:margin="data.compontents[index].config.margin" />
 
+						<!-- 拼团商品组件（付费插件）：来源/数量/两个隐藏开关都在装修接口里生效，
+							 端上只按配置渲染三档排列；未安装时模板不渲染 -->
+						<tz-group-buy-list v-if="item && item.type == 'group_buy' && groupBuyInstalled"
+							:list="data.compontents[index].config.list"
+							:type="data.compontents[index].config.type"
+							:show-goods-type="data.compontents[index].config.show_goods_type"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin" />
+
 						<tz-teacher v-if="item && item.type == 'teacher'"
 						:round="data.compontents[index].config.round"
 						:name="data.compontents[index].config.name" :introduce="data.compontents[index].config.introduce"
@@ -140,7 +150,8 @@
 						:start_time_show="data.compontents[index].config.start_time_show"
 						v-if="item && item.type == 'live'" />
 
-					<tz-coupon @refresh="refresh()" :max_show_num="data.compontents[index].config.max_show_num"
+					<!-- 领取结果由 tz-coupon 就地写回那一枚券，宿主页不再整页重取（2026-10-20 用户点名） -->
+					<tz-coupon :max_show_num="data.compontents[index].config.max_show_num"
 						:coupon="data.compontents[index].config.coupon" :source="data.compontents[index].config.source"
 						v-if="item && item.type == 'coupon'" />
 

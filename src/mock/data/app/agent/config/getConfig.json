@@ -81,6 +81,9 @@
     "member_recruit_status": "1",
     "member_recruit_condition_paycount_status": "1",
     "member_recruit_condition_paycount_value": "1",
-    "channels": true
+    "channels": true,
+    "settle_days": 7,
+    "settle_days_max": 365,
+    "settle_to_balance": "1"
   }
 }

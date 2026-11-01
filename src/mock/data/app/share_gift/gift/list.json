@@ -1,0 +1,50 @@
+{
+  "code": 1,
+  "msg": "获取成功",
+  "time": "1791344794",
+  "data": {
+    "has_active": true,
+    "has_record": true,
+    "rows": [
+      {
+        "id": 3137,
+        "title": "两个人",
+        "invite_num": 2,
+        "end_time": 1791368241,
+        "end_time_text": "2026-10-07 18:17",
+        "run_state": "ongoing",
+        "run_state_text": "进行中",
+        "condition_text": "邀请2人即可获得超值奖品",
+        "assist_num": 0,
+        "progress_text": "0/2",
+        "action_text": "去参与"
+      }
+    ],
+    "attr": {
+      "record_status": [
+        "进行中",
+        "待领取",
+        "已领取",
+        "已过期"
+      ],
+      "prize_status": [
+        "待领取",
+        "已领取",
+        "已过期"
+      ],
+      "assist_status": {
+        "1": "有效",
+        "2": "未成功"
+      },
+      "prize_type": {
+        "course": "线上课程",
+        "physical": "实物商品",
+        "coupon": "优惠券",
+        "score": "积分",
+        "cash": "现金奖励",
+        "custom": "自定义奖品"
+      },
+      "deadline_tip": "请在15天内领取奖品，过期将无法兑换"
+    }
+  }
+}

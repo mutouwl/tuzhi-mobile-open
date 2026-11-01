@@ -104,6 +104,13 @@
 						<div class="order-item-list">
 							结算状态: {{ item.status == 1 ? '已结算' : item.status == 2 ? '无效' : '待结算' }}
 						</div>
+						<!-- 到账是另一个事实，单独一行（M24 一根元信息行只放一个事实）；
+						     「预计 3 天后到账」与日期都由后端算好下发，前端不许自己比时间（M22/M35）。
+						     只有待结算那一档才出这一行，按 M16 不给它铺骨架块、也不预留空位 -->
+						<div class="order-item-list" v-if="item.status == 0 && item.settle_left_text">
+							<text>{{ item.settle_left_text }}</text>
+							<text class="order-item-value" v-if="item.settle_time_text">（{{ item.settle_time_text }}）</text>
+						</div>
 						<div class="order-item-list">
 							类型: {{ item.type == 'commission' ? '商品佣金' : '下级分销员卖货提成' }}
 						</div>

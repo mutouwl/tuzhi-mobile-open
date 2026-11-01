@@ -1,0 +1,219 @@
+/* 赠送记录页（M-P4）页面私有类：一律 sfg- 前缀（M11，禁止 .box/.card/.title 这类全站互相覆盖的裸名）。
+   单位只用 px（禁 rpx）；颜色只吃 token：主 #0968f6 / 辅助灰 #86909c / 页面底 #f7f8fa /
+   卡片白 #fff / 价格 #f53f3f / 骨架 #e5e6eb。
+   条目卡与卡间距走全局档 `.school-cards / .school-card`（M10/M21：直角、不投影、内衬 14、间距 10），
+   卡内商品区复用紧凑档 `tz-course-mini`（2026-10-20 用户点名；口径同「我的拼团」那一页）；
+   本文件只排卡下信息区的三段（状态/份数 → 领取人 → 时间+动作）与骨架那几块的几何。
+   ⚠ **同一行里项与项的间距只由容器的 `gap` 给，任何一项都不许写 `margin-left`**（硬约束 20）：
+   这一行的项会按状态 `v-if` 收起（已领取/已失效那两档不给按钮、没领取时不给领取人块），
+   排在后面的项一旦成了首项，它自带的 margin 就成了整行的左偏移。 */
+
+/* 收窄范围那一行（仅订单详情入口带 order_no 时出）：页签下方那一行 12px 灰字；
+   单号是外部串，允许折行、不撑破卡片 */
+.sfg-scope {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 10px 10px 0;
+  font-size: 12px;
+  color: #86909c;
+}
+
+.sfg-scope-no {
+  min-width: 0;
+  word-break: break-all;
+}
+
+/* 一条 = 商品卡（卡内由 tz-course-mini 给）+ 卡下信息区；行高由内容给，不预留（M18⑧） */
+.sfg-item {
+  display: block;
+}
+
+/* 卡下信息区：一道发丝线把商品与「这一份礼单」分开（白底卡片内的静态分隔，色值取全站 #f2f3f5） */
+.sfg-info {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f2f3f5;
+}
+
+/* ① 状态标 + 份数刻度：左右两端，间距只由 gap 给（不用 margin-left，硬约束 20） */
+.sfg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* 状态标：按礼单三档上色（0 待赠送蓝 / 2 已领取绿 / 3 已失效灰），
+   词条本身吃后端 `status_label`；色值按压底对比度取深一档（硬约束 29） */
+.sfg-tag {
+  flex: none;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: 600;
+  color: #4e5969;
+  background: #f2f3f5;
+}
+
+.sfg-tag--pending {
+  color: #0d5bc4;
+  background: #e8f3ff;
+}
+
+.sfg-tag--claimed {
+  color: #008123;
+  background: #e8ffea;
+}
+
+.sfg-tag--void {
+  color: #4e5969;
+  background: #f2f3f5;
+}
+
+/* 份数刻度：同一张购买单买了几份、这是第几份（只有一份时整句不出） */
+.sfg-seq {
+  flex: none;
+  font-size: 11px;
+  line-height: 14px;
+  color: #86909c;
+}
+
+/* ② 领取人块：**「领取人」标签在前、头像 24 圆（与「我的拼团」成员头像同一档）贴着昵称**（M35）——
+   标签若摆在头像与昵称中间，就把「这个人 + 他的名字」这一对拆成三段（2026-10-27 用户点名）；
+   标签在前还能让本行与下面「时间标签 + 值」那一行的标签左缘对齐（M21 的左缘一条线） */
+.sfg-receiver-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.sfg-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex: none;
+  background: #f2f3f5;
+}
+
+.sfg-receiver-label {
+  flex: none;
+  font-size: 10px;
+  line-height: 14px;
+  color: #86909c;
+}
+
+.sfg-receiver {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: #1d2129;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 未领取那一档：不画空圆占位，直接一句灰字（与状态标同一事实，不重复一枚假头像） */
+.sfg-receiver-empty {
+  font-size: 12px;
+  line-height: 18px;
+  color: #86909c;
+}
+
+/* ③ 时间 + 动作：左右两端，间距只由 gap 给 */
+.sfg-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+/* 行内动作的宿主：只包住按钮，给 `@click.stop` 一个落点（点按钮不冒泡到整条记录）。
+   自身不占满一行、也不带外边距（间距仍由 .sfg-foot 的 gap 给，硬约束 20） */
+.sfg-action {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+/* 灰字时间走 §1 的 10px 档（写成正文档会被读成第二句商品名）；标签与值那 4px 同样只由 gap 给 */
+.sfg-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sfg-time-label {
+  font-size: 10px;
+  line-height: 14px;
+  color: #86909c;
+  flex: none;
+}
+
+.sfg-time-value {
+  font-size: 10px;
+  line-height: 14px;
+  color: #86909c;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sfg-loadmore {
+  padding: 4px 0 10px;
+}
+
+/* 空态那一格的上下留白（u-empty 根节点自带 margin，不补这一档它会贴在页签下面） */
+.sfg-empty {
+  padding: 40px 0 48px;
+}
+
+/* ── 首屏骨架：三段与真实行同几何（M16：灰块只进到容器内部替换会变的那几格；
+     商品区那一块由 tz-course-mini 自己的骨架档给）── */
+.sfg-sk-status {
+  width: 48px;
+  height: 18px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex: none;
+}
+
+.sfg-sk-seq {
+  width: 54px;
+  height: 10px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex: none;
+}
+
+.sfg-avatar--sk {
+  background: #e5e6eb;
+}
+
+.sfg-sk-name {
+  width: 80px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+.sfg-sk-time {
+  width: 110px;
+  height: 10px;
+  border-radius: 4px;
+  background: #e5e6eb;
+}
+
+/* 按钮块按 tz-button size="small" 实算（两字按钮 28 + 内衬 30 ≈ 58、高 27） */
+.sfg-sk-btn {
+  width: 58px;
+  height: 27px;
+  border-radius: 4px;
+  background: #e5e6eb;
+  flex: none;
+}

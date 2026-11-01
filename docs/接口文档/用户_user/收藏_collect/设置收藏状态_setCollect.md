@@ -15,7 +15,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| item_id | string | 否 | 条目ID | `` |
+| item_id | string | 否 | 条目ID | - |
 | type | string | 否 | 类型 | `course` |
 
 ## 请求示例
@@ -23,7 +23,7 @@
 ```bash
 curl -X POST '{apiUrl}user/collect/setCollect' \
   -H 'Content-Type: application/json' \
-  -d '{"item_id":"","type":"course"}'
+  -d '{"item_id":"xxx","type":"course"}'
 ```
 
 ## 返回示例

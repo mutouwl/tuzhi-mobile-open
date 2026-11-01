@@ -7,7 +7,10 @@
 //      再走 onShow 必须重取，否则登录后还摆着游客那一屏；
 //   D. 下拉刷新（onPullDownRefresh）取一次，且转圈要等这一趟有回音才收
 //      （uni.stopPullDownRefresh 落在 user/info 的 resolve/reject 之后，不在触发那一刻）；
-//   E. 首屏那一趟取失败不记「已取过」，下一次 onShow 照样重试，不会卡在空骨架上。
+//   E. 首屏那一趟取失败不记「已取过」，下一次 onShow 照样重试，不会卡在空骨架上；
+//   F. **切 tab 回来是新实例**（底部导航走 redirectTo，实例已销毁）：按会话快照复原，
+//      零请求、内容照旧，装修配置也不再取——这就是 2026-10-28 用户点名的「已加载的页面要保存」；
+//   G. 换号后新实例**不许**复原上一个人的快照（余额/券/奖品都带用户），必须重取。
 // 另外钉住 pages.json：用户中心这一路由必须开 enablePullDownRefresh，否则下拉那一下没有收条。
 // 用法：node tuzi-mobile/scripts/check-user-center-refresh.js   （exit 0 = 全部符合预期）
 const fs = require('fs');
@@ -15,16 +18,29 @@ const path = require('path');
 
 const PAGE = path.resolve(__dirname, '../src/pages/user/index/js.vue');
 const PAGES_JSON = path.resolve(__dirname, '../src/pages.json');
+const SNAPSHOT = path.resolve(__dirname, '../src/common/utils/page-snapshot.js');
+
+/** 快照工具用真件（只把 export 外壳换成 CommonJS）：要验的就是它存/取与身份分档 */
+function loadSnapshotModule() {
+  let src = fs.readFileSync(SNAPSHOT, 'utf8').replace(/export function /g, 'function ');
+  src += '\nmodule.exports = { readPageSnapshot: readPageSnapshot, writePageSnapshot: writePageSnapshot };\n';
+  const m = { exports: {} };
+  new Function('module', 'exports', src)(m, m.exports);
+  return m.exports;
+}
 
 function loadOptions(stub) {
   let src = fs.readFileSync(PAGE, 'utf8');
   src = src.replace(/^[\s\S]*?<script>/, '').replace(/<\/script>[\s\S]*$/, '').replace('export default', 'module.exports =');
+  // 快照工具先用真件接上，再走下面的空实现桩
+  src = src.replace(/^import\s*\{([^}]*)\}\s*from\s*["'][^"']*page-snapshot["'];?\s*$/gm,
+    (m, names) => 'const {' + names + '} = __snapshot;');
   // 具名/默认 import 换成同名空实现桩：new Function 不吃 ESM 语法，而被桩化的辅助函数在本链路里只是装配装修配置
   src = src.replace(/^import\s*\{([^}]*)\}\s*from\s*["'][^"']*["'];?\s*$/gm, (m, names) =>
     'const ' + names.split(',').map((n) => n.trim()).filter(Boolean).map((n) => n + ' = () => ({})').join(', ') + ';');
   src = src.replace(/^import\s+([A-Za-z_$][\w$]*)\s+from\s*["'][^"']*["'];?\s*$/gm, 'const $1 = () => ({});');
   const m = { exports: {} };
-  new Function('module', 'exports', 'uni', src)(m, m.exports, stub.uni);
+  new Function('module', 'exports', 'uni', '__snapshot', src)(m, m.exports, stub.uni, stub.snapshot);
   return m.exports;
 }
 
@@ -83,9 +99,10 @@ const assert = (name, ok, got) => {
 };
 
 (async () => {
+  const snapshot = loadSnapshotModule();
   // A + B：首进取一次，之后每次 onShow 都不再取
   const env = makeEnv('TOKEN_A');
-  const opts = loadOptions({ uni: env.uni });
+  const opts = loadOptions({ uni: env.uni, snapshot: snapshot });
   const vm = makeVm(opts, env);
   opts.onLoad.call(vm);
   opts.onShow.call(vm);
@@ -118,10 +135,40 @@ const assert = (name, ok, got) => {
   assert('   └ 收条不在触发那一刻收，等这一趟有回音才收', stopsSync === stopsBeforePull && env.stops() === stopsBeforePull + 1,
     '触发后=' + stopsSync + ' 回音后=' + env.stops());
 
+  // F：切 tab 回来＝新实例（redirectTo 已把旧实例销毁）——按会话快照复原，零请求
+  await tick();
+  const beforeF = infoCalls(env.calls);
+  const decorateBeforeF = env.calls['page.userCenter.getConfig'] || 0;
+  const vmTab = makeVm(opts, env);
+  opts.onLoad.call(vmTab);
+  opts.onShow.call(vmTab);
+  await tick();
+  assert('F 切 tab 回来（新实例）按快照复原：零请求、内容照旧',
+    infoCalls(env.calls) === beforeF && vmTab.userInfo.nickname === '凸知' && vmTab.loading === false && vmTab.fetched === true,
+    'calls=' + infoCalls(env.calls) + '，nickname=' + (vmTab.userInfo && vmTab.userInfo.nickname));
+  assert('F 复原时装修配置也不再取一次',
+    (env.calls['page.userCenter.getConfig'] || 0) === decorateBeforeF,
+    'decorateCalls=' + (env.calls['page.userCenter.getConfig'] || 0));
+
+  // G：换号后再切 tab（新实例）——上一个人的快照不许复用
+  const beforeG = infoCalls(env.calls);
+  const decorateBeforeG = env.calls['page.userCenter.getConfig'] || 0;
+  env.storage.user_token = 'TOKEN_H';
+  const vmOther = makeVm(opts, env);
+  opts.onLoad.call(vmOther);
+  opts.onShow.call(vmOther);
+  await tick();
+  assert('G 换号后新实例不复用旧身份快照：user/info 重取一次',
+    infoCalls(env.calls) === beforeG + 1,
+    'calls=' + infoCalls(env.calls));
+  assert('G 换号后装修配置也重新取一次',
+    (env.calls['page.userCenter.getConfig'] || 0) === decorateBeforeG + 1,
+    'decorateCalls=' + (env.calls['page.userCenter.getConfig'] || 0));
+
   // E：首屏那一趟取失败不写「已取过」——页面还停在空骨架上，下一次 onShow 必须重试，不会卡死
   const env2 = makeEnv('TOKEN_C');
   env2.breakOnce();
-  const opts2 = loadOptions({ uni: env2.uni });
+  const opts2 = loadOptions({ uni: env2.uni, snapshot: snapshot });
   const vm2 = makeVm(opts2, env2);
   opts2.onShow.call(vm2);
   await tick();

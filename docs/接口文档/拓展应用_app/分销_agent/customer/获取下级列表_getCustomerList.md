@@ -18,14 +18,14 @@
 | limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
 | order | string | 否 | 订单 | `desc` |
-| name | string | 否 | 名称 | `` |
+| name | string | 否 | 名称 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/agent/customer/getCustomerList' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"order":"desc","name":""}'
+  -d '{"limit":10,"page":1,"order":"desc","name":"xxx"}'
 ```
 
 ## 返回示例

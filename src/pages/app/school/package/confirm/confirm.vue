@@ -24,17 +24,21 @@
                 :cover="form.cover"
                 :name="form.name"
                 :sku-name="sku.name"
-                :price="sku.price"
+                :price="displayPrice"
                 :lessons="skuLessons"
                 :valid-text="validText"
             />
-            <!-- 校区回显（弹层内选定）；上课学生支持本页切换，默认带入缓存选中的学生 -->
+            <!-- 校区 / 上课学生：本页就是「确认报名」这一步，两样都在这里拍板（校区走自定义校区选择弹窗，
+                 与课时余额页同一只 `campus-select-popup`；学生走选择学生弹层，默认带入缓存选中的学生）。
+                 拼团那一趟也从这里进来（2026-10-30：拼团同样要确认校区与学生），确认完再把校区/学生
+                 交给结算页 —— 结算页不再摆任何校区/学生选择器。 -->
             <view class="school-cell-card">
-                <view class="school-cell-item">
+                <view class="school-cell-item" @click="openCampusPicker">
                     <view class="school-cell-label">校区</view>
                     <view class="school-cell-value">
-                        <text class="school-cell-value-text" :class="{ 'cell-placeholder': !campusName }">{{ campusName || '-' }}</text>
+                        <text class="school-cell-value-text" :class="{ 'cell-placeholder': !campusName }">{{ campusText }}</text>
                     </view>
+                    <view class="school-cell-arrow"><tz-icon name="enter" color="#86909C" :size="13" /></view>
                 </view>
                 <view class="school-cell-item student-cell" @click="studentPopup = true">
                     <view class="school-cell-label">上课学生</view>
@@ -59,6 +63,14 @@
             :student-id="student.id"
             @confirm="onStudentPicked"
             @close="studentPopup = false"
+        />
+        <!-- 选择校区弹层（与课时余额页同一只：校区卡 + 右侧单选，复用 `tz-campus`，不另造版式） -->
+        <campus-select-popup
+            :show="campusPicker"
+            :list="form.campus_list || []"
+            :value="campusId"
+            @select="onCampusPicked"
+            @close="campusPicker = false"
         />
 
         <tz-tab-bar />
