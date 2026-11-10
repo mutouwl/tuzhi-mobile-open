@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://github.com/mutouwl/tuzhi-mobile-open"><img src="https://img.shields.io/github/stars/mutouwl/tuzhi-mobile-open?style=social" alt="GitHub Stars" /></a>
+  <a href="https://gitee.com/tuzhi-open/tuzhi-mobile-open"><img src="https://gitee.com/tuzhi-open/tuzhi-mobile-open/badge/star.svg?theme=white" alt="Gitee Stars" /></a>
+</p>
+
+<p align="center"><sub>如果这个项目对你有帮助，欢迎点上面的 Star 支持我们。</sub></p>
+
 <h1 align="center">凸知移动端（Tuzi Mobile）</h1>
 
 <h4 align="center">
