@@ -8,7 +8,9 @@ import { readGroupBuyOrder, withGroupBuyOrder } from '@/common/utils/group-buy-o
 import { GB_GRADIENT, GB_TEXT } from '@/common/utils/group-buy-theme.js';
 // 票种 → 拼团价 的映射（与选票页同读一份；各写一遍就是下一次改口径只改一半）
 import { gbTicketPrice } from '@/common/utils/group-buy-ticket-price.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+  mixins: [scoreExchange],
   components: { formModal },
   data() {
     return {
@@ -46,7 +48,9 @@ export default {
   computed: {
     /** 骨架屏的撤出判据：活动详情 / 票券 / 报名表单 / 拼团活动（非拼团链恒为已落地）全部到手 */
     loading() {
-      return !(this.detailLoaded && this.ticketLoaded && this.formLoaded && this.gbLoaded);
+      // 积分商品这一腿（2026-11-09）：行金额与底栏合计在兑换模式下读 `scoreExchangeScore`，
+      // 没落地前那几格是 0 —— 只按另外几路收口就会先闪一遍「0 积分」
+      return !(this.detailLoaded && this.ticketLoaded && this.formLoaded && this.gbLoaded && this.scoreReady);
     },
     /** 拼团那一趟（URL 带 `gb_activity`）：行金额与合计按活动的拼团价画 */
     gbPicking() {
@@ -60,6 +64,9 @@ export default {
     },
     /** 合计金额：与票券行同源（拼团那一趟按拼团价累加） */
     totalPrice() {
+      if (this.isScoreExchange) {
+        return this.scoreExchangeScore * (Number(this.totalNumber) || 0);
+      }
       let p = 0;
       (this.checkedTicket || []).forEach((item) => { p += this.ticketUnitPrice(item) * (Number(item.number) || 0); });
       return Math.round(p * 100) / 100;
@@ -268,6 +275,12 @@ export default {
         return false;
       }
 
+      // 积分兑换一次只能换 1 张票：后端积分单只允许一条商品行
+      if (that.isScoreExchange && Number(that.totalNumber) !== 1) {
+        uni.$u.toast('积分兑换一次只能选择 1 张票券');
+        return false;
+      }
+
       that.$api('app.activity.form.submit', {
         form: that.applyInfo,
         activity_id: this.pageParams.id
@@ -297,12 +310,12 @@ export default {
                 var formId = res.data[formInfoIndex];
               }
 
-              goodsList.push({
+              goodsList.push(that.withScoreGoods({
                 goodsId: that.checkedTicket[i].id,
                 goodsType: 'activity',
                 count: 1,
                 extend: formId
-              });
+              }));
               formInfoIndex++;
             }
 
@@ -342,6 +355,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    this.initScoreExchange(that.pageParams);
     that.pageParams.ticket = JSON.parse(that.pageParams.ticket)
     // 拼团那一趟（选票页随 `ticket` 带上来的扁平 `gb_*`）：本页只搬运并补齐票种/张数/报名信息 id。
     // **身份核的是 `gb_goods_id` 与 `pageParams.id`**（活动 9），不是 `gb_activity`（拼团活动 12388）：

@@ -15,6 +15,21 @@ export default {
       }
     }
   },
+  computed: {
+    /**
+     * 招募条件「已达成 / 未达成」按数值比。
+     *
+     * `userCondition.pay_price` 来自 MySQL SUM（PDO 回来是字符串），配置值也是字符串；
+     * 直接 `'5.00' >= '10'` 在 JS 里是字典序比较（'5' > '1'），会把没达标显示成已达成。
+     * 与 2026-11-03 分销等级「升级条件需大于上一级」同一族：先 Number 再比。
+     */
+    payCountAchieved() {
+      return Number(this.userCondition.pay_count || 0) >= Number(this.config.member_recruit_condition_paycount_value || 0);
+    },
+    payPriceAchieved() {
+      return Number(this.userCondition.pay_price || 0) >= Number(this.config.member_recruit_condition_payprice_value || 0);
+    },
+  },
   watch: {
   },
   methods: {

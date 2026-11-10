@@ -20,7 +20,24 @@ export default {
   },
   watch: {
   },
+  computed: {
+    /**
+     * 本单到账的消费积分（后端 `consume_score`，由 `ConsumeGrant::earnedOfOrder()` 求和 pay 流水）。
+     * 端上不重算：兑换单 / 完成时机未到账 / 零流水后端都回 0，这里只做展示前的数值兜底。
+     */
+    earnedScore() {
+      const detail = this.orderDetail || {};
+      const score = Number(detail.consume_score);
+      return isFinite(score) && score > 0 ? Math.floor(score) : 0;
+    }
+  },
   methods: {
+    /**
+     * 「恭喜您获得 N 积分」整行点进积分中心（navigateTo：看完能返回结果页）
+     */
+    goScoreCenter() {
+      this.$nav.to('/pages/app/score/home/home', 'local');
+    },
     handleBtnTap() {
       if (typeof this.btnClick === 'function') {
         this.btnClick();

@@ -99,20 +99,24 @@
 
 			<tz-divider bgColor="#fafafa" v-if="info.activity_location" />
 
-			<!-- 场馆地址：点一下打开地图（2026-10-31 用户口径）。活动表只有文本地址、没有经纬度，
-			     H5 按文字检索打开高德页；小程序/App 没有「按地址开地图」的接口，退到复制地址 -->
+			<!-- 场馆地址：地址右侧那枚向右箭头就是导航入口（2026-11-08 用户口径：右上角不再单独摆「导航」按钮，
+			     箭头点一下执行导航）。按 M2「行尾箭头只表去向、动作交给整行 @click」，
+			     箭头仍是纯视觉，点击由整块承接——箭头落在可点区域里，点它一样走导航。
+			     活动表只有文本地址、没有经纬度，H5 按文字检索打开高德页；
+			     小程序/App 没有「按地址开地图」的接口，退到复制地址 -->
 			<view class="tkd-block" v-if="info.activity_location" @click="openVenueMap">
 				<view class="tkd-block-head">
 					<view class="tkd-block-title">
 						<tz-icon name="coordinates" :size="16" color="#0968F6" />
 						<text class="tkd-block-title-text">场馆地址</text>
 					</view>
-					<view class="tkd-venue-nav">
-						<tz-icon name="dingwei" :size="14" color="#86909C" />
-						<text class="tkd-venue-nav-text">导航</text>
+				</view>
+				<view class="tkd-venue-row">
+					<view class="tkd-venue">{{ info.activity_location }}</view>
+					<view class="tkd-venue-arrow">
+						<tz-icon name="enter" :size="13" color="#86909C" />
 					</view>
 				</view>
-				<view class="tkd-venue">{{ info.activity_location }}</view>
 			</view>
 
 			<tz-divider bgColor="#fafafa" v-if="info.order_no" />
@@ -122,7 +126,7 @@
 					<view class="tkd-block-title">
 						<text class="tkd-block-title-text">订单详情</text>
 					</view>
-					<tz-icon name="enter" :size="14" color="#C9CDD4" />
+					<tz-icon name="enter" :size="13" color="#86909C" />
 				</view>
 				<view class="tkd-block-sub">查看订单信息、支付方式等</view>
 			</view>

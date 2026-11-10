@@ -105,3 +105,53 @@
     font-size: 24px;
     margin-right: 4px;
 }
+
+/* ===== 首屏骨架屏（M16）：静态块 #e5e6eb，类名带 sub-sk- 前缀（本页样式未加 scoped，防外溢） ===== */
+
+/* 外壳逐条照抄 components/course.vue 的 .course-item-box + .course-item-box-round：
+   高 100 / 白底 / 圆角 10 / 行间 10px / overflow hidden（真实行的 .info 是 content-box 且会溢出被裁，这里照抄才能等高） */
+.sub-sk-item{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.sub-sk-item:last-child{
+    margin-bottom: 0;
+}
+
+/* 封面位：与 .course-item-box .cover 逐值相同（宽 130、高 100%，不写 flex-shrink 保持一致收缩行为） */
+.sub-sk-cover{
+    height: 100%;
+    width: 130px;
+    position: relative;
+    background-color: #e5e6eb;
+}
+
+/* 文字区：与 .course-item-box .info 逐值相同（宽度算式 + 8px 内衬，不写 box-sizing） */
+.sub-sk-info{
+    width: calc(100% - 130px);
+    padding: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 标题条：对齐 14px 字号那一行（灰条由 u-skeleton 画，这里只定位置与宽度） */
+.sub-sk-title{
+    width: 72%;
+    height: 14px;
+}
+
+/* 订阅时间条：与 .time 同一落位（距底 6px + 20px 行盒，块高 12 居中其中） */
+.sub-sk-time{
+    position: absolute;
+    bottom: 10px;
+    left: 8px;
+    width: 66%;
+    height: 12px;
+}

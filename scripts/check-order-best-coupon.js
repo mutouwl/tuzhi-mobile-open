@@ -126,6 +126,23 @@ function rules(src) {
       /that\.\$set\(that\.data, 'coupon_can_use'/.test(order)],
     ['⑧d 券弹窗空态按页签：可用档说「暂无可用优惠券」',
       /'暂无可用优惠券'/.test(picker)],
+
+    // ⑨ 选了券却没生效时不许静默（2026-11-02 客户反馈「实物商品选券后价格不变、也没有选中提示」）：
+    //    核算档不报错（code 仍为 1），原因只在 `data.msg`；原先只有拼团分支读它，普通下单连实物单
+    //    都是「价格不动、券行还是请选择优惠券、一句话也没有」，且无效券一直挂在 form 上带到建单
+    ['⑨a 券没生效时清掉 form.coupon_id 并把 data.msg 说给用户',
+      /const askedCoupon = Number\(form\.coupon_id\) \|\| 0;[\s\S]{0,200}?const usedCoupon = Number\(\(res\.data \|\| \{\}\)\.coupon_id\) \|\| 0;/.test(order)
+      && /else if \(askedCoupon > 0 && usedCoupon !== askedCoupon\) \{[\s\S]{0,320}?that\.form\.coupon_id = 0;[\s\S]{0,320}?res\.data && res\.data\.msg/.test(order)],
+    ['⑨b 券被拒时透出 checkCoupon 的具体原因（记录 + 使用两处都在）',
+      /protected \$couponRejectReason/.test(orderCreate)
+      && /couponRejectReason = !empty\(\$result\['cannot_use_msg'\]\)/.test(orderCreate)
+      && /\$this->exception\(\$this->couponRejectReason \?: '优惠券不可用'\)/.test(orderCreate)],
+    // 抵 0 元的券不许核销（2026-11-02 线上实测抓到「券挂进订单、金额一分不减、券被用掉」）。
+    // 判据必须落在 `checkCoupon()`：券列表（scanCoupons）与试算（calcCoupon）读同一处，
+    // 否则又会出现「列表说可用、选了不抵钱」——用户原话「既然显示在可用里就该能用」。
+    ['⑨c 抵 0 元的券在 checkCoupon 就判不可用（列表与试算同源）+ 建单兜底',
+      /if \(\s*floatval\(\$coupon->coupon_money\) <= 0\) \{[\s\S]{0,160}?\$can_use = false;[\s\S]{0,160}?该优惠券在本单可抵扣金额为 0/.test(orderCreate)
+      && /floatval\(\$this->orderData\['coupon'\]->coupon_money\) <= 0\) \{[\s\S]{0,260}?\$this->orderData\['coupon'\] = null;/.test(orderCreate)],
   ];
 }
 
@@ -162,6 +179,10 @@ if (process.argv.includes('--selftest')) {
   red('0 元单也挑券', (s) => s.replace(/if \(floatval\(\$this->orderData\['goods_total_price'\]\) <= 0\) \{\s*return 0;\s*\}/, ''), '⑥f', 'orderCreate');
   red('核算回体不吐可用券张数', (s) => s.replace("'coupon_can_use' => $this->availableCouponCount(),", ''), '⑧a', 'orderCreate');
   red('券行没券时退回「请选择优惠券」', (s) => s.replace("'暂无可用优惠券'", "'请选择优惠券'"), '⑧b');
+  red('选券没生效仍静默（不清券、不提示）',
+    (s) => s.replace(/that\.form\.coupon_id = 0;\s*uni\.showToast\(\{/, 'uni.showToast({'), '⑨a');
+  red('券被拒原因被笼统化', (s) => s.replace("$this->couponRejectReason ?: '优惠券不可用'", "'优惠券不可用'"), '⑨b', 'orderCreate');
+  red('抵 0 元的券照样核销', (s) => s.replace("floatval($this->orderData['coupon']->coupon_money) <= 0", "floatval($this->orderData['coupon']->coupon_money) < 0"), '⑨c', 'orderCreate');
   console.log('自检失败 ' + fail + ' 条');
   if (fail > 0) { process.exit(1); }
 }

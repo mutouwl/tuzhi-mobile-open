@@ -73,8 +73,9 @@
           {{ item.briefing }}
         </div>
         <template v-if="item.type == 'activity'">
-          <div class="subtitle one-line-hidden">
-            <tz-icon color="#86909C" name="coordinates" :size="16" />{{ item.location }}
+          <div class="subtitle one-line-hidden subtitle--with-icon">
+            <tz-icon color="#86909C" name="coordinates" :size="16" />
+            <text class="subtitle-text">{{ item.location }}</text>
           </div>
         </template>
         <!-- 进度行（行数据带 progress 才出，其余调用点不传即逐字不变）：图标 + 线型进度条 + 状态文字。
@@ -382,6 +383,19 @@
     color: #86909c;
     font-size: 12px;
     margin-top: 4px;
+  }
+
+  /* 行内图标 + 文字：文字收成 <text> 并把行高钉到图标同档（:size=16），间距交给容器 gap
+     （匿名文本项的行盒与图标行盒不同档，只靠 align-items 会一高一低） */
+  .course-item-box .info .subtitle--with-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .course-item-box .info .subtitle-text {
+    font-size: 12px;
+    line-height: 16px;
   }
 
 

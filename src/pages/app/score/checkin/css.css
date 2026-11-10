@@ -1,0 +1,4 @@
+/* 打卡列表（指定打卡）：本页没有私有样式——
+   页面根 .school-page（灰底 + 底部留白）、列表容器 .school-cards--divided（白底通栏档）走 App.vue 全局档，
+   条目卡与其骨架屏全部由共用组件 tz-checkin-activity-card 实现（组件内部直接复用课程卡 tz-course），
+   与「我的打卡 / 可参与的打卡」两页同一份版式，不在此另抄一遍 */

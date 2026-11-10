@@ -361,7 +361,7 @@ ok('J4 「翻到底」那一跳两头都接上：tz-popup-list @lower → 弹层
   /@lower="\$emit\('load-more'\)"/.test(popup) && /@load-more="loadMoreTeams"/.test(area)
     && /loadMoreTeams\(\)[\s\S]{0,160}this\.teamsPage \+= 1/.test(area));
 
-/* ---------- K. 商详拼团价横幅（2026-10-20 用户拿小鹅通图 2 点名「特殊样式也没有展示」） ---------- */
+/* ---------- K. 商详拼团价横幅（2026-10-20 用户拿参照产品图 2 点名「特殊样式也没有展示」） ---------- */
 // 2026-10-27 起横幅本体住在 `group-buy-banner.vue`（课程详情页把它挂进价格格），
 // 所以样式断言钉那一份；拼团区必须引用它、且允许被 `hide-banner` 收掉（否则宿主会出两枚横幅）。
 ok('K1 商详拼团价是红橙横幅：大字拼团价 + 「N人拼团价」白标 + 划线原价 + 距结束分段倒计时',
@@ -382,12 +382,12 @@ ok('K2 底栏「立即开团」按钮底色 = 横幅那条红橙渐变（同一�
   'banner=' + (bannerGradient || '(没取到)') + ' / 按钮=' + ((gbb.match(/color="([^"]*gradient[^"]*)"/) || [])[1] || '(无渐变)')
     + ' / 旧纯色残留=' + (/#f53f3f/.test(gbbCode) ? '有' : '无'));
 
-/* ---------- L. 2026-10-25 对照小鹅通截图补齐的四件（阶梯起价 / 邀新标识 / 到期撤区 / 弹层形态） ---------- */
-ok('L1 阶梯拼团横幅取**最低价那一档**并带「起」（小鹅通「拼团¥78.00 起」；取首档＝人数最少、价格最高，把门槛价写高）',
+/* ---------- L. 2026-10-25 对照参照产品截图补齐的四件（阶梯起价 / 邀新标识 / 到期撤区 / 弹层形态） ---------- */
+ok('L1 阶梯拼团横幅取**最低价那一档**并带「起」（参照产品「拼团¥78.00 起」；取首档＝人数最少、价格最高，把门槛价写高）',
   /lowestLadder\(\)/.test(banner) && /class="gba-rise"/.test(banner)
     && /type === 'ladder' && this\.lowestLadder/.test(banner)
     && /Math\.min|pb < pa/.test(banner));
-ok('L2 邀新拼团在商详价格区下方有常驻提示条「仅限新用户参团」（小鹅通 03-04 图；老用户看不出来这是新用户专享价）',
+ok('L2 邀新拼团在商详价格区下方有常驻提示条「仅限新用户参团」（参照产品 03-04 图；老用户看不出来这是新用户专享价）',
   /class="gba-invite"/.test(area) && /仅限新用户参团/.test(codeOnly(area)) && /activity\.type === 'invite'/.test(area));
 ok('L3 会话内活动到期：整区收掉 + 底栏入口撤掉 + 宿主价格格的横幅一并撤（倒计时归零那一支置 expired 并重发 ready=null，硬约束 27②）',
   /expired: false/.test(area) && /that\.expired = true/.test(area)
@@ -398,7 +398,7 @@ ok('L3 会话内活动到期：整区收掉 + 底栏入口撤掉 + 宿主价格�
 ok('L4 弹层面板挂底部安全区（面板只挂一份、u-popup 那份已关；微信端减半），空态容器 40/48 内衬',
   /env\(safe-area-inset-bottom\)/.test(popup) && /safeAreaInsetBottom="false"/.test(popup)
     && /\.gbp-empty\s*\{[\s\S]{0,60}padding:\s*40px 0 48px/.test(popup));
-ok('L5 凑团行剩余时间是秒级 `HH:MM:SS` 且弹层开着时 1 秒续跑、关层/卸载都清定时器（小鹅通 01-08 图「剩余23:59:59」）',
+ok('L5 凑团行剩余时间是秒级 `HH:MM:SS` 且弹层开着时 1 秒续跑、关层/卸载都清定时器（参照产品 01-08 图「剩余23:59:59」）',
   /pad2\(Math\.floor\(\(total % 3600\) \/ 60\)\)/.test(popup) && /pad2\(total % 60\)/.test(popup)
     && /'剩余 ' \+/.test(popup) && /setInterval\(function tick\(\)/.test(popup)
     && /clearTimer\(\);/.test(popup) && /beforeDestroy\(\)\s*\{\s*this\.clearTimer/.test(popup)

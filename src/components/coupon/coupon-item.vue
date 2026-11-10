@@ -68,8 +68,9 @@
       </div>
     </div>
     <div class="detail-info" v-if="cantUseMsg">
-      <div class="instructions">
-        <tz-icon name="prompt" :size="14" color="#FF7820" />{{ cantUseMsg }}
+      <div class="instructions instructions--with-icon">
+        <tz-icon name="prompt" :size="14" color="#FF7820" />
+        <text class="instructions-text">{{ cantUseMsg }}</text>
       </div>
     </div>
   </div>
@@ -324,6 +325,17 @@ export default {
   white-space: pre-wrap;
   display: flex;
   align-items: center;
+}
+
+/* 行内图标 + 文字：文字收成 <text> 并把行高钉到图标同档（:size=14），
+   项间距交给容器 gap（匿名文本项的行盒与图标行盒不同档，只靠 align-items 会一高一低） */
+.instructions--with-icon {
+  gap: 4px;
+}
+
+.instructions-text {
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .coupon-item .coupon-choose-box {

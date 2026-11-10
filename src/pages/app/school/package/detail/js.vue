@@ -6,7 +6,9 @@ import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
 import { groupBuyConfirmUrl } from '@/common/utils/group-buy-order.js';
 // 拼团价（规格 + 档位两轴）：确认报名页头区要显示与规格弹窗同一个数
 import { gbPriceOf } from '@/common/utils/group-buy-spec.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+        mixins: [scoreExchange],
         components: { PackageSkuSelectModal },
         data() {
             return { id: 0, form: { banners: [], campus_list: [], skus: [], tags: [], teachers: [] }, activeCampus: 0, activeSku: 0, skuPopup: false, teacherPopup: false, skeletonLoading: true, installed: true, missing: false, loadError: false,
@@ -70,6 +72,7 @@ export default {
             },
         },
         onLoad(options) {
+            this.initScoreExchange(this.$nav.parsePageParams(options));
             // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
             this.gbJoinCtx = readGroupBuyJoin(this.$nav.parsePageParams(options));
             this.gbJoinMode = !!this.gbJoinCtx;
@@ -112,15 +115,60 @@ export default {
             },
             /** 底栏「立即开团」：就地开拼团区那只凑团弹层 */
             openGb() { if (this.$refs.gbArea) { this.$refs.gbArea.openPopup(); } },
+            /**
+             * 积分商品详情到手（mixins 回调）：只留商家勾过的套餐规格
+             *
+             * 套餐规格 id 就是 `school_package_sku.id`（下单把它当 goodsId）；
+             * 确认页地址带的是**下标** ⇒ 裁剪后必须记下标映射，重新编号会把「第 2 档」指到别的价上。
+             * 确认页读的是**同一份接口返回**并按同样规则裁一次，两处裁法一致才对齐（判据都在后端 `spec_ids`）。
+             */
+            onScoreExchangeReady() {
+                if (!this.isScoreExchange) { return; }
+                if (this.scoreExchangeError) {
+                    this.missing = true;
+                    this.loadError = true;
+                    this.skeletonLoading = false;
+                    uni.showToast({ title: this.scoreExchangeError, icon: 'none' });
+                    return;
+                }
+                this.applyScoreSpecScope();
+            },
+            /** 按 `rawSkus` 重裁一次（幂等：每次从原清单算） */
+            applyScoreSpecScope() {
+                if (!this.form) { return; }
+                const base = Array.isArray(this.rawSkus) ? this.rawSkus : (this.form.skus || []);
+                const kept = this.scoreHasSpec
+                    ? this.scoreSpecOptions(base)
+                    : base.map((item, index) => ({ item, index }));
+                this.form.skus = kept.map((row) => row.item);
+                // 下标映射：裁剪后第 k 档在原数组里的位置（确认页地址带的就是下标）
+                this.__skuOriginIndex = kept.map((row) => row.index);
+                if (this.activeSku >= this.form.skus.length) {
+                    this.activeSku = 0;
+                }
+            },
+            /** 确认页地址里的规格下标：裁剪过就换算回原下标，没裁过就是原样 */
+            skuIndexForUrl() {
+                const map = this.__skuOriginIndex;
+                return Array.isArray(map) && map.length
+                    ? Number(map[this.activeSku] === undefined ? this.activeSku : map[this.activeSku])
+                    : (Number(this.activeSku) || 0);
+            },
             getData() {
                 this.$api('school.package.detail', { id: this.id }).then((ret) => {
                     // 全局拦截器对 code=0 只 toast 不 reject，须校验业务码；套餐不存在/已下架落空态
                     if (ret && ret.code === 1 && ret.data) {
                         this.form = ret.data;
+                        // 未裁剪的规格清单留一份：兑换模式的裁剪与「积分商品晚到」那一次都读它
+                        this.rawSkus = Array.isArray(ret.data.skus) ? ret.data.skus.slice() : [];
                         this.activeCampus = (ret.data.campus_list || [])[0] ? ret.data.campus_list[0].id : 0;
+                        // 兑换模式：只摆商家勾过的套餐规格（判据在后端 `spec_ids`）
+                        if (this.isScoreExchange) {
+                            this.applyScoreSpecScope();
+                        }
                         // 受邀参团：页面上「选择套餐」先落到团上那一档（点加入拼的是另一档就自相矛盾）
-                        if (this.gbJoinCtx && (ret.data.skus || []).length) {
-                            const joinIdx = ret.data.skus.findIndex((s) => Number(s.id) === Number(this.gbJoinCtx.specId));
+                        if (this.gbJoinCtx && (this.form.skus || []).length) {
+                            const joinIdx = this.form.skus.findIndex((s) => Number(s.id) === Number(this.gbJoinCtx.specId));
                             if (joinIdx >= 0) { this.activeSku = joinIdx; }
                         }
                         // 页面标题跟随套餐名称（原为固定的「课程详情」）：H5 同步浏览器/微信顶部标题，小程序同步导航栏标题
@@ -178,12 +226,18 @@ export default {
                     return;
                 }
                 // 普通报名：确认报名页地址与拼团那一趟共用 `groupBuyConfirmUrl()`（路径只存那一处），
-                // 这一趟没有拼团上下文 ⇒ `gb` 省略
-                this.$nav.to(groupBuyConfirmUrl({
+                // 这一趟没有拼团上下文 ⇒ `gb` 省略。
+                // ⚠ 下标换算回**原下标**：确认页自己重取套餐详情（拿到的是完整 skus 清单），
+                // 拿裁剪后的位置过去会指到别的规格上
+                let confirmUrl = groupBuyConfirmUrl({
                     packageId: this.id,
-                    skuIndex: this.activeSku,
+                    skuIndex: this.skuIndexForUrl(),
                     campusId: this.activeCampus,
-                }));
+                });
+                if (this.scoreExchangeId > 0) {
+                    confirmUrl += (confirmUrl.indexOf('?') >= 0 ? '&' : '?') + 'score_goods_id=' + this.scoreExchangeId;
+                }
+                this.$nav.to(confirmUrl);
             },
             /**
              * 拼团下单入口（2026-10-30 用户点名：校区课程套餐点「拼团」也要先到**确认报名页**去确认

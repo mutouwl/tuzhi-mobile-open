@@ -96,7 +96,13 @@
                             <span class="unit">密码兑换</span>
                         </template>
                         <template v-if="item.pay_type == 'pay'">
-                            <template v-if="isVirtualPay(item)">
+                            <!-- 积分兑换（2026-11-09）：兑换单的现金价已被后端归零、改记 `score_amount`，
+                                 这一格必须换成积分 —— 照旧画 ¥0 会被读成「这件商品不要钱」。
+                                 字段由调用点映射（`score_mode` 缺省不传 ⇒ 其余调用点逐字不变） -->
+                            <template v-if="item.score_mode">
+                                <span class="price-value">{{ item.price }}</span><span class="coin-name">积分</span>
+                            </template>
+                            <template v-else-if="isVirtualPay(item)">
                                 <span class="price-value">{{ item.price }}</span><span class="coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
                             </template>
                             <template v-else>

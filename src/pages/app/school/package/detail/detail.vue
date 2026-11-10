@@ -35,7 +35,8 @@
                      横幅与玩法、凑团列表在下面那张卡里连着排，拼团进行中本卡价格行收起（第五轮）。
                      横幅以下**不再补任何小字**（2026-10-29 用户点名「pd-gb-lessons 这个又是从哪里冒出来的呀？」）：
                      上一版自作主张把「/ N 课时」折成横幅下方一行，已删；课时回到「选择套餐」弹层里看） -->
-                <view class="price" v-if="gbPriceShown"><text class="rmb">￥</text><text class="num">{{ minPrice }}</text> / {{ totalLessons }}课时</view>
+                <view class="price" v-if="isScoreExchange"><text class="num">{{ scoreExchangeScore }}</text> 积分</view>
+                <view class="price" v-else-if="gbPriceShown"><text class="rmb">￥</text><text class="num">{{ minPrice }}</text> / {{ totalLessons }}课时</view>
             </view>
             <!-- 拼团区（2026-10-28 用户点名「教务套餐也要能拼团」；2026-10-29 用户点名它排错位置了：
                  「你这个拼团的消息卡怎么放在教师下面了？你应该放在这个价格下面呀，或者直接把这个价格给覆盖掉呀」）。
@@ -45,7 +46,7 @@
                  （规格由活动逐档设价、学员在凑团弹层里选），后端 goodsArea 按套餐查进行中的活动。
                  **`host-order`（2026-10-30 用户点名「拼团也要进确认报名页」）**：`@order` 收到拼团上下文后
                  先进本页自己的确认报名页（校区 + 上课学生），那一页确认完再带同一组 `gb_*` 键进结算页 -->
-            <tz-group-buy-area v-if="form.id" ref="gbArea" goods-type="school_package" host-spec host-order hide-danmu
+            <tz-group-buy-area v-if="form.id && !isScoreExchange" ref="gbArea" goods-type="school_package" host-spec host-order hide-danmu
                 :goods-id="form.id"
                 :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
                 :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
@@ -102,10 +103,10 @@
               ③ `v-if="gbEntry"` 挂在宿主标签上：没有进行中的活动时整枚宿主不渲染，否则 MP 端那枚
                  空宿主仍占着 `flex:1` 的半个栏宽。 -->
         <view class="school-footer pd-footer h5-bottom-bar" v-if="!skeletonLoading && !missing && !loadError">
-            <tz-group-buy-btn v-if="gbEntry" class="pd-gb-slot" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+            <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="pd-gb-slot" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
             <!-- 我在这一场拼团里已有进行中的团（`gbInTeam`）→ 「立即报名」收起（PRD 2026-10-27）：
                  底栏只留「查看拼团详情」这一个出口，不留一枚点了会被后端拒的死按钮 -->
-            <u-button class="pd-buy-btn" type="primary" text="立即报名" @click="buy" v-if="!gbInTeam && !gbJoinMode"></u-button>
+            <u-button class="pd-buy-btn" type="primary" :text="isScoreExchange ? '立即兑换' : '立即报名'" @click="buy" v-if="!gbInTeam && !gbJoinMode"></u-button>
         </view>
 
         <!-- 选套餐弹层（参照实物商品规格弹窗；校区选择一并收入弹层内、置于选择套餐上方）
@@ -121,6 +122,8 @@
             :value.sync="activeSku"
             :gb="(gbPicking || gbInTeam) ? gbActivity : null"
             :in-team="gbInTeam"
+            :score-mode="isScoreExchange"
+            :score-value="scoreExchangeScore"
             @confirm="confirmSku"
             @close="closeSkuPopup"
         />

@@ -7,11 +7,14 @@ import couponGoodsBar from "@/components/coupon/coupon-goods-bar.vue";
 import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
 // 拼团下单上下文在中间页之间的搬运（键名只存那一份；2026-10-31 线下活动接上「选票 → 报名信息」两页）
 import { withGroupBuyOrder } from "@/common/utils/group-buy-order.js";
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+  mixins: [scoreExchange],
   components: { banner, liveStartTimeBar,couponGoodsBar },
   data() {
     return {
-      loading: true,
+      // 详情这一腿是否落地（骨架判据见 computed `loading`：还要并上积分商品那一腿）
+      detailLoaded: false,
       data: {},
       pageParams: {},
       bindCoutseList: [],
@@ -33,6 +36,16 @@ export default {
   },
   computed: {
     /**
+     * 骨架屏的撤出判据（2026-11-09）
+     *
+     * 两条腿：活动详情 ∧ 积分商品详情（兑换模式才有，非兑换模式 `scoreReady` 恒 true）。
+     * 价格格在兑换模式下读 `scoreExchangeScore`，只按详情那一条收口会先闪一遍「0 积分」
+     * （硬约束 22：一个加载态盖住多条腿时，收口必须是「整条链都收尾」）。
+     */
+    loading() {
+      return !(this.detailLoaded && this.scoreReady);
+    },
+    /**
      * 宿主价格行显不显示（2026-10-30 第五轮，用户第二次点名「拼团价要复制覆盖原来的价格」）：
      * 拼团进行中（拼团区 `@ready` 上抛的 `gbEntry.activity` 非空）⇒ 本页价格行收起，
      * 价格只由拼团卡第一行的横幅给 —— 一屏只有一个价；没有活动 / 活动结束抛 null ⇒ 照常显示。
@@ -43,7 +56,7 @@ export default {
     }
   },
   methods: {
-    /** 拼团区把人送去下单：本页只记这一枚账，回来由 onShow 兑 */
+    /** 拼团区把人送去下单：本页只记这一枚账，回来由 onShow 兑（用 this，模块级 that 会被别的实例顶掉） */
     gbGoPay() { this.gbPending = true; },
     /** 拼团区 @ready：摘要收下来喂底栏那枚拼团按钮（摘要串由组件算好，本页不加工） */
     gbReady(entry) {
@@ -100,7 +113,8 @@ export default {
       clearInterval(that.studyTime);
       // 首屏（还没有详情）由骨架屏给反馈；从下一跳退回来 / 下拉刷新时已有内容，
       // 静默重取、不闪骨架（M16 的「回退不闪」与 M23 的「返回由本页重取」两条一起满足）
-      that.loading = !that.data.id;
+      // 这一趟开始时先按「详情没落地」记一次；已经有内容就不回骨架（骨架由 computed 收口）
+      that.detailLoaded = !!that.data.id;
 
       that.tabs = [];
       that.$api('app.activity.detail', {
@@ -118,9 +132,9 @@ export default {
           that.getBindCourse();
 
 
-          that.loading = false;
+          that.detailLoaded = true;
         } else {
-          that.loading = false;
+          that.detailLoaded = true;
           uni.showModal({
             title: '提示',
             content: res.msg,
@@ -132,7 +146,7 @@ export default {
       }).catch(() => {
         // 网络异常 / 请求被拦：同样要收口，否则页面永远停在骨架态（M22 的退出分支一次写全）；
         // 收口后页面是空的，得把原因说出来，用户才知道下拉刷新这一条出口
-        that.loading = false;
+        that.detailLoaded = true;
         uni.$u.toast('加载失败，请重试');
       });
 
@@ -149,7 +163,11 @@ export default {
         activity_id: that.pageParams.id
       }).then(ret => {
         if (ret.code === 1) {
-          that.$nav.to('/pages/app/activity/ticket/ticket?id=' + that.pageParams.id);
+          let url = '/pages/app/activity/ticket/ticket?id=' + that.pageParams.id;
+          if (Number(that.pageParams.score_goods_id) > 0) {
+            url += '&score_goods_id=' + Number(that.pageParams.score_goods_id);
+          }
+          that.$nav.to(url);
         }else{
           uni.$u.toast(ret.msg);
         }
@@ -186,6 +204,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    this.initScoreExchange(that.pageParams);
     // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
     that.gbJoinCtx = readGroupBuyJoin(that.pageParams);
     that.gbJoinMode = !!that.gbJoinCtx;

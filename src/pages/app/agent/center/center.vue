@@ -39,10 +39,7 @@
 							<div class="agent-sk-line agent-sk-block sk-h-20 sk-w-35"></div>
 						</div>
 					</div>
-					<div class="agent-sk-cell">
-						<div class="agent-sk-line agent-sk-block sk-h-14 sk-w-25"></div>
-						<div class="agent-sk-line agent-sk-block sk-h-14 sk-w-15"></div>
-					</div>
+					<!-- 可提现金额行按金额为 0 收起（v-if），按 M16 不给灰块也不预留空位 -->
 				</tz-box>
 				<tz-divider bgColor="none" />
 				<tz-box padding="10px 15px">
@@ -155,20 +152,43 @@
 						</div>
 					</div>
 
-					<u-cell :border="false" title="可提现金额" style="padding: 0;" :value="member.money"
-						@click="$nav.to('/pages/app/agent/wallet/settle/settle')">
-						<template #right-icon>
-							<tz-icon name="enter" color="#86909C" :size="13" />
-						</template>
-					</u-cell>
+					<!-- 可提现金额 / 账户余额两行同属一本账：分隔线只留在这一块头上，挂在页面自己的行容器上
+					     （不再往 u-cell 内部加边框）；两行之间只留白、不画线。
+					     可提现金额为 0 时整行收起（2026-11-08 用户口径），此时由账户余额行自己带那条线 -->
+					<view class="balance-total" v-if="showWithdrawMoney">
+						<u-cell :border="false" style="padding: 0;" :value="member.money"
+							@click="$nav.to('/pages/app/agent/wallet/settle/settle')">
+							<template #title>
+								<view class="balance-title">
+									<text class="u-cell__title-text">可提现金额</text>
+									<text class="balance-tag balance-tag--old">旧</text>
+								</view>
+							</template>
+							<template #right-icon>
+								<tz-icon name="enter" color="#86909C" :size="13" />
+							</template>
+						</u-cell>
+					</view>
 					<!-- 商家开启「结算到用户余额」后，新佣金不再进分销钱包，这一本账也得在这页有个门；
-					     显隐只吃后端下发的那枚开关，不许前端自己判「有没有余额」（硬约束 27②/M36） -->
-					<u-cell :border="false" v-if="config.settle_to_balance == 1" style="padding: 0;" title="账户余额"
-						label="佣金到账后并入这里" value="去提现" @click="$nav.to('/pages/user/balance/index')">
-						<template #right-icon>
-							<tz-icon name="enter" color="#86909C" :size="13" />
-						</template>
-					</u-cell>
+					     显隐只吃后端下发的那枚开关，不许前端自己判「有没有余额」（硬约束 27②/M36）。
+					     右缘只挂行尾箭头，与「可提现金额」那一行同一档（tz-icon enter 13 #86909C），
+					     入门动作交给整行点击，不再摆「去提现」按钮（2026-11-08 用户口径） -->
+					<view class="balance-cell" :class="{ 'balance-cell--solo': !showWithdrawMoney }"
+						v-if="config.settle_to_balance == 1">
+						<u-cell :border="false" style="padding: 0;" @click="$nav.to('/pages/user/balance/index')">
+							<template #title>
+								<view class="balance-title">
+									<text class="u-cell__title-text">账户余额</text>
+									<!-- 「新」只在两本账并排（上面那行可提现金额也在）时才有对照意义：
+									     只剩这一本账时摆个「新」没有可比的另一本，整枚 Tag 收起（2026-11-09 用户口径） -->
+									<text class="balance-tag balance-tag--new" v-if="showWithdrawMoney">新</text>
+								</view>
+							</template>
+							<template #right-icon>
+								<tz-icon name="enter" color="#86909C" :size="13" />
+							</template>
+						</u-cell>
+					</view>
 				</tz-box>
 				<tz-divider bgColor="none" />
 				<tz-box padding="10px 15px">

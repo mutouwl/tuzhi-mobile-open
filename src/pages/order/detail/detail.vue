@@ -53,8 +53,11 @@
 				<!-- <div  v-for="(item, index) in data.goodsList" :key="index" :id="item.item_id">{{ item.snapshoot.count }}--</div> -->
 				<template v-for="(item, index) in data.goodsList">
 					<view :key="index" v-if="item.snapshoot">
+						<!-- 积分兑换单（2026-11-09）：这一行的价改画积分（后端 `limitItemField` 下发
+						     `score_amount`，现金价已归零） -->
 						<course :itemId="item.item_id" :packageId="item.snapshoot.package_id || ''" :name="item.snapshoot.name" :cover="item.snapshoot.cover"
-							:type="item.snapshoot.type" :price="item.snapshoot.price" :count="item.count" :more="true"
+							:type="item.snapshoot.type" :price="Number(item.score_amount) > 0 ? item.score_amount : item.snapshoot.price" :count="item.count" :more="true"
+							:score-mode="Number(item.score_amount) > 0"
 							:is-virtual-pay="isVirtualPay"/>
 						<!-- 商品行发货状态（2026-10-29 用户点名去掉）：订单状态栏已经说明「待发货/已发货」，
 						     商品行再挂一次「发货状态 待发货」是同一句话讲两遍。后端 `send_status_text` 仍下发
@@ -85,7 +88,12 @@
 				<tz-divider bgColor="#fff" />
 				<div class="total-box">
 					合计：
-					<span class="price">
+					<!-- 积分兑换单（2026-11-09）：现金实付恒 0（后端把本行金额归零、改记 `score_amount`），
+					     照旧画「¥0.00」会被读成「这一单没收钱」⇒ 兑换单的合计改画积分 -->
+					<span class="price" v-if="data.score_amount">
+						{{ data.score_amount }}<span class="unit">积分</span>
+					</span>
+					<span class="price" v-else>
 						<span class="unit" v-if="!isVirtualPay">¥</span>
 						{{ data.real_price ? data.real_price : 0 }}
 						<span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>

@@ -16,7 +16,7 @@
 
         <template v-if="sortOptions.length">
           <view class="filter-group-title">排序</view>
-          <view class="sort-options">
+          <view class="sort-options" :class="{ 'sort-wrap': sortWrap }">
             <view v-for="option in sortOptions" :key="option.value" class="sort-option"
               :class="{ active: pendingSort == option.value }" @tap="pendingSort = option.value">{{ option.name }}</view>
           </view>
@@ -55,6 +55,7 @@ import TCalendar from '@tdesign/uniapp/calendar/calendar.vue';
  * 打开时以当前生效筛选作为待选项；确认后通过 confirm 事件返回待应用的值，由父页面应用并刷新列表。
  * 自定义时间范围（日历）的交互闭环在组件内部完成：点自定义 → 关弹窗开日历 → 确认 → 回到弹窗。
  * typeOptions / sortOptions 传空数组即隐藏对应组：只筛时间（教务流水/上课记录）、只筛类型+排序（全站搜索）各取所需。
+ * 排序组默认单行均分（圈子搜索 3 档）；选项多且名字长时传 sortWrap 走两列换行（积分商品 7 档排序）。
  */
 const DEFAULT_SORT_OPTIONS = [
   { name: '最新发布', value: 'new' },
@@ -84,6 +85,12 @@ export default {
     sortOptions: {
       type: Array,
       default: () => DEFAULT_SORT_OPTIONS,
+    },
+    // 排序选项换行铺排：选项多、名字长时用（积分商品 7 档「商品原价高到低」），
+    // 默认单行均分（圈子搜索 3 档「最新发布/评论最多/获赞最多」）
+    sortWrap: {
+      type: Boolean,
+      default: false,
     },
     // 当前生效的内容类型（取值须在 typeOptions 内，'' = 全部）
     typeValue: {
@@ -246,6 +253,19 @@ export default {
 .sort-options { display: flex; gap: 7px; margin-top: 9px; }
 .sort-option { flex: 1; padding: 9px 0; border-radius: 6px; background: #f6f7f9; color: #5e6670; font-size: 13px; text-align: center; }
 .sort-option.active { background: #eaf3ff; color: #0968f6; font-weight: 600; }
+/* 排序选项多、名字长时换行铺排（sortWrap 档，积分商品 7 档「商品原价高到低」）：
+   单行 flex:1 每枚只剩约 40px、5~7 字标签会被挤成两行；换行后每枚固定半行宽，
+   高度、底色、选中态与单行那一档逐值相同，只有「排几列」这一件不同 */
+.sort-wrap { flex-wrap: wrap; }
+.sort-wrap .sort-option {
+  flex: 0 0 calc(50% - 7px);
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
 /* 类型组：选项多（全站搜索 9 类）按 4 列换行，短名等宽、长名（实物商品）自动占位不挤字；
    高度与排序组同档 36px，选中态配色与排序组逐值相同 */
 .type-options { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }

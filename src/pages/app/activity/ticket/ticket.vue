@@ -34,23 +34,29 @@
 						     `origin_price`（商家改过票券价时以活动为准），同价不摆假的优惠 -->
 						<view class="ticket-price-box">
 							<span class="ticket-price" :style="gbPriceStyle">
-								<template v-if="isVirtualPay(detail)">
+								<!-- 积分兑换（2026-11-08）：兑换口径下每一张票按「积分」计价，不许画现金价
+								     （后端下单同样按 `score * count` 累加，见 `OrderCreate`） -->
+								<template v-if="isScoreExchange">
+									<span class="ticket-price-value">{{ scoreExchangeScore }}</span><span class="ticket-coin-name">积分</span>
+								</template>
+								<template v-else-if="isVirtualPay(detail)">
 									<span class="ticket-price-value">{{ ticketUnitText(item) }}</span><span class="ticket-coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 								</template>
 								<template v-else>
 									<span class="ticket-price-unit">¥</span><span class="ticket-price-value">{{ ticketUnitText(item) }}</span>
 								</template>
 							</span>
-							<!-- 划线原价只在人民币档出：虚拟支付那一档原价与拼团价的单位不同源（原价是人民币值、
-							     拼团价是代币值），两个数并排会被读成同一个单位 -->
-							<span class="ticket-origin" v-if="ticketOrigin(item) && !isVirtualPay(detail)">¥{{ ticketOrigin(item) }}</span>
+							<!-- 划线原价只在人民币档出：兑换/虚拟支付那一档与售价不是同一套单位 -->
+							<span class="ticket-origin" v-if="ticketOrigin(item) && !isVirtualPay(detail) && !isScoreExchange">¥{{ ticketOrigin(item) }}</span>
 						</view>
 						<span class="ticket-num">{{item.inventory ? '剩余'+item.can_buy+'张' : ''}} <span style="margin-left: 10px;"> {{ item.limit_buy ? '可购'+item.can_buy+'张' :'不限购' }}</span></span>
 					</div>
 				</div>
 
 			</div>
-			<u-empty v-else icon="/static/image/empty.png" width="70" height="70" text="暂无可购票券"/>
+			<!-- 空态文案：积分商品不可兑 / 勾过的票种一档不剩时给后端那一句原因，
+			     不再一律写「暂无可购票券」（那一句会把「配置失效」读成「活动没票」） -->
+			<u-empty v-else icon="/static/image/empty.png" width="70" height="70" :text="loadMsg || '暂无可购票券'"/>
 
 			<view class="box control-box h5-bottom-bar">
 				<div class="ticket-change">
@@ -58,7 +64,10 @@
 					</div>
 					<div class="price" :style="gbPriceStyle">
 						<span class="total-text">合计：</span>
-						<template v-if="isVirtualPay(detail)">
+						<template v-if="isScoreExchange">
+							<span class="price-value">{{ scoreExchangeScore * ticketCount }}</span><span class="coin-name">积分</span>
+						</template>
+						<template v-else-if="isVirtualPay(detail)">
 							<span class="price-value">{{ price.toFixed(2) }}</span><span class="coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 						</template>
 						<template v-else>

@@ -1,9 +1,11 @@
 <script>
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 var that;
 
 export default {
+  mixins: [scoreExchange],
   data() {
     return {
       id: 0,
@@ -11,6 +13,8 @@ export default {
       info: null,
       loadMsg: '',
       currentSpec: null,
+      // 未裁剪的规格清单（取数时的原样）：兑换模式的裁剪每次都从这一份重算
+      rawSpecs: [],
       showSpec: false,
       // 「这一次开规格弹层是为了拼团」（2026-10-29）：确认时把有效期那一档交回拼团区
       gbPicking: false,
@@ -55,6 +59,7 @@ export default {
   },
   onLoad(options) {
     that = this;
+    this.initScoreExchange(options);
     // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
     that.gbJoinCtx = readGroupBuyJoin(options);
     that.gbJoinMode = !!that.gbJoinCtx;
@@ -170,13 +175,56 @@ export default {
       this.renewTip = (this.joinStatus === 'expired' && Number(info.sell_type) === 2 && discount > 0)
         ? ('老成员续费享 ' + info.renew_discount + ' 折') : '';
     },
+    /**
+     * 积分商品详情到手（mixins 回调）：规格清单裁成「商家勾过的那几档」
+     *
+     * 圈子的规格 id 就是 `app_circle_spec.id`，下单在 `extend` 里带 `规格id_价格`
+     * （`goods\Circle::getPayDetail()` 按 `_` 拆），裁剪只动展示，不需要下标映射。
+     */
+    onScoreExchangeReady() {
+      if (!that.isScoreExchange) { return; }
+      if (that.scoreExchangeError) {
+        that.info = null;
+        that.loading = false;
+        that.loadMsg = that.scoreExchangeError;
+        uni.showToast({ title: that.scoreExchangeError, icon: 'none' });
+        return;
+      }
+      that.applyScoreSpecScope();
+    },
+    /** 按 `rawSpecs` 重裁一次（幂等：每次从原清单算） */
+    applyScoreSpecScope() {
+      if (!that.info) { return; }
+      const base = Array.isArray(that.rawSpecs) ? that.rawSpecs : (that.info.specs || []);
+      const list = that.scoreHasSpec
+        ? that.scoreSpecOptions(base).map((row) => row.item)
+        : base;
+      that.info.specs = list;
+      // 最低价跟着裁过的清单走（不裁则仍按整个规格表算，展示价会低于实际可兑价）
+      const prices = list.map((row) => Number(row.price));
+      that.minPrice = prices.length ? Math.min.apply(null, prices).toFixed(2) : '0.00';
+      if (!list.length) {
+        that.currentSpec = null;
+        return;
+      }
+      const keep = that.currentSpec
+        ? list.find((spec) => Number(spec.id) === Number(that.currentSpec.id))
+        : null;
+      that.currentSpec = keep || list[0];
+    },
     async load() {
       try {
         const res = await that.$api('circle.circle.presale', { id: that.id });
         uni.stopPullDownRefresh();
         if (res && res.code === 1) {
           that.info = res.data;
+          // 未裁剪的规格清单留一份（兑换模式的裁剪每次都从它重算，不拿裁过的再裁）
+          that.rawSpecs = Array.isArray(that.info.specs) ? that.info.specs.slice() : [];
           that.applyInfo(res.data);
+          // 兑换模式：只摆商家勾过的那几档（判据在后端 `spec_ids`，前端不重判）
+          if (that.isScoreExchange) {
+            that.applyScoreSpecScope();
+          }
           if (that.info.specs && that.info.specs.length) {
             // 受邀参团：页面上那档有效期先落到团上那一档（点加入拼的是另一档就自相矛盾）
             const joinSpec = that.gbJoinCtx
@@ -373,12 +421,12 @@ export default {
         return;
       }
       that.showSpec = false;
-      const goodsList = [{
+      const goodsList = [that.withScoreGoods({
         goodsId: that.id,
         goodsType: 'circle',
         count: 1,
         extend: that.currentSpec.id + '_' + that.currentSpec.price
-      }];
+      })];
       that.$nav.to('/pages/order/submit/submit?type=circle&goodsList=' + JSON.stringify(goodsList));
     }
   },

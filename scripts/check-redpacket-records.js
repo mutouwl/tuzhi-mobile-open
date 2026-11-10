@@ -320,7 +320,9 @@ ok('换色不外溢：白底那三只弹窗的骨架仍是灰块',
 //     ② .rp-shell 原先 top:44px，头顶那一段没人铺色（白卡是 margin:0 14px 起的那块，
 //     顶上只露左右各 14px 空档），透出来的同样是遮罩下的画面。
 //     判据：**弹层壳体本身要实色**——有色底不许带 backdrop-filter，也不许留 <1 的 alpha；
-//     壳体那一层要铺满整块面板，不留任何一段没人着色的空档。
+//     壳体那一层与它头顶那一条都不许留「没人着色、透出遮罩」的空档
+//     （2026-11-09 曾把红身顶边下压到 8px、由 .is-card 面板底铺白唇；2026-11-10 用户点名
+//     「外侧背景的高度应该与红色区域等高，并且与红色区域对齐」，红身顶边回 0，与面板同盒）。
 //     这一族是「壳体自己的底色」，与组 19 的「行内骨架块」不同层，故单列一组。
 const rpCssNoComment = rpCss.replace(/\/\*[\s\S]*?\*\//g, '');
 const shellRule = (cls) => ((rpCssNoComment.match(new RegExp('\\.' + cls + '(?![\\w-])[^{]*\\{[\\s\\S]*?\\}')) || [''])[0]);
@@ -328,10 +330,10 @@ const shellBody = (cls) => ((rpCssNoComment.match(new RegExp('\\.' + cls + '\\s*
 ok('红身不带 backdrop-filter（磨砂＝把遮罩下的直播间画面糊成灰雾）', !/backdrop-filter/.test(shellBody('redpacket-modal')) && !/backdrop-filter/.test(shellBody('rp-shell')));
 ok('红身两处都是不透明实色（#fa4a60 → #ec324e），不再有 alpha < 1 的 rgba 底',
   /#fa4a60/.test(shellBody('redpacket-modal')) && /#fa4a60/.test(shellBody('rp-shell')) && !/background[^;]*rgba\(/.test(shellBody('redpacket-modal')) && !/background[^;]*rgba\(/.test(shellBody('rp-shell')));
-ok('红身从面板顶就铺满（.rp-shell 不再 top:44px 留一段没人着色）',
-  /position:\s*absolute/.test(shellRule('rp-shell')) && /top:\s*0/.test(shellRule('rp-shell')) && /bottom:\s*0/.test(shellRule('rp-shell')));
-ok('白卡态把面板自己的底色让给 .rp-shell（is-card 收成 transparent，红身不两处各铺一份）',
-  /\.redpacket-modal\.is-card\s*\{[^}]*background:\s*transparent/.test(rpCssNoComment));
+ok('红身与面板同一个盒、四角同圆心（.rp-shell top:0 / bottom:0，不再留 8px 白唇）',
+  /position:\s*absolute/.test(shellRule('rp-shell')) && /top:\s*0/.test(shellRule('rp-shell')) && /bottom:\s*0/.test(shellRule('rp-shell')) && /border-radius:\s*16px/.test(shellRule('rp-shell')));
+ok('白卡态面板底色仍是白卡那一份 #fff8f4（红身整面盖住，只作抗锯齿兜底，不许透出遮罩）',
+  /\.redpacket-modal\.is-card\s*\{[^}]*background:\s*#fff8f4/.test(rpCssNoComment));
 ok('半透明红那一档在整份信封样式里已清干净（不留 rgba(250,74,96,.94) / rgba(236,50,78,.94) 残写法）',
   !/rgba\(250,\s*74,\s*96/.test(rpCssNoComment) && !/rgba\(236,\s*50,\s*78/.test(rpCssNoComment));
 

@@ -1,150 +1,252 @@
-@charset "UTF-8";
-/* 补签 */
-.resign-box {
-  background: #fff;
-  padding: 30rpx 35rpx 40rpx;
+.sign-page {
+  min-height: 100vh;
+  background: #fafafa;
+  padding-bottom: 16px;
 }
 
-.resign-box .title-box .resign-title {
-  font-size: 32rpx;
-  font-weight: 600;
+/* 顶部状态区：今日签到状态 + 连签天数 + 签到记录/规则入口（对齐行业口径；底色取本项目主色） */
+.hero {
+  position: relative;
+  height: 150px;
+  padding: 24px 20px 0;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #0968f6 0%, #4f9bff 100%);
+  color: #fff;
 }
 
-.resign-box .title-box .resign-card-num {
-  color: #e3ad5b;
-  font-size: 32rpx;
-  font-weight: 600;
-}
-
-.resign-box .invite-box {
-  width: 677rpx;
-  height: 118rpx;
-  background: rgba(233, 184, 103, 0.2);
-  border-radius: 59rpx;
-  padding: 0 25rpx;
-  margin-top: 40rpx;
-}
-
-.resign-box .invite-box .invite-tag {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-}
-
-.resign-box .invite-box .invite-notice {
-  font-size: 24rpx;
-  font-weight: 500;
-  color: #e3ad5b;
-}
-
-.resign-box .invite-box .invite-btn {
-  width: 119rpx;
-  height: 50rpx;
-  background: linear-gradient(90deg, #e9b461, #eecc89);
-  border-radius: 25rpx;
-  font-size: 24rpx;
-  font-weight: 500;
-  padding: 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.calendar {
-  background: #fff;
-}
-
-.calendar .sign-everyday {
-  
-  background: white;
+.hero-main {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+}
+
+.hero-title {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  color: #fff;
+}
+
+.hero-sub {
+  margin-top: 8px;
   font-size: 13px;
-  border-bottom: 1px solid #efefef;
-
-  padding-bottom: 15px;
-  /* margin-bottom: 15px; */
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.calendar .sign-everyday .sign-everyday-log {
-  font-weight: 400;
-  color: #0968f6;
-}
-
-.calendar .sign-everyday .sign-num-box {
-  color: #86909C;
-}
-
-.calendar .sign-everyday .sign-num-box .sign-num {
-  font-weight: 600;
-  color: #0968f6;
-  padding: 0 10rpx;
-}
-
-.calendar .bar {
+/* 顶部两枚入口：签到记录 / 规则。右缘与标题行同一档 20px 出血；
+   高 32px 与 hero-title 行高同值，两枚胶囊在标题那一行垂直居中；间距只由容器 gap 给 */
+.hero-links {
+  position: absolute;
+  top: 24px;
+  right: 20px;
   display: flex;
+  align-items: center;
+  height: 32px;
+  gap: 8px;
+}
+
+.hero-link {
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  line-height: 16px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.hero-link-hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.hero-sk {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+}
+
+.hero-sk-title {
+  width: 120px;
+  height: 28px;
+}
+
+.hero-sk-sub {
+  width: 90px;
+  height: 14px;
+  margin-top: 12px;
+}
+
+/* 日历卡：压在顶部色块上（按 M21 走全宽直角白块，不造浮起圆角卡） */
+.calendar-card {
+  position: relative;
+  margin: -56px 0 0;
+  padding: 14px 15px 8px;
+  background: #fff;
+}
+
+.cal-bar {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  height: 45px;
-  line-height: 45px;
-
-  width: 70%;
-  margin: 0 auto;
+  padding: 0 4px 8px;
 }
 
-.calendar .bar .bar-btn {
-  background: none;
+/* 月切换：图标+文字同一档行盒——图标 :size="16" 由 tz-icon 钉 line-height:16px，文字也钉 16px，
+   项间距只由容器 gap 给（不写 margin-left）。
+   图标取 tz 字体 return=< / enter=>（`python tools/icon-ink-normalize.py 16 return,enter` 已确认有字形，
+   墨迹 705/1024=0.688 em ⇒ 16 字号墨迹约 11px；12px 中文墨迹实测 10.6~11.4px，两者同档，
+   即 §1 的横排「图标+文字」档：文字不小于图标）。 */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #4e5969;
 }
 
-
-.calendar .bar .date {
-  width: 100%;
-  font-weight: 400;
-  text-align: center;
+.cal-nav-text {
+  line-height: 16px;
 }
 
-.calendar .week{
-	display: flex;
-    text-align: center;
+/* 图标槽只框墨迹、不框字号（§1「方框只框墨迹」）：return/enter 的 advance 是满 1em（16px），墨迹只占
+   前 705/1024 ⇒ 墨迹宽 11px、尾部自带 4.98px 透明空边。槽宽按墨迹宽给 11px，字形的尾部空边溢出到槽外
+   （透明、不裁切），于是「上月」那侧图标与文字的间隙＝gap 4px、「下月」那侧也是 4px，两枚箭头对文字等距；
+   按 16px 写就会变成一侧 4px、另一侧 9px。
+   高度钉 16px 与文字行盒同轴；墨迹中心相对行盒中心 +0.49px，中文（12px 字号 / 16px 行盒）+0.32~0.88px，
+   同向同量 ⇒ 不补 translateY（补了反向偏下，§1 图标垂直居中第②步）。 */
+.cal-nav-ic {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 11px;
+  height: 16px;
 }
 
-.calendar .week .week-item {
-  font-size: 24rpx;
-  font-weight: 500;
-  color: #999999;
+.cal-month {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.week {
+  display: flex;
+  padding: 4px 0 8px;
+}
+
+.week-item {
   flex: 1;
-  height: 50px;
-  line-height: 50px;
+  text-align: center;
+  font-size: 12px;
+  color: #86909c;
 }
 
-.calendar .myDateTable {
+.day-grid {
   display: flex;
   flex-wrap: wrap;
 }
 
-.calendar .myDateTable .dateCell {
+.day-cell {
   width: calc(100% / 7);
-  height: 50px;
-  line-height: 50px;
-  font-size: 13px;
-  font-weight: 400;
-  color: #333333;
-}
-
-.calendar .myDateTable .dateCell .cell {
+  height: 62px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-.is-sign {
-  width: 100%;
-  height: 100%;
+.day-inner {
+  width: 44px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.day-inner.is-today {
+  background: #e8f1ff;
+}
+
+.coin {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coin-star {
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.coin-signed {
+  background: linear-gradient(135deg, #0968f6, #4f9bff);
   color: #fff;
-  background-color: #0968f6;
 }
 
+.coin-reward {
+  background: linear-gradient(135deg, #ffe1a6, #ffb54d);
+  color: #8d5b00;
+}
 
-.sign-btn{
-  width: 100%;
-  padding: 15px;
+.coin-future {
+  background: #fff4de;
+  color: #d99a2b;
+}
 
+.coin-past {
+  background: #f2f3f5;
+  color: #c9cdd4;
+}
+
+.coin-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  min-width: 18px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: #ff7d00;
+  color: #fff;
+  font-size: 9px;
+  line-height: 14px;
+  text-align: center;
   box-sizing: border-box;
+}
+
+.coin-badge-signed {
+  background: #0968f6;
+}
+
+.day-num {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 14px;
+  color: #4e5969;
+}
+
+.day-num-today {
+  color: #0968f6;
+  font-weight: 600;
+}
+
+.day-sk-coin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e5e6eb;
+}
+
+.day-sk-num {
+  width: 16px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 3px;
+  background: #e5e6eb;
+}
+
+.sign-action {
+  padding: 20px 15px 8px;
 }

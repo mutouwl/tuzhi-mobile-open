@@ -5,7 +5,9 @@ import couponGoodsBar from "@/components/coupon/coupon-goods-bar.vue";
 import bindCourseList from "@/components/course/bind-course-list.vue";
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+  mixins: [scoreExchange],
   components: {
     exercisesControlModal,
     couponGoodsBar,
@@ -75,6 +77,9 @@ export default {
      * 会被读成「两个卖价」。**只换标题、不动显隐**：这一行仍常驻（㉔），拼团那一趟也照样能读到数字。
      */
     priceLabel() {
+      if (this.isScoreExchange) {
+        return '兑换积分';
+      }
       return this.gbEntry && this.gbEntry.activity ? '原价' : '售价';
     }
   },
@@ -108,13 +113,11 @@ export default {
    */
     subscription() {
       //判断购买方式、单独购买、购买专栏
-      var goodsList = [
-        {
-          goodsId: that.data.id,
-          goodsType: 'exercises',
-          count: 1
-        }
-      ];
+      var goodsList = [that.withScoreGoods({
+        goodsId: that.data.id,
+        goodsType: 'exercises',
+        count: 1
+      })];
       that.$nav.to('/pages/order/submit/submit?type=exercises&goodsList=' + JSON.stringify(goodsList));
     },
 
@@ -190,6 +193,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    this.initScoreExchange(that.pageParams);
     // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
     that.gbJoinCtx = readGroupBuyJoin(that.pageParams);
     that.gbJoinMode = !!that.gbJoinCtx;

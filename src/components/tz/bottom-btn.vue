@@ -95,8 +95,14 @@
             <template>
                 <div class="price">
                     <!-- 送好友那一档（图1）只留「¥ + 金额」、金额放大；普通下单页仍是「合计: ¥x」 -->
-                    <span class="total-text" v-if="theme != 'send-friend'">合计:</span>
-                    <span class="unit" v-if="!params.is_virtual_pay">¥</span><span class="value">{{ params.price }}</span><span class="unit" v-if="params.is_virtual_pay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                    <template v-if="scoreMode">
+                        <span class="total-text">消耗:</span>
+                        <span class="value">{{ params.price }}</span><span class="unit">积分</span>
+                    </template>
+                    <template v-else>
+                        <span class="total-text" v-if="theme != 'send-friend'">合计:</span>
+                        <span class="unit" v-if="!params.is_virtual_pay">¥</span><span class="value">{{ params.price }}</span><span class="unit" v-if="params.is_virtual_pay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                    </template>
                 </div>
 
                 <!-- #ifdef MP-WEIXIN -->
@@ -203,6 +209,11 @@ export default {
         theme: {
             type: String,
             default: ''
+        },
+        /** 积分兑换提交页：金额改「消耗: N 积分」 */
+        scoreMode: {
+            type: Boolean,
+            default: false
         },
         /**
          * 隐藏主购买按钮（2026-10-27 用户点名「如果我当前正在拼团，那么是不能再购买的。

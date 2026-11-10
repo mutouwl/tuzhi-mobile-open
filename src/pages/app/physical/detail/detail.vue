@@ -52,7 +52,14 @@
         <!-- 拼团横幅不再压到价格格（2026-10-30 用户点名「gba-rule 拼团玩法都应该放在 gba-banner
              下面，也包括正在拼团的列表，让拼团连成一个整体」+「上下挨在一起，不要拆分放」）：
              横幅回拼团区那张卡的第一行、与玩法/凑团列表连着放；本格恢复原价 + 已售 -->
-        <view class="price-box" v-if="gbPriceShown">
+        <!-- 积分兑换：价格格只显示所需积分，不显示现金 -->
+        <view class="price-box" v-if="isScoreExchange">
+          <view class="price-wrapper">
+            <text class="price-text">{{ scoreExchangeScore }}</text>
+            <text class="price-symbol">积分</text>
+          </view>
+        </view>
+        <view class="price-box" v-else-if="gbPriceShown">
           <view class="price-wrapper">
             <text class="price-symbol" v-if="!isVirtualPay">¥</text>
             <text class="price-text">{{
@@ -80,7 +87,7 @@
            学员在凑团弹层里先选规格再开团，所以本页不需要第二份「下单用商品 id」—— `goods-id` 只给拼团区取数用 -->
       <!-- `host-spec`（2026-10-29）：规格交给本页自己的 `sku-select-modal` 选，拼团区不再摆第二套规格卡；
            选完回调 `afterSpec`，阶梯档/份数由拼团区那只第二步弹窗接着问 -->
-      <tz-group-buy-area v-if="goodsId" ref="gbArea" goods-type="physical" :goods-id="goodsId" host-spec hide-danmu
+      <tz-group-buy-area v-if="goodsId && !isScoreExchange" ref="gbArea" goods-type="physical" :goods-id="goodsId" host-spec hide-danmu
         :share="share" :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
         :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
         :join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
@@ -146,19 +153,19 @@
          （PRD 2026-10-27 用户点名「如果我当前正在拼团，那么是不能再购买的」）：底栏只留
          「查看拼团详情」这一个出口。判据吃拼团区 `@ready` 上抛的 `inTeam`，本页不读 `my_team` -->
     <view class="detail-tabbar h5-bottom-bar" v-if="!skeletonLoading && goodsInfo && selectedSkuPrice.id">
-      <tz-group-buy-btn v-if="gbEntry" class="goods-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+      <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="goods-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
       <button
         class="buy-btn"
         @tap="openSkuPicker"
         v-if="!gbInTeam && !gbJoinMode && Number(selectedSkuPrice.stock) > 0"
       >
-        立即购买
+        {{ isScoreExchange ? '立即兑换' : '立即购买' }}
       </button>
       <button class="disabled-btn" disabled v-else-if="!gbInTeam && !gbJoinMode">已售罄</button>
     </view>
     <view class="detail-tabbar h5-bottom-bar" v-else-if="!skeletonLoading && goodsInfo">
-      <tz-group-buy-btn v-if="gbEntry" class="goods-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-      <button class="buy-btn" @tap="openSkuPicker" v-if="!gbInTeam && !gbJoinMode">立即购买</button>
+      <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="goods-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+      <button class="buy-btn" @tap="openSkuPicker" v-if="!gbInTeam && !gbJoinMode">{{ isScoreExchange ? '立即兑换' : '立即购买' }}</button>
     </view>
 
     <!-- 商品不存在或已下架（含缺少 id、接口返回失败）：给一处出口，避免只留一张空白页 -->
@@ -183,6 +190,8 @@
       :goods-num.sync="goodsNum"
       :gb="(gbPicking || gbInTeam) ? gbActivity : null"
       :in-team="gbInTeam"
+      :score-mode="isScoreExchange"
+      :score-value="scoreExchangeScore"
       @selectSku="onSelectSku"
       @confirm="onSkuConfirm"
       @close="closeSkuPicker"

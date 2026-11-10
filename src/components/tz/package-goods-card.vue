@@ -6,8 +6,9 @@
 			<view class="pkg-goods-sku" v-if="skuName">已选：{{ skuName }}</view>
 			<view class="pkg-goods-price">
 				<view class="pkg-goods-price-main">
-					<text class="rmb">¥</text><text class="num">{{ price || 0 }}</text>
-					<text class="lessons" v-if="lessons">/ {{ lessons }}课时</text>
+					<text class="rmb" v-if="!scoreMode">¥</text><text class="num">{{ price || 0 }}</text>
+					<text class="lessons" v-if="scoreMode">积分</text>
+					<text class="lessons" v-else-if="lessons">/ {{ lessons }}课时</text>
 				</view>
 				<text class="pkg-goods-valid" v-if="validText">{{ validText }}</text>
 			</view>
@@ -40,6 +41,11 @@ export default {
 		price: {
 			type: [Number, String],
 			default: 0
+		},
+		/** 积分兑换模式：价格显示成「N 积分」，不显示 ¥ 与课时 */
+		scoreMode: {
+			type: Boolean,
+			default: false
 		},
 		// 课时数（0/空时不展示课时）
 		lessons: {

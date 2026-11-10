@@ -24,7 +24,8 @@
                 :cover="form.cover"
                 :name="form.name"
                 :sku-name="sku.name"
-                :price="displayPrice"
+                :price="isScoreExchange ? scoreExchangeScore : displayPrice"
+                :score-mode="isScoreExchange"
                 :lessons="skuLessons"
                 :valid-text="validText"
             />

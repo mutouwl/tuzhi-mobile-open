@@ -60,10 +60,56 @@
     margin-top: 5px;
 }
 
+/* u-cell 内部只归左右内衬（与卡片内容左缘对齐）。「这一行头上画不画线」改由本页的行容器给：
+   往组件内部再加/去边框既过不了 M12/§4（小程序端 ::v-deep 编译成裸选择器），
+   也会把「两栏之间不要分隔条」变成又一条穿透规则（2026-11-08 用户点名） */
 ::v-deep .u-cell__body{
-    margin-top: 10px!important;
-    border-top:1px solid #F2F3F5!important;
     padding: 10px 0 0px!important;
+}
+
+/* 可提现金额行：与上方四格数据之间 10px + 一条发丝线（与改动前同位置同色） */
+.balance-total{
+    margin-top: 10px;
+    border-top: 1px solid #F2F3F5;
+}
+
+/* 账户余额行：与可提现金额行只留 20px 白（10px 外边距 + 行内 10px 上留白），中间不画分隔条 */
+.balance-cell{
+    margin-top: 10px;
+}
+
+/* 可提现金额为 0 时那一行收起，账户余额成为本块第一行：分隔线跟着它走，
+   与可提现金额在时同一位置（10px 外边距 + 发丝线 + 行内 10px 上留白） */
+.balance-cell--solo{
+    border-top: 1px solid #F2F3F5;
+}
+
+/* 标题 + 账本 tag 同一行：间距只由容器 gap 给（硬约束 20） */
+.balance-title{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 「旧 / 新」账本 tag：档位照 M6 状态 Tag（12px / 内衬 1px 6px / 圆角 4），
+   两档各自算对比：#4e5969 压 #f2f3f5 = 6.4:1、#0e42d2 压 #e8f4ff = 6.9:1 */
+.balance-tag{
+    flex: none;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+}
+
+.balance-tag--old{
+    color: #4E5969;
+    background-color: #F2F3F5;
+}
+
+.balance-tag--new{
+    color: #0E42D2;
+    background-color: #E8F4FF;
 }
 
 ::v-deep .u-cell__title-text{
@@ -284,21 +330,6 @@
     height: 35px;
     border-radius: 8px;
     flex: none;
-}
-
-/* 「可提现金额」行：对齐 u-cell 的分割线与上下留白（本页穿透选择器给 body 那一层定的 margin-top / padding-top 10px） */
-.agent-sk .agent-sk-cell{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #F2F3F5;
-}
-
-/* 同一行的两条占位条（居中对齐），去掉竖排时的行间距 */
-.agent-sk .agent-sk-cell .agent-sk-line{
-    margin-top: 0;
 }
 
 @keyframes agent-sk-animate{

@@ -5,8 +5,8 @@
       正文（规格 chips / 人数档 / 内含商品）仍是本组件自己的（硬约束 11）。
     -->
     <tz-spec-popup-shell v-if="goodsInfo" :show="show" :gb-mode="gbMode" :cover="coverSrc" :gb-price="gbPrice"
-        :price="priceText" :origin-price="priceText" :team-text="gbTeam" :is-virtual-pay="isVirtualPay"
-        :coin-name="coinName" :sub-text="currentSpec ? currentSpec.name : '请选择规格'"
+        :price="shellPrice" :origin-price="priceText" :team-text="gbTeam" :is-virtual-pay="shellVirtualPay"
+        :coin-name="shellCoinName" :sub-text="currentSpec ? currentSpec.name : '请选择规格'"
         :confirm-text="confirmText" :confirm-disabled="confirmDisabled"
         max-height="70vh" :body-scroll="true" :body-style="bodyStyle"
         @close="close" @confirm="onConfirm" @cover="previewSpecImage">
@@ -86,7 +86,15 @@ export default {
          * 藏起来，从规格行照样能下原价单（用户点名「这应该是一个逻辑漏洞」）。
          * 弹窗照开（内含商品只有这里看得见），只把确认按钮换成禁用态。
          */
-        inTeam: { type: Boolean, default: false }
+        inTeam: { type: Boolean, default: false },
+        /**
+         * 积分兑换模式（2026-11-08 加性入参）：宿主传页面那一枚 `isScoreExchange`。
+         * 兑换走积分 ⇒ 头区价格换成积分、不画 ¥ 与划线原价（积分价是整件商品一个数，不随规格变）；
+         * 缺省 false 时本弹层与改造前逐字相同。
+         */
+        scoreMode: { type: Boolean, default: false },
+        /** 兑换所需积分（后端 `app_score_goods.score`，与商详价格区同一个数） */
+        scoreValue: { type: [String, Number], default: 0 }
     },
     data() {
         return {
@@ -111,6 +119,17 @@ export default {
         /** 普通态那一格价格（拼团态由外壳按 `gb-mode` 切到 `gbPrice`） */
         priceText() {
             return this.currentSpec ? this.currentSpec.price : 0;
+        },
+        /** 外壳头区价格：兑换模式只显示积分（不随规格变，口径同实物那只规格弹窗） */
+        shellPrice() {
+            return this.scoreMode ? this.scoreValue : this.priceText;
+        },
+        /** 外壳虚拟支付档：兑换模式按「价格 + 单位」那一支画（不挂 ¥） */
+        shellVirtualPay() {
+            return this.scoreMode ? true : this.isVirtualPay;
+        },
+        shellCoinName() {
+            return this.scoreMode ? '积分' : this.coinName;
         },
         /** 正文几何：与收进外壳前逐值相同（16px 内衬 + 40vh 上限） */
         bodyStyle() {

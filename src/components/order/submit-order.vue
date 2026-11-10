@@ -97,9 +97,16 @@
                 <div class="total-box">
                     共{{ data.goods_count ? data.goods_count : 0 }}件，商品小记：
                     <span class="price">
-                        <span class="unit" v-if="!isVirtualPay">¥</span>
-                        {{ data.goods_total_price ? data.goods_total_price : 0 }}
-                        <span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                        <!-- 积分兑换（2026-11-09）：兑换单的现金小记恒 0（后端 `calcAmount` 把本行金额归零、
+                             改记 `score_amount`）⇒ 这一格必须换成积分，否则读出来是「这件商品不要钱」 -->
+                        <template v-if="isScoreExchange">
+                            {{ data.score_amount ? data.score_amount : 0 }}<span class="unit">积分</span>
+                        </template>
+                        <template v-else>
+                            <span class="unit" v-if="!isVirtualPay">¥</span>
+                            {{ data.goods_total_price ? data.goods_total_price : 0 }}
+                            <span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                        </template>
                     </span>
                 </div>
             </template>
@@ -184,7 +191,7 @@
              仍只被虚拟支付关掉：那一档扣的是代币，券的人民币抵扣口径对不上（与全站同一档）。
              拼团档的券值在选券后由 `group_buy.team.calc` 现算（`data.coupon_discount_fee`），
              提交时随 `team.open/join` 带 `coupon_id`。 -->
-        <template v-if="!isVirtualPay">
+        <template v-if="!isVirtualPay && !isScoreExchange">
         <tz-divider bgColor="#fafafa" />
         <tz-box padding="5px 15px">
             <u-form>
@@ -241,7 +248,7 @@
         <tz-divider bgColor="#fafafa" />
         <tz-box padding="5px 15px">
             <u-form :labelWidth="labelWidth">
-                <u-form-item label="积分" :border="true" v-if="!isGroupBuy && data.score_amount">
+                <u-form-item :label="isScoreExchange ? '兑换积分' : '积分'" :border="true" v-if="!isGroupBuy && data.score_amount">
                     <div class="item-val">-{{ data.score_amount }}</div>
                 </u-form-item>
 
@@ -256,8 +263,9 @@
         </tz-box>
         </template>
 
-        <tz-bottom-btn type="submit" :theme="isSendFriend ? 'send-friend' : (isGroupBuy ? 'group-buy' : '')" :params="{
-        price: data.real_price ? data.real_price : 0,
+        <tz-bottom-btn type="submit" :score-mode="isScoreExchange"
+            :theme="isSendFriend ? 'send-friend' : (isGroupBuy ? 'group-buy' : '')" :params="{
+        price: isScoreExchange ? (data.score_amount || 0) : (data.real_price ? data.real_price : 0),
         is_virtual_pay: isVirtualPay,
       }" @handle="submitOrder" />
         </template>
@@ -429,10 +437,13 @@
              *  - `pay_type`：结算页的价格恒按「实付金额」出一个数（免费/指定学员/密码兑换在核算后也只是一个金额），
              *    紧凑档的价格块按 `pay_type` 分档、缺了整块不出 ⇒ 固定给 'pay'，数字逐字沿用 `detail.price`；
              *  - `count`：件数（紧凑档右下角那枚「×N」），本页必须保留 —— 多份下单要能看出买了几份；
-             *  - `is_virtual_pay`：虚拟支付（代币）档，卡片自带 `platform` 判据，这里只负责把页面那一枚透下去。
+             *  - `is_virtual_pay`：虚拟支付（代币）档，卡片自带 `platform` 判据，这里只负责把页面那一枚透下去；
+             *  - `score_mode` / `price`：积分兑换单的单价换成这一行的**积分**（后端把现金价归零、
+             *    改记 `score_amount`），现金价照旧画会读成「这件商品不要钱」（2026-11-09）。
              */
             orderGoodsCards() {
                 const rows = (this.data && this.data.orderGoodsList) || [];
+                const scoreMode = this.isScoreExchange;
                 return rows.map((row) => {
                     const item = row || {};
                     const detail = item.detail || {};
@@ -443,10 +454,11 @@
                         type: type,
                         cover: detail.cover || '',
                         name: detail.name || '',
-                        price: detail.price,
+                        price: scoreMode ? (Number(item.score_amount) || 0) : detail.price,
                         pay_type: 'pay',
                         count: item.count,
                         is_virtual_pay: this.isVirtualPay ? 1 : 0,
+                        score_mode: scoreMode ? 1 : 0,
                     };
                 });
             },
@@ -487,9 +499,19 @@
             isGroupBuy() {
                 return Number((this.pageParams || {}).gb_activity) > 0;
             },
-            /** 拼团上下文（调用方都知道 goods_type/goods_id，随参数带过来，本页不再反查） */
-            gbCtx() {
+            /**
+             * 积分兑换（2026-11-08 九类通用）：课程旧链是 `type=score`，
+             * 其它类型 order_type 保持 physical/composite/…，靠下单行 `score_goods_id` 识别。
+             */
+            isScoreExchange() {
                 const p = this.pageParams || {};
+                if (String(p.type || '') === 'score') {
+                    return true;
+                }
+                return (p.goodsList || []).some((item) => Number(item.score_goods_id) > 0);
+            },
+            /** 拼团上下文（调用方都知道 goods_type/goods_id，随参数带过来，本页不再反查） */
+            gbCtx() {                const p = this.pageParams || {};
                 return {
                     activity_id: Number(p.gb_activity) || 0,
                     team_id: Number(p.gb_team) || 0,
@@ -1094,7 +1116,7 @@
                 // 自动选券（2026-10-29 用户点名「优惠券可以默认选中一个最优的」）：
                 // 只走首屏那一趟 —— silent 的局部重算（改份数）与用户自己选过券之后都不许再挑，
                 // 否则「我选了不使用」会被下一次重算改回来。虚拟支付由后端那一侧跳过。
-                const autoCoupon = !silent && !this.couponAutoTried && !(Number(this.form.coupon_id) > 0);
+                const autoCoupon = !this.isScoreExchange && !silent && !this.couponAutoTried && !(Number(this.form.coupon_id) > 0);
                 if (autoCoupon) {
                     form.auto_coupon = 1;
                 }
@@ -1122,15 +1144,29 @@
                     if (seq !== this.calcSeq) { return; }
                     this.loading = false;
                     if (res.code === 1) {
+                        // 本次带上去的券 vs 后端真正用上的券（`coupon_id` 就是「这一趟核销的那张」）。
+                        // 两者不等 = 券在本单没生效：核算档**不报错**（code 仍是 1），原因只在 `data.msg` 里，
+                        // 而 `data.msg` 原先只有拼团分支（`calcGroupBuyAmount`）读 ⇒ 普通下单连实物单
+                        // 选完券都是「价格不动、券行还是请选择优惠券、一句话也没有」。
+                        // 这里补上那一跳：清掉无效券（否则提交时建单档会直接抛错）+ 把原因说给用户。
+                        const askedCoupon = Number(form.coupon_id) || 0;
+                        const usedCoupon = Number((res.data || {}).coupon_id) || 0;
                         that.data = res.data;
                         if (autoCoupon) {
-                            // 后端挑中的券回填到 form：券行（抵扣额）、券弹窗的勾选态、提交载荷都读这一格。
+                            // 后端挑中的券回填到 form：券行（抵扣额）、券弹窗的勾选状态、提交载荷都读这一格。
                             // 没挑到（无可用券 / 虚拟支付）时 `coupon_id` 为 0，券行保持「请选择优惠券」
                             that.couponAutoTried = true;
                             const picked = Number((res.data || {}).coupon_id) || 0;
                             if (picked > 0) {
                                 that.form.coupon_id = picked;
                             }
+                        } else if (askedCoupon > 0 && usedCoupon !== askedCoupon) {
+                            that.form.coupon_id = 0;
+                            uni.showToast({
+                                title: (res.data && res.data.msg) || '该优惠券本单不可用，请重新选择',
+                                icon: 'none',
+                                duration: 2500,
+                            });
                         }
                         if (silent) { return; }
                         // 规格含实物商品的组合订单：预载默认收货地址

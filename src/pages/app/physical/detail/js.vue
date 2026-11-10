@@ -8,10 +8,12 @@ import ParamsModal from '../components/params-modal.vue';
 import { specGroupsOf } from '@/common/utils/spec-stock.js';
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 
 var that;
 
 export default {
+  mixins: [scoreExchange],
   components: {
     SkuSelectModal,
     ServiceModal,
@@ -31,6 +33,9 @@ export default {
       selectedSkuPrice: {},
       selectedSkus: {},
       goodsNum: 1,
+      // 未裁剪的规格清单（取数时的原样）：兑换模式的规格裁剪每次都从这一份重算，
+      // 不拿 `goodsInfo.sku_prices`（已裁过）再裁，否则「积分商品晚到」那一次会越裁越少
+      rawSkuPrices: [],
       // 「这一次打开规格弹窗是为了拼团」（2026-10-29）：确认时把选中的规格交给拼团区，
       // 而不是走普通购买；关弹窗/走普通购买时复位，避免下一次购买被当成拼团
       gbPicking: false,
@@ -112,6 +117,7 @@ export default {
   },
   onLoad(options) {
     that = this;
+    this.initScoreExchange(options);
 
     let id = options.id;
     // 受邀链接上的邀请人（`?share=<userId>`）：只用于拼团访客埋点，不参与商品取数
@@ -172,6 +178,58 @@ export default {
     if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
   },
   methods: {
+    /**
+     * 积分商品详情到手（mixins 回调）：规格裁剪要重跑一次
+     *
+     * 商品详情与积分商品详情是两条并行的请求：商品先到那一拍还不知道「允许哪几档」，
+     * 于是整份规格树都摆了出来。这里按同一份 `rawSkuPrices` 重裁一次（原始清单存在页面里，
+     * 不在 `goodsInfo.sku_prices` 上 —— 那一份已经裁过，再裁会越裁越少）。
+     */
+    onScoreExchangeReady() {
+      if (!that.isScoreExchange) { return; }
+      if (that.scoreExchangeError) {
+        // 积分商品被拒（下架 / 勾过的档全失效）：整页按不可兑收口
+        that.goodsInfo = null;
+        that.skeletonLoading = false;
+        uni.showToast({ title: that.scoreExchangeError, icon: 'none' });
+        return;
+      }
+      if (!that.rawSkuPrices || !that.rawSkuPrices.length) { return; }
+      that.applyScoreSpecScope();
+    },
+    /**
+     * 把 `goodsInfo.sku_prices` 裁成「允许兑换的那几档」，`sku_tree` 跟着重算，选中档一起校正
+     *
+     * 幂等：每次都从 `rawSkuPrices`（第一次取数时的原清单）重算，不拿裁过的再裁。
+     */
+    applyScoreSpecScope() {
+      if (!that.goodsInfo) { return; }
+      const base = that.rawSkuPrices || [];
+      const list = that.scoreHasSpec
+        ? that.scoreSpecOptions(base).map((row) => row.item)
+        : base;
+      that.goodsInfo.sku_prices = list;
+      that.goodsInfo.sku_tree = that.buildSkuTree(list);
+      if (!list.length) {
+        // 勾过的档全下架/售罄：界面停在「暂无可用规格」，不给一个点了必报错的按钮
+        that.selectedSkuPrice = {};
+        that.selectedSkus = {};
+        return;
+      }
+      // 已选那一档若被裁掉，回落到第一档能买的（与取数落地那一拍同口径）
+      const keep = list.find((sku) => Number(sku.id) === Number(that.selectedSkuPrice && that.selectedSkuPrice.id));
+      const pickRow = keep || list.find((sku) => Number(sku.stock) > 0) || list[0];
+      that.selectedSkuPrice = pickRow;
+      that.selectedSkus = {};
+      if (pickRow && pickRow.goods_sku_text) {
+        pickRow.goods_sku_text.split(',').forEach((text, index) => {
+          if (that.goodsInfo.sku_tree[index]) {
+            const option = that.goodsInfo.sku_tree[index].children.find((child) => child.name === text);
+            if (option) { that.$set(that.selectedSkus, index, option); }
+          }
+        });
+      }
+    },
     /**
      * 拼团区（`components/tz/group-buy-area.vue`）要把人带去下单：
      * 导航由组件自己发（它才知道选了哪一档、凑的是哪一个团，`extend.group_buy` 挂在它那一行上），
@@ -327,11 +385,11 @@ export default {
       }
       
       const goodsList = [
-        {
+        that.withScoreGoods({
           goodsId: that.goodsId + '_' + (that.selectedSkuPrice.id || 0),
           goodsType: 'physical',
           count: that.goodsNum
-        }
+        })
       ];
       
       that.$nav.to('/pages/order/submit/submit?type=physical&goodsList=' + JSON.stringify(goodsList));
@@ -406,13 +464,19 @@ export default {
             cleanedData.sku_tree = that.buildSkuTree(res.data.sku_prices);
           }
 
-          if (res.data.sku_prices && res.data.sku_prices.length > 0) {
-            const inStockSku = res.data.sku_prices.find(sku => Number(sku.stock) > 0);
+          // 积分兑换（2026-11-08 用户点名「仅显示可积分兑换的规格选项…新增的规格未添加到积分商品
+          // 的规格中，那么不要在积分兑换时规格中显示对应的选项」）：
+          // 未裁剪的原清单先存一份（`rawSkuPrices`），裁剪与「积分商品晚到」那一次重裁都读它；
+          // 首次裁剪在下面统一走 `applyScoreSpecScope()`，不在这里写第二套。
+          that.rawSkuPrices = Array.isArray(res.data.sku_prices) ? res.data.sku_prices.slice() : [];
+
+          if (cleanedData.sku_prices && cleanedData.sku_prices.length > 0) {
+            const inStockSku = cleanedData.sku_prices.find(sku => Number(sku.stock) > 0);
             // 受邀参团：页面上「选择」那一行先落到团上那一档（不然进来看的是第一档、点加入却拼另一档）
             const joinSku = that.gbJoinCtx
-              ? res.data.sku_prices.find(sku => Number(sku.id) === Number(that.gbJoinCtx.specId))
+              ? cleanedData.sku_prices.find(sku => Number(sku.id) === Number(that.gbJoinCtx.specId))
               : null;
-            that.selectedSkuPrice = joinSku || inStockSku || res.data.sku_prices[0];
+            that.selectedSkuPrice = joinSku || inStockSku || cleanedData.sku_prices[0];
 
             const pickedSku = joinSku || inStockSku;
             if (pickedSku && pickedSku.goods_sku_text) {
@@ -430,6 +494,12 @@ export default {
 
           that.goodsInfo = cleanedData;
           that.goodsSwiper = cleanedData.carousel && cleanedData.carousel.length > 0 ? cleanedData.carousel : [cleanedData.cover];
+
+          // 兑换模式：首帧就把规格裁成「可兑换的那几档」（规格树与选中档一并校正）。
+          // 积分商品详情若还没回来（并行请求），`onScoreExchangeReady()` 会再重裁一次。
+          if (that.isScoreExchange) {
+            that.applyScoreSpecScope();
+          }
 
           that.guaranteeList = that.buildGuaranteeList(res.data);
 

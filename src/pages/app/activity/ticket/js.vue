@@ -8,7 +8,9 @@ import { readGroupBuyOrder, withGroupBuyOrder } from '@/common/utils/group-buy-o
 import { GB_GRADIENT, GB_TEXT } from '@/common/utils/group-buy-theme.js';
 // 票种 → 拼团价 的映射（与报名信息页同读一份；各写一遍就是下一次改口径只改一半）
 import { gbTicketPrice } from '@/common/utils/group-buy-ticket-price.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+  mixins: [scoreExchange],
   components: { banner, liveStartTimeBar },
   data() {
     return {
@@ -19,6 +21,10 @@ export default {
       gbLoaded: false,
       detail: {},
       ticketList: [],
+      // 未裁剪的票券原清单：兑换模式的裁剪每次都从它重算（不拿裁过的再裁）
+      rawTicketList: [],
+      // 空态文案（积分商品不可兑时给后端那一句原因，不再是「暂无可购票券」）
+      loadMsg: '',
       ticketSelected: {},
       price: 0,
       ticketCount:0,
@@ -34,7 +40,9 @@ export default {
   computed: {
     /** 骨架屏的撤出判据：详情 / 票券 / 拼团活动（非拼团链恒为已落地）全部到手 */
     loading() {
-      return !(this.detailLoaded && this.ticketLoaded && this.gbLoaded);
+      // 积分商品这一腿（2026-11-09）：兑换模式的价格区读 `scoreExchangeScore`，
+      // 没落地前那一格是 0 —— 只按另外三路收口就会先闪一遍「0 积分」
+      return !(this.detailLoaded && this.ticketLoaded && this.gbLoaded && this.scoreReady);
     },
     /** 拼团那一趟（URL 带 `gb_activity`）：价格按活动的拼团价画 */
     gbPicking() {
@@ -86,7 +94,11 @@ export default {
       }).then(res => {
         uni.stopPullDownRefresh();
         if (res.code === 1) {
-          that.ticketList = res.data || [];
+          var list = res.data || [];
+          // 积分兑换（2026-11-08）：只摆商家勾过的那几种票券（判据在后端 `spec_ids`，
+          // 票券 id 就是活动这一族的 spec_id）。未裁剪的原清单另存一份，重裁时从它算。
+          that.rawTicketList = list.slice();
+          that.ticketList = that.filterScoreTickets(list);
         } else {
           uni.showModal({
             title: '提示',
@@ -98,6 +110,29 @@ export default {
         }
         that.ticketLoaded = true;
       }).catch(() => { that.ticketLoaded = true; });
+    },
+    /** 积分商品详情到手（mixins 回调）：票券清单重裁一次（详情可能晚于票券到） */
+    onScoreExchangeReady() {
+      if (!that.isScoreExchange) { return; }
+      if (that.scoreExchangeError) {
+        that.loadMsg = that.scoreExchangeError;
+        that.ticketList = [];
+        return;
+      }
+      that.loadMsg = '';
+      if (that.rawTicketList && that.rawTicketList.length) {
+        that.ticketList = that.filterScoreTickets(that.rawTicketList);
+      }
+      // 商家勾过的票种一档都不剩：说清原因，别留一屏「暂无可购票券」让人以为活动没票
+      if (!that.ticketList.length && that.scoreHasSpec) {
+        that.loadMsg = '该积分商品暂无可兑换的票券';
+      }
+    },
+    /** 按 `score_spec_ids` 过滤票券；不吃规格/非兑换模式原样返回 */
+    filterScoreTickets(list) {
+      var rows = Array.isArray(list) ? list : [];
+      if (!that.isScoreExchange || !that.scoreHasSpec) { return rows; }
+      return that.scoreSpecOptions(rows).map(function (row) { return row.item; });
     },
 
     /**
@@ -158,10 +193,13 @@ export default {
       }
       // 拼团上下文随 `ticket` 一起落到报名信息页（键名只存 `group-buy-order.js`；
       // 普通报名链 `gbOrder` 是空对象 ⇒ `withGroupBuyOrder` 原样返回，地址逐字不变）
-      const url = withGroupBuyOrder(
+      let url = withGroupBuyOrder(
         '/pages/app/activity/form/form?id=' + that.pageParams.id + '&ticket=' + JSON.stringify(this.ticketSelected),
         that.gbOrder
       );
+      if (Number(that.pageParams.score_goods_id) > 0) {
+        url += '&score_goods_id=' + Number(that.pageParams.score_goods_id);
+      }
       that.$nav.to(url);
     },
     numberChange(option) {
@@ -196,6 +234,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    this.initScoreExchange(that.pageParams);
     // 拼团那一趟（活动详情 `gbOrder()` 带上来的扁平 `gb_*`）：本页只搬运，不重判。
     // **身份核的是 `gb_goods_id` 与 `pageParams.id`**（活动 9），不是 `gb_activity`（拼团活动 12388）：
     // 对不上（历史链接 / 手工改址）⇒ 当普通报名链，别把别一场活动带进这一单

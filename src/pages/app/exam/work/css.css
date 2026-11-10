@@ -57,8 +57,12 @@ page {
 }
 
 
+/* 底栏主按钮不再各带左右外边距：u-button 本身就是 `width:100%` 的格子内容，
+   再叠 8px 外边距会让它比格子宽 16px、文字中心整体右移（2026-11-09 用户点名
+   「上一题、下一题及交卷 并没有在垂直方向上居中，也没有水平居中」）。
+   同栏的「答题卡 / 移除」是自带 8px 的 control-btn，间距只靠它们那一条，主按钮归零 */
 .bottom-btn-box .u-button {
-    margin: 0 8px;
+    margin: 0;
 }
 
 .bottom-btn-box .control-btn {
@@ -79,13 +83,19 @@ page {
     overflow-y: auto;
 }
 
+/* 两枚并排放进这一行：间距只由容器 `gap` 给（硬约束 20 禁止给单项写 margin）。
+   原先 `width:50% + margin:0 5px` 让两个格子合计比 70% 宽出 20px（右侧那枚整体右探，
+   读出来就是「文字没有水平居中」，2026-11-09 用户点名）；改成「宽度已扣掉 gap」的定宽，
+   只显示一枚时（已交卷 / 最后一题）仍占半格、不被拉成整行。
+   `space-between` 与 `gap` 同值时互为兜底：老基础库不认 flex gap 时仍按剩余空间均分。 */
 .page-btn {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     width: 70%;
 }
 
 .page-btn>div{
-    width: 50%;
-    margin: 0 5px;
+    flex: 0 0 calc(50% - 5px);
+    min-width: 0;
 }

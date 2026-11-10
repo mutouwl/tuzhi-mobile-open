@@ -5,10 +5,12 @@ import SubGoodsPopup from '../components/sub-goods-popup.vue';
 import { specBuyable } from '@/common/utils/spec-stock.js';
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 
 var that;
 
 export default {
+  mixins: [scoreExchange],
   components: {
     SpecSelectModal,
     SubGoodsPopup
@@ -22,6 +24,8 @@ export default {
       showSubGoodsPopup: false,
       goodsSwiper: [],
       selectedSpec: null,
+      // 未裁剪的规格清单（取数时的原样）：兑换模式的裁剪每次都从这一份重算
+      rawSpecs: [],
       // 「这一次打开规格弹窗是为了拼团」（2026-10-29）：确认时把规格交回拼团区，不走普通购买；
       // 关弹窗 / 走普通购买时复位，避免下一次购买被当成拼团
       gbPicking: false,
@@ -61,6 +65,7 @@ export default {
   },
   onLoad(options) {
     that = this;
+    this.initScoreExchange(options);
     // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真（单独购买立刻收起），
     // 拼团区取到活动后由 `@ready.join` 校准
     that.gbJoinCtx = readGroupBuyJoin(options);
@@ -117,6 +122,40 @@ export default {
     if (that.$refs.gbArea) { that.$refs.gbArea.reload(); }
   },
   methods: {
+    /**
+     * 积分商品详情到手（mixins 回调）：把规格清单裁成「商家勾过的那几档」
+     *
+     * 组合商品的规格 id 就是 `app_composite_spec.id`，下单仍在 `extend` 里带
+     * `规格id_价格`（`Composite::getPayDetail()` 按 `_` 拆第一段），所以裁剪只动展示，
+     * 不需要下标映射。
+     */
+    onScoreExchangeReady() {
+      if (!that.isScoreExchange) { return; }
+      if (that.scoreExchangeError) {
+        that.goodsInfo = null;
+        that.loading = false;
+        uni.showToast({ title: that.scoreExchangeError, icon: 'none' });
+        return;
+      }
+      that.applyScoreSpecScope();
+    },
+    /** 按 `rawSpecs`（取数时的原清单）重裁一次，幂等 */
+    applyScoreSpecScope() {
+      if (!that.goodsInfo) { return; }
+      const base = Array.isArray(that.rawSpecs) ? that.rawSpecs : (that.goodsInfo.specs || []);
+      const list = that.scoreHasSpec
+        ? that.scoreSpecOptions(base).map((row) => row.item)
+        : base;
+      that.goodsInfo.specs = list;
+      if (!list.length) {
+        that.selectedSpec = null;
+        return;
+      }
+      const keep = that.selectedSpec
+        ? list.find((spec) => Number(spec.id) === Number(that.selectedSpec.id))
+        : null;
+      that.selectedSpec = keep || list[0];
+    },
     /**
      * 拼团区（`components/tz/group-buy-area.vue`）要把人带去下单：
      * 导航由组件自己发（它才知道选了哪一档、凑的是哪一个团），本页只记这一枚「去过了」的账，
@@ -176,12 +215,12 @@ export default {
       }
       // 构建 goodsList 参数跳转到下单页
       const goodsList = [
-        {
+        that.withScoreGoods({
           goodsId: that.goodsId,
           goodsType: 'composite',
           count: 1,
           extend: spec.id + '_' + spec.price
-        }
+        })
       ];
       that.$nav.to('/pages/order/submit/submit?type=composite&goodsList=' + JSON.stringify(goodsList));
     },
@@ -224,8 +263,14 @@ export default {
           const data = res.data;
           data.cover = data.cover || (data.images && data.images.length ? data.images[0] : '');
           data.carousel = data.images || [];
+          // 未裁剪的规格清单先留一份：兑换模式的裁剪与「积分商品晚到」那一次都读它
+          that.rawSpecs = Array.isArray(data.specs) ? data.specs.slice() : [];
           that.goodsInfo = data;
           that.goodsSwiper = data.carousel && data.carousel.length ? data.carousel : [data.cover];
+          // 兑换模式：首帧就只摆可兑换的那几档（积分商品详情晚到时由回调再重裁一次）
+          if (that.isScoreExchange) {
+            that.applyScoreSpecScope();
+          }
           // 受邀参团：页面上「选择」那一行先落到团上那一档（点加入拼的是另一档就自相矛盾）
           if (that.gbJoinCtx && data.specs) {
             const joinSpec = data.specs.find((s) => Number(s.id) === Number(that.gbJoinCtx.specId));

@@ -32,27 +32,44 @@ export default {
       form:{}
     }
   },
+  computed: {
+    /**
+     * 可提现金额那一行显不显示
+     *
+     * 2026-11-08 用户口径：可提现金额为 0 时整行收起。
+     * 只认接口回填的 member.money（缺字段/取数失败一律当 0，不凭前端猜）；
+     * 它是 v-if 才出的行，骨架屏按 M16 不给灰块、也不预留空位。
+     */
+    showWithdrawMoney() {
+      var money = Number(this.member && this.member.money);
+      return !isNaN(money) && money > 0;
+    }
+  },
   watch: {
   },
   methods: {
     getData() {
       that.getUserInfo();
-      that.getMember();
+      var memberJob = that.getMember();
       that.getLevel();
       that.getConfig();
-      uni.stopPullDownRefresh();
 
-      that.$api('app.agent.member.getMemberTotal', that.form).then(res => {
-        that.loading = false;
+      var totalJob = that.$api('app.agent.member.getMemberTotal', that.form).then(res => {
         if (res.code === 1) {
           that.statistics = res.data;
         }
-
-      }).catch(() => {
-        // 请求失败也要撤掉首屏骨架屏，否则页面一直停在占位态
-        that.loading = false;
       });
-      
+
+      // 可提现金额那一行按 member.money 判显隐：金额与统计一起落地才撤骨架屏，
+      // 否则先撤骨架、金额后到会让整行迟一步冒出来（硬约束 22：一个加载态盖住多条腿时统一收口）。
+      // 下拉刷新也等这一趟全部回音再收条（M4），任何一条失败都不拖住其余。
+      Promise.all([
+        memberJob.catch(() => null),
+        totalJob.catch(() => null)
+      ]).then(() => {
+        that.loading = false;
+        uni.stopPullDownRefresh();
+      });
     },
 
     getConfig() {
@@ -70,12 +87,12 @@ export default {
       });
     },
     getMember() {
-      that.$api('app.agent.member.getMember', {}).then(res => {
+      // 返回这条请求本身：可提现金额行的显隐要等它落地，getData 拿它和统计一起收口
+      return that.$api('app.agent.member.getMember', {}).then(res => {
         if (res.code === 1) {
           that.member = res.data;
         }
       });
-      uni.stopPullDownRefresh();
     },
 
     getUserInfo() {
@@ -86,19 +103,21 @@ export default {
       });
     },
     getStatus() {
-      // loading 只驱动首屏骨架屏：统一由 getData 的统计接口关闭（早关会露出 0 值），且此处不置 true，
-      // 免得 onShow / 下拉刷新重拉时闪骨架屏挡住已渲染内容
+      // loading 只驱动首屏骨架屏：统一由 getData 的统计与成员两条腿一起关闭（早关会露出 0 值），
+      // 且此处不置 true，免得 onShow / 下拉刷新重拉时闪骨架屏挡住已渲染内容
       that.$api('app.agent.recruit.getStatus', that.form).then(res => {
         if (res.code === 1 && res.data == 1) {
           that.getData();
         } else {
           that.loading = false;
+          uni.stopPullDownRefresh();
           if (res.code === 1) {
             that.$nav.to('/pages/app/agent/member/recruit/recruit','local','redirectTo');
           }
         }
       }).catch(() => {
         that.loading = false;
+        uni.stopPullDownRefresh();
       });
     },
     channels(){

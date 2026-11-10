@@ -15,9 +15,13 @@
 						<text class="price-lessons" v-if="skus.length">/ {{ currentSkuLessons }}课时</text>
 						<text class="gb-team" v-if="gbTeam">{{ gbTeam }}</text>
 					</view>
+					<!-- 积分兑换（2026-11-08 用户点名「点击立即兑换，弹出来的多规格选择弹窗，上面的这个价格
+					     应该显示为积分」）：兑换价是整件商品一个数（后端 `app_score_goods.score`），不随规格变，
+					     所以这里不画 ¥ 符号、也不算划线原价 —— 与实物那只规格弹窗同一档（`scoreMode`）。 -->
 					<view class="pkg-price" v-else>
-						<text class="price-symbol">¥</text>
-						<text class="price-num">{{ currentSku.price || '0' }}</text>
+						<text class="price-symbol" v-if="!scoreMode">¥</text>
+						<text class="price-num">{{ scoreMode ? (scoreValue || 0) : (currentSku.price || '0') }}</text>
+						<text class="price-coin" v-if="scoreMode">积分</text>
 						<text class="price-lessons" v-if="skus.length">/ {{ currentSkuLessons }}课时</text>
 						<text class="price-lessons" v-if="currentSku.id">{{ currentSku.valid_type == 1 ? '长期有效' : currentSku.valid_days + '天内有效' }}</text>
 					</view>
@@ -120,6 +124,14 @@ export default {
 		 * 弹层照开（套餐权益 / 校区只有这里看得见），只把确认按钮换成禁用态。
 		 */
 		inTeam: { type: Boolean, default: false },
+		/**
+		 * 积分兑换模式（2026-11-08 加性入参）：宿主传页面那一枚 `isScoreExchange`。
+		 * 兑换走积分、不走现金价 ⇒ 头区价格换成积分、不画 ¥ 与划线原价；
+		 * 缺省 false 时本弹层与改造前逐字相同（普通报名链不受影响）。
+		 */
+		scoreMode: { type: Boolean, default: false },
+		/** 兑换所需积分（后端 `app_score_goods.score`，与商详价格区同一个数） */
+		scoreValue: { type: [String, Number], default: 0 },
 		// 当前选中校区 id（.sync 双向同步）
 		campus: {
 			type: [Number, String],
@@ -398,6 +410,14 @@ export default {
 	font-size: 12px;
 	color: #86909c;
 	margin-left: 6px;
+}
+
+/* 积分单位（兑换模式）：与价格同色同档，不当灰字说明读 —— 与 `.price-num` 同行 baseline 对齐 */
+.price-coin {
+	font-size: 12px;
+	font-weight: 700;
+	color: #f53f3f;
+	margin-left: 2px;
 }
 
 .pkg-text {

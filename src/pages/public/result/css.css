@@ -29,6 +29,22 @@ page{
   color: #1D2129;
 }
 
+/* 「恭喜您获得 N 积分」：整行可点，提示与箭头作为一组由 .tip 的 text-align 居中 */
+.tip .score-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 2px 8px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff7d00;
+}
+
+.tip .score-tip-arrow {
+  margin-top: 1px;
+}
+
 .tip .subtitle {
   font-size: 13px;
   color: #86909C;

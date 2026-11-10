@@ -32,7 +32,12 @@
                      `unexpected token '`（带引号的键 `'font-weight'` 编进 style 表达式）⇒ 整页 WXML 编译失败。
                      值语义不变，只是把两格拼成 style 串；H5 的 uni-view 同样吃串。 -->
                 <div class="price" :style="priceColor ? 'color:' + priceColor + ';font-weight:600' : ''">
-                    <span class="unit" v-if="!isVirtualPay">¥ </span> {{ price }}<span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                    <!-- 积分兑换单（2026-11-09）：这一行记的是 `score_amount`（后端把现金价归零），
+                         照旧挂 ¥ 会被读成「这件商品还要付钱」 -->
+                    <template v-if="scoreMode">{{ price }}<span class="unit">积分</span></template>
+                    <template v-else>
+                        <span class="unit" v-if="!isVirtualPay">¥ </span> {{ price }}<span class="unit" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+                    </template>
                 </div>
 
                 <div class="num">
@@ -98,6 +103,14 @@ export default {
         price: {
             type: [String, Number],
             default: ''
+        },
+        /**
+         * 积分兑换单（2026-11-09）：`price` 这一格记的是**积分**（后端把现金价归零、改记
+         * `score_amount`）⇒ 价格行画「N 积分」、不挂 ¥。缺省 false 时其余调用点逐字不变。
+         */
+        scoreMode: {
+            type: Boolean,
+            default: false
         },
         isVirtualPay: {
             type: Boolean,

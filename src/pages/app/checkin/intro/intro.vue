@@ -46,7 +46,8 @@
           <!-- 拼团价横幅回拼团区（2026-10-30 用户点名「gba-rule 拼团玩法都应该放在 gba-banner 下面，
                也包括正在拼团的列表，让拼团连成一个整体」+「上下挨在一起，不要拆分放」）：
                横幅与玩法、凑团列表在同一张卡里连着排，拼团进行中本卡参与价收起（第五轮）。 -->
-          <view class="cdi-price" v-if="gbPriceShown && isPay"><text class="rmb" v-if="!isVirtualPay">￥</text><text class="num">{{ info.price }}</text><text class="coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
+          <view class="cdi-price" v-if="isScoreExchange"><text class="num">{{ scoreExchangeScore }}</text><text class="coin">积分</text></view>
+          <view class="cdi-price" v-else-if="gbPriceShown && isPay"><text class="rmb" v-if="!isVirtualPay">￥</text><text class="num">{{ info.price }}</text><text class="coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
         </view>
         <!-- 拼团区（M-P1）：压在「名称 + 标签 + 参与数据 + 参与价」那张标题卡正下方，拼团价与售卖价同一屏可比
              （写法照实物详情页）。两条入参：① `goods-type` 取后端 `ActivityForm::GOODS_TYPES` 里那一档
@@ -56,7 +57,7 @@
              「已参与」这一档不在这儿另判：后端 `Gate` 自己有「你已参与该团」那一句（同一条判据只存一处，M22），
              本页不重判一遍，也不拿它当隐藏条件（硬约束 27②：入口显隐不许依赖只有该入口自己能产生的数据）。
              `@go-pay` 只记账：导航由组件自己发，见 js.vue 的 gbGoPay -->
-        <tz-group-buy-area v-if="id" ref="gbArea" goods-type="checkin" :goods-id="id" hide-danmu
+        <tz-group-buy-area v-if="id && !isScoreExchange" ref="gbArea" goods-type="checkin" :goods-id="id" hide-danmu
           :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
           :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
           :join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
@@ -116,15 +117,16 @@
       <view class="cdi-join-tip" v-else-if="joinClosed">{{ joinClosedText }}</view>
       <u-button class="cdi-main-btn" type="primary" text="免费参与" @click="doJoin" v-else-if="joinType == 'free'"></u-button>
       <block v-else-if="joinType == 'pay'">
-        <view class="cdi-join-price"><text v-if="!isVirtualPay">¥</text><text>{{ info.price }}</text><text class="cdi-join-coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
+        <view class="cdi-join-price" v-if="isScoreExchange"><text>{{ scoreExchangeScore }}</text><text class="cdi-join-coin">积分</text></view>
+        <view class="cdi-join-price" v-else><text v-if="!isVirtualPay">¥</text><text>{{ info.price }}</text><text class="cdi-join-coin" v-if="isVirtualPay">{{ $tools.systemConfig('coin_name') || '金币' }}</text></view>
         <!-- 拼团档：与「立即购买」并排（竞品 07 图：售卖 + 发起拼团）。
              `gbEntry` 空（无活动/未装插件）时不出这一枚，本行与改造前逐字相同；
              按钮本体是全站共用的 `tz-group-buy-btn`（两行：立即开团 + 拼团价；
              底色那条红橙渐变只存组件一处，不在页面里另写色值）。
              **我正在这一场拼团里已有进行中的团（`gbInTeam`）→ 「立即购买」收起**（PRD 2026-10-27）：
              底栏只留「查看拼团详情」这一个出口，不留一枚点了会被后端拒的死按钮 -->
-        <tz-group-buy-btn v-if="gbEntry" class="cdi-main-btn" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-        <u-button class="cdi-main-btn" type="primary" text="立即购买" @click="goBuy" v-if="!gbInTeam && !gbJoinMode"></u-button>
+        <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="cdi-main-btn" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+        <u-button class="cdi-main-btn" type="primary" :text="isScoreExchange ? '立即兑换' : '立即购买'" @click="goBuy" v-if="!gbInTeam && !gbJoinMode"></u-button>
       </block>
       <u-button class="cdi-main-btn" type="primary" text="输入密码参与" @click="pwdVisible = true" v-else-if="joinType == 'password'"></u-button>
       <u-button class="cdi-main-btn" type="primary" text="加入打卡" @click="doJoin" v-else-if="joinType == 'course' && hasCourse"></u-button>

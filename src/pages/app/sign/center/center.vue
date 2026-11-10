@@ -1,75 +1,79 @@
 <template>
-	<view class="container">
-
-
+	<view class="sign-page">
 		<template v-if="config.status == 1">
-			<tz-box>
-				<!-- 打卡日历页面 -->
-				<view class="calendar">
+			<!-- 顶部状态区（对齐行业口径：今日状态 + 连签天数 + 签到记录/规则入口） -->
+			<view class="hero">
+				<view class="hero-main">
+					<template v-if="!loaded">
+						<view class="hero-sk hero-sk-title"></view>
+						<view class="hero-sk hero-sk-sub"></view>
+					</template>
+					<template v-else>
+						<text class="hero-title">{{ isSign ? '今日已签到' : '今日未签到' }}</text>
+						<text class="hero-sub">已连续签到 {{ cuntinueDays }} 天</text>
+					</template>
+				</view>
+				<!-- 顶部两枚入口：签到记录在左、规则在右（同一档半透明白胶囊，几何只由 .hero-links 给） -->
+				<view class="hero-links">
+					<view class="hero-link" hover-class="hero-link-hover" @tap="goLog">签到记录</view>
+					<view class="hero-link" hover-class="hero-link-hover" @tap="goRule">规则</view>
+				</view>
+			</view>
 
-					<view class="sign-everyday pad">
-
-						<view class="sign-num-box">
-							已连续签到
-							<text class="sign-num">{{ cuntinueDays }}</text>
-							天
-						</view>
-
-						<text class="sign-everyday-log" @click="$nav.to('/pages/app/sign/log/log')">签到记录</text>
+			<!-- 签到日历 -->
+			<view class="calendar-card">
+				<view class="cal-bar">
+					<view class="cal-nav" @tap="handleCalendar(0)">
+						<view class="cal-nav-ic"><tz-icon name="return" :size="16" color="#4E5969" /></view>
+						<text class="cal-nav-text">上月</text>
 					</view>
-
-					<view class="bar">
-						<!-- 年月 -->
-						<view class="previous" @click="handleCalendar(0)">
-							<tz-icon name="return" :size="16" color="#4E5969" />
-						</view>
-						<view class="date">{{ cur_year || '--' }} 年 {{ cur_month || '--' }} 月</view>
-						<view class="next" @click="handleCalendar(1)">
-							<tz-icon name="enter" :size="16" color="#4E5969" />
-						</view>
-					</view>
-					<!-- 显示星期 -->
-					<view class="week x-f">
-						<view class="week-item" v-for="(item, index) in weeks_ch" :key="index">{{ item }}</view>
-					</view>
-					<!-- 日历表 -->
-					<view class="myDateTable">
-						<view v-for="(item, j) in days" :key="j" class="dateCell">
-							<view v-if="item.date == undefined || item.date == null" class="cell"><text
-									:decode="true">&nbsp;&nbsp;</text></view>
-							<template v-else>
-								<!-- 已签到日期 -->
-								<view v-if="item.is_sign" class="cell is-sign">
-									<text>{{ item.day }}</text>
-								</view>
-								<!-- 漏签 -->
-								<view class="cell forget-sign" v-else-if="cur_year < toYear || (cur_year == toYear && cur_month < toMonth) || (cur_year == toYear && cur_month == toMonth && item.date < today)
-									">
-									<text>{{ item.day }}</text>
-								</view>
-								<view class="cell" v-else>
-									<text>{{ item.day }}</text>
-								</view>
-							</template>
-						</view>
-
+					<text class="cal-month">{{ cur_year || '--' }}年{{ pad(cur_month) }}月</text>
+					<view class="cal-nav" @tap="handleCalendar(1)">
+						<text class="cal-nav-text">下月</text>
+						<view class="cal-nav-ic"><tz-icon name="enter" :size="16" color="#4E5969" /></view>
 					</view>
 				</view>
 
-			</tz-box>
+				<view class="week">
+					<text v-for="(item, index) in weeks_ch" :key="index" class="week-item">{{ item }}</text>
+				</view>
 
-			<!-- 签到按钮 -->
-			<view class="sign-btn">
-				<u-button :disabled="isPresentMonth || isSign" :text="isSign ? '今日已签到' : '签到'" type="primary"
-					@click="onSign"></u-button>
+				<template v-if="!loaded">
+					<view class="day-grid">
+						<view v-for="i in 35" :key="i" class="day-cell">
+							<view class="day-sk-coin"></view>
+							<view class="day-sk-num"></view>
+						</view>
+					</view>
+				</template>
+				<template v-else>
+					<view class="day-grid">
+						<view v-for="(item, j) in days" :key="j" class="day-cell">
+							<view v-if="item.date" class="day-inner" :class="{ 'is-today': item.current === 'today' }">
+								<view class="coin" :class="item.coin_class">
+									<text class="coin-star">{{ item.is_sign ? '✓' : '★' }}</text>
+									<text v-if="item.reward_score > 0 && !item.is_sign" class="coin-badge">+{{ item.reward_score }}</text>
+									<text v-else-if="item.is_sign && item.reward_score > 0" class="coin-badge coin-badge-signed">+{{ item.reward_score }}</text>
+								</view>
+								<text class="day-num" :class="{ 'day-num-today': item.current === 'today' }">
+									{{ item.current === 'today' ? '今天' : item.day }}
+								</text>
+							</view>
+						</view>
+					</view>
+				</template>
 			</view>
-			<tz-tab-bar />
+
+			<!-- 签到按钮：已签到时「明日继续签到」写在按钮里，不再另外摆一行提示 -->
+			<view class="sign-action">
+				<tz-button long size="normal" type="primary" :disabled="!loaded || isSign || signing"
+					:text="isSign ? '今日已签到，明日继续签到' : '立即签到'" @click="onSign" />
+			</view>
+
+			<tz-footer />
 		</template>
 
-
-		<u-empty icon="/static/image/empty.png" width="70" height="70" v-else text="该功能暂不可用" />
-
-		<tz-footer />
+		<u-empty v-else icon="/static/image/empty.png" width="70" height="70" text="该功能暂不可用" />
 	</view>
 </template>
 
@@ -77,6 +81,6 @@
 
 </script>
 
-<style  lang="scss">
+<style lang="scss">
 @import "./css.css";
 </style>

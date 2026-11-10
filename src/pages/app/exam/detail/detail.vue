@@ -80,9 +80,10 @@
 
 						<div class="exam-property-item-value">
 
-							<span class="exam-property-item-unit" v-if="!isVirtualPay(data)">¥</span>
-							<span>{{ data.pay_price }}</span>
-							<span class="exam-property-item-unit" v-if="isVirtualPay(data)">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
+							<span class="exam-property-item-unit" v-if="isScoreExchange">积分</span>
+							<span class="exam-property-item-unit" v-else-if="!isVirtualPay(data)">¥</span>
+							<span>{{ isScoreExchange ? scoreExchangeScore : data.pay_price }}</span>
+							<span class="exam-property-item-unit" v-if="!isScoreExchange && isVirtualPay(data)">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 						</div>
 					</div>
 
@@ -136,7 +137,7 @@
 			     **已有使用权限 ⇒ 整段不出**（2026-10-30 用户点名「当前已经有了练习的使用权限，为什么还会显示拼团价格」）：
 			     判据 `gbVisible`（`data.id ∧ !data.is_auth`），与上面横幅、弹幕、底栏那几枚同源；
 			     换个判据写第二份，就是同一件事在两处各判一遍（硬约束 11） -->
-			<tz-group-buy-area v-if="gbVisible" ref="gbArea" goods-type="exercises" :goods-id="data.id" hide-danmu
+			<tz-group-buy-area v-if="gbVisible && !isScoreExchange" ref="gbArea" goods-type="exercises" :goods-id="data.id" hide-danmu
 				:join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
 				:join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
 				:join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
@@ -174,8 +175,8 @@
 				     order-extra 插槽（与课程页同一机制），摘要空串（无活动/未装插件）整枚不渲染。
 				     **我正在这一场拼团里已有进行中的团（`gbInTeam`）→ 主按钮收起**（PRD 2026-10-27）：
 				     与课程详情页同一枚 `hide-main`，底栏只留「查看拼团详情」这一个出口 -->
-				<tz-bottom-btn @handle="subscription()" btnTitle="立即订阅" v-if="data.sales_type == 2" :hide-main="gbInTeam || gbJoinMode">
-					<tz-group-buy-btn v-if="gbEntry" class="tbb-slot" slot="order-extra" :text="gbEntry.text" :price="gbEntry.price_text" @open="openGb" />
+				<tz-bottom-btn @handle="subscription()" :btnTitle="isScoreExchange ? '立即兑换' : '立即订阅'" v-if="data.sales_type == 2" :hide-main="gbInTeam || gbJoinMode">
+					<tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="tbb-slot" slot="order-extra" :text="gbEntry.text" :price="gbEntry.price_text" @open="openGb" />
 				</tz-bottom-btn>
 				<tz-bottom-btn @handle="$nav.to(data.course.id, 'course')" :btnTitle="(data.course && data.course.id) ? '去订阅关联课程' : '暂未开放'" v-if="data.sales_type == 3"/>
 			</template>

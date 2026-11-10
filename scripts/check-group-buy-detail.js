@@ -131,7 +131,7 @@ ok('6.2b 分享弹窗的码与文案直进团详情（`type="team"` + `:val="tea
   /type="team"/.test(codeOf(det)) && /:val="teamId"/.test(codeOf(det))
     && /:code-type="type" :code-id="shareSrc"/.test(read('src/components/modal/share-modal.vue')));
 
-ok('6.2c 团详情倒计时是**秒级 HH:MM:SS**（超一天加 N天 前缀）且 1 秒一跳（小鹅通 01-08 / 03-05 图；分钟粒度 + 30 秒一跳读出来是「倒计时不动」）',
+ok('6.2c 团详情倒计时是**秒级 HH:MM:SS**（超一天加 N天 前缀）且 1 秒一跳（参照产品 01-08 / 03-05 图；分钟粒度 + 30 秒一跳读出来是「倒计时不动」）',
   /pad2\(Math\.floor\(\(total % 86400\) \/ 3600\)\)/.test(det)
     && /pad2\(total % 60\)/.test(det) && /setTimeout\(tick, 1000\)/.test(det));
 
@@ -171,10 +171,10 @@ ok('6.7 倒计时时间单位对齐：`expire_time` 是秒级、`this.now` 是�
   /Number\(this\.detail\.expire_time\) \* 1000 - this\.now/.test(det));
 // 判据扫代码不扫注释（模板注释里就写着「不再有虚位」这句说明本身）
 const detCode = det.replace(/<!--[\s\S]*?-->/g, '');
-// 2026-10-29 改写：2026-10-27 对照小鹅通重排后成员区已是「44px 头像网格 + 团长小标」（横向列表那一版已撤），
+// 2026-10-29 改写：2026-10-27 对照参照产品重排后成员区已是「44px 头像网格 + 团长小标」（横向列表那一版已撤），
 // 旧判据钉的是 2026-10-16 的纵向昵称列表 —— 设计换了、判据没跟（改版后一直红）。现在钉**当前**这一档：
 // 固定 44 圆、间距由容器 gap 给、团长小标、模拟成团补位；纵向列表那一档的类与副行函数必须零残留（防两套并存）。
-ok('6.8 成员区是**44px 头像网格**（2026-10-27 对照小鹅通图 1/2/4 那一版）：圆 44、间距只由 `.gbd-members` 的 gap 给、'
+ok('6.8 成员区是**44px 头像网格**（2026-10-27 对照参照产品图 1/2/4 那一版）：圆 44、间距只由 `.gbd-members` 的 gap 给、'
   + '团长那一枚挂 `团长` 小标、模拟成团按 `virtual_count` 补位；2026-10-16 那版纵向昵称列表（28 圆 + 副行 + 行底线）已撤净',
   /class="gbd-member"/.test(detCode) && /class="gbd-leader-tag"/.test(detCode)
     && /\.gbd-member-avatar\s*\{[\s\S]{0,160}width:\s*44px/.test(detCode)
@@ -2063,8 +2063,12 @@ const EXAM_JS = 'src/pages/app/exam/detail/js.vue';
 
   const gbSource = /that\.\$api\('group_buy\.activity\.detail', \{ goods_type: goodsType, goods_id: goodsId \}\)/.test(tkJs)
     && priceUtilOk;
+  // 2026-11-08：票种单价多了一档「积分兑换」分支（`isScoreExchange`，单位换「积分」、不摆划线原价），
+  // 拼团那一档的取价仍是 `ticketUnitText(item)`，所以这里按「拼团分支在」而不是「它是第一支」判；
+  // 兑换分支存在时，划线原价那一行必须连它一起收（`&& !isScoreExchange`），否则一屏两套单位
   const gbShown = /<span class="ticket-price-value">\{\{ ticketUnitText\(item\) \}\}<\/span>/.test(tkVue)
-    && /v-if="ticketOrigin\(item\) && !isVirtualPay\(detail\)"/.test(tkVue)
+    && /v-if="ticketOrigin\(item\) && !isVirtualPay\(detail\)( && !isScoreExchange)?"/.test(tkVue)
+    && (/isScoreExchange/.test(tkVue) ? /!isVirtualPay\(detail\) && !isScoreExchange/.test(tkVue) : true)
     && /price \+= this\.ticketUnitPrice\(this\.ticketList\[j\]\) \* this\.ticketSelected\[i\]/.test(tkJs);
   ok('㊱1 选票页拼团价适配：票种单价与合计都吃 `group_buy.activity.detail` 的拼团价（阶梯型按 URL 那一档）、'
     + '划线原价取活动快照 `origin_price`，映射只存 `group-buy-ticket-price.js` 一份；普通报名链逐字不变',

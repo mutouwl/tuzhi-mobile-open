@@ -1,23 +1,49 @@
-
 .container{
     padding: 10px;
 }
 
-.course-list-box.diallel {
+/* 列表容器：卡片自身的圆角/底色/内衬/间距都在 `components/tz/score-goods-card.vue` 里，
+   本页只负责「列表是单列」这一层，不再抄一份卡片版式（硬约束 11）。
+   类名带页面前缀：`course-mini.vue` 等组件的 `<style>` 未加 scoped，
+   `.course-list-box` 这类通用名会被它的全局规则选中（M11/M12） */
+.goods-list {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
 }
 
-.filter{
+/* 筛选按钮：图标 + 文字一行居中。类名带页面前缀 `sc-`（M11）——`.filter` 是全站通用名，
+   多个页面各自给它写过完全不同的值（.filter{ padding:15px 10px; background:#F7F8FA } 那一族），
+   裸用它会被别的页面样式选中。
+   ① 图标与文字都是 flex 项，容器 display:flex + align-items:center 只对齐「行盒」，
+      行盒高不一致（图标那条被 tz-icon 钉成 16px，文字吃继承行高）时墨迹中心就差出来；
+      故把行高钉成与图标同档的 16px，两条行盒等高，中心自然重合（§1 行内图标）。
+   ② 间距只由容器 gap 给，不给某一项写 margin（W41②）。
+   ③ tz 的 paixu 墨迹中心本就比行盒中心低 ≈0.4px，与中文同向，不补 translateY（§1 第②步）。
+   ④ 不画左分隔线：本页是页签行右侧的独立入口，页签各自的 11px 内衬已经给出间距；
+      带一条竖线的是「一条栏里并排两组」的形态，全站同类筛选按钮（tz-search-filter-bar 那枚、
+      教务预约列表 bl-filter-btn）都不带边框，多这一条读起来像页面被切开。
+   ⑤ 右侧留白 15px：与上方搜索栏（tz-box padding 左右各 15px）同一条右边界，两处右缘对齐；
+      页签行本身没有左右内衬，这个数只能由本按钮自己补齐（M7②）。上下 2px 与教务预约列表
+      的 bl-filter-btn 同档，把点击区撑到 20px；视觉位置仍由 u-tabs__wrapper 的 align-items:center 居中。
+   ⑥ 排序名最长是 6 个字（「商品原价高到低」），页签行是按分组往后长的，横向一挤本项会缩、
+      文字折成两行把整行撑高，故不参与收缩、也不换行 */
+.sc-filter{
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: 12px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    gap: 4px;
+    line-height: 16px;
     color: #4E5969;
     background-color: #fff;
-    padding: 0 4px;
-    border-left: 1px solid #f5f5f5;
+    padding: 2px 15px 2px 8px;
+}
+
+/* 排序生效（非默认排序）时图标与文字一起转主色，与教务搜索页筛选按钮同一口径 */
+.sc-filter.active{
+    color: #0968f6;
 }
 
 /*  #ifdef H5  */

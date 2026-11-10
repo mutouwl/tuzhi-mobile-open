@@ -10,8 +10,6 @@ export default {
       config: {},
       //待结算收益与到账提示（都由后端算）
       total: {},
-      //账户余额（user.money，佣金结算到余额之后落在这里）
-      balance: '0.00',
       // 首屏即为加载态：金额那一格先铺骨架屏（M16）；onShow 重取不置回 true，已渲染的数字不被盖掉
       loading: true
     }
@@ -43,8 +41,8 @@ export default {
   },
   methods: {
     getData() {
-      // 四条腿一起取：分销钱包、商家开关、待结算汇总、账户余额。
-      // 骨架屏的收口判据是这四条全部回音（硬约束 22：一个加载态盖住多条腿时不能「这一腿回来了就撤」），
+      // 三条腿一起取：分销钱包、商家开关、待结算汇总（账户余额已按用户口径从本页撤掉，不再取）。
+      // 骨架屏的收口判据是这三条全部回音（硬约束 22：一个加载态盖住多条腿时不能「这一腿回来了就撤」），
       // 任何一条失败都不能拖住其余，否则整页停在占位态
       var jobs = [
         that.$api('app.agent.member.getMember', {}).then(res => {
@@ -57,24 +55,19 @@ export default {
             that.config = res.data;
           }
         }),
-        //读汇总时后端会先把本人到点的佣金就地结算掉，这里的待结算与下面的余额才是同一时刻的数
+        //读汇总时后端会先把本人到点的佣金就地结算掉，这里的待结算才是同一时刻的数
         that.$api('app.agent.order.getTotal', { type: '' }).then(res => {
           if (res.code === 1) {
             that.total = res.data;
           }
-        }),
-        that.$api('user.withdraw.getBalance', {}).then(res => {
-          if (res.code === 1) {
-            that.balance = res.data.balance;
-          }
         })
       ];
 
+      // 下拉刷新等这一趟全部回音再收条（M4）
       Promise.all(jobs.map(job => job.catch(() => null))).then(() => {
         that.loading = false;
+        uni.stopPullDownRefresh();
       });
-
-      uni.stopPullDownRefresh();
     },
 
     //刷新

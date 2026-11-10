@@ -7,11 +7,15 @@ import PackageGoodsCard from '@/components/tz/package-goods-card.vue';
 // 拼团下单上下文（扁平 gb_* 键）：本页既是普通报名的确认页，也是**拼团那条链**的确认页 ——
 // 拼团进来时原样收下、确认完（校区可换、学生可选）再原样带回结算页。键名只存那一处（硬约束 11）。
 import { readGroupBuyOrder, withGroupBuyOrder } from '@/common/utils/group-buy-order.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 export default {
+    mixins: [scoreExchange],
     components: { StudentSelectPopup, StudentInfo, CampusSelectPopup, PackageGoodsCard },
     data() {
         // 预填上次选中的学生（教务中心/确认页切换后缓存），进页后拉名单按接口数据校正（见 resolveStudent）
-        return { id: 0, skuIndex: 0, campusId: 0, form: {}, student: schoolStudent.get() || { id: 0, name: '' }, studentPopup: false, campusPicker: false, gb: {}, skeletonLoading: true, installed: true };
+        return { id: 0, skuIndex: 0, campusId: 0, form: {}, student: schoolStudent.get() || { id: 0, name: '' }, studentPopup: false, campusPicker: false, gb: {}, skeletonLoading: true, installed: true,
+            // 未裁剪的套餐规格清单（兑换模式的裁剪从它重算，不拿裁过的再裁）
+            rawSkus: [] };
     },
     computed: {
         sku() {
@@ -51,6 +55,7 @@ export default {
         },
     },
     onLoad(options) {
+        this.initScoreExchange(this.$nav.parsePageParams(options));
         if (!this.$tools.systemConfig('app_isinstall_school')) {
             this.installed = false;
             uni.showToast({ title: '该功能未开通', icon: 'none' });
@@ -72,6 +77,13 @@ export default {
         getData() {
             this.$api('school.package.detail', { id: this.id }).then((ret) => {
                 this.form = ret.data || {};
+                // 未裁剪的套餐规格原清单留一份（兑换模式的裁剪从它重算）
+                this.rawSkus = Array.isArray(this.form.skus) ? this.form.skus.slice() : [];
+                // 积分兑换（2026-11-08）：本页只摆商家勾过的套餐规格，并按同样规则把地址里的
+                // **原下标**换算成裁剪后的位置（详情页传的是原下标，它自己也裁了一次）。
+                if (this.isScoreExchange) {
+                    this.applyScoreSpecScope();
+                }
                 // 进页时没带校区 / 带了但已失效（软删或停用）：只有一个可选校区就直接选上，
                 // 多个则等用户在本页点选（校区格写「请选择校区」，提交前会拦一次）
                 if (!this.campusName && (this.form.campus_list || []).length === 1) {
@@ -81,6 +93,35 @@ export default {
             }).catch(() => {
                 this.skeletonLoading = false;
             });
+        },
+        /** 积分商品详情到手（mixins 回调）：套餐规格重裁一次（详情可能晚于套餐到） */
+        onScoreExchangeReady() {
+            if (!this.isScoreExchange) { return; }
+            if (this.scoreExchangeError) {
+                this.skeletonLoading = false;
+                uni.showToast({ title: this.scoreExchangeError, icon: 'none' });
+                return;
+            }
+            this.applyScoreSpecScope();
+        },
+        /**
+         * 按「商家勾过的规格」重裁 `form.skus`，并把 `skuIndex` 从**原下标**换算成裁剪后的位置
+         *
+         * 地址里带的是原下标（详情页 `skuIndexForUrl()` 换算出来的），本页数组却是裁过的 ⇒
+         * 不换算就会「选了第 2 档、页面显示第 1 档」。
+         * `__skuOriginIndex[k]` = 裁剪后第 k 档在原数组里的位置，反查即得。
+         */
+        applyScoreSpecScope() {
+            if (!this.form) { return; }
+            const base = Array.isArray(this.rawSkus) ? this.rawSkus : (this.form.skus || []);
+            const kept = this.scoreHasSpec
+                ? this.scoreSpecOptions(base)
+                : base.map((item, index) => ({ item, index }));
+            this.form.skus = kept.map((row) => row.item);
+            const origin = kept.map((row) => row.index);
+            const want = Number(this.skuIndex) || 0;
+            const at = origin.indexOf(want);
+            this.skuIndex = at >= 0 ? at : 0;
         },
         // 拉取绑定学生列表：本页学生以接口下发的名单为准（接口只含未删除的学生），缓存只作首帧占位。
         // 缓存学生不在名单中＝已被机构删除或已解绑：先丢掉失效缓存再按统一规则回落，
@@ -137,7 +178,7 @@ export default {
                 this.$nav.to(url, 'local', 'redirectTo');
                 return;
             }
-            const goodsList = JSON.stringify([{
+            const goodsList = JSON.stringify([this.withScoreGoods({
                 goodsId: this.sku.id,
                 goodsType: 'school_package',
                 count: 1,
@@ -146,7 +187,7 @@ export default {
                     student_id: this.student.id,
                     campus_id: this.campusId,
                 },
-            }]);
+            })]);
             this.$nav.to('/pages/order/submit/submit?type=school_package&goodsList=' + goodsList, 'local', 'redirectTo');
         },
     },

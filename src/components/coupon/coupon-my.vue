@@ -24,7 +24,14 @@
 					</template>
 				</view>
 				<view class="left-type" :class="data.status == 'expired' || data.status == 'used' ? 'disabled-color' : 'subtitle-color'">
-					{{ (data.type === 'reduce' || data.type == 'reduce') ? '满' + (data.enough || 0) + '可用' : '优惠券' }}
+					<!-- 门槛读生效值（`enough_status=2` ⇒ 无门槛），与算价 / 后台文案同一判据；
+					     旧写法只看 `enough`，商家把门槛开关关掉、残留金额还在时，券卡写「满100可用」
+					     而下单已经不再拦门槛（2026-11-03 同族复核） -->
+					{{ (data.type === 'reduce' || data.type == 'reduce')
+						? ((!data.enough_status || data.enough_status == 2 || (data.enough || 0) <= 0)
+							? '无门槛可用'
+							: '满' + (data.enough || 0) + '可用')
+						: '优惠券' }}
 				</view>
 				</template>
 			</view>
@@ -91,7 +98,8 @@
 		<!-- 不可使用原因提示（v-if 才出，骨架档不预留这一格） -->
 		<view class="cant-use-msg-box" v-if="!skeleton && cantUseMsg">
 			<view class="cant-use-msg">
-				<tz-icon name="prompt" :size="14" color="#FF7820" />{{ cantUseMsg }}
+				<tz-icon name="prompt" :size="14" color="#FF7820" />
+				<text class="cant-use-msg-text">{{ cantUseMsg }}</text>
 			</view>
 		</view>
 	</view>
@@ -436,6 +444,13 @@ export default {
 	color: #505050;
 	display: flex;
 	align-items: center;
+	gap: 4px;
+}
+
+/* 行内图标 + 文字：行高钉到图标同档（:size=14），间距交给容器 gap */
+.cant-use-msg-text {
+	font-size: 12px;
+	line-height: 14px;
 }
 
 /* 颜色定义 */

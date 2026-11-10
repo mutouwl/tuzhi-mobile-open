@@ -135,6 +135,34 @@ export default {
     },
 
     /**
+     * 积分商城商品 → 对应商详（带 `score_goods_id` 进兑换模式）
+     *
+     * 九类落点复用本文件同一份 type→页面映射；课程五型额外带 `type=score`
+     * 兼容课程商详既有的兑换模式。不在这里再抄一遍路径。
+     * @param {string} goodsType 大类（course/physical/...）
+     * @param {string} subType 课程细分（article/video/...）
+     * @param {number} goodsId 商品 id
+     * @param {number} scoreGoodsId 积分商品行 id
+     * @returns {String}
+     */
+    scorePath(goodsType, subType, goodsId, scoreGoodsId) {
+        var type = String(goodsType || 'course');
+        var sub = String(subType || '');
+        var pageType = type === 'course' && sub !== '' ? sub : type;
+        var base = pageType === 'vipcard'
+            ? '/pages/app/vip/center/center?card_id=' + (Number(goodsId) || 0)
+            : (pageType === 'checkin'
+                ? '/pages/app/checkin/intro/intro?id=' + (Number(goodsId) || 0)
+                : this.getPagePath(goodsId, pageType));
+        if (!base) { return ''; }
+        var url = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'score_goods_id=' + (Number(scoreGoodsId) || 0);
+        if (type === 'course') {
+            url += '&type=score';
+        }
+        return url;
+    },
+
+    /**
      * 拼团商品链接（`<商品 id>_<商品大类>`）→ 那件商品的详情页
      *
      * 拆出大类后**复用本表同一份 type→页面映射**，不在这一档再写一遍路径；

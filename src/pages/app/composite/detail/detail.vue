@@ -63,7 +63,13 @@
         <!-- 拼团价横幅回拼团区（2026-10-30 用户点名「gba-rule 拼团玩法都应该放在 gba-banner 下面，
              也包括正在拼团的列表，让拼团连成一个整体」+「上下挨在一起，不要拆分放」）：
              横幅与玩法、凑团列表在下一张卡里连着排，拼团进行中本卡价格行收起（第五轮）。 -->
-        <view class="price-box" v-if="gbPriceShown">
+        <view class="price-box" v-if="isScoreExchange">
+          <view class="price-wrapper">
+            <text class="price-text">{{ scoreExchangeScore }}</text>
+            <text class="price-symbol">积分</text>
+          </view>
+        </view>
+        <view class="price-box" v-else-if="gbPriceShown">
           <view class="price-wrapper" v-if="selectedSpec">
             <text class="price-symbol" v-if="!isVirtualPay">¥</text>
             <text class="price-text">{{ selectedSpec.price }}</text>
@@ -90,7 +96,7 @@
            `@go-pay` 只记账：导航由组件自己发（它才知道选了哪一档、凑的是哪一个团），见 js.vue 的 gbGoPay -->
       <!-- `host-spec`（2026-10-29）：规格/内含商品交给本页自己的 `spec-select-modal` 选（那只本来就有这两节），
            拼团区不再摆第二套规格卡；选完回调 `afterSpec`，阶梯档由拼团区第二步弹窗接着问 -->
-      <tz-group-buy-area v-if="goodsId" ref="gbArea" goods-type="composite" :goods-id="goodsId" host-spec hide-danmu
+      <tz-group-buy-area v-if="goodsId && !isScoreExchange" ref="gbArea" goods-type="composite" :goods-id="goodsId" host-spec hide-danmu
         :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
         :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
         :join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
@@ -137,8 +143,8 @@
     </view>
     <view class="detail-tabbar h5-bottom-bar" v-else-if="goodsInfo">
       <view class="tabbar-right">
-        <tz-group-buy-btn v-if="gbEntry" class="cmp-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-        <button class="buy-btn" @tap="handleBuy" v-if="!gbInTeam && !gbJoinMode">立即购买</button>
+        <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="cmp-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+        <button class="buy-btn" @tap="handleBuy" v-if="!gbInTeam && !gbJoinMode">{{ isScoreExchange ? '立即兑换' : '立即购买' }}</button>
       </view>
     </view>
 
@@ -155,6 +161,8 @@
       :selected-spec="selectedSpec"
       :gb="(gbPicking || gbInTeam) ? gbActivity : null"
       :in-team="gbInTeam"
+      :score-mode="isScoreExchange"
+      :score-value="scoreExchangeScore"
       @select="onSpecSelect"
       @confirm="onSpecConfirm"
       @close="closeSpecPicker"

@@ -52,19 +52,24 @@
 					<div>答题卡</div>
 				</div>
 
+				<!-- 三枚按钮都不许再写 `display:block`（2026-11-09 用户点名「上一题、下一题及交卷
+				     并没有在垂直方向上居中，也没有水平居中」）：inline 的 display 会盖掉 uview
+				     `.u-button` 的 `display:flex; align-items:center; justify-content:center`，
+				     文字只剩 uni-button 自带的 `text-align:center` + 行盒贴顶，两轴都不居中。
+				     宽高交给 `.u-button{width:100%}` 与 `.page-btn>div` 的格子，按钮自己不带 margin -->
 				<div class="page-btn">
 					<div>
-						<u-button :customStyle="{display:'block',width:'100%'}" style="display:block;width:100%" type="default" plain :disabled="currentIndex == 0" @click="changeQuestion('prev')">
+						<u-button :customStyle="{ width: '100%' }" type="default" plain :disabled="currentIndex == 0" @click="changeQuestion('prev')">
 							<tz-icon name="return" :size="16" />&nbsp;上一题
 						</u-button>
 					</div>
 					<div v-if="currentIndex < data.question_list.length - 1">
-						<u-button :customStyle="{display:'block',width:'100%'}" style="display:block;width:100%" type="primary" @click="changeQuestion('next')">
+						<u-button :customStyle="{ width: '100%' }" type="primary" @click="changeQuestion('next')">
 							下一题 &nbsp;<tz-icon name="enter" :size="16" />
 						</u-button>
 					</div>
 					<div v-else-if="data.status == 0">
-						<u-button :customStyle="{display:'block',width:'100%'}" style="display:block;width:100%" type="primary" @click="submitConfirm">
+						<u-button :customStyle="{ width: '100%' }" type="primary" @click="submitConfirm">
 							交卷 &nbsp;<tz-icon name="checkmark" :size="16" />
 						</u-button>
 					</div>

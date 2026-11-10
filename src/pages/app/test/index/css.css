@@ -1,0 +1,54 @@
+/* 考试列表：页面底走全局 page 背景（#fafafa），行卡是白底 tz-box 里的一条条清单
+   （与作业练习列表同一形：标题 + 副行，右侧一枚箭头） */
+.test-list-page {
+	min-height: 100vh;
+}
+
+.exam-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 15px 0;
+	border-bottom: 1px solid #efefef;
+}
+
+/* 末行不留发丝线：按 index 收口（小程序端结构伪类不稳，同 M6/M24），真实行与骨架行同一档 */
+.exam-row-last {
+	border-bottom: none;
+}
+
+/* 按下反馈用同一块浅灰底（不换字号/不缩放） */
+.exam-row-hover {
+	background-color: #fafafa;
+}
+
+.exam-row-main {
+	flex: 1;
+	min-width: 0;
+	padding-right: 10px;
+}
+
+.exam-row-title {
+	font-size: 14px;
+	font-weight: 500;
+	color: #1d2129;
+}
+
+.exam-row-sub {
+	margin-top: 6px;
+	font-size: 12px;
+	color: #86909c;
+}
+
+/* 骨架档里箭头那一格也先占位（与真实 tz-icon 16 同尺寸） */
+.exam-row-arrow-sk {
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+	border-radius: 4px;
+	background-color: #e5e6eb;
+}
+
+.load-more-box {
+	padding: 4px 0 12px;
+}

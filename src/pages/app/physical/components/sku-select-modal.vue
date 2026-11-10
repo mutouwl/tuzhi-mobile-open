@@ -6,8 +6,8 @@
 	  拼团那一趟的价格 / 原价划线 / 「拼团」标 / 「拼团专享」标 / N人团 / 红橙按钮都由外壳按
 	  `gb-mode` 一处判，本组件只把这一档的值算好递进去（取价口径仍只存 `common/utils/group-buy-spec.js`）。
 	-->
-	<tz-spec-popup-shell :show="show" :gb-mode="gbMode" :cover="coverSrc" :gb-price="gbPrice" :price="priceText"
-		:origin-price="priceText" :team-text="gbTeam" :is-virtual-pay="isVirtualPay" :coin-name="coinName"
+	<tz-spec-popup-shell :show="show" :gb-mode="gbMode" :cover="coverSrc" :gb-price="gbPrice" :price="shellPrice"
+		:origin-price="shellOrigin" :team-text="gbTeam" :is-virtual-pay="shellVirtualPay" :coin-name="shellCoinName"
 		:sub-text="getSkuText()" :confirm-text="confirmText" :confirm-disabled="confirmDisabled"
 		max-height="70vh" :body-scroll="true" :body-style="bodyStyle" @close="close" @confirm="onConfirm">
 		<!-- 正文外层：拼团态的选中色挂在这一层（外壳的 `gb-mode` 不在本组件作用域里，
@@ -99,6 +99,15 @@ export default {
 		inTeam: {
 			type: Boolean,
 			default: false
+		},
+		/** 积分兑换模式：头区价格换成积分，不摆划线现金价 */
+		scoreMode: {
+			type: Boolean,
+			default: false
+		},
+		scoreValue: {
+			type: [String, Number],
+			default: 0
 		}
 	},
 	data() {
@@ -132,6 +141,19 @@ export default {
 		/** 普通态那一格价格（拼团态由外壳按 `gb-mode` 切到 `gbPrice`，这一格不参与） */
 		priceText() {
 			return this.selectedSkuPrice.price || (this.goodsInfo && this.goodsInfo.price) || 0;
+		},
+		/** 外壳头区价格：兑换模式只显示积分，不显示现金 */
+		shellPrice() {
+			return this.scoreMode ? this.scoreValue : this.priceText;
+		},
+		shellOrigin() {
+			return this.scoreMode ? '' : this.priceText;
+		},
+		shellVirtualPay() {
+			return this.scoreMode ? true : this.isVirtualPay;
+		},
+		shellCoinName() {
+			return this.scoreMode ? '积分' : this.coinName;
 		},
 		/** 虚拟支付那一趟的币名（外壳拼在价格后面，与圈子/组合同一档） */
 		coinName() {

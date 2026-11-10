@@ -44,7 +44,11 @@
         <!-- 拼团价横幅回拼团区（2026-10-30 用户点名「bga-rule 拼团玩法都应该放在 gba-banner 下面，
              也包括正在拼团的列表，让拼团连成一个整体」+「上下挨在一起，不要拆分放」）：
              横幅与玩法、凑团列表在下面那张卡里连着排，拼团进行中本卡价格行收起（第五轮；免费行同样收起）。 -->
-        <view class="price-row" v-if="gbPriceShown && info.sell_type == 2">
+        <view class="price-row" v-if="isScoreExchange">
+          <text class="price-value">{{ scoreExchangeScore }}</text>
+          <text class="coin-name">积分</text>
+        </view>
+        <view class="price-row" v-else-if="gbPriceShown && info.sell_type == 2">
           <template v-if="!isVirtualPay">
             <text class="price-symbol">¥</text>
             <text class="price-value">{{ currentSpec ? currentSpec.price : minPrice }}</text>
@@ -68,7 +72,7 @@
              **上距按页给（2026-10-29 用户点名「送好友卡片要有上边距」）**：本页长条上方是
              `.cover-stat`（人加入 · 动态，自带 6px 上距），与长条之间不留缝就读成同一段 ⇒ 传 8，
              与课程商详那一档同值（M45：改这一档只改调用点，不回 `.sfa-entry--card` 写死）。 -->
-        <tz-send-friend-area v-if="id && info.sell_type == 2" ref="sfCard" scene="inCard" manual
+        <tz-send-friend-area v-if="id && info.sell_type == 2 && !isScoreExchange" ref="sfCard" scene="inCard" manual
           goods-type="circle" :goods-id="id" :margin-top="8"
           :extend="currentSpec ? (currentSpec.id + '_' + currentSpec.price) : ''" @open="onGiftOpen" />
       </view>
@@ -82,7 +86,7 @@
            `@go-pay` 只记账：导航由组件自己发，见 js.vue 的 gbGoPay -->
       <!-- `host-spec`（2026-10-29）：规格（有效期）交给本页自己的 `tz-circle-spec-popup` 选，
            拼团区不再摆第二套规格卡；选完回调 `afterSpec`，阶梯档由拼团区第二步弹窗接着问 -->
-      <tz-group-buy-area v-if="id" ref="gbArea" goods-type="circle" :goods-id="id" host-spec hide-danmu
+      <tz-group-buy-area v-if="id && !isScoreExchange" ref="gbArea" goods-type="circle" :goods-id="id" host-spec hide-danmu
         :join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
         :join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
         :join-goods-id="gbJoinCtx ? gbJoinCtx.goodsId : 0"
@@ -171,22 +175,22 @@
                ⇒ 主购买/续费一律收起，底栏只留「查看拼团详情」这一个出口），这里**只判这一处**、
                三支的购买按钮读同一枚标记，页面不另判 `my_team`。 -->
           <view class="footer-btn-group" v-if="joinStatus == 'joined'">
-            <tz-group-buy-btn v-if="gbEntry" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-            <view class="footer-btn renew" v-if="info.sell_type == 2 && !gbInTeam && !gbJoinMode" @tap="handleRenew">续费</view>
+            <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+            <view class="footer-btn renew" v-if="info.sell_type == 2 && !gbInTeam && !gbJoinMode" @tap="handleRenew">{{ isScoreExchange ? '立即兑换' : '续费' }}</view>
             <view class="footer-btn joined" @tap="goIndex">进入圈子</view>
           </view>
           <view class="footer-btn full" v-else-if="isBanned" @tap="onBanned">已被封禁</view>
           <view class="footer-btn-group" v-else-if="joinStatus == 'expired' && info.sell_type == 2">
-            <tz-group-buy-btn v-if="gbEntry" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-            <view class="footer-btn renew" v-if="!gbInTeam && !gbJoinMode" @tap="handleRenew">立即续费</view>
+            <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+            <view class="footer-btn renew" v-if="!gbInTeam && !gbJoinMode" @tap="handleRenew">{{ isScoreExchange ? '立即兑换' : '立即续费' }}</view>
           </view>
           <view class="footer-btn full" v-else-if="isFull" @tap="onFull">该圈子已满员</view>
           <view class="footer-btn free" v-else-if="info.sell_type == 1 || info.can_join_free == 1" @tap="freeJoin">免费加入</view>
           <!-- 拼团档：与「立即购买」并排（竞品 07 图：售卖 + 发起拼团）。
                `gbEntry` 空（无活动/未装插件）时整组只剩「立即购买」一枚，与改造前逐字相同 -->
           <view class="footer-btn-group" v-else>
-            <tz-group-buy-btn v-if="gbEntry" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
-            <view class="footer-btn" v-if="!gbInTeam && !gbJoinMode" @tap="handleBuy">立即购买</view>
+            <tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="presale-gb-slot" height="44" :text="gbEntry ? gbEntry.text : ''" :price="gbEntry ? gbEntry.price_text : ''" @open="openGb" />
+            <view class="footer-btn" v-if="!gbInTeam && !gbJoinMode" @tap="handleBuy">{{ isScoreExchange ? '立即兑换' : '立即购买' }}</view>
           </view>
         </view>
       </view>
@@ -206,7 +210,8 @@
         :gb="(gbPicking || (gbInTeam && !giftMode)) ? gbActivity : null"
         :in-team="gbInTeam && !giftMode"
         :renew-tip="renewTip" @pick="onSpecPick" @confirm="confirmSpec"
-        @update:show="showSpec = $event" @close="closeSpec" />
+        @update:show="showSpec = $event" @close="closeSpec"
+        :score-mode="isScoreExchange" :score-value="scoreExchangeScore" />
     </view>
 
     <tz-tab-bar @visibleChange="onTabbarVisible" />

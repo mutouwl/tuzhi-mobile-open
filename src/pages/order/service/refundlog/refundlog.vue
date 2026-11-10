@@ -22,7 +22,7 @@
 
 		<tz-box padding="5px 5px" v-else-if="list.length > 0">
 			<u-cell-group :border="false">
-				<u-cell  size="large" v-for="(item,index) in list" :key="index"  :border="(list.length - 1) == index ? false : true" :title="item.item_name ? '退款商品「'+item.item_name +'」': '-'" :value="'¥'+item.refund_fee" :label="$tools.formatDate(item.createtime)">
+				<u-cell  size="large" v-for="(item,index) in list" :key="index"  :border="(list.length - 1) == index ? false : true" :title="item.item_name ? '退款商品「'+item.item_name +'」': '-'" :value="Number(item.score_amount) > 0 ? item.score_amount + '积分' : '¥'+item.refund_fee" :label="$tools.formatDate(item.createtime)">
 				</u-cell>
 			</u-cell-group>			
 		</tz-box>

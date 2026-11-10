@@ -2,8 +2,10 @@
 import { detailTitle, applyH5Share, mpCard } from "@/common/utils/checkin-share";
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
+import scoreExchange from '@/common/mixins/score-exchange.js';
 var that;
 export default {
+  mixins: [scoreExchange],
   data() {
     return {
       id: 0,
@@ -149,6 +151,7 @@ export default {
   },
   onLoad(options) {
     that = this;
+    this.initScoreExchange(options);
     if (!that.$tools.systemConfig("app_isinstall_checkin")) {
       uni.showToast({ title: "打卡功能未安装", icon: "none" });
       setTimeout(() => uni.navigateBack(), 800);
@@ -268,12 +271,12 @@ export default {
     },
     // 付费参与：与打卡主页同一条下单链路（订单 goods_type=checkin），支付成功由 Payed 行为发放权益
     goBuy() {
-      const goodsList = [{
+      const goodsList = [that.withScoreGoods({
         goodsId: that.id,
         goodsType: 'checkin',
         count: 1,
         extend: '',
-      }];
+      })];
       that.$nav.to('/pages/order/submit/submit?type=checkin&goodsList=' + JSON.stringify(goodsList));
     },
     goCourse() {

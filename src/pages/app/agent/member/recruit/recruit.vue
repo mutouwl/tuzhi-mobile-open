@@ -71,7 +71,7 @@
 							<u-cell-group :border="false">
 								<u-cell :title="'消费笔数满' + config.member_recruit_condition_paycount_value + '笔'"
 									:label="'当前消费笔数为：' + userCondition.pay_count + ' 笔'"
-									:value="userCondition.pay_count >= config.member_recruit_condition_paycount_value ? '已达成' : '未达成'"
+									:value="payCountAchieved ? '已达成' : '未达成'"
 									:border="false" :titleStyle="{ fontSize: '14px' }"
 									v-if="config.member_recruit_condition_paycount_status == 1">
 									<img src="@/static/image/app/price.png" class="condition-icon" slot="icon" width="30"
@@ -79,7 +79,7 @@
 								</u-cell>
 								<u-cell :title="'自购金额满' + config.member_recruit_condition_payprice_value + '元'"
 									:label="'当前自购金额为：' + userCondition.pay_price + ' 元'" :border="false"
-									:value="userCondition.pay_price >= config.member_recruit_condition_payprice_value ? '已达成' : '未达成'"
+									:value="payPriceAchieved ? '已达成' : '未达成'"
 									:titleStyle="{ fontSize: '14px' }"
 									v-if="config.member_recruit_condition_payprice_status == 1">
 									<img src="@/static/image/app/count.png" slot="icon" class="condition-icon" width="30"

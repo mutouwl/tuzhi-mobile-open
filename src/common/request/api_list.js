@@ -848,6 +848,12 @@ export default {
 				auth: true,
 				method: 'POST',
 			},
+			// 积分任务「关联打卡」指定的打卡清单（范围＝score_task.checkin.activity_ids）
+			designated: {
+				url: 'app/checkin/designated/getList',
+				auth: true,
+				method: 'POST',
+			},
 			detail: {
 				url: 'app/checkin/checkin/detail',
 				auth: true,
@@ -1403,6 +1409,13 @@ export default {
 			},
 		},
 
+		// 积分任务「学完指定课程」指定的课程清单（范围＝score_task.study_course.course_ids）
+		designated: {
+			url: 'course/designated/getList',
+			auth: false,
+			method: 'POST',
+		},
+
 		group: {
 			index: {
 				url: 'course/group/index',
@@ -1832,6 +1845,13 @@ export default {
 				method: 'POST',
 				// desc: '考试记录',
 			},
+			// 考试列表（积分任务「参加考试」的落点；范围＝score_task.exam.exam_ids）
+			examList: {
+				url: 'app/test/exam/getList',
+				auth: false,
+				method: 'POST',
+				// desc: '考试列表',
+			},
 		},
 
 		/** 题库练习 ↓ **/
@@ -1981,11 +2001,50 @@ export default {
 				method: 'POST',
 				// desc: '积分详情',
 			},
+			types: {
+				url: 'app/score/goods/types',
+				auth: false,
+				method: 'POST',
+				// desc: '积分商品筛选的大类选项',
+			},
 			config: {
 				url: 'app/score/config/getConfig',
 				auth: false,
 				method: 'POST',
 				// desc: '配置',
+			},
+			// 积分中心（P4：余额 + 任务 + 领取 + 规则）
+			center: {
+				url: 'app/score/center/index',
+				auth: true,
+				method: 'POST',
+				// desc: '积分中心首屏',
+			},
+			tasks: {
+				url: 'app/score/center/tasks',
+				auth: true,
+				method: 'POST',
+				// desc: '全部任务',
+			},
+			claim: {
+				url: 'app/score/center/claim',
+				auth: true,
+				method: 'POST',
+				// desc: '领取任务奖励',
+			},
+			rule: {
+				url: 'app/score/center/rule',
+				auth: true,
+				method: 'POST',
+				// desc: '积分规则',
+			},
+			// 购买商品任务（基础规则 / 自定义活动）范围是「指定商品可用」时，「去逛逛」落的清单；
+			// 范围与发放侧同一份真源，端上不另判
+			consumeGoods: {
+				url: 'app/score/consume/goods',
+				auth: false,
+				method: 'POST',
+				// desc: '消费发放任务指定的商品清单',
 			},
 		},
 		//签到

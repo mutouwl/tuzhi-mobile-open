@@ -1,11 +1,13 @@
 <script>
 // 拼团「加入别人的团」上下文（团详情「立即加入」带 gb_team 一组参数进本页）
 import { readGroupBuyJoin } from '@/common/utils/group-buy-join.js';
+import scoreExchange from '@/common/mixins/score-exchange.js';
 var that;
 // 模块级的取数轮次：同一路由在页面栈里出现两次时，旧实例在飞的响应不会撞上新实例的轮次
 // （若按实例计数，两边都从 1 开始，旧响应会被新实例当成自己的回体，M23）
 var loadSeq = 0;
 export default {
+  mixins: [scoreExchange],
   data() {
     return {
       detail: [],
@@ -185,6 +187,53 @@ export default {
     },
 
     /**
+     * 兑换模式的范围收口：**只留积分商品指向的那一张卡** + 那一张卡上勾过的档
+     *
+     * 用户原话（2026-11-08）：「明明只添加了一个会员卡，但是通过滑动切换不同的会员卡，
+     * 发现都可以兑换」「不要显示未添加积分兑换的会员卡和对应的价格选项」。
+     * 判据只读后端下发的 `scoreExchange.goods_id` 与 `spec_ids`（与积分商品行同源），
+     * 前端不按 URL 上的 `card_id` 自己猜 —— 商家换过会员卡后旧链接里的 card_id 可能是别的卡。
+     *
+     * 幂等：两条取数（卡列表 / 积分商品）谁先到都会调这一份。卡列表每次重取拿到的都是
+     * **新对象**（没有 `__scoreScoped` 标记）⇒ 会正常再裁一次；而同一次数据上重复调用时
+     * 标记让它直接返回，避免「裁剪后的下标再拿去做一次映射」。
+     */
+    applyScoreScope() {
+      // 卡列表已被裁成一张时直接跳过整段（`checkCardIndex` 恒 0，重复找只是白跑）
+      const only = Number(that.scoreExchange && that.scoreExchange.goods_id) || 0;
+      if (only > 0 && (that.detail.length !== 1 || Number(that.detail[0].id) !== only)) {
+        const keep = that.detail.findIndex((c) => Number(c.id) === only);
+        if (keep >= 0) {
+          that.detail = [that.detail[keep]];
+          that.checkCardIndex = 0;
+        } else {
+          // 积分商品指向的会员卡已下架/被删：整页按不可兑收口（别退回「哪张卡都能买」）
+          that.detail = [];
+          that.loadMsg = '该积分商品暂不可兑';
+          return;
+        }
+      }
+      if (!that.scoreHasSpec) { return; }
+      // 裁剪只在**还没裁过**的这一份上做：`__scoreScoped` 标记防重复裁导致下标二次映射
+      that.detail = that.detail.map((card) => {
+        if (card.__scoreScoped) { return card; }
+        const skus = Array.isArray(card.sku) ? card.sku : [];
+        const kept = that.scoreSpecOptions(skus, (item, index) => index);
+        const next = Object.assign({}, card, { sku: kept.map((row) => row.item) });
+        // 下标映射：裁剪后第 k 档在原数组里的位置（下单要带原下标）
+        next.__skuOriginIndex = kept.map((row) => row.index);
+        next.__scoreScoped = true;
+        return next;
+      });
+      // 当前选中那一档若被滤掉，落到剩下的第一档（下标是裁剪后的位置）
+      const card = that.detail[that.checkCardIndex];
+      const origin = card && Array.isArray(card.__skuOriginIndex) ? card.__skuOriginIndex : [];
+      if (origin.length && that.skuIndex >= origin.length) {
+        that.skuIndex = 0;
+      }
+    },
+
+    /**
      * 获取付费会员卡列表
      */
     getData() {
@@ -227,6 +276,19 @@ export default {
           if (that.checkCardIndex >= that.detail.length) {
             that.checkCardIndex = 0;
             that.skuIndex = 0;
+          }
+          // 积分兑换：卡片链接带了 card_id，落到那一张卡
+          const wantCard = Number(that.pageParams.card_id) || 0;
+          if (that.isScoreExchange && wantCard > 0) {
+            const hit = that.detail.findIndex((c) => Number(c.id) === wantCard);
+            if (hit >= 0) {
+              that.checkCardIndex = hit;
+              that.skuIndex = 0;
+            }
+          }
+          // 兑换模式的范围收口（单卡 + 可兑规格）：两个取数谁先到都走同一份
+          if (that.isScoreExchange) {
+            that.applyScoreScope();
           }
         } else {
           that.failMsg(res);
@@ -286,6 +348,10 @@ export default {
 
     /**
      * 购买会员卡
+     *
+     * 兑换模式下 `sku` 那一排被裁成「可兑换的几档」，**下标不能直接用**：
+     * 订单里的第二段是会员卡 sku JSON 的**原下标**（`Card::getPayDetail` 按下标取档），
+     * 裁剪后重新编号会把「第 2 档」指到别的价上。`__skuOriginIndex` 是裁剪时记下的映射。
      */
     buy() {
 
@@ -299,14 +365,17 @@ export default {
         return false;
       }
 
+      const originIndex = that.detail[that.checkCardIndex].__skuOriginIndex;
+      const specIndex = Array.isArray(originIndex) && originIndex.length
+        ? Number(originIndex[that.skuIndex])
+        : Number(that.skuIndex);
+
       //判断购买方式、单独购买、购买专栏
-      var goodsList = [
-        {
-          goodsId: that.detail[that.checkCardIndex].id + '_' + that.skuIndex,
-          goodsType: 'vipcard',
-          count: 1
-        }
-      ];
+      var goodsList = [that.withScoreGoods({
+        goodsId: that.detail[that.checkCardIndex].id + '_' + specIndex,
+        goodsType: 'vipcard',
+        count: 1
+      })];
       that.$nav.to('/pages/order/submit/submit?type=vipcard&goodsList=' + JSON.stringify(goodsList));
     },
 
@@ -366,6 +435,27 @@ export default {
   onPullDownRefresh() {
     that.refresh();
   },
+  /**
+   * 积分商品详情到手（mixins 里 `loadScoreExchange()` 成功后回调）
+   *
+   * 两条取数是并行的：卡列表可能先到、也可能后到。规格/单卡收口若只在 `getData()` 里做，
+   * 「积分商品晚到」那一拍就漏了 —— 用户看到的是全部卡、全部规格。
+   * 所以两处都调这一份（幂等：重复裁一次不会错，第二次时 `__skuOriginIndex` 已是原下标）。
+   */
+  onScoreExchangeReady() {
+    if (!that.isScoreExchange) { return; }
+    // 积分商品被拒（下架 / 勾过的档全失效）：整页按不可兑收口
+    if (that.scoreExchangeError) {
+      that.detail = [];
+      that.loadMsg = that.scoreExchangeError;
+      that.loading = false;
+      return;
+    }
+    // 两条取数并行：卡列表可能先到、也可能后到；`detail` 已经在手就当场收口
+    if (that.detail && that.detail.length) {
+      that.applyScoreScope();
+    }
+  },
   onShow() {
     that = this;
     // 从下单/支付退回来：只重取拼团区（整页重取会把人滑到的卡与已选规格打回去）
@@ -376,6 +466,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
+    this.initScoreExchange(that.pageParams);
     // 受邀参团：URL 上那一组 gb_* 只活在本页实例上；初值先置真，拼团区取到活动后由 `@ready.join` 校准
     that.gbJoinCtx = readGroupBuyJoin(that.pageParams);
     that.gbJoinMode = !!that.gbJoinCtx;

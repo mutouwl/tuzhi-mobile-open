@@ -1497,6 +1497,7 @@ export default {
       that
         .$api("app.score.detail", {
           id: that.pageParams.id,
+          score_goods_id: that.pageParams.score_goods_id || 0,
         })
         .then((res) => {
           if (res.code === 1) {
@@ -1857,6 +1858,8 @@ export default {
 
       //积分商品走独立兑换流程（优先于免费判断）
       if (this.pageParams.type && this.pageParams.type == "score") {
+        // 带上积分商品行 id：服务端按行定位，不再只按课程 goods_id 猜
+        goodsList[0].score_goods_id = Number(that.scoreGoodsDetail.score_goods_id || 0);
         that.leaveToPay(
           "/pages/order/submit/submit?type=score&goodsList=" + JSON.stringify(goodsList)
         );

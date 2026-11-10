@@ -1,0 +1,9 @@
+/* 课程列表（指定课程）：与课程广场同一档——页底走全局 page 背景，卡片由 tz-course 自己出，
+   这里只给内容区左右/上下内衬与本页私有的加载行（类名带页面前缀，M11） */
+.container {
+	padding: 10px;
+}
+
+.tc-loadmore {
+	padding: 8px 0;
+}

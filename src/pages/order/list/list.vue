@@ -47,17 +47,22 @@
 			</view>
 		</block>
 
-		<block v-else>
-			<order :orderIndex="index" :price="item.real_price" :status="item.status" :orderNo="item.order_no"
-				:controll="item.controll" :isVirtualPay="item.is_virtual_pay == 1"
-				:status-text="item.status_text || ''"
-				v-for="(item, index) in list" :key="index"
-				@handle="orderHandle">
-				<course v-if="option.snapshoot" v-for="(option, key) in item.item" :key="key" :name="option.snapshoot.name"
-					:cover="option.snapshoot.cover" :type="option.snapshoot.type" :price="option.snapshoot.price"
-					:count="option.count" :can_use="false" :is-virtual-pay="item.is_virtual_pay == 1" />
-			</order>
-		</block>
+			<block v-else>
+				<!-- 积分兑换单（2026-11-09）：现金实付恒 0，合计与商品行都改画积分（后端下发 `score_amount`） -->
+				<order :orderIndex="index" :price="Number(item.score_amount) > 0 ? item.score_amount : item.real_price" :status="item.status" :orderNo="item.order_no"
+					:controll="item.controll" :isVirtualPay="item.is_virtual_pay == 1"
+					:score-mode="Number(item.score_amount) > 0"
+					:status-text="item.status_text || ''"
+					v-for="(item, index) in list" :key="index"
+					@handle="orderHandle">
+					<course v-if="option.snapshoot" v-for="(option, key) in item.item" :key="key" :name="option.snapshoot.name"
+						:cover="option.snapshoot.cover" :type="option.snapshoot.type"
+						:price="Number(option.score_amount) > 0 ? option.score_amount : option.snapshoot.price"
+						:score-mode="Number(option.score_amount) > 0"
+						:count="option.count" :can_use="false" :is-virtual-pay="item.is_virtual_pay == 1" />
+				</order>
+			</block>
+
 
 		<u-empty icon="/static/image/empty.png" width="70" height="70" v-if="list.length == 0 && !loading" />
 

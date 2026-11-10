@@ -1,0 +1,138 @@
+/* 消费发放任务「指定商品」清单：商品卡与分销中心推广商品卡同一档
+   （120 定高 / 白底 10px 圆角 / 140 封面 + 两行标题 + 底部价格），类名带本页前缀（M11） */
+
+.consume-page {
+	min-height: 100vh;
+	background: #fafafa;
+	padding-bottom: 16px;
+}
+
+/* 顶部说明条：与积分模块同一色系（深琥珀字压浅琥珀底，白底上 5.3:1 档同源） */
+.consume-tip {
+	margin: 10px 15px 0;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: #FFF4E5;
+	font-size: 12px;
+	line-height: 18px;
+	color: #AA530D;
+}
+
+.consume-item {
+	height: 120px;
+	display: flex;
+	justify-content: space-between;
+	background-color: #fff;
+	margin: 10px 15px;
+	padding: 10px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.consume-item:last-child {
+	margin-bottom: 0;
+}
+
+.consume-item .consume-item-cover {
+	height: 100%;
+	width: 140px;
+	border-radius: 10px;
+	position: relative;
+	flex-shrink: 0;
+	background: #F1F2F4;
+}
+
+.consume-item .consume-item-cover .consume-item-cover-img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+}
+
+.consume-item .consume-item-cover .consume-item-type {
+	position: absolute;
+	bottom: 4px;
+	right: 4px;
+	height: 20px;
+	padding: 0 6px;
+	box-sizing: border-box;
+	line-height: 18px;
+	background: rgba(0, 0, 0, .25);
+	border-radius: 4px;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+}
+
+.consume-item .consume-item-cover .consume-item-type text {
+	color: #fff;
+	font-size: 10px;
+}
+
+.consume-item .consume-item-info {
+	width: calc(100% - 140px);
+	padding: 0 8px;
+	overflow: hidden;
+	position: relative;
+}
+
+.consume-item .consume-item-info .consume-item-title {
+	color: #1D2129;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.consume-item-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	bottom: 0;
+	width: 96%;
+}
+
+.consume-item-price {
+	color: #F53F3F;
+	font-weight: 600;
+	font-size: 16px;
+}
+
+/* 免费档与课程卡 no-price 同档：14px 常规字重，同样是价格红 */
+.consume-item-price.is-free {
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.consume-loadmore {
+	padding: 8px 0;
+}
+
+/* ===== 首屏骨架（M16）：占位块复用真实商品卡的容器类，只补占位条尺寸 ===== */
+.consume-sk .consume-sk-block {
+	background-image: linear-gradient(90deg, #F1F2F4 25%, #e6e6e6 37%, #F1F2F4 50%);
+	background-size: 400% 100%;
+	animation: consume-sk-animate 1.8s ease infinite;
+}
+
+.consume-sk .consume-sk-line {
+	display: block;
+	height: 14px;
+	border-radius: 4px;
+}
+
+.consume-sk .consume-sk-line + .consume-sk-line {
+	margin-top: 5px;
+}
+
+.consume-sk .sk-h-14 { height: 14px; }
+.consume-sk .sk-h-16 { height: 16px; }
+.consume-sk .sk-w-30 { width: 30%; }
+.consume-sk .sk-w-75 { width: 75%; }
+.consume-sk .sk-w-100 { width: 100%; }
+
+@keyframes consume-sk-animate {
+	0% { background-position: 100% 50%; }
+	100% { background-position: 0 50%; }
+}

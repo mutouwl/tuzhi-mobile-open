@@ -1,5 +1,5 @@
 <template>
-    <div @click="click" :disabled="disabled" :class="[
+    <div @click="click" :disabled="disabled" :style="customStyle" :class="[
     'tuzi-btn',
     {
         'primary':type == 'primary',
@@ -14,6 +14,7 @@
         'long':long,
         'theme-send-friend':theme == 'send-friend',
         'theme-group-buy':theme == 'group-buy',
+        'theme-score':theme == 'score',
         'disabled':disabled
     }
     
@@ -38,7 +39,10 @@
             // 'group-buy' = 拼团业务色（2026-10-30 用户点名「这个页面中的主题色是蓝色的，那最好可以
             // 同步一下平台的主题色」——拼团模块自己的主题色是红橙，取 `group-buy-btn` /
             // `group-buy-banner` 那一条 `linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%)`，
-            // 与商详底栏「立即开团」逐字同值，页面不再自己拼一条渐变）。
+            // 与商详底栏「立即开团」逐字同值，页面不再自己拼一条渐变）；
+            // 'score' = 积分模块业务色（2026-11-08 用户点名「把按钮的主题色调整为黄色，也就是我们这个
+            // 页面顶部的背景色那种主题」——积分中心页顶部余额区那条琥珀渐变 `#ef8531 → #f2a03a`
+            // 就是这一模块自己的主色，按钮与同屏的「+N 积分 / 已完成」一起从它派生，不再吃平台蓝）。
             // 只换底色、不换圆角与尺寸 —— 圆角仍吃 4px（M17）。
             theme: {
                 type: String,
@@ -59,6 +63,13 @@
             disabled: {
                 type: [Boolean],
                 default: false
+            },
+            // 调用点要改这一枚按钮的内衬时走这里（M12：跨组件覆盖只认 props）。
+            // 微信端本组件默认 `isolated`，调用方 wxss 里的 `::v-deep .tuzi-btn` 编译进产物也穿不进组件内部，
+            // 只有 inline style 能过隔离；传 CSS 字符串，避免 MP 端 `:style` 绑对象不序列化的那一坑。
+            customStyle: {
+                type: String,
+                default: ""
             }
         },
         methods: {
@@ -141,6 +152,17 @@
        `pages/app/group_buy/detail/detail.vue` 的动作区四枚主按钮走这一档 */
     .tuzi-btn.primary.theme-group-buy{
         background: linear-gradient(90deg, #ff4b2b 0%, #ff8f2b 100%);
+        border-color: transparent;
+    }
+
+    /* 积分主题：底色取积分中心页顶部余额区那一条琥珀渐变（`pages/app/score/home/home.vue`
+       的 `.score-head`：`#ef8531 0% → #f2a03a 56% → #f8ca47 100%`），与同屏余额数值压在同一条底上。
+       按钮只取前两档、不带浅端 `#f8ca47`：那一段白字只有 1.55:1，26px 高的小块上整条渐变读不清
+       （与 `theme-group-buy` 同理，M81）。白字对比 2.60 / 2.13，与同屏顶部这条渐变的既有白字、
+       参照页同类按钮（实测 2.11–2.46）同一档。只作用于显式传 theme="score" 的调用点，
+       其余按钮的蓝底逐字不变 —— 积分中心首页与「全部任务」页的任务行按钮走这一档 */
+    .tuzi-btn.primary.theme-score{
+        background: linear-gradient(90deg, #ef8531 0%, #f2a03a 100%);
         border-color: transparent;
     }
 

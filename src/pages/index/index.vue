@@ -84,6 +84,15 @@
 							:border="data.compontents[index].config.border" :round="data.compontents[index].config.round"
 							:type="data.compontents[index].config.type" :margin="data.compontents[index].config.margin" />
 
+						<!-- 积分商品组件：单列；来源（指定 / 最新 / 分组）与行数据都由装修接口取好下发，
+							 「展示兑换量」读的是 /marketing/score 那份开关（本页只取值，不另判） -->
+						<tz-score-goods v-if="item && item.type == 'score'"
+							:list="data.compontents[index].config.list"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin"
+							:show-redeemed="scoreShowRedeemed" />
+
 						<!-- 教务组件（付费插件）：未安装时模板不渲染，组件自身在无数据时也不占位 -->
 						<tz-school-package v-if="item && item.type == 'school_package' && schoolInstalled"
 							:list="data.compontents[index].config.list"

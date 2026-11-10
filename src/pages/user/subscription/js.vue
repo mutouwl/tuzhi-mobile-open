@@ -57,11 +57,8 @@ export default {
     },
 
     getData() {
+      // 加载态由列表骨架屏给（M16），不再弹「请稍后」那枚转圈 toast
       that.loading = true;
-
-      uni.showLoading({
-        title: '请稍后'
-      });
 
       that.$api('order.subscription.getMySubscription', that.form).then(res => {
         if (res.code === 1) {
@@ -72,11 +69,9 @@ export default {
           that.list = list
         }
 
-        uni.hideLoading();
         that.loading = false;
       }).catch(() => {
         that.loading = false;
-        uni.hideLoading();
       });
       uni.stopPullDownRefresh();
     },

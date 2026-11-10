@@ -151,16 +151,25 @@
 								<!-- 这一排就是会员卡自己的规格组件（`changeSku`）：有进行中的拼团时，
 								     卡面上的价切到**这一档的拼团价**、原价划线收起 —— 页面上只有一套价（2026-10-29 统一口径） -->
 								<div class="cell-value">
-									<template v-if="gbSkuPrice(index)">
+									<template v-if="isScoreExchange">
+										{{ scoreExchangeScore }}<span class="value-unit">积分</span>
+									</template>
+									<template v-else-if="gbSkuPrice(index)">
 										<span class="value-unit">¥</span>{{ gbSkuPrice(index) }}<span class="cell-price-origin">¥{{ item.price }}</span>
 									</template>
 									<template v-else>
 										<span class="value-unit" v-if="!isVirtualPaySku(item, detail[checkCardIndex])">¥</span>{{item.price }}<span class="value-unit" v-if="isVirtualPaySku(item, detail[checkCardIndex])">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 									</template>
 								</div>
-								<div class="cell-label">
+								<!-- 日均价那一行是**现金价**派生（`sku.price / time`）：积分兑换时价格不随天数档变，
+								     摆「约¥0.33/天」既不是这一单的口径、也会被读成「还要再付现金」
+								     ⇒ 兑换模式整行不出，限购说明单独留一行（2026-11-09） -->
+								<div class="cell-label" v-if="!isScoreExchange">
 									{{ formatAveragePrice(item, detail[checkCardIndex]) }} <span
 										v-if="item.limit>0">，此规格限购{{item.limit}}次</span>
+								</div>
+								<div class="cell-label" v-else-if="item.limit>0">
+									此规格限购{{item.limit}}次
 								</div>
 
 							</div>
@@ -179,7 +188,7 @@
 			<!-- `spec-inline`（2026-10-29）：会员卡的规格就是上面那排「N天 / ¥x」卡、摆在页面里，
 			     没有规格弹窗可挂 ⇒ 阶梯型的人数额也摆在本区页面上（`gba-pick` 那一块），
 			     点「立即开团」时用 `currentPick()` 把规格与档位一起交回，不再开第二步弹窗 -->
-			<tz-group-buy-area v-if="detail[checkCardIndex]" ref="gbArea" goods-type="vipcard" host-spec spec-inline hide-danmu
+			<tz-group-buy-area v-if="detail[checkCardIndex] && !isScoreExchange" ref="gbArea" goods-type="vipcard" host-spec spec-inline hide-danmu
 				:goods-id="detail[checkCardIndex].id"
 				:join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
 				:join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
@@ -270,8 +279,8 @@
 			<template v-else>
 				<!-- 我在这一场拼团里已有进行中的团（`gbInTeam`）→ 主按钮「立即开通」收起（PRD 2026-10-27），
 				     与课程详情页同一枚 `hide-main`，底栏只留「查看拼团详情」这一个出口 -->
-				<tz-bottom-btn btnTitle="立即开通" @handle="buy" :hide-main="gbInTeam || gbJoinMode">
-					<tz-group-buy-btn v-if="gbEntry" class="tbb-slot" slot="order-extra" :text="gbEntry.text" :price="gbEntry.price_text" @open="openGb" />
+				<tz-bottom-btn :btnTitle="isScoreExchange ? '立即兑换' : '立即开通'" @handle="buy" :hide-main="gbInTeam || gbJoinMode">
+					<tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="tbb-slot" slot="order-extra" :text="gbEntry.text" :price="gbEntry.price_text" @open="openGb" />
 				</tz-bottom-btn>
 			</template>
 

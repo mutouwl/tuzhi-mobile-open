@@ -250,7 +250,7 @@ export default {
             return hours >= 24 ? `${Math.round(hours / 24)} 天内成团` : `${hours} 小时内成团`;
         },
         hasTeams() { return this.teams.length > 0; },
-        /** 「已拼 N 件」社会证明（小鹅通 01-08 弹层 meta 行）：人数吃后端 `join_count`，
+        /** 「已拼 N 件」社会证明（参照产品 01-08 弹层 meta 行）：人数吃后端 `join_count`，
          *  没给（老包/未装）就整段不写，不留一句「已拼 0 件」 */
         joinedText() {
             const n = Number(this.activity.join_count) || 0;

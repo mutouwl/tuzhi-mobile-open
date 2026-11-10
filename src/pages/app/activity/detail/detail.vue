@@ -41,7 +41,10 @@
 				<!-- 拼团进行中本卡价格行收起（2026-10-30 第五轮：「拼团价要复制覆盖原来的价格」⇒ 一屏只有一个价）：
 				     拼团价由**正下方那张拼团卡第一行的横幅**给（2026-10-31 整块上移到标题卡正下方，
 				     用户点名「活动的拼团价格应该放在标题的下面」），横幅与玩法/凑团仍连成一块。 -->
-				<div class="activity-price" v-if="gbPriceShown && hasPrice(data.price)">
+				<div class="activity-price" v-if="isScoreExchange">
+					<span class="price-value">{{ scoreExchangeScore }}</span><span class="coin-name">积分</span>
+				</div>
+				<div class="activity-price" v-else-if="gbPriceShown && hasPrice(data.price)">
 					<template v-if="isVirtualPay(data)">
 						<span class="price-value">{{ data.price }}</span><span class="coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 					</template>
@@ -53,7 +56,7 @@
 
 			<live-start-time-bar :start-time="data.activity_start_time" :end-time="data.activity_end_time" />
 
-			<coupon-goods-bar v-if="!isVirtualPay(data)" goods-type="activity" :goods-id="data.id" />
+				<coupon-goods-bar v-if="!isVirtualPay(data) && !isScoreExchange" goods-type="activity" :goods-id="data.id" />
 		</tz-box>
 		<tz-divider bgColor="#fafafa" v-if="!loading" />
 
@@ -98,7 +101,7 @@
 		     「票种 + 张数 + 报名信息 id」，这三样本来就在本页自己的两张中间页里收（选票页 → 报名信息页）
 		     ⇒ 拼团区不弹它那只配置层、不在这里拼规格份数，只把拼团上下文经 `@order` 交回本页，
 		     由本页带进选票页。 -->
-		<tz-group-buy-area v-if="data.id" ref="gbArea" goods-type="activity" :goods-id="data.id" hide-danmu
+		<tz-group-buy-area v-if="data.id && !isScoreExchange" ref="gbArea" goods-type="activity" :goods-id="data.id" hide-danmu
 			host-ticket host-order :closed="!data.apply_status"
 			:join-team="gbJoinCtx ? gbJoinCtx.teamId : 0"
 			:join-activity="gbJoinCtx ? gbJoinCtx.activityId : 0"
@@ -177,7 +180,7 @@
 			@handle="apply"
 			:disabled="!data.apply_status"
 			:hide-main="gbInTeam || gbJoinMode"
-			:btnTitle="!data.apply_status ? '报名已截止' : '立即报名'">
+			:btnTitle="!data.apply_status ? '报名已截止' : (isScoreExchange ? '立即兑换' : '立即报名')">
 			<!-- 拼团入口：与课程/实物/练习那几页同一枚插槽件（底栏只提供加性插槽，不认识插件）。
 			     **我正在这一场拼团里已有进行中的团（`gbInTeam`）→ 主按钮「立即报名」收起**
 			     （PRD 2026-10-27）：与课程详情页同一枚 `hide-main`，底栏只留「查看拼团详情」。
@@ -186,7 +189,7 @@
 			     （`tz-group-buy-btn` 的 `disabled` 在组件里也拦一次 `$emit('open')`）。
 			     **但「查看拼团详情」那一档不灰**（`!gbInTeam` 才关）：已在团里的人只是去看自己的团，
 			     报名时间过了不该连自己那一团都点不开。 -->
-			<tz-group-buy-btn v-if="gbEntry" class="tbb-slot" slot="order-extra" :text="gbEntry.text"
+			<tz-group-buy-btn v-if="gbEntry && !isScoreExchange" class="tbb-slot" slot="order-extra" :text="gbEntry.text"
 				:price="gbEntry.price_text" :disabled="!data.apply_status && !gbInTeam" @open="openGb" />
 		</tz-bottom-btn>
 

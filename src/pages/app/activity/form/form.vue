@@ -49,9 +49,14 @@
 			<tz-box padding="0px 0px 10px">
 				<u-cell :border="(checkedTicket.length - 1) != index" :title="item.name" :label="item.number+'张'" center v-for="(item,index) in checkedTicket">
 					<template slot="value">
-						<!-- 行金额：拼团那一趟按活动的拼团价算（`ticketUnitPrice`），普通报名链仍是票券原价 -->
+						<!-- 行金额：拼团那一趟按活动的拼团价算（`ticketUnitPrice`），普通报名链仍是票券原价；
+						     积分兑换那一趟按「兑换积分 × 张数」——与底栏合计同一个取数口（`totalPrice`），
+						     行里画现金价会让一屏出现两套单位（2026-11-08） -->
 						<div class="ticket-price" :style="gbPriceStyle">
-							<template v-if="isVirtualPay(detail)">
+							<template v-if="isScoreExchange">
+								<span class="ticket-price-value">{{ scoreExchangeScore * (Number(item.number) || 0) }}</span><span class="ticket-coin-name">积分</span>
+							</template>
+							<template v-else-if="isVirtualPay(detail)">
 								<span class="ticket-price-value">{{ (ticketUnitPrice(item) * item.number).toFixed(2) }}</span><span class="ticket-coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 							</template>
 							<template v-else>
@@ -86,7 +91,10 @@
 				<div class="ticket-change">
 					<div class="price" :style="gbPriceStyle">
 						<span class="total-text">合计：</span>
-						<template v-if="isVirtualPay(detail)">
+						<template v-if="isScoreExchange">
+							<span class="price-value">{{ totalPrice }}</span><span class="coin-name">积分</span>
+						</template>
+						<template v-else-if="isVirtualPay(detail)">
 							<span class="price-value">{{ totalPrice.toFixed(2) }}</span><span class="coin-name">{{ $tools.systemConfig('coin_name') || '金币' }}</span>
 						</template>
 						<template v-else>

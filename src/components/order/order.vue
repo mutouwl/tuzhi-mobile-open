@@ -36,7 +36,11 @@
             <div class="order-footer">
                 <div class="total-box">
                     合计:
-                    <span class="price" v-if="!isVirtualPay">
+                    <!-- 积分兑换单（2026-11-09）：现金实付恒 0，合计这一格画积分（`score_amount`） -->
+                    <span class="price coin-price" v-if="scoreMode">
+                        {{ price }} 积分
+                    </span>
+                    <span class="price" v-else-if="!isVirtualPay">
                         <span class="unit">¥</span>
                         {{ price }}
                     </span>
@@ -99,6 +103,14 @@
             statusText: {
                 type: String,
                 default: ''
+            },
+            /**
+             * 积分兑换单（2026-11-09）：`price` 这一格记的是**积分**（后端把现金实付归零、改记
+             * `score_amount`）⇒ 合计画「N 积分」、不挂 ¥。缺省 false 时其余调用点逐字不变。
+             */
+            scoreMode: {
+                type: Boolean,
+                default: false
             }
         },
         methods: {

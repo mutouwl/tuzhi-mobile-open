@@ -263,25 +263,32 @@
   line-height: 18px;
 }
 
-.tkd-venue{
+/* 地址行：文字占满剩余宽度、箭头贴右——箭头就是导航入口（2026-11-08 用户口径：
+   右上角不再单独摆「导航」按钮，改为地址右侧一枚向右箭头，点箭头执行导航） */
+.tkd-venue-row{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   margin-top: 8px;
+}
+
+.tkd-venue{
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
   color: #4E5969;
   line-height: 20px;
   word-break: break-all;
 }
 
-/* 块头的「导航」提示：与「复制」标签同一档浅灰，只说明这枚整块可点 */
-.tkd-venue-nav{
+/* 箭头：按 M2「行尾箭头只表去向」取全站主流那一档（13px / #86909C，全站 24 处同款，
+   也与本页「订单详情」行尾那枚同档）；盒高 20 与地址首行行高同高，
+   箭头与第一行垂直居中——地址折行时不会漂到整块中间；右缘贴齐块内衬 */
+.tkd-venue-arrow{
   display: flex;
   align-items: center;
-}
-
-.tkd-venue-nav-text{
-  margin-left: 4px;
-  font-size: 12px;
-  line-height: 18px;
-  color: #86909C;
+  flex-shrink: 0;
+  height: 20px;
 }
 
 /* 信息行沿用全局 .school-cell-*：只把左右内衬收掉与块标题左缘对齐 */

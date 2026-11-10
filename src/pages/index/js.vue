@@ -65,6 +65,8 @@ export default {
       checkinInstalled: false,
       // 拼团插件安装状态（付费插件）：未安装时模板不渲染拼团商品组件
       groupBuyInstalled: false,
+      // 积分商城「展示兑换量」开关：缺省 1 = 显示，与 /marketing/score 设置、装修组件同一份配置
+      scoreShowRedeemed: 1,
     };
   },
   watch: {},
@@ -175,9 +177,33 @@ export default {
       // loadCircleComponents，少了这一句，切 tab 回来圈子那两段会因为模板闸门恒 false 整段消失
       that.circleInstalled = !!that.$tools.systemConfig("app_isinstall_circle");
 
+      // 积分商城「展示兑换量」：与本页装修数据分开取（装修接口只下发商品行，开关在积分配置里）。
+      // 落地这一处判，与上面几枚安装状态同档；缓存命中时也照常刷新一次（开关是商家随时会改的）
+      that.loadScoreShowRedeemed();
+
       // #ifdef H5
       that.$nav.share(pageData.page.name);
       // #endif
+    },
+
+    /**
+     * 积分商城「展示兑换量」开关（`app.score.config` → `show_redeemed`，缺省 1 = 显示）
+     *
+     * 装修接口只下发商品行、不带这个开关；本页在落地那一处取一次即可（不阻塞首屏渲染：
+     * 缺省值就是「显示」，开关为关时卡片只是把「已兑换 N」这一格隐藏，不牵动版式）。
+     */
+    loadScoreShowRedeemed() {
+      const vm = that;
+      vm.$api("app.score.config", {})
+        .then((res) => {
+          if (res.code === 1 && res.data) {
+            vm.scoreShowRedeemed =
+              res.data.show_redeemed === undefined ? 1 : Number(res.data.show_redeemed);
+          }
+        })
+        .catch(() => {
+          // 取失败沿用缺省「显示」，不把这一格误藏
+        });
     },
 
     /**

@@ -8,6 +8,7 @@ export default {
         page: 1
       },
       list: [],
+      loading: true,
       pageParams:{
       }
     }
@@ -17,13 +18,17 @@ export default {
   methods: {
 
 
-    
+
 
     getData() {
-      
-      uni.showLoading({
-        title: '请稍后'
-      });
+      that.loading = true;
+      // 首屏（列表为空）由骨架屏给反馈，不再叠加原生 loading；上拉翻页时已有记录还在屏上，用「请稍后」提示
+      var loadingTip = that.list.length > 0;
+      if (loadingTip) {
+        uni.showLoading({
+          title: '请稍后'
+        });
+      }
       //资产类型
       var form = JSON.parse(JSON.stringify(that.form));
 
@@ -36,7 +41,15 @@ export default {
           that.list = list;
         }
 
-        uni.hideLoading();
+        if (loadingTip) {
+          uni.hideLoading();
+        }
+        that.loading = false;
+      }).catch(() => {
+        if (loadingTip) {
+          uni.hideLoading();
+        }
+        that.loading = false;
       });
       uni.stopPullDownRefresh();
     },
@@ -52,7 +65,7 @@ export default {
   onLoad(pageParams) {
     that = this;
     that.pageParams = that.$nav.parsePageParams(pageParams);
-    
+
     this.getData();
   },
   //下拉刷新

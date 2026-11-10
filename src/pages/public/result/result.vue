@@ -9,6 +9,14 @@
 				{{ title }}
 			</div>
 
+			<!-- 消费发放积分（2026-11-08 用户点名）：本单到账的积分，整行点进积分中心。
+			     判据只认后端 consume_score（ConsumeGrant::earnedOfOrder 求和 pay 流水），
+			     端上不按「开启了消费发放」自己算：兑换单 / 完成时机未到账 / 零流水都是 0 -->
+			<div class="score-tip" v-if="earnedScore > 0" @tap="goScoreCenter">
+				<text class="score-tip-text">恭喜您获得{{ earnedScore }}积分</text>
+				<tz-icon name="right" :size="12" color="#ff7d00" class="score-tip-arrow" />
+			</div>
+
 			<div class="subtitle">
 				{{ subtitle }}
 			</div>

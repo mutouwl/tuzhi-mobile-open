@@ -536,7 +536,7 @@
 				{
 					"path": "sign/center/center",
 					"style": {
-						"navigationBarTitleText": "签到中心",
+						"navigationBarTitleText": "每日签到",
 						"h5": {
 							"titleNView": false
 						},
@@ -566,7 +566,97 @@
 				{
 					"path": "score/center/center",
 					"style": {
-						"navigationBarTitleText": "积分商城",
+						"navigationBarTitleText": "积分兑换",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/home/home",
+					"style": {
+						"navigationBarTitleText": "积分中心",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/tasks/tasks",
+					"style": {
+						"navigationBarTitleText": "全部任务",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/rule/rule",
+					"style": {
+						"navigationBarTitleText": "积分规则",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/course/course",
+					"style": {
+						"navigationBarTitleText": "课程列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/consume/consume",
+					"style": {
+						"navigationBarTitleText": "商品列表",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "score/checkin/checkin",
+					"style": {
+						"navigationBarTitleText": "打卡列表",
 						"h5": {
 							"titleNView": false
 						},
@@ -696,6 +786,21 @@
 					"path": "exam/group/group",
 					"style": {
 						"navigationBarTitleText": "练习分类",
+						"h5": {
+							"titleNView": false
+						},
+						"enablePullDownRefresh": true,
+						"app-plus": {
+							"pullToRefresh": {
+								"color": "#007aff"
+							}
+						}
+					}
+				},
+				{
+					"path": "test/index/index",
+					"style": {
+						"navigationBarTitleText": "考试列表",
 						"h5": {
 							"titleNView": false
 						},

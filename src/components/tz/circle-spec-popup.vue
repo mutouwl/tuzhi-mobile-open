@@ -21,8 +21,8 @@
 	  空串/取图失败落全站默认商品图。
 	-->
 	<tz-spec-popup-shell :show="show" :gb-mode="!!(gbPrice && !isVirtualPay)" :cover="cover" :gb-price="gbPrice"
-		:price="priceText" :origin-price="originPrice" :marking-price="markingPrice" :team-text="gbTeam"
-		:is-virtual-pay="isVirtualPay" :coin-name="coinName" :confirm-text="confirmText"
+		:price="shellPrice" :origin-price="originPrice" :marking-price="shellMarking" :team-text="gbTeam"
+		:is-virtual-pay="shellVirtualPay" :coin-name="shellCoinName" :confirm-text="confirmText"
 		:confirm-disabled="inTeamBlocked" min-height="50vh" max-height="70vh" :body-style="bodyStyle"
 		@close="onClose" @confirm="onConfirm">
 		<!-- 正文外层：拼团态的选中色挂在这一层（外壳的 `gb-mode` 不在本组件作用域里，
@@ -79,6 +79,14 @@ export default {
 		 * 送好友那一趟（`giftMode`）由宿主不传这一枚，不受影响。
 		 */
 		inTeam: { type: Boolean, default: false },
+		/**
+		 * 积分兑换模式（2026-11-08 加性入参）：宿主传页面那一枚 `isScoreExchange`。
+		 * 兑换走积分 ⇒ 头区价格换成积分、不画 ¥ 与续费折扣划线价（积分价是整件商品一个数，不随时长档变）；
+		 * 缺省 false 时本弹层与改造前逐字相同。
+		 */
+		scoreMode: { type: Boolean, default: false },
+		/** 兑换所需积分（后端 `app_score_goods.score`，与商详价格区同一个数） */
+		scoreValue: { type: [String, Number], default: 0 },
 	},
 	emits: ['update:show', 'pick', 'confirm', 'close'],
 	computed: {
@@ -99,15 +107,29 @@ export default {
 			if (!this.current) { return this.minPrice; }
 			return this.isVirtualPay ? (this.current.virtual_price || this.current.price) : this.current.price;
 		},
+		/** 外壳头区价格：兑换模式只显示积分（不随时长档变，口径同实物那只规格弹窗） */
+		shellPrice() {
+			return this.scoreMode ? this.scoreValue : this.priceText;
+		},
+		/** 外壳虚拟支付档：兑换模式按「价格 + 单位」那一支画（不挂 ¥） */
+		shellVirtualPay() {
+			return this.scoreMode ? true : this.isVirtualPay;
+		},
+		shellCoinName() {
+			return this.scoreMode ? '积分' : this.coinName;
+		},
 		/** 划线原价：拼团态那一行用（当前这一档的原价） */
 		originPrice() {
 			return this.current ? this.current.price : this.minPrice;
 		},
-		/** 普通态的划线价（续费折扣那一档，只有标记价高于售价时才摆） */
+		/** 普通态的划线价（续费折扣那一档，只有标记价高于售价时才摆）；兑换模式不摆（现金价不是这一单的口径） */
 		markingPrice() {
 			const row = this.current;
 			if (!row || !row.marking_price) { return ''; }
 			return Number(row.marking_price) > Number(row.price) ? row.marking_price : '';
+		},
+		shellMarking() {
+			return this.scoreMode ? '' : this.markingPrice;
 		},
 		/** 正文几何：flex:1 吃掉 50vh 下限之下的剩余高度，内容超出在块内滚动 */
 		bodyStyle() {

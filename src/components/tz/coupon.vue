@@ -18,7 +18,7 @@
                     <div class="desc">
 
                         {{
-                            !item.enough_status || item.enough == 0
+                            !item.enough_status || item.enough_status == 2 || item.enough == 0
                             ? "无门槛"
                             : "满" + item.enough + "元可用"
                             }}

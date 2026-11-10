@@ -100,9 +100,9 @@ export default {
           path: "/pages/app/sign/center/center",
         },
         {
-          name: "积分商城",
+          name: "积分中心",
           icon: "service",
-          path: "/pages/app/score/center/center",
+          path: "/pages/app/score/home/home",
         },
         {
           name: "练习",

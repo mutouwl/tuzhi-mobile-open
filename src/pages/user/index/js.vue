@@ -181,9 +181,9 @@ export default {
           path: "/pages/app/sign/center/center",
         },
         {
-          name: "积分商城",
+          name: "积分中心",
           icon: "service",
-          path: "/pages/app/score/center/center",
+          path: "/pages/app/score/home/home",
         },
         {
           name: "练习",
@@ -507,6 +507,10 @@ export default {
         // #ifndef MP-WEIXIN
         that.$nav.to("/pages/user/balance/index");
         // #endif
+      } else if (type == "score") {
+        // 积分主入口进积分中心（与「常用功能 → 积分中心」同一落点）；
+        // 积分流水是中心里的一条下钻（首页右上「明细」→ assets?type=score），不再当主入口
+        that.$nav.to("/pages/app/score/home/home");
       } else if (type == "prize") {
         // 奖品页是标准版页面（pages/user 分包），插件未装也在——奖品能力本身不是某个插件的私有物
         that.$nav.to("/pages/user/prize/index");
