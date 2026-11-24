@@ -1,0 +1,14 @@
+.db-list {
+	min-height: 100vh;
+	background: #f7f8fa;
+	padding-bottom: 20px;
+}
+.db-list-search {
+	padding: 8px 12px;
+	background: #fff;
+}
+/* 卡片版式全在 tz-course-mini 里（封面 / 标题 / 简介 / 价格位 / 骨架档），
+   左右内衬由 tz-box 给（与「我的收藏」列表页同一档），本页只补加载行间距 */
+.db-loadmore {
+	padding: 4px 0 14px;
+}

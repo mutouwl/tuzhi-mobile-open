@@ -1,6 +1,6 @@
 <template>
     <view class="box">
-        <!-- 加载态：四类清单还在取，按真实行（内衬 10/15、图标 22）先占位再盖骨架 -->
+        <!-- 加载态：各类清单还在取，按真实行（内衬 10/15、图标 22）先占位再盖骨架 -->
         <template v-if="loading">
             <view class="ia-sk-row" v-for="i in 3" :key="'ia-sk-' + i">
                 <view class="ia-sk-icon"></view>
@@ -20,13 +20,13 @@
                     <text slot="title" style="font-size: 14px;">{{ item.name }}</text>
                 </u-cell>
             </u-cell-group>
-            <!-- 四类都空才是空态；一条都没取到手时说的是失败原因，不把故障说成「暂无」 -->
+            <!-- 各类都空才是空态；一条都没取到手时说的是失败原因，不把故障说成「暂无」 -->
             <u-empty v-else icon="/static/image/empty.png" width="70" height="70" :text="loadMsg || '暂无互动内容'" />
         </template>
 
         <u-popup :show="show" @close="show=false" title="互动" :closeable="true" :round="10">
             <div class="sheet-box">
-                <tz-course-mini v-if="list[checked] && list[checked].length > 0" :list="list[checked]" :round="true" :border="false"
+                <tz-course-mini v-if="popupRows.length > 0" :list="popupRows" :round="true" :border="false"
                     type="single" />
                 <u-empty v-else icon="/static/image/empty.png" width="70" height="70" text="暂无内容" />
             </div>
@@ -42,8 +42,9 @@
     // #ifdef MP-TOUTIAO
     import i18n from "@/components/language/index.js";
     // #endif
+    import { drillBookCardRows } from "@/common/utils/drill-book-card.js";
 
-    // 互动栏四类实体的名称/图标/接口/所属插件只存这一处，行按「关联数 > 0」渲染
+    // 互动栏各类实体的名称/图标/接口/所属插件只存这一处，行按「关联数 > 0」渲染
     const SECTIONS = [
         {
             type: "exercises",
@@ -51,6 +52,16 @@
             icon: "brush",
             api: "app.exam.exercises.getCourseBindExam",
             plugin: "app_isinstall_test"
+        },
+        {
+            // 刷题本（付费插件）：与练习同一档——按「关联数 > 0」才出这一行；
+            // 关联方式与管理端「关联课程参与」是同一份事实（`BindCourse::bookIdsOfCourse`），
+            // 与底栏那一枚读同一个接口 `app.drill_book.index.courseBind`
+            type: "drill_book",
+            name: "刷题本",
+            icon: "questions",
+            api: "app.drill_book.index.courseBind",
+            plugin: "app_isinstall_drill_book"
         },
         {
             type: "activity",
@@ -88,8 +99,13 @@
                     test: [],
                     exercises: [],
                     activity: [],
-                    form: []
+                    form: [],
+                    // 刷题本（付费插件）：键必须在 data 里声明，后补的键在 Vue2 下不响应
+                    drill_book: []
                 },
+                // 各类的「已关联 N 个」：刷题本接口是分页口（回 total/rows），条数读 total，
+                // 其余几类是整份数组，读本页条数
+                counts: {},
                 show: false,
                 checked: ""
             };
@@ -101,23 +117,41 @@
             }
         },
         computed: {
-            // 只有关联到内容的那一类才占一行，四类全空由模板落空态
+            // 只有关联到内容的那一类才占一行，全空由模板落空态
             sections() {
                 var list = this.list;
+                var counts = this.counts || {};
                 var rows = [];
                 SECTIONS.forEach(function (item) {
                     var bound = list[item.type] || [];
                     if (bound.length > 0) {
-                        rows.push({ type: item.type, name: item.name, icon: item.icon, count: bound.length });
+                        // 分页口径的那一类（刷题本）以接口 total 为准；未下发 total 的仍读本页条数
+                        var total = Number(counts[item.type]);
+                        var count = total > bound.length ? total : bound.length;
+                        rows.push({ type: item.type, name: item.name, icon: item.icon, count: count });
                     }
                 });
                 return rows;
+            },
+            /**
+             * 弹窗里那一份卡片行
+             *
+             * 刷题本走的是商品卡那一套契约（`tz-course-mini` 要看 pay_type/price/type 才画角标与价格位），
+             * 其余几类接口下发的就是卡片行本身。映射只在 `common/utils/drill-book-card.js` 一处，
+             * 与刷题本列表页、课程详情底栏那一只弹窗逐字同源（硬约束 11）。
+             */
+            popupRows() {
+                var rows = this.list[this.checked] || [];
+                if (this.checked !== "drill_book") {
+                    return rows;
+                }
+                return drillBookCardRows(rows);
             }
         },
         watch: {},
         methods: {
             /**
-             * 并行取四类关联清单：未安装插件的那一类不发请求，
+             * 并行取各类关联清单：未安装插件的那一类不发请求，
              * 全部回音（含失败）后才撤骨架屏，骨架屏不常驻
              */
             loadAll() {
@@ -131,7 +165,15 @@
                         if (!res || res.code !== 1) {
                             vm.loadMsg = (res && res.msg) || "互动内容加载失败";
                         } else {
-                            vm.list[item.type] = res.data || [];
+                            // 两种出参形状都收：分页口（刷题本 `{total,rows}`）取 rows 与 total，
+                            // 整份数组口（练习/考试/活动/表单）原样吃（见各控制器）
+                            var data = res.data;
+                            if (data && !Array.isArray(data) && Array.isArray(data.rows)) {
+                                vm.list[item.type] = data.rows;
+                                vm.$set(vm.counts, item.type, Number(data.total || 0));
+                            } else {
+                                vm.list[item.type] = data || [];
+                            }
                         }
                         vm.finishLoad();
                     }, function () {

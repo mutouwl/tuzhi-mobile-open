@@ -1,5 +1,7 @@
 # 核算订单
 
+> 自动选券（2026-10-29 用户点名「优惠券可以默认选中一个最优的」）：下单页首屏
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -21,13 +23,14 @@
 | live_id | string | 否 | liveID | - |
 | live_goods_action_id | string | 否 | live商品操作ID | - |
 | address_id | string | 否 | 地址ID | - |
+| auto_coupon | integer | 否 | auto优惠券 | `0` |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}order/order/calculate' \
   -H 'Content-Type: application/json' \
-  -d '{"goodsList":"xxx","order_type":"goods","coupon_id":"xxx","live_id":"xxx","live_goods_action_id":"xxx","address_id":"xxx"}'
+  -d '{"goodsList":"xxx","order_type":"goods","coupon_id":"xxx","live_id":"xxx","live_goods_action_id":"xxx","address_id":"xxx","auto_coupon":0}'
 ```
 
 ## 返回示例

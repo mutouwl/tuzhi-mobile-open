@@ -1,0 +1,87 @@
+.db-collect {
+	min-height: 100vh;
+	background: #f7f8fa;
+	padding-bottom: 20px;
+}
+.db-collect-search {
+	padding: 8px 12px;
+	background: #fff;
+}
+.db-card {
+	background: #fff;
+	border-radius: 0;
+	margin: 10px 0 0;
+	padding: 10px 12px;
+}
+.db-collect-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 6px;
+}
+.db-collect-cat {
+	font-size: 12px;
+	color: #0968f6;
+	background: #e8f3ff;
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+.db-collect-uncollect {
+	font-size: 12px;
+	color: #f53f3f;
+}
+.db-loadmore {
+	padding: 14px 0;
+}
+.db-sk-line {
+	height: 12px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+.db-collect-sk-card {
+	background: #fff;
+	margin: 10px 0 0;
+	padding: 14px 12px;
+}
+
+/* ---------- 目录视图（照错题本 db-wrong-card） ---------- */
+/* 白卡满宽：直角卡不左右缩进，留白交给卡自己的 padding */
+.db-collect-card {
+	background: #fff;
+	margin: 10px 0 0;
+	padding: 0 12px;
+}
+/* 目录行：「所有题目」汇总行与目录行同一套行结构、同一档字号字重（16px / 600）；
+   行与行之间不画分割线，层级只靠缩进与导引线表达 */
+.db-collect-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	min-height: 52px;
+	padding: 10px 0;
+	box-sizing: border-box;
+}
+.db-collect-row-name {
+	flex: 1;
+	min-width: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 22px;
+	color: #1d2129;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.db-collect-row-right {
+	display: flex;
+	align-items: center;
+	flex: none;
+	margin-left: 8px;
+}
+.db-collect-row-count {
+	font-size: 13px;
+	color: #86909c;
+	margin-right: 4px;
+}
+/* 层级导引线 / 折叠圆钮 / 叶子占位点已收进共用组件 `components/drill-catalog.vue`
+   （与刷题本首页、错题本同一份版式与几何，竖线一律从圆钮下沿起画） */

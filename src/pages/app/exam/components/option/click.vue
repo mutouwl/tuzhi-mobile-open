@@ -1,5 +1,63 @@
 <template>
     <div class="option-single-box">
+        <!-- 刷题本做题页（variant=report）：无底色选项行 + 圆形 / 圆角方形字母牌。
+             作答态：选中项实心主色；判断项与单选同走字母牌（A 正确 / B 错误），对错只由颜色表达（2026-11-24 用户点名） -->
+        <template v-if="variant === 'report'">
+            <template v-if="isOptionType">
+                <div class="oq-list" :class="{ 'oq-list--edit': !onlyRead, 'oq-list--scored': scored }">
+                    <div class="oq-item" v-for="(item, index) in list" :key="index" @click="select(index)">
+                        <div :class="['oq-no', isSquare ? 'oq-no--square' : 'oq-no--circle',
+                            { 'is-right': onlyRead && isActive(index), 'is-wrong': errorIsActive(index),
+                              'is-picked': !onlyRead && isActive(index) }]">
+                            <text>{{ String.fromCharCode(65 + parseInt(index)) }}</text>
+                        </div>
+                        <div class="oq-val">
+                            <tz-parse bgColor="none" :content="item" />
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 填空题：底部一张上掀的白色输入面板（解析态只读回显，答错的空带红叉、答对带绿勾） -->
+            <template v-if="type == 'fillblank'">
+                <div class="oq-fill" :class="{ 'is-collapsed': fillCollapsed }">
+                    <div class="oq-fill-tab" @click="toggleFill">
+                        <div class="oq-fill-arrow" :class="{ 'is-up': fillCollapsed }"></div>
+                    </div>
+                    <div class="oq-fill-body" v-show="!fillCollapsed">
+                        <div class="oq-fill-row" v-for="(item, index) in blankList" :key="index">
+                            <div v-if="onlyRead" class="oq-fill-mark"
+                                :class="blankWrong[index] ? 'is-wrong' : 'is-right'">
+                                <tz-icon :name="blankWrong[index] ? 'cha' : 'gou'" :size="13" color="#fff" />
+                            </div>
+                            <div v-else class="oq-fill-no">{{ index + 1 }}</div>
+                            <input :class="['oq-fill-input', { 'is-disabled': onlyRead }]" type="text"
+                                v-model="fillblankAnswer[index]" :disabled="onlyRead" @input="onFillblankChange"
+                                placeholder-class="oq-fill-ph" :placeholder="onlyRead ? '' : '请填写答案'" />
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 问答题：大输入框 + 左下角一枚插图入口（不起数量角标） -->
+            <template v-if="type == 'essay'">
+                <div class="oq-essay">
+                    <textarea class="oq-essay-input" v-model="essayAnswer" :disabled="onlyRead"
+                        @input="onEssayChange" placeholder-class="oq-fill-ph"
+                        :placeholder="onlyRead ? '' : '请填写答案'" maxlength="10000" />
+                    <div class="oq-essay-tools" v-if="!onlyRead">
+                        <tz-upload class="oq-essay-upload" v-model="essayImages" :maxCount="4"
+                            @change="onEssayImagesChange">
+                            <view class="oq-essay-upload-btn">
+                                <tz-icon name="picture" :size="20" color="#666" />
+                            </view>
+                        </tz-upload>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <template v-else>
         <!-- 单选/多选/判断/不定项选择 -->
         <template v-if="isOptionType">
             <div :class="['option-single-item', { 'success_answer': isActive(index), 'error_answer': errorIsActive(index) }]"
@@ -38,6 +96,7 @@
                 </div>
             </div>
         </template>
+        </template>
     </div>
 </template>
 
@@ -54,6 +113,7 @@ export default {
             active: false,
             itemAnswer: [],
             fillblankAnswer: [],
+            fillCollapsed: false,
             essayAnswer: '',
             essayImages: []
         }
@@ -97,6 +157,23 @@ export default {
         question: {
             type: String,
             default: ''
+        },
+        // '' = 练习/考试的既有选项样式；report = 刷题本做题页的解析版式
+        variant: {
+            type: String,
+            default: ''
+        },
+        // 填空解析态每空是否答错（与题目正确答案逐空对账，由 question-box 给）
+        blank_wrong: {
+            type: Array,
+            default: function () {
+                return [];
+            }
+        },
+        // 试卷题（有卷面分）：解析态未选项的字母取深灰；练习模式取浅灰（参照图两态不同）
+        scored: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
@@ -108,6 +185,10 @@ export default {
         },
         isOptionType() {
             return ['single', 'multiple', 'judge', 'indefinite'].indexOf(this.type) !== -1;
+        },
+        /** 多选 / 不定项用圆角方形牌，单选 / 判断用圆形牌（参照页口径） */
+        isSquare() {
+            return this.type === 'multiple' || this.type === 'indefinite';
         },
         blankList() {
             var count = parseInt(this.blank_count) || 0;
@@ -131,6 +212,11 @@ export default {
         }
     },
     methods: {
+
+        // 填空题输入面板顶部中央的抓手：点一下折叠 / 展开输入区
+        toggleFill() {
+            this.fillCollapsed = !this.fillCollapsed;
+        },
 
         initActive() {
             if (this.isOptionType) {
@@ -473,5 +559,231 @@ export default {
 .essay-tool .u-upload__button,
 .essay-tool .u-upload__wrap__preview {
     margin: 0 8px 8px 0 !important;
+}
+
+/* ---------- 刷题本做题页选项（variant=report）---------- */
+/* 作答态与解析态同一行距（2026-11-22 用户点名：做完题转解析后间距不能再变）：
+   行距只在本节落一次，解析态不许收窄；同日用户点名「选项行距与字号偏大」，
+   行内上下留白收到 14px、选项正文 18→16px（选项牌仍 40） */
+.oq-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+}
+
+.oq-no {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #E5E6EB;
+    background: #fff;
+    color: #4E5969;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.oq-no--circle {
+    border-radius: 50%;
+}
+
+.oq-no--square {
+    border-radius: 8px;
+}
+
+.oq-val {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 16px;
+    line-height: 24px;
+    color: #1D2129;
+}
+
+.oq-list--scored .oq-no {
+    color: #4E5969;
+}
+
+/* 作答态统一取浅灰并覆盖上面的试卷档 */
+.oq-list--edit .oq-no {
+    color: #999;
+}
+
+/* 单选 / 判断：选中的那枚整颗填色，字母反白 */
+.oq-no--circle.is-right {
+    background: #00B42A;
+    border-color: #00B42A;
+    color: #fff;
+}
+
+.oq-no--circle.is-wrong {
+    background: #F53F3F;
+    border-color: #F53F3F;
+    color: #fff;
+}
+
+/* 多选 / 不定项：正确项绿描边绿字，错误项红描边红字 */
+.oq-no--square.is-right {
+    border-color: #00B42A;
+    color: #00B42A;
+}
+
+.oq-no--square.is-wrong {
+    border-color: #F53F3F;
+    color: #F53F3F;
+}
+
+/* 作答态（未判）：选中的那一枚走主色，别提前读成「正确」 */
+.oq-no--circle.is-picked {
+    background: #0968F6;
+    border-color: #0968F6;
+    color: #fff;
+}
+
+.oq-no--square.is-picked {
+    background: #0968F6;
+    border-color: #0968F6;
+    color: #fff;
+}
+
+/* 填空：底部一张上掀的白色输入面板（顶部中央一枚下三角抓手） */
+.oq-fill {
+    position: relative;
+    margin: 16px -8px -24px;
+    padding: 16px 15px 20px;
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+.oq-fill-tab {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    margin-left: -25px;
+    width: 50px;
+    height: 15px;
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+.oq-fill-arrow {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    margin-left: -7px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid #C9CDD4;
+    transition: transform .2s;
+}
+
+/* 已折叠：三角翻向朝上，面板收成一条抓手 */
+.oq-fill-arrow.is-up {
+    transform: rotate(180deg);
+}
+
+.oq-fill.is-collapsed {
+    padding-top: 8px;
+    padding-bottom: 16px;
+}
+
+.oq-fill-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.oq-fill-row:last-child {
+    margin-bottom: 0;
+}
+
+/* 解析态：答错的空红底叉、答对的空绿底勾 */
+.oq-fill-mark {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oq-fill-mark.is-wrong {
+    background: #F53F3F;
+}
+
+.oq-fill-mark.is-right {
+    background: #00B42A;
+}
+
+/* 作答态：圆钮里是空的序号 */
+.oq-fill-no {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: #B2B2B2;
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.oq-fill-input {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 44px;
+    line-height: 44px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    font-size: 15px;
+    color: #1D2129;
+    background: #fff;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+}
+
+.oq-fill-input.is-disabled {
+    background: #fff;
+    color: #1D2129;
+}
+
+.oq-fill-ph {
+    color: #B2B2B2;
+}
+
+/* 问答：大输入框 + 左下角一枚插图入口 */
+.oq-essay-input {
+    width: 100%;
+    min-height: 240px;
+    padding: 14px;
+    box-sizing: border-box;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1D2129;
+    background: #fff;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+}
+
+.oq-essay-tools {
+    display: flex;
+    align-items: center;
+    margin-top: 14px;
+}
+
+.oq-essay-upload-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

@@ -19,11 +19,11 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | student_id | integer | 是 | 学生ID（须为本人名下） | `3619` |
-| schedule_student_ids | array | 否 | 学员课次ID数组（批量请假），如 [101,102] | `8762` |
+| schedule_student_ids | array | 否 | 学员课次ID数组（批量请假），如 [101,102] | `[8762]` |
 | schedule_student_id | integer | 否 | 单个学员课次ID（兼容旧调用；数组有值时忽略） | `0` |
 | type | integer | 否 | 请假类型：1事假 2病假 3其他，默认 1 | `1` |
 | reason | string | 否 | 请假原因（最长 200 字） | `家中有事` |
-| images | array | 否 | 图片凭证 URL 数组（最多 6 张） | `` |
+| images | array | 否 | 图片凭证 URL 数组（最多 6 张） | `[]` |
 
 ## 请求头
 

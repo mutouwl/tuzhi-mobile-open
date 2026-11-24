@@ -47,7 +47,7 @@ curl -X POST '{apiUrl}app/checkin/diary/myList' \
 | msg | string | 提示信息 |
 | data | object | 业务数据 |
 | data | string | 分页结果 |
-| data.total | number | 我发布的日记总条数 |
+| data.total | integer | 我发布的日记总条数 |
 | data.rows | array | 日记行数组（按发布时间倒序） |
 | data.rows[].id | integer | 动态（打卡记录）ID |
 | data.rows[].checkin_id | integer | 所属打卡活动 ID |

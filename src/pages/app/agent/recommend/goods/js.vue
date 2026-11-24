@@ -249,6 +249,15 @@ export default {
       });
     }
 
+    // 仅当 drill_book（刷题本）付费插件已安装时，添加“刷题本”筛选项
+    if (that.$tools.systemConfig('app_isinstall_drill_book')) {
+      that.type.push({
+        name: '刷题本',
+        type: 'drill_book',
+        key: that.type.length
+      });
+    }
+
     this.getData();
   },
   //下拉刷新

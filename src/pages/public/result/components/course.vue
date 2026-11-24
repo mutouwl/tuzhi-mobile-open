@@ -77,6 +77,15 @@
                             this.$nav.to(id, "checkin", "redirectTo");
                         }
                         break;
+                    case "drill_book":
+                        //刷题本：与 checkin 同一条坑（2026-11-18 用户点名「付款后跳刷题本，提示记录未找到」）。
+                        //支付成功页列的是这一单的商品卡，点进去必须是刷题本首页；缺这一档会掉进 default
+                        //按课程详情拼 `/pages/course/detail/detail?id=272`，那个 id 在课程表里不存在 → 「记录未找到」。
+                        //路径统一取 router.js 的 drill_book 档，未安装插件时不跳转
+                        if (id && this.$tools.systemConfig("app_isinstall_drill_book")) {
+                            this.$nav.to(id, "drill_book", "redirectTo");
+                        }
+                        break;
 
                     default:
                         this.$nav.to(id, "course", "redirectTo");

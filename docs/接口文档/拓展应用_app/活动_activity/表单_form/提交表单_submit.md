@@ -17,15 +17,15 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| form | array | 否 | 表单 | - |
 | activity_id | string | 否 | 活动ID | `12` |
+| form | array | 否 | 表单 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/activity/form/submit' \
   -H 'Content-Type: application/json' \
-  -d '{"form":"xxx","activity_id":12}'
+  -d '{"activity_id":12,"form":"xxx"}'
 ```
 
 ## 返回示例

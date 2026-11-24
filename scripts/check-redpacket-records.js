@@ -18,6 +18,11 @@ const apiList = read('src/common/request/api_list.js');
 
 const results = [];
 const ok = (name, cond, note) => results.push({ name, pass: !!cond, note: note || '' });
+// CSS 注释里写下的选择器名**同样是源码文本**：不先剥注释，`(?![\w-])[^{]*\{` 这类「选择器 → 规则体」
+// 抽取就会先命中注释、再一路吃到下一处花括号，读到隔壁那条规则。2026-11-14 实测：在注释里写了
+// `.modal-close`、`--rp-card-rise` 之后，z-index/内衬三条断言全部误红（代码是对的，门禁是错的）。
+// 凡是要抽规则体的地方一律先过这一手。
+const stripCssComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 // 去掉 HTML 注释的模板段：凡是「渲染出来不许出现」的检查（加载中文案、裸露的类名等）都只看这一段 ——
 // 注释里讨论这些字眼是允许的，.vue 的注释不参与渲染
 const tplOf = (src) => (src.match(/<template>[\s\S]*<\/template>/) || [''])[0].replace(/<!--[\s\S]*?-->/g, '');
@@ -74,8 +79,9 @@ ok('tz-popup-list 给了确定 height', /<tz-popup-list[^>]*height="70vh"/.test(
 ok('没有 min/max-height', !/min-height|max-height/.test(records));
 // 6b. 2026-09-30 用户点名「行加浅浅的粉底色、去掉行间边框、行间要有垂直间距」：
 //     底色取自信封红（#f0435c 8% 叠白底）、行不再有 border-bottom、间距由容器 gap 给（不是行 margin）
-// 只在 <style> 段里找（模板与注释里也出现过这些类名，正则会一路吃到下一处花括号）
-const styleText = (records.match(/<style[\s\S]*?<\/style>/) || [''])[0];
+// 只在 <style> 段里找（模板与注释里也出现过这些类名，正则会一路吃到下一处花括号）；
+// 注释先剥掉——见文件头 stripCssComments 那一段的成因
+const styleText = stripCssComments((records.match(/<style[\s\S]*?<\/style>/) || [''])[0]);
 // (?![\w-]) 是必需的：`.rp-rec-name-row` / `.rp-rec-sk-line--title` 这类同前缀的兄弟类
 // 同样匹配「`.rp-rec-name` + 边界」，不挡掉就会去读隔壁那条规则（- 是非单词字符，\b 挡不住）
 const rowStyle = (cls) => ((styleText.match(new RegExp('\\.' + cls + '(?![\\w-])[^{]*\\{[\\s\\S]*?\\}')) || [''])[0]);
@@ -119,6 +125,9 @@ ok('记录行不再拼发放人账号名', !/admin_name/.test(records));
 //     冷灰 #86909c 在这一档只有 2.9:1、近黑 #1d2129 与粉底分属两个色系，标签灰底与主色蓝更是外来的。
 //     行内四档统一从信封红 #f0435c 派生的暖红系里取，标签两档照抄信封那一份（白底红字 / 红底白字）
 const rpCss = read('src/pages/course/live/redpacket/css.css');
+// 这份 css 的注释写得比规则还长，凡是「抽规则体」的地方一律读剥过注释的这一份
+// （注释里出现过 `.modal-close`、`--rp-card-rise`、`.rp-card` 这类字样，直接匹配会读到注释）
+const rpCssSrc = stripCssComments(rpCss);
 const rowTextStyles = ['rp-rec-name', 'rp-rec-meta', 'rp-rec-amount', 'rp-rec-time', 'rp-rec-tag', 'rp-rec-tag--pending']
   .map((cls) => rowStyle(cls)).join('\n');
 ok('行内文字走暖红系（名称深红 #8f2233）', /color:\s*#8f2233/.test(rowStyle('rp-rec-name')));
@@ -130,7 +139,7 @@ ok('行内文字不再用价格档 #f53f3f（同样只有 3.4:1）', !/#f53f3f/.
 ok('结束态标签＝白底红字（对应信封「手气最佳」那枚）', /background:\s*#fff/.test(rowStyle('rp-rec-tag')) && /color:\s*#c2273d/.test(rowStyle('rp-rec-tag')));
 ok('标签不再用灰底 #f2f3f5 / 主色蓝 #0968f6（外来色系）', !/#f2f3f5/.test(rowTextStyles) && !/#0968f6/.test(rowTextStyles));
 ok('待领取标签＝红底白字（对应信封红身 + 白字那一档）', /background:\s*#d3314b/.test(rowStyle('rp-rec-tag--pending')) && /color:\s*#fff/.test(rowStyle('rp-rec-tag--pending')));
-ok('信封那份红仍是这一族的锚点（别把锚点一起换掉）', /#f0435c/.test(rpCss) && /color:\s*#f0435c/.test(rpCss));
+ok('信封那份红仍是这一族的锚点（别把锚点一起换掉）', /#f0435c/.test(rpCssSrc) && /color:\s*#f0435c/.test(rpCssSrc));
 ok('弹窗头部仍在白底上：标题 #1d2129 保持原档', /color:\s*#1d2129/.test(rowStyle('rp-rec-title')));
 
 // 12b. 2026-10-04 用户点名「红包记录弹窗中，共多少个，这个做成 Tag 放在红包记录标题的右侧」：
@@ -166,21 +175,21 @@ ok('模板里计数 Tag 紧跟标题、仍在头部那一行内（顺序：head�
 //     可以取消骨架屏，直接一个遮罩、中间展示加载中这个动画」。
 //     信封这一屏在三态下是三套几何（待开一面红 / 白卡结果卡 / 领取记录），没有任何一块能先摆真版式再盖灰
 //     ⇒ 走整面遮罩 + 中间转圈那一档（M16「弹层多态面板」那一条），高度取加载完成后那一版
-const rpRowStyle = (cls) => ((rpCss.match(new RegExp('\\.' + cls + '(?![\\w-])[^{]*\\{[\\s\\S]*?\\}')) || [''])[0]);
+const rpRowStyle = (cls) => ((rpCssSrc.match(new RegExp('\\.' + cls + '(?![\\w-])[^{]*\\{[\\s\\S]*?\\}')) || [''])[0]);
 const loadingBlock = (modalVue.match(/<div class="redpacket-loading"[\s\S]*?<\/div>/) || [''])[0];
 ok('加载态是整面那一档：铺满、中间一枚转圈', /class="redpacket-loading" v-if="detailLoading"/.test(modalVue) && /<u-loading-icon[^>]*mode="circle"/.test(loadingBlock));
 ok('加载层不再压半透明黑 rgba(0, 0, 0, 0.35)', !/rgba\(0,\s*0,\s*0,\s*0\.35\)/.test(rpRowStyle('redpacket-loading')));
 ok('待开态那一层不带底色（红身由 .redpacket-modal 自己给，加载中仍是红的）', !/background/.test(rpRowStyle('redpacket-loading')));
-const isCardLoadingRule = (rpCss.match(/\.redpacket-modal\.is-card \.redpacket-loading\s*\{[^}]*\}/) || [''])[0];
+const isCardLoadingRule = (rpCssSrc.match(/\.redpacket-modal\.is-card \.redpacket-loading\s*\{[^}]*\}/) || [''])[0];
 ok('白卡态那一层吃白卡那份 #fff8f4（不再被压成黑色）', /background-color:\s*#fff8f4/.test(isCardLoadingRule), isCardLoadingRule.replace(/\s+/g, ' ').slice(0, 90));
-ok('加载层高度按加载完成后那一版分档（待开 318 / 白卡 354）', /min-height:\s*318px/.test(rpRowStyle('redpacket-loading')) && /\.redpacket-modal\.is-card \.redpacket-loading\s*\{[\s\S]*?min-height:\s*354px/.test(rpCss));
+ok('加载层高度按加载完成后那一版分档（待开 318 / 白卡 354）', /min-height:\s*318px/.test(rpRowStyle('redpacket-loading')) && /\.redpacket-modal\.is-card \.redpacket-loading\s*\{[\s\S]*?min-height:\s*354px/.test(rpCssSrc));
 ok('转圈两档颜色跟着底走（白底吃红 #c2273d / 红底吃白），成对给在 computed 里', /loadingColor\(\)[\s\S]{0,300}cardMode \? '#c2273d' : '#ffffff'/.test(modalJs) && /loadingInactiveColor\(\)[\s\S]{0,300}rgba\(194,\s*39,\s*61,\s*0\.28\)/.test(modalJs));
 ok('转圈不再写死白色（白底上一枚白转圈看不见）', /:color="loadingColor"/.test(loadingBlock) && /:inactive-color="loadingInactiveColor"/.test(loadingBlock) && !/color="#ffffff"/.test(loadingBlock));
 ok('白卡态那一档也铺满红身（z-index 压过 .rp-shell，z-index 为 auto）', /position:\s*relative/.test(rpRowStyle('redpacket-loading')) && /z-index:\s*5/.test(rpRowStyle('redpacket-loading')));
 ok('加载中仍关得掉：关闭按钮 z-index 10 压在遮罩 5 之上', /z-index:\s*10/.test(rpRowStyle('modal-close')));
 ok('遮罩不进 loading-not-skeleton（不拿直角遮罩盖 u-popup 的圆角）', !/tz-loading-page|u-loading-page/.test(modalVue));
 ok('遮罩不配「加载中」文字（否则进 loading-spinner-text-block 清单）', !/加载中/.test(loadingBlock) && !/text="/.test(loadingBlock));
-ok('旧灰块树已删净（rp-sk-* / rp-sk-blink 不许留死类）', !/rp-sk-/.test(rpCss) && !/rp-sk-/.test(modalVue) && !/rp-sk-blink/.test(rpCss));
+ok('旧灰块树已删净（rp-sk-* / rp-sk-blink 不许留死类）', !/rp-sk-/.test(rpCssSrc) && !/rp-sk-/.test(modalVue) && !/rp-sk-blink/.test(rpCssSrc));
 ok('白卡态加载中仍出红身（.rp-shell 不再被 detailLoading 收掉）', /class="rp-shell" v-if="cardMode"/.test(modalVue));
 
 // 14. 2026-10-01 用户点名「这个红包即使已经过期或者没人领取，也应该显示查看大家的手气」
@@ -324,7 +333,7 @@ ok('换色不外溢：白底那三只弹窗的骨架仍是灰块',
 //     （2026-11-09 曾把红身顶边下压到 8px、由 .is-card 面板底铺白唇；2026-11-10 用户点名
 //     「外侧背景的高度应该与红色区域等高，并且与红色区域对齐」，红身顶边回 0，与面板同盒）。
 //     这一族是「壳体自己的底色」，与组 19 的「行内骨架块」不同层，故单列一组。
-const rpCssNoComment = rpCss.replace(/\/\*[\s\S]*?\*\//g, '');
+const rpCssNoComment = rpCssSrc;  // 同一份「剥过注释」的文本（见文件头 stripCssComments）
 const shellRule = (cls) => ((rpCssNoComment.match(new RegExp('\\.' + cls + '(?![\\w-])[^{]*\\{[\\s\\S]*?\\}')) || [''])[0]);
 const shellBody = (cls) => ((rpCssNoComment.match(new RegExp('\\.' + cls + '\\s*\\{[^}]*\\}')) || [''])[0]);
 ok('红身不带 backdrop-filter（磨砂＝把遮罩下的直播间画面糊成灰雾）', !/backdrop-filter/.test(shellBody('redpacket-modal')) && !/backdrop-filter/.test(shellBody('rp-shell')));
@@ -336,6 +345,33 @@ ok('白卡态面板底色仍是白卡那一份 #fff8f4（红身整面盖住，�
   /\.redpacket-modal\.is-card\s*\{[^}]*background:\s*#fff8f4/.test(rpCssNoComment));
 ok('半透明红那一档在整份信封样式里已清干净（不留 rgba(250,74,96,.94) / rgba(236,50,78,.94) 残写法）',
   !/rgba\(250,\s*74,\s*96/.test(rpCssNoComment) && !/rgba\(236,\s*50,\s*78/.test(rpCssNoComment));
+
+// 20b. 2026-11-14 用户点名「让 .rp-card 顶部超出 rp-shell 一部分，注意 class="modal-close"
+//      要随着 .rp-card 顶部高度变化而变化」。
+//      口径：探出量只有一处来源（--rp-card-rise：基础 0px / 白卡态 8px），白卡顶边与关闭按钮
+//      top 都从它算；探出的那一截同时加进白卡内衬与最小高度 ⇒ 白卡下缘、口袋位置、面板总高
+//      都不变（加载层按 354 铺的那一档撤下时不跳高）。
+//      记录屏的白卡（.rp-card--records）自己那条内衬/高度会盖掉基础式，必须同步吃同一枚变量。
+const rpCardRule = (rpCssNoComment.match(/\.rp-card\s*\{[^}]*\}/) || [''])[0];
+const rpRecordsCardRule = (rpCssNoComment.match(/\.rp-card--records\s*\{[^}]*\}/) || [''])[0];
+const isCardRule20 = (rpCssNoComment.match(/\.redpacket-modal\.is-card\s*\{[^}]*\}/) || [''])[0];
+const baseRise = (rpCssNoComment.match(/\.redpacket-modal\s*\{[^}]*--rp-card-rise:\s*([^;]+);/) || [])[1] || '';
+ok('白卡探出量只有一处来源（基础 0px / 白卡态 8px）',
+  /^0px$/i.test(baseRise.trim()) && /--rp-card-rise:\s*8px/.test(isCardRule20));
+ok('白卡顶边按同一枚变量上移（负 margin-top，红身 top 仍为 0）',
+  /margin:\s*calc\(0px\s*-\s*var\(--rp-card-rise\)\)\s*14px\s*0/.test(rpCardRule) && /top:\s*0/.test(shellRule('rp-shell')));
+ok('探出量同时加进白卡内衬与最小高度（下缘与面板总高不变，加载完不跳高）',
+  /padding:\s*calc\(32px \+ var\(--rp-card-rise\)\)/.test(rpCardRule)
+  && /min-height:\s*calc\(262px \+ var\(--rp-card-rise\)\)/.test(rpCardRule));
+ok('记录屏白卡同步吃同一枚变量（它自己那条内衬/高度会盖掉基础式）',
+  /padding:\s*calc\(26px \+ var\(--rp-card-rise\)\)/.test(rpRecordsCardRule)
+  && /min-height:\s*calc\(300px \+ var\(--rp-card-rise\)\)/.test(rpRecordsCardRule));
+ok('关闭按钮 top 跟着白卡顶边走（同一个变量算，不写死 12px）',
+  /top:\s*calc\(12px\s*-\s*var\(--rp-card-rise\)\)/.test(rpRowStyle('modal-close')));
+ok('白卡态放开 overflow（否则探出面板顶边的那一截被 16px 圆角裁平）',
+  /overflow:\s*visible/.test(isCardRule20));
+ok('白卡态面板底色仍是白卡那份（探出的是白卡自己，不是面板露白唇）',
+  /background:\s*#fff8f4/.test(isCardRule20));
 
 let fail = 0;
 

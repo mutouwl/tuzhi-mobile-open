@@ -1,0 +1,107 @@
+.db-setting {
+	min-height: 100vh;
+	background: #f7f8fa;
+	/* 白卡满宽（2026-11-22 用户点名）：左右不再内缩 12px，留白交给卡内衬 */
+	padding: 12px 0 90px;
+}
+.db-set-tip {
+	font-size: 12px;
+	color: #86909c;
+	/* 与下面卡片的内衬对齐（卡 padding 左右 14） */
+	padding: 0 14px 10px;
+}
+.db-set-card {
+	background: #fff;
+	border-radius: 0;
+	padding: 6px 14px 16px;
+}
+.db-set-label {
+	font-size: 14px;
+	color: #1d2129;
+	font-weight: 500;
+	margin: 16px 0 10px;
+	display: flex;
+	align-items: center;
+}
+.db-set-tip-icon {
+	font-size: 12px;
+	color: #c9cdd4;
+	margin-left: 4px;
+}
+.db-set-options {
+	display: flex;
+	gap: 10px;
+}
+.db-set-option {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	border-radius: 4px;
+	border: 1px solid #e5e6eb;
+	background: #fff;
+	font-size: 14px;
+	color: #4e5969;
+}
+/* 骨架：选项块与真实 .db-set-option 同几何（40 高、4px 圆角、等分） */
+.db-sk-option {
+	flex: 1;
+	height: 40px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+.db-sk-line {
+	height: 12px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+.db-set-option-active {
+	border-color: #0968f6;
+	background: #e8f3ff;
+	color: #0968f6;
+	font-weight: 500;
+}
+.db-set-option text {
+	margin-right: 4px;
+}
+.db-set-hint {
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+	margin-top: 8px;
+}
+/* 自定义题量：输入框与「条」单位同一个框，尾部单位贴右（间距只由 gap 给） */
+.db-set-count {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+.db-set-count-field {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 120px;
+	height: 40px;
+	padding: 0 12px;
+	box-sizing: border-box;
+	border: 1px solid #e5e6eb;
+	border-radius: 4px;
+	background: #fff;
+}
+.db-set-count-input {
+	flex: 1;
+	min-width: 0;
+	height: 100%;
+	font-size: 14px;
+	color: #1d2129;
+}
+.db-set-count-unit {
+	font-size: 14px;
+	color: #4e5969;
+}
+.db-set-count-hint {
+	font-size: 12px;
+	color: #86909c;
+}

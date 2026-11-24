@@ -1,0 +1,428 @@
+.db-index {
+	min-height: 100vh;
+	background: #f7f8fa;
+	/* 吸底栏的留白由 `tz-bottom-btn` 自带的 60px filler-box 承担（与课程商详同一机制），
+	   本页不再另加 padding-bottom：两处都加会多出一条空白带 */
+}
+.db-cover-box {
+	position: relative;
+	width: 100%;
+	height: 0;
+	padding-bottom: 56%;
+	overflow: hidden;
+	background: #f2f3f5;
+}
+.db-cover {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+/* 没有封面时那条占位底：取页面底同族的浅灰，不塌成一条白边 */
+.db-cover-empty {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: #f2f3f5;
+}
+.db-cover-title {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 30px 15px 12px;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 600;
+	background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+/* 白卡满宽（2026-11-22 用户点名）：直角卡不再左右各缩 12px，
+   与上方满宽的信息卡 / 拼团区同一档；左右留白交给卡自己的 padding */
+.db-card {
+	background: #fff;
+	border-radius: 0;
+	margin: 10px 0 0;
+	padding: 14px 12px;
+}
+.db-brief-text {
+	font-size: 14px;
+	color: #4e5969;
+	line-height: 20px;
+}
+/* 刷题简介（照参照图）：封面 56×56 圆角 6 + 右侧刷题本名，下一行简介浅灰 */
+.db-intro-head {
+	display: flex;
+	align-items: center;
+}
+.db-intro-cover {
+	width: 56px;
+	height: 56px;
+	border-radius: 6px;
+	flex: none;
+	display: block;
+}
+.db-intro-cover-empty {
+	background: #f2f3f5;
+}
+.db-intro-name {
+	flex: 1;
+	min-width: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2129;
+	margin-left: 12px;
+}
+.db-intro-text {
+	margin-top: 10px;
+	font-size: 13px;
+	color: #86909c;
+	line-height: 20px;
+}
+.db-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+.db-nav-item {
+	flex: 0 0 25%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 4px 0;
+	/* 整格可点：图标是 image/字体两档，内层节点会吃掉一次命中；这里保证
+	   「点在名字上」「点在图标边缘」都落回 .db-nav-item 的 click（2026-11-18 用户反馈「点了没反应」） */
+	position: relative;
+}
+.db-nav-icon {
+	width: 42px;
+	height: 42px;
+	border-radius: 8px;
+	margin-bottom: 6px;
+}
+.db-nav-icon-default {
+	position: relative;
+	/* 默认档只给一枚裸图标，不铺任何底色：模拟测试/错题本/我的收藏/练习历史
+	   四枚一律走页面默认底色（2026-11-19 用户点名「不需要增加这个丰富多彩的背景」）。
+	   42px 方块尺寸留着不画底：四枚入口的几何一致，图标在里面居中 */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+/* 图标库那一档同样不铺底色（与自定义页面导航组件 components/tz/navigation.vue 同口径：
+   裸 tz-icon 居中、颜色跟页面文字色走）。这里只负责把图标摆在 42px 位里 */
+.db-nav-icon-font {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+/* 四枚固定入口（模拟测试 / 错题本 / 我的收藏 / 练习历史）与自定义入口一律不给底色：
+   图标直接描在页面默认底色上（2026-11-19 用户点名「不需要增加这个丰富多彩的背景」）。
+   .db-nav-test / -wrong / -collect / -history / -report / custom 这几档渐变已撤，类名保留
+   只为模板里 `:class="'db-nav-' + nav.nav_key"` 不报未知类，样式上已无声明。 */
+.db-nav-name {
+	font-size: 12px;
+	color: #1d2129;
+}
+/* 导航模板三档：一行三个 / 一行四个（默认）/ 一行多个 */
+.db-nav-three .db-nav-item {
+	flex: 0 0 33.3333%;
+}
+.db-nav-more .db-nav-item {
+	flex: 0 0 20%;
+}
+/* 进度带（参照图实测）：浅蓝底贴卡片上沿与左右边，32px 高、三格垂直居中。
+   上沿/左右边的出血量与内衬由 overviewBandStyle(comp) 按「组件样式」内边距给，
+   商家改过内边距时带子跟着变；下面这套是默认档（左右 12 / 上下 14，与 .db-card 同值）。 */
+.db-overview-band {
+	background: #f5f9ff;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	margin: -14px -12px 0;
+	padding: 0 12px;
+}
+.db-overview-head {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+}
+.db-overview-title {
+	font-size: 12px;
+	/* 标题与百分比同为深蓝（参照图实测）。带底是固定的浅蓝，所以字色也固定：
+	   不跟页面「文字颜色」——选白色时这里会变成白字压浅蓝 */
+	color: #3d6299;
+	flex: none;
+}
+/* 百分比紧跟标题后（参照图「刷题进度 50%」：与标题同一深蓝，不是主色蓝） */
+.db-overview-percent {
+	font-size: 12px;
+	color: #3d6299;
+	margin-left: 6px;
+	flex: none;
+}
+.db-overview-track {
+	flex: 1;
+	min-width: 0;
+	margin-left: 12px;
+}
+.db-overview-row {
+	display: flex;
+	margin-top: 14px;
+}
+.db-overview-cell {
+	flex: 1;
+	text-align: center;
+}
+.db-overview-num {
+	font-size: 18px;
+	font-weight: 600;
+	/* 参照图实测 #353535：这一格是白底，用固定深灰而不是跟页面文字色
+	   （页面选白色时会把「0 / 总题数」洗成白字压白底） */
+	color: #353535;
+	line-height: 24px;
+}
+.db-overview-label {
+	font-size: 12px;
+	/* 与数字同为 #353535（参照图实测：标签不是浅灰副文本，深浅与数字一致） */
+	color: #353535;
+	margin-top: 2px;
+}
+.db-catalog-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2129;
+	margin-bottom: 8px;
+}
+/* 目录层级树（行 / 导引线 / 折叠圆钮 / 名称 / 进度行）已抽到共用组件：
+   `pages/app/drill_book/components/drill-catalog.vue`（三页同一份，改一处三页都跟）。
+   本页只保留右侧那一格「做题 / 继续」的样式。 */
+/* 叶子目录右侧动作钮（参照图1：白底、细灰边胶囊）：
+   由目录树组件的 `right` 插槽摆到整行最右、相对「名称行 + 进度行」整块垂直居中；
+   文案两档：做过题 =「继续」，一题没做 =「做题」 */
+.db-cat-do {
+	flex: none;
+	margin-left: 10px;
+	padding: 4px 16px;
+	border: 1px solid #c9cdd4;
+	border-radius: 40px;
+	font-size: 14px;
+	line-height: 22px;
+	color: #1d2129;
+	background: #fff;
+}
+/* 叶子目录没题目：占「做题 / 继续」那一格的一行灰色状态字（不是按钮，不挂边框）；
+   点这一行也不再弹 toast，状态由这一行写明 */
+.db-cat-none {
+	flex: none;
+	margin-left: 10px;
+	font-size: 12px;
+	line-height: 22px;
+	color: #86909c;
+}
+.db-detail {
+	margin-top: 8px;
+}
+
+/* ---------- 未购 / 未获权限档：购买页（版式照课程商详 .course-info / .info 那一档） ---------- */
+/* 信息卡：满宽白块、内衬 10 / 15 / 15（与课程商详 `tz-box padding="10px 15px 15px"` 逐值相同） */
+.db-buy-info {
+	background: #fff;
+	padding: 10px 15px 15px;
+}
+/* 价格行：全站红档、22px 粗体（与课程商详 `.course-info .price` 逐值相同） */
+.db-buy-price {
+	font-size: 22px;
+	font-weight: 700;
+	color: #f53f3f;
+	line-height: 30px;
+}
+.db-buy-price-unit {
+	font-size: 14px;
+	font-weight: 400;
+	margin-right: 4px;
+}
+/* 虚拟支付：代币名跟在数字后面（¥ 是前缀、代币是后缀，两者各占一侧） */
+.db-buy-coin {
+	font-size: 14px;
+	font-weight: 400;
+	margin-left: 4px;
+}
+/* 名称与简介：16px 标题 / 12px 灰字简介，间距同课程商详 */
+.db-buy-name {
+	margin-top: 10px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #1d2129;
+	line-height: 22px;
+}
+.db-buy-brief {
+	margin-top: 6px;
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+}
+/* 商品事实一行（总题数 · 有效期）：照课程商详「N 次学习」那一行的字号与色阶 */
+.db-buy-facts {
+	margin-top: 10px;
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+}
+.db-buy-dot {
+	margin: 0 6px;
+}
+/* 正文块：满宽白块 + 标题（照课程商详 `tz-title` + `tz-box` 那一段的落法） */
+.db-buy-detail {
+	background: #fff;
+	padding: 15px;
+}
+.db-buy-detail-head {
+	font-size: 16px;
+	font-weight: 600;
+	color: #323233;
+	line-height: 20px;
+	margin-bottom: 10px;
+}
+/* 购买页正文用 `.db-detail`（与已授权态的「刷题本介绍」同一份正文样式），
+   那一档自带 8px 上距是给卡内标题用的，这里标题已带 10px 下距 ⇒ 就地归零，不叠成 18px */
+.db-buy-detail .db-detail {
+	margin-top: 0;
+}
+/* 关联课程条：左封面 + 名称与说明 + 右箭头（可关联多门，逐门各一条） */
+/* 分组容器承担与上方内容的 14px 间距与那条发丝线；每一条之间再给 12px，
+   末条不带（`margin-bottom` 而不是 flex `gap`：iOS < 14.5 的 WXSS 不认 gap）。 */
+.db-bind-course-group {
+	margin-top: 14px;
+	padding-top: 14px;
+	border-top: 1px solid #f2f3f5;
+}
+.db-bind-course {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+}
+.db-bind-course:last-child {
+	margin-bottom: 0;
+}
+.db-bind-cover {
+	width: 48px;
+	height: 48px;
+	border-radius: 4px;
+	flex: none;
+	display: block;
+	background: #f2f3f5;
+}
+.db-bind-info {
+	flex: 1;
+	min-width: 0;
+	margin: 0 8px;
+}
+.db-bind-name {
+	font-size: 14px;
+	color: #1d2129;
+}
+.db-bind-tip {
+	margin-top: 4px;
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+}
+
+/* ---------- 装修组件：公告 / 图片广告 / 富文本 / 音频 / 视频 ---------- */
+/* 公告、音频、视频都走全站 tz-* 组件（与自定义页面同一份），页面不再自带版式 */
+.db-image-ad {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 10px 0 0;
+}
+.db-image-ad-cell {
+	position: relative;
+	overflow: hidden;
+	background: #f2f3f5;
+	/* 小程序 WXSS 不支持 aspect-ratio：用 padding-bottom 撑 1:1（与 .db-cover-box 同法） */
+	height: 0;
+	padding-bottom: 100%;
+	box-sizing: border-box;
+}
+.db-image-ad-img {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+.db-image-ad-title {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	padding: 4px 0;
+	text-align: center;
+	font-size: 12px;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.4);
+}
+
+/* 轮播图（组件模版第 4 档）：2:1 画幅，与预览同高宽比 */
+.db-image-ad-carousel {
+	display: block;
+}
+.db-image-ad-carousel-box {
+	position: relative;
+	height: 0;
+	padding-bottom: 50%;
+	overflow: hidden;
+}
+.db-image-ad-swiper {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+.db-image-ad-slide {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: #f2f3f5;
+}
+
+/* 横向滑动（组件模版第 5/6 档）：scroll-view 里子项必须 inline-block，
+   百分比宽度才按可视宽度算；项间距由 margin-right 给（见 adScrollCellStyle） */
+.db-image-ad-scroll {
+	margin: 10px 0 0;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+.db-image-ad-scroll .db-image-ad-cell {
+	display: inline-block;
+	vertical-align: top;
+}
+.db-richtext {
+	font-size: 14px;
+	color: #4e5969;
+	line-height: 20px;
+}
+.db-audio-title {
+	height: 20px;
+	line-height: 20px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 12px;
+}
+.db-video-player {
+	width: 100%;
+	height: 200px;
+}
+.db-audio-empty {
+	font-size: 12px;
+	color: #86909c;
+}

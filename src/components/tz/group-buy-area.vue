@@ -106,7 +106,7 @@
                         :class="{ 'gba-tier--on': pickedLadderId === Number(row.id) }"
                         @click="pickLadder(row)">
                         <text class="gba-tier-num">{{ row.invite_num }}人团</text>
-                        <text class="gba-tier-price">¥{{ money(row.price) }}/人</text>
+                        <text class="gba-tier-price">{{ gbPricePrefix }}{{ money(row.price) }}{{ gbPriceSuffix }}/人</text>
                     </view>
                 </view>
             </view>
@@ -599,12 +599,30 @@ export default {
             // 已在团里那一档仍是「查看拼团详情」，保留原来的价格行（逐字不变）
             if (this.joinMode && !this.myTeam) { return ''; }
             if (this.isLadder) {
-                return this.pickedTier ? '¥' + this.money(this.pickedTier.price) : '';
+                return this.pickedTier ? this.gbPricePrefix + this.money(this.pickedTier.price) + this.gbPriceSuffix : '';
             }
             if (this.pickedSpec) {
-                return '¥' + this.money(this.pickedSpec.price);
+                return this.gbPricePrefix + this.money(this.pickedSpec.price) + this.gbPriceSuffix;
             }
-            return '¥' + this.money(this.activity.price);
+            return this.gbPricePrefix + this.money(this.activity.price) + this.gbPriceSuffix;
+        },
+        /**
+         * 价格单位：虚拟支付商品走代币名（后端已把 activity.price / 档位价换成代币数），
+         * 其余仍是人民币。判据读后端下发的 `is_virtual_pay`（与横幅同一枚），端上不按商品类型猜
+         * （2026-11-23 用户点名「拼团中的刷题本也要适配」：此前底栏与档位块恒拼 ¥）
+         */
+        gbVirtual() {
+            return Number(this.activity && this.activity.is_virtual_pay) === 1;
+        },
+        coinName() {
+            return this.$tools.systemConfig('coin_name') || '金币';
+        },
+        /** 代币是后缀（99金币），人民币是前缀（¥99） */
+        gbPricePrefix() {
+            return this.gbVirtual ? '' : '¥';
+        },
+        gbPriceSuffix() {
+            return this.gbVirtual ? this.coinName : '';
         },
         /** 底栏那枚按钮的文案（宿主只读这一枚字符串，格式化只存这里一处）。
          *  2026-10-27 起三档与竞品对齐：**我在拼 → 查看拼团详情**（图 3）、

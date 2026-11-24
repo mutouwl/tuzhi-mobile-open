@@ -7,7 +7,7 @@
     name="img"
     :maxCount="maxCount ? maxCount : 9"
     :disabled="disabled"
-  ></u-upload>
+  ><slot></slot></u-upload>
 </template>
 
 <script>

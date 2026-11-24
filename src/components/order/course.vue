@@ -221,6 +221,12 @@ export default {
                         this.$nav.to(this.itemId, 'checkin')
                     }
                     break;
+                case 'drill_book':
+                    // 刷题本：跳转刷题本首页（路径取 router.js 的 drill_book 档）；未安装时不跳
+                    if (this.itemId && this.$tools.systemConfig('app_isinstall_drill_book')) {
+                        this.$nav.to(this.itemId, 'drill_book')
+                    }
+                    break;
 
                 default:
                     break;

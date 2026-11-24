@@ -1,0 +1,54 @@
+.db-history {
+	min-height: 100vh;
+	background: #f7f8fa;
+	padding-bottom: 20px;
+}
+.db-card {
+	background: #fff;
+	border-radius: 0;
+	margin: 10px 0 0;
+	padding: 14px 12px;
+}
+.db-history-list {
+	margin-top: 10px;
+	background: #fff;
+}
+.db-history-item {
+	padding: 14px 12px;
+	border-bottom: 1px solid #f2f3f5;
+}
+.db-history-item.is-last {
+	border-bottom: none;
+}
+.db-history-name {
+	font-size: 14px;
+	color: #1d2129;
+	line-height: 20px;
+	margin-bottom: 8px;
+	word-break: break-all;
+}
+.db-history-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 12px;
+	color: #86909c;
+}
+.db-history-time {
+	margin-right: 10px;
+}
+.db-history-undo {
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: #e8f3ff;
+	color: #0968f6;
+	font-size: 12px;
+}
+.db-loadmore {
+	padding: 14px 0;
+}
+.db-sk-line {
+	height: 12px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}

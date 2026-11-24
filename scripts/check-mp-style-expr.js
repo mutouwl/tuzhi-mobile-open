@@ -1,7 +1,14 @@
 /**
- * 小程序 WXML：`:style` 表达式里不许出现对象字面量（2026-10-29 线上「直接打不开」的机器验法）
+ * 小程序 WXML：`:style` 只许绑「字符串或模板里的对象字面量」
  *
- * 事故现场：`components/order/course.vue` 的
+ * 两类事故，本门禁都管：
+ *   ① 方法调用（`:style="boxStyleOf(comp)"`，2026-11-23 刷题本首页）：mp 编译器对 `:style`
+ *      的表达式有白名单（对象/数组/字符串/标识符/成员/条件/逻辑/二元），**没有 CallExpression**，
+ *      直接报 `:style 不支持 ... 语法`、整个小程序包编不过（H5 正常，所以本地 H5 跑不出来）。
+ *      写法：取数时预计算成串，模板只绑成员（`:style="comp.cssBox"`）。
+ *   ② 三元/逻辑里的对象字面量（见下），会静默 `[object Object]` 或整页 WXML 编译失败。
+ *
+ * 事故现场（②）：`components/order/course.vue` 的
  *   `:style="priceColor ? { color: priceColor, 'font-weight': 600 } : ''"`
  * 被 uni 编成
  *   `style="{{(priceColor?{color:priceColor,'font-weight':600}:'')}}"`
@@ -44,13 +51,22 @@ function mpOptions(rel) {
     });
 }
 
-/** 把一份模板编成 WXML，返回 `style="{{...}}"` 里「去掉字符串字面量后仍含对象字面量」的那些表达式 */
+/** 把一份模板编成 WXML，返回会被静默/致命破坏的 style 表达式：
+ *  ① 编译期就被 mp 拒绝的（方法调用等，`:style="boxStyleOf(comp)"`）；
+ *  ② `style="{{...}}"` 里「去掉字符串字面量后仍含对象字面量」的那些表达式 */
 function scanTemplate(template, rel) {
     const opts = mpOptions(rel);
     opts.emitted = [];
-    compile(template, opts);
-    const wxml = opts.emitted.join('\n');
+    const ret = compile(template, opts);
     const out = [];
+    // ① mp 编译器对 `:style` 的表达式有白名单（uni-template-compiler/lib/script/traverse/data/style.js）：
+    //    对象/数组/字符串/标识符/成员/条件/逻辑/二元——**没有 CallExpression**。
+    //    compile() 自身不 throw，错误收在 result.errors 里，vue-loader 才把它抛成「Errors compiling template」。
+    ((ret && ret.errors) || []).forEach((e) => {
+        const msg = String((e && (e.msg || e.message)) || '');
+        if (/^:style\s+不支持\s+/.test(msg)) out.push({ expr: msg, fatal: true, kind: 'expr' });
+    });
+    const wxml = opts.emitted.join('\n');
     // 只认真正的 style 属性：`custom-style="{{...}}"` / `overlay-style="{{...}}"` 是组件 prop，允许对象
     const re = /(?<![-\w])style="\{\{([\s\S]*?)\}\}"/g;
     let m;
@@ -116,22 +132,35 @@ if (process.argv.includes('--selftest')) {
         `<view :style="on ? 'margin-top:' + m + 'px' : ''"></view>`,
         'components/__selftest__.vue'
     );
+    const call = scanTemplate(
+        `<view :style="boxStyleOf(comp)"></view>`,
+        'components/__selftest__.vue'
+    );
+    const member = scanTemplate(
+        `<view :style="comp.cssBox"></view>`,
+        'components/__selftest__.vue'
+    );
     const ok1 = fatal.length === 1 && fatal[0].fatal === true;
     const ok2 = silent.length === 1 && silent[0].fatal === false;
     const ok3 = safe.length === 0;
+    const ok4 = call.length === 1 && call[0].fatal === true && /^:style\s+不支持/.test(call[0].expr);
+    const ok5 = member.length === 0;
     console.log(`${ok1 ? 'PASS' : 'FAIL'} 反例①带引号对象（会编译失败）被识别`);
     console.log(`${ok2 ? 'PASS' : 'FAIL'} 反例②无引号对象（静默失效）被识别`);
     console.log(`${ok3 ? 'PASS' : 'FAIL'} 正例（拼成 style 串）不误报`);
-    process.exit(ok1 && ok2 && ok3 ? 0 : 1);
+    console.log(`${ok4 ? 'PASS' : 'FAIL'} 反例③方法调用（:style 不支持 ... 语法，小程序整包编不过）被识别`);
+    console.log(`${ok5 ? 'PASS' : 'FAIL'} 正例（绑预计算好的字符串成员）不误报`);
+    process.exit(ok1 && ok2 && ok3 && ok4 && ok5 ? 0 : 1);
 }
 
 const hits = scanAll();
 if (!hits.length) {
-    console.log('PASS 全站模板的 style 表达式里没有对象字面量（487 个 .vue 逐个过 uni mp 编译器）');
+    console.log('PASS 全站模板的 style 表达式里既没有对象字面量，也没有方法调用（每个 .vue 逐个过 uni mp 编译器）');
     process.exit(0);
 }
 hits.forEach((h) => {
     console.log(`${h.fatal ? '[FAIL] 会编译失败' : '[FAIL] 静默失效'} ${h.file}\n        ${h.expr.slice(0, 180)}`);
 });
-console.log(`\n共 ${hits.length} 处。改法：把三元里的对象拆成 style 串，如 'color:' + x + ';font-weight:600'。`);
+console.log(`\n共 ${hits.length} 处。改法：三元里的对象拆成 style 串（'color:' + x）；`
+    + `方法调用改成取数时预计算成串、模板绑成员（:style="comp.cssBox"）。`);
 process.exit(1);

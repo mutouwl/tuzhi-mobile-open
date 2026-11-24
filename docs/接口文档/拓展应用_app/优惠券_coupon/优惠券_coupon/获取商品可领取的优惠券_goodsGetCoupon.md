@@ -16,7 +16,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| request | Request | 否 | * @param int $goods_id | - |
+| request | Request | 否 | - | - |
 | goods_id | string | 否 | 商品ID | - |
 | goods_type | string | 否 | 商品类型 | - |
 

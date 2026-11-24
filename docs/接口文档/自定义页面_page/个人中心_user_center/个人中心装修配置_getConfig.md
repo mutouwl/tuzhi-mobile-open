@@ -247,9 +247,9 @@ curl -X POST '{apiUrl}page/user_center/getConfig' \
         },
         {
           "key": "score_shop",
-          "name": "积分商城",
+          "name": "积分中心",
           "icon": "service",
-          "path": "/pages/app/score/center/center",
+          "path": "/pages/app/score/home/home",
           "app_tag": "",
           "installed": true
         },

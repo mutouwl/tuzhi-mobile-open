@@ -445,17 +445,25 @@
 			'iscollect': iscollect,
 			'is_virtual_pay': isVirtualPay(data),
 		}" :btnTitle="joinBtnText()" @handle="buyCheck" @share="share" @collect="collect" >
+			<!-- 刷题本入口（付费插件）：这门课关联了刷题本就出这一枚，未加入学习也能点开看清单
+			     （能不能进由刷题本自己的权益闸门判，`is_auth` 随列表下发）。与拼团同走
+			     `order-extra` 插槽、同挂 `.tbb-slot`（宽度档在 `src/App.vue` 全局表，硬约束 45）；
+			     未安装刷题本插件时 `drillBookList` 恒空 ⇒ 这一枚不渲染、那一发请求也不发 -->
+			<tz-drill-book-entry v-if="drillBookList.length > 0" class="tbb-slot" slot="order-extra"
+				@open="modal.drillBook = true" />
 			<tz-group-buy-btn v-if="!isScorePage && gbEntry" class="tbb-slot" slot="order-extra" :text="gbEntry.text" :price="gbEntry.price_text" @open="openGb" />
 		</tz-bottom-btn>
 
 		<!-- 已订阅态底栏：打卡那一枚只在「这门课（或其所属专栏）关联了上架打卡活动」时出，
-		     判据是 loadCheckin 取回来的列表非空（未安装打卡插件时那条请求根本不发，自然也是空） -->
+		     判据是 loadCheckin 取回来的列表非空（未安装打卡插件时那条请求根本不发，自然也是空）；
+		     刷题本那一枚同档：判据是 loadDrillBooks 取回来的列表非空（付费插件，未安装同样不发请求） -->
 		<tz-bottom-btn v-if="data.subscription && !circleCourseContext" type="control" :params="{
 			'iscollect': iscollect,
 			'column_id': pageParams.column_id,
-			'checkin': checkinList.length > 0
+			'checkin': checkinList.length > 0,
+			'drill_book': drillBookList.length > 0
 		}" @collect="collect" @share="share" @comment="modal.comment = true; commentReplyId = 0;"
-			@dir="modal.columnCourse = true" @checkin="modal.checkin = true">
+			@dir="modal.columnCourse = true" @checkin="modal.checkin = true" @drill-book="modal.drillBook = true">
 			<!-- 送好友入口（已订阅这一档，2026-10-16 用户追问「课程购买之后就不能送好友了？」后补）：
 			     与「打卡」同一形态挂在控制栏里，显隐仍只由插件那枚后端 flag 决定；
 			     **`class="sf-control-slot"` 不能省**（2026-10-29 三次点名同一处：先「送好友三个字变成
@@ -486,6 +494,11 @@
 		<checkin-course-modal :show="modal.checkin" :list="checkinList" :attr="checkinAttr"
 			:load-status="checkinLoadStatus" @close="modal.checkin = false"
 			@lower="loadMoreCheckin" @open="goCheckin" />
+
+		<!-- 底栏「刷题本」弹窗：本课程关联的刷题本列表，数据与上面那枚入口同一份（同上，不二次取数） -->
+		<drill-book-course-modal :show="modal.drillBook" :rows="drillBookCards"
+			:loading="drillBookLoading" :load-msg="drillBookMsg" :load-status="drillBookLoadStatus"
+			@close="modal.drillBook = false" @lower="loadMoreDrillBooks" />
 
 	</view>
 </template>

@@ -98,6 +98,24 @@
     right: 0px;
     top: 36%;
 }
+
+/* 「暂无关联课程」这一格（2026-11-21 用户点名「空状态 icon 上方与『该练习关联课程』之间显示灰色」）：
+   那一支的外壳是 `tz-box padding="0 15px 15px"` —— **卡顶没有内衬**，而 u-empty 根节点自带
+   `margin: 100px !important`；父级无 padding/border，那 100px 上外距直接从卡里穿出去（外边距塌陷），
+   白卡被整块推下去，标题与图标之间就露出页面底 `rgba(250,250,250,1)` 那条灰带。
+   改法照全站空态配方（`components/tz/group-buy-popup.vue` 的 `.gbp-empty`）：留白由宿主这一层给 40/48，
+   组件自身外距收成 0。零值写在 `.u-empty.u-empty` 上（0,3,0）压过组件 scoped 那条
+   `margin: 100px !important`（0,2,0），不吃样式块合并顺序；模板传 `margin-top="0"` 无效
+   （内联样式不带 !important，压不过 scoped 那条）。
+   类名带 `exam-` 前缀：本页样式块无 scoped（M12），裸 `.xx-empty` 会外溢到别页。 */
+.exam-course-empty {
+    padding: 40px 0 48px;
+}
+
+.exam-course-empty .u-empty.u-empty {
+    margin: 0 !important;
+}
+
 /* 拼团横幅回拼团区了（2026-10-30 用户点名「拼团连成一个整体」「上下挨在一起，不要拆分放」）：
    本页不再有卡上方那条独立横幅，`.exam-gb-banner` 随之删净 */
 

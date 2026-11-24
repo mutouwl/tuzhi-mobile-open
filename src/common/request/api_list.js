@@ -1947,6 +1947,49 @@ export default {
 			}
 		},
 
+		/** 刷题本（付费插件 drill_book） ↓ **/
+		drill_book: {
+			index: {
+				detail: { url: 'app/drill_book/index/detail', auth: false, method: 'POST' },
+				list: { url: 'app/drill_book/books/list', auth: false, method: 'POST' },
+				// 全部上架刷题本（不按权益过滤）：自定义页面「刷题本列表」入口用
+				allList: { url: 'app/drill_book/books/allList', auth: false, method: 'POST' },
+				groups: { url: 'app/drill_book/books/groups', auth: false, method: 'POST' },
+				courseBind: { url: 'app/drill_book/books/courseBind', auth: false, method: 'POST' },
+			},
+			practice: {
+				setting: { url: 'app/drill_book/practice/setting', auth: true, method: 'POST' },
+				start: { url: 'app/drill_book/practice/start', auth: true, method: 'POST' },
+				// 「继续上次」：后端定落点（进行中记录原样续 / 上次那个目录做完就往下）
+				resume: { url: 'app/drill_book/practice/resume', auth: true, method: 'POST' },
+				papers: { url: 'app/drill_book/practice/papers', auth: true, method: 'POST' },
+				startPaper: { url: 'app/drill_book/practice/startPaper', auth: true, method: 'POST' },
+			},
+			work: {
+				detail: { url: 'app/drill_book/work/detail', auth: true, method: 'POST' },
+				save: { url: 'app/drill_book/work/save', auth: true, method: 'POST' },
+				answerOne: { url: 'app/drill_book/work/answerOne', auth: true, method: 'POST' },
+				collect: { url: 'app/drill_book/work/collect', auth: true, method: 'POST' },
+				mark: { url: 'app/drill_book/work/mark', auth: true, method: 'POST' },
+				submit: { url: 'app/drill_book/work/submit', auth: true, method: 'POST' },
+				report: { url: 'app/drill_book/work/report', auth: true, method: 'POST' },
+			},
+			wrong: {
+				groups: { url: 'app/drill_book/wrong/groups', auth: true, method: 'POST' },
+				questions: { url: 'app/drill_book/wrong/questions', auth: true, method: 'POST' },
+				remove: { url: 'app/drill_book/wrong/remove', auth: true, method: 'POST' },
+				retry: { url: 'app/drill_book/wrong/retry', auth: true, method: 'POST' },
+			},
+			mine: {
+				collects: { url: 'app/drill_book/mine/collects', auth: true, method: 'POST' },
+				// 收藏按目录分组 + 按目录/整本做题（2026-11-22 收藏页照错题本目录树改版）
+				collectGroups: { url: 'app/drill_book/mine/collectGroups', auth: true, method: 'POST' },
+				collectPractice: { url: 'app/drill_book/mine/collectPractice', auth: true, method: 'POST' },
+				uncollect: { url: 'app/drill_book/mine/uncollect', auth: true, method: 'POST' },
+				history: { url: 'app/drill_book/mine/history', auth: true, method: 'POST' },
+			},
+		},
+
 		/** VIP ↓ **/
 		vip: {
 			detail: {

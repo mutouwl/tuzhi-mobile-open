@@ -644,6 +644,17 @@ export default {
       });
     }
 
+    // 刷题本（付费插件 drill_book）：入口显隐只吃「装没装」这一枚轴（硬约束 27②/31）。
+    // 2026-11-22 用户点名「我的刷题本改为『刷题本』，放在设置前面」：设置是兜底清单最后一项，
+    // 按 splice(len-1) 插在它前面，其余入口的位序逐字不变（硬约束 28）；名称与后端清单同词
+    if (that.$tools.systemConfig("app_isinstall_drill_book")) {
+      that.controllNav.splice(that.controllNav.length - 1, 0, {
+        name: "刷题本",
+        icon: "task",
+        path: "/pages/app/drill_book/list/list",
+      });
+    }
+
     // 我的拼团：入口显隐只吃「装没装」这一枚轴，不吃「有没有拼团记录」（硬约束 27②/31）——
     // 拿记录数当判据，新商家永远等不到第一行，读出来就是「明明开了却没有按钮」。
     // icon 用 addpeople（邀人成团那一档语义），字形在 iconfont.css 里实测存在；

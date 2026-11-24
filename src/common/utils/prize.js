@@ -19,6 +19,8 @@ const TARGET_PAGE = {
 	coupon: '/pages/app/coupon/my/my',
 	score: '/pages/app/score/center/center',
 	balance: '/pages/user/balance/index',
+	// 刷题本奖品：领取后落「我的刷题本」列表（刚发的权益就在第一行）
+	drill_book: '/pages/app/drill_book/list/list',
 };
 
 /**

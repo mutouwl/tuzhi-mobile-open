@@ -1,0 +1,30 @@
+page {
+	background-color: #fff;
+}
+
+/* 顶栏工具槽（收藏 / 标记）：两枚横排一行。
+   MP 端命名插槽的内容会被编译进一层块级 `view slot` 包装，包装层里直接摆两个 view 会竖排；
+   这一行自己给 flex 行布局，包装层是块级也不影响（2026-11-23 用户点名） */
+.work-slot-tools {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 14px;
+}
+
+/* 顶栏工具槽（收藏 / 标记）：24×24 触区、图标 20。
+   槽内容由页面样式表负责（MP 下组件样式不外溢到插槽节点），与外壳同值 */
+.work-slot-tool {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+}
+
+/* 顶栏「已用时」槽（试卷 / 模拟测试）：与考试做题页倒计时同一档（14px、主色），
+   槽内容同样由页面样式表负责（与 .work-slot-tool 同一条原因） */
+.work-slot-time {
+	font-size: 14px;
+	color: #0968f6;
+}

@@ -1,5 +1,7 @@
 # 商品列表
 
+> 三参形态 `where(字段, 运算符, 值)`：TP5.0 把「第二个参数是数组」当成
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -15,19 +17,20 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| limit | integer | 否 | 每页数量 | `10` |
 | page | integer | 否 | 页码 | `1` |
-| group | string | 否 | 分组 | - |
+| limit | integer | 否 | 每页数量 | `10` |
+| group | integer | 否 | 分组 | `0` |
 | search | string | 否 | search | - |
 | sort | string | 否 | 排序 | `desc` |
 | order | string | 否 | 订单 | - |
+| type | string | 否 | 类型 | - |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/score/goods/index' \
   -H 'Content-Type: application/json' \
-  -d '{"limit":10,"page":1,"group":"xxx","search":"xxx","sort":"desc","order":"xxx"}'
+  -d '{"page":1,"limit":10,"group":0,"search":"xxx","sort":"desc","order":"xxx","type":"xxx"}'
 ```
 
 ## 返回示例

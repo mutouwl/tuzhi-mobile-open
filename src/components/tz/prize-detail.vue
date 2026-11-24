@@ -8,6 +8,7 @@
 	  **卡按奖品类型换形态，判据只读后端逐行下发的 detail.kind**（M22：前端不自己按 type 猜）：
 	    · course    复用登记在册的 tz-course（条目卡不许自抄一份封面/标题版式，M24），
 	                 点整卡跳这门课的详情（落点由后端给 course_id，前端不拼 URL）
+	    · drill_book 同一张 tz-course，落点是刷题本首页（落点由后端给 goods_id）
 	    · coupon    复用 coupon-my 券卡（与「我的优惠券」页同一张，一个字都没改）
 	    · physical  实物商品卡（带兜底图的 package-goods-card）+ 0 元订单号
 	    · score     积分介绍格：数值 + 单位（读后端 score_value，前端不自己判断有没有值来猜是哪一型）
@@ -63,6 +64,18 @@
 					:border="true"
 					:margin="0"
 					@click="goCourse"
+				></tz-course>
+
+				<!-- 刷题本：与线上课程同一张卡（条目卡只负责版式，M24），点整卡落刷题本首页；
+				     落点只认后端给的 goods_id，前端不按 type 拼 URL -->
+				<tz-course
+					v-else-if="kind === 'drill_book'"
+					:list="[drillBookRow]"
+					:navigate="false"
+					:round="true"
+					:border="true"
+					:margin="0"
+					@click="goDrillBook"
 				></tz-course>
 
 				<!-- 优惠券：与「我的优惠券」页同一张券卡（coupon-my 吃的是 coupon_user 那行，
@@ -205,6 +218,17 @@ export default {
 				pay_type: 'free',
 			};
 		},
+		/** 刷题本那一行：与课程同形（id 走后端给的 goods_id，type 走 i18n 的 drill_book 档） */
+		drillBookRow() {
+			const d = (this.current && this.current.detail) || {};
+			return {
+				id: Number(d.goods_id) || 0,
+				name: (this.current && this.current.name) || '',
+				cover: this.coverSrc,
+				type: 'drill_book',
+				pay_type: 'free',
+			};
+		},
 		/** 券卡吃的是关联那张 app_coupon（金额、门槛、有效期都在它身上） */
 		couponFace() {
 			const d = (this.current && this.current.detail) || {};
@@ -238,7 +262,7 @@ export default {
 		footText() {
 			// 「去学习」只在真拿到手那一档出：没领的课程跳过去也看不了（权益是领取那一刻才开通的），
 			// 给一枚点开只能看不能学的按钮，是把用户送去撞墙
-			if (this.kind === 'course') {
+			if (this.kind === 'course' || this.kind === 'drill_book') {
 				return this.granted ? '去学习' : '我知道了';
 			}
 			// 现金 / 积分：底部那一枚由「我知道了」换成「去查看」（2026-10-04 用户点名）。
@@ -290,6 +314,18 @@ export default {
 			this.$nav.to(this.$nav.getPagePath(id, 'course'));
 		},
 		/**
+		 * 刷题本详情：落点只认后端给的 goods_id（与课程同一口径，路由走 $nav）
+		 */
+		goDrillBook() {
+			const d = (this.current && this.current.detail) || {};
+			const id = Number(d.goods_id) || 0;
+			if (!id) {
+				uni.showToast({ title: '这本刷题本暂时无法打开，请联系客服', icon: 'none' });
+				return;
+			}
+			this.$nav.to(id, 'drill_book');
+		},
+		/**
 		 * 券卡那一格：点「使用」跳走之前先把这只窗收掉（券卡内部自己跳，
 		 * 收窗只能在这一层接；不收的话退回来窗还盖在用券页上面）
 		 */
@@ -322,11 +358,15 @@ export default {
 		 * 只 emit 的话 visible 一直是真的 —— 症状是那枚按钮按了没反应、遮罩也撤不掉。
 		 */
 		onFoot() {
-			// 判据与 footText 同一句：课程那一档未领取时不跳（见 footText 的注释）
-			if (this.kind === 'course') {
+			// 判据与 footText 同一句：课程 / 刷题本那一档未领取时不跳
+			if (this.kind === 'course' || this.kind === 'drill_book') {
 				if (this.granted) {
 					this.close();
-					this.goCourse();
+					if (this.kind === 'drill_book') {
+						this.goDrillBook();
+					} else {
+						this.goCourse();
+					}
 				} else {
 					this.close();
 				}

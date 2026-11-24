@@ -4,9 +4,9 @@
 > 数据源：`tuzi-mobile/src/common/request/api_list.js`（Mobile 端接口配置文件）+ 后端 `application/api/controller/**`。
 > 目录与文件按「中文名_变量」命名（文件名前缀即接口标题），由生成器统一维护，重命名请用 `--all` 全量刷新。
 
-- 生成时间：2026/11/1 08:40:31
-- 接口总数：422 个（20 个模块）
-- 已生成文档：422 份
+- 生成时间：2026/11/24 16:46:45
+- 接口总数：457 个（20 个模块）
+- 已生成文档：457 份
 
 ## 通用约定
 
@@ -219,6 +219,12 @@
 | `POST /api/course/mp_study/entry` | 获取小程序学习入口 | [查看](课程_course/小程序学习_mp_study/获取小程序学习入口_entry.md) |
 | `POST /api/course/mp_study/urllink` | 获取小程序 URL Link（微信外 H5 拉起微信） | [查看](课程_course/小程序学习_mp_study/获取小程序 URL Link（微信外 H5 拉起微信）_urllink.md) |
 | `GET /api/course/mp_study/code` | 小程序码图片（PNG 图片流）（后端） | [查看](课程_course/小程序学习_mp_study/小程序码图片（PNG 图片流）_code.md) |
+
+#### designated（designated）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/course/designated/getList` | 列表（分页） | [查看](课程_course/designated/列表（分页）_getList.md) |
 
 #### 分组（group）
 
@@ -472,6 +478,12 @@
 | `POST /api/app/checkin/checkin/editOwn` | 编辑我的打卡动态 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/编辑我的打卡动态_editOwn.md) |
 | `POST /api/app/checkin/checkin/shareInfo` | 打卡活动分享信息 | [查看](拓展应用_app/打卡_checkin/打卡_checkin/打卡活动分享信息_shareInfo.md) |
 
+##### designated（checkin/designated）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/checkin/designated/getList` | 列表（分页） | [查看](拓展应用_app/打卡_checkin/designated/列表（分页）_getList.md) |
+
 ##### 课程关联打卡（checkin/course）
 
 | 接口 | 说明 | 文档 |
@@ -656,6 +668,7 @@
 | `POST /api/app/test/test/submitTest` | 提交考试 | [查看](拓展应用_app/考试_test/考试_test/提交考试_submitTest.md) |
 | `POST /api/app/test/test/getResult` | 考试结果 | [查看](拓展应用_app/考试_test/考试_test/考试结果_getResult.md) |
 | `POST /api/app/test/worklog/getLog` | worklog记录 | [查看](拓展应用_app/考试_test/worklog/worklog记录_getLog.md) |
+| `POST /api/app/test/exam/getList` | 考试列表（分页） | [查看](拓展应用_app/考试_test/考试_exam/考试列表（分页）_getList.md) |
 | `POST /api/app/test/test/getButtonText` | 获取考试操作按钮状态（后端） | [查看](拓展应用_app/考试_test/考试_test/获取考试操作按钮状态_getButtonText.md) |
 
 #### 考试（exam）
@@ -677,6 +690,37 @@
 | `POST /api/app/exam/exercises_log/getResult` | 获取考试结果 | [查看](拓展应用_app/考试_exam/exercises_log/获取考试结果_getResult.md) |
 | `POST /api/app/exam/exercises/getSubscribeList` | 获取订阅列表 | [查看](拓展应用_app/考试_exam/exercises/获取订阅列表_getSubscribeList.md) |
 
+#### drill本（drill_book）
+
+| 接口 | 说明 | 文档 |
+| --- | --- | --- |
+| `POST /api/app/drill_book/index/detail` | 刷题本详情 + 首页数据 对访客开放 | [查看](拓展应用_app/drill_book/index/刷题本详情 + 首页数据 对访客开放_detail.md) |
+| `POST /api/app/drill_book/books/list` | 我的刷题本列表 未登录时只返回免费档 | [查看](拓展应用_app/drill_book/books/我的刷题本列表 未登录时只返回免费档_list.md) |
+| `POST /api/app/drill_book/books/allList` | 刷题本列表 | [查看](拓展应用_app/drill_book/books/刷题本列表_allList.md) |
+| `POST /api/app/drill_book/books/groups` | 类别（刷题本按商品分组筛选用） | [查看](拓展应用_app/drill_book/books/类别（刷题本按商品分组筛选用）_groups.md) |
+| `POST /api/app/drill_book/books/courseBind` | 关联课程下的刷题本 | [查看](拓展应用_app/drill_book/books/关联课程下的刷题本_courseBind.md) |
+| `POST /api/app/drill_book/practice/setting` | 刷题设置页 | [查看](拓展应用_app/drill_book/practice/刷题设置页_setting.md) |
+| `POST /api/app/drill_book/practice/start` | 开始答题：按设置抽题并建 | [查看](拓展应用_app/drill_book/practice/开始答题：按设置抽题并建_start.md) |
+| `POST /api/app/drill_book/practice/resume` | 「继续」：回到练习 | [查看](拓展应用_app/drill_book/practice/「继续」：回到练习_resume.md) |
+| `POST /api/app/drill_book/practice/papers` | 模拟测试-试卷列表（「模拟测试」入口） | [查看](拓展应用_app/drill_book/practice/模拟测试-试卷列表（「模拟测试」入口）_papers.md) |
+| `POST /api/app/drill_book/practice/startPaper` | 开始模拟测试 | [查看](拓展应用_app/drill_book/practice/开始模拟测试_startPaper.md) |
+| `POST /api/app/drill_book/work/detail` | 取本次答题的题目 | [查看](拓展应用_app/drill_book/work/取本次答题的题目_detail.md) |
+| `POST /api/app/drill_book/work/save` | 暂存一题作答（测试模式：不判对错、不返答案） | [查看](拓展应用_app/drill_book/work/暂存一题作答（测试模式：不判对错、不返答案）_save.md) |
+| `POST /api/app/drill_book/work/answerOne` | 做题模式：答一题即时判对错并返答案与解析 | [查看](拓展应用_app/drill_book/work/做题模式：答一题即时判对错并返答案与解析_answerOne.md) |
+| `POST /api/app/drill_book/work/collect` | 收藏 / 取消收藏（星标） | [查看](拓展应用_app/drill_book/work/收藏 ／ 取消收藏（星标）_collect.md) |
+| `POST /api/app/drill_book/work/mark` | i 标记 / 取消标记（疑问标记） | [查看](拓展应用_app/drill_book/work/i 标记 ／ 取消标记（疑问标记）_mark.md) |
+| `POST /api/app/drill_book/work/submit` | 交卷 测试模式可带整份答案 | [查看](拓展应用_app/drill_book/work/交卷 测试模式可带整份答案_submit.md) |
+| `POST /api/app/drill_book/work/report` | 结果报告 | [查看](拓展应用_app/drill_book/work/结果报告_report.md) |
+| `POST /api/app/drill_book/wrong/groups` | 错题本分组列表 | [查看](拓展应用_app/drill_book/wrong/错题本分组列表_groups.md) |
+| `POST /api/app/drill_book/wrong/questions` | 某目录 / 某一次试卷的错题题目 | [查看](拓展应用_app/drill_book/wrong/某目录 ／ 某一次试卷的错题题目_questions.md) |
+| `POST /api/app/drill_book/wrong/remove` | 从错题本移除题目 | [查看](拓展应用_app/drill_book/wrong/从错题本移除题目_remove.md) |
+| `POST /api/app/drill_book/wrong/retry` | 错题重练：按所选范围 | [查看](拓展应用_app/drill_book/wrong/错题重练：按所选范围_retry.md) |
+| `POST /api/app/drill_book/mine/collects` | 我的收藏（题目列表，可分页） | [查看](拓展应用_app/drill_book/mine/我的收藏（题目列表，可分页）_collects.md) |
+| `POST /api/app/drill_book/mine/collectGroups` | 我的收藏按目录分组 | [查看](拓展应用_app/drill_book/mine/我的收藏按目录分组_collectGroups.md) |
+| `POST /api/app/drill_book/mine/collectPractice` | 我的收藏「按目录做题」：把所选范围 | [查看](拓展应用_app/drill_book/mine/我的收藏「按目录做题」：把所选范围_collectPractice.md) |
+| `POST /api/app/drill_book/mine/uncollect` | 取消收藏 | [查看](拓展应用_app/drill_book/mine/取消收藏_uncollect.md) |
+| `POST /api/app/drill_book/mine/history` | 练习历史 | [查看](拓展应用_app/drill_book/mine/练习历史_history.md) |
+
 #### VIP（vip）
 
 | 接口 | 说明 | 文档 |
@@ -694,7 +738,13 @@
 | `POST /api/app/score/goods/index` | 商品列表 | [查看](拓展应用_app/积分_score/商品_goods/商品列表_index.md) |
 | `POST /api/app/score/goods/detail` | 积分商品详情 | [查看](拓展应用_app/积分_score/商品_goods/积分商品详情_detail.md) |
 | `POST /api/app/score/goods_group/getList` | 获取分组列表 | [查看](拓展应用_app/积分_score/goods_group/获取分组列表_getList.md) |
+| `POST /api/app/score/goods/types` | 筛选用的商品大类 | [查看](拓展应用_app/积分_score/商品_goods/筛选用的商品大类_types.md) |
 | `POST /api/app/score/config/getConfig` | 积分配置 | [查看](拓展应用_app/积分_score/配置_config/积分配置_getConfig.md) |
+| `POST /api/app/score/center/index` | 积分中心首屏：余额 + 任务 + 待领汇总 | [查看](拓展应用_app/积分_score/center/积分中心首屏：余额 + 任务 + 待领汇总_index.md) |
+| `POST /api/app/score/center/tasks` | 全部任务 | [查看](拓展应用_app/积分_score/center/全部任务_tasks.md) |
+| `POST /api/app/score/center/claim` | 领取任务奖励 | [查看](拓展应用_app/积分_score/center/领取任务奖励_claim.md) |
+| `POST /api/app/score/center/rule` | 积分规则页：通用规则 + 签到规则说明 | [查看](拓展应用_app/积分_score/center/积分规则页：通用规则 + 签到规则说明_rule.md) |
+| `POST /api/app/score/consume/goods` | 指定商品清单（分页） | [查看](拓展应用_app/积分_score/consume/指定商品清单（分页）_goods.md) |
 
 #### 签到（sign）
 
@@ -911,10 +961,10 @@
 | 支付（pay） | 10 | 10 |
 | 商品（goods） | 1 | 1 |
 | 订单（order） | 20 | 20 |
-| 课程（course） | 24 | 24 |
+| 课程（course） | 25 | 25 |
 | 用户（user） | 50 | 50 |
 | 直播（live） | 28 | 28 |
-| 拓展应用（app） | 231 | 231 |
+| 拓展应用（app） | 265 | 265 |
 | 奖品（prize） | 4 | 4 |
 | 数据（data） | 7 | 7 |
 | 分享（share） | 3 | 3 |
@@ -923,7 +973,7 @@
 | token（token） | 2 | 2 |
 | validate（validate） | 8 | 8 |
 | virtual_pay（virtual_pay） | 8 | 8 |
-| **合计** | **422** | **422** |
+| **合计** | **457** | **457** |
 
 ## 新增接口文档流程
 

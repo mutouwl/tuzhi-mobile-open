@@ -285,6 +285,9 @@ var data = {
   "composite": "组合商品",
   "school_package": "课程套餐",
   "checkin": "打卡活动",
+  // 刷题本（付费插件 drill_book）：`$t(item.type)` 读这一列，缺键会渲染成空白
+  // （`tz-course` / `tz-course-mini` 封面右下那枚型别标签就是这一档）
+  "drill_book": "刷题本",
   // 拼团（付费插件 group_buy）：订单来源标识。**两档都要登记**（W69 / 硬约束 35）：
   // 根级这一档吃 `$t(data.source)` 那种直接翻译，`source.` 命名空间那一档吃 `$t('source.' + 值)`
   // （订单列表与详情两处各读一档，缺哪档坏哪个页面；头条端 $t 是 CN[key] 查表，缺键直接渲染成空白）。

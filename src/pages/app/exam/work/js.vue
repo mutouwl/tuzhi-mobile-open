@@ -3,21 +3,16 @@ var that;
 // #ifdef MP-TOUTIAO
 import i18n from "@/components/language/index.js";
 // #endif
-import answerSheetModal from "@/pages/app/exam/components/answer-sheet-modal.vue";
-import optionClick from "../components/option/click.vue";
-import questionBox from "@/pages/app/exam/components/question-box.vue";
+import questionWorkShell from "@/pages/app/exam/components/question-work-shell.vue";
 
 export default {
   // #ifdef MP-TOUTIAO
   i18n,
   // #endif
-  components: { answerSheetModal, optionClick, questionBox },
+  components: { questionWorkShell },
   data() {
     return {
       autoSubmitTimer: null,
-      modal: {
-        answerSheet: false,
-      },
 
       data: {
         question_list: [],
@@ -25,50 +20,43 @@ export default {
       //答案
       answerList: {},
 
-      //滑块的高度(单位px)
-      swiperHeight: 0,
       //当前索引
       currentIndex: 0,
       pageParams: {
         jobtype: "exam",
       },
-      loading: false,
+      // 首帧即骨架（M16），接口回来前不许先白一帧
+      loading: true,
     };
   },
   watch: {},
-  methods: {
-    exchange() {
-      that.loading = true;
-      uni.showLoading({
-        title: "请稍后",
+  computed: {
+    /**
+     * 交给通用做题外壳的逐题数组（外壳只负责版式，数据与判据仍在本页）
+     *
+     * 外壳按这一份既排题面又排答题卡，所以 `id` 必须带上；其余键原样绑给 report 版式的 question-box。
+     * 用普通对象数组而不是函数：小程序端 props 必须可序列化。练习 / 错题本交卷后 status=1，整份转只读解析态。
+     */
+    workQuestions() {
+      var status = this.data.status;
+      var reply = this.answerList;
+      return (this.data.question_list || []).map(function (item) {
+        return {
+          id: item.id,
+          marked: item.marked,
+          edit: status != 1,
+          type: item.type,
+          question: item.question,
+          option: item.option,
+          user_answer: reply[item.id],
+          analysis: item.analysis,
+          answer: item.answer,
+          score: item.score,
+        };
       });
-
-      that
-        .$api("app.exchange.exchange", {
-          code: that.code,
-        })
-        .then((res) => {
-          that.loading = false;
-          if (res.code === 1) {
-            that.code = "";
-            uni.showModal({
-              title: "提示",
-              content: res.msg,
-              confirmText: "查看订阅",
-              success: function (res) {
-                if (res.confirm) {
-                  that.$nav.to("/pages/user/subscription/subscription");
-                }
-              },
-            });
-          } else {
-            uni.$u.toast(res.msg);
-          }
-
-          uni.hideLoading();
-        });
     },
-
+  },
+  methods: {
     /**
      * 选中选项
      * @param {*} e
@@ -87,7 +75,8 @@ export default {
           return a - b;
         });
       }
-      this.answerList[questionId] = option;
+      // $set：answerList 的新键要能驱动答题卡「已答」与题干回显（Vue 2 新增键不响应）
+      this.$set(this.answerList, questionId, option);
 
       //考试需要实时提交答案（问答和填空题不实时提交）
       if (this.pageParams.jobtype == "test" && ["essay", "fillblank"].indexOf(questionType) === -1) {
@@ -99,38 +88,21 @@ export default {
       }
     },
 
-    //手动切换题目
-    changeSwiper(e) {
-      this.currentIndex = e.detail.current;
-    },
-
-    //动态设置swiper的高度
-    setSwiperHeight() {
-      uni.getSystemInfo({
-        success: function (res) {
-          that.swiperHeight = res.windowHeight - 110;
-        },
-      });
-    },
-
-    changeQuestion(type) {
-      if (type == "next") {
-        if (this.currentIndex >= that.data.question_list.length - 1) {
-          return false;
-        }
-        this.currentIndex++;
-      } else {
-        if (this.currentIndex <= 0) {
-          return false;
-        }
-        this.currentIndex--;
+    /**
+     * 回上一步：已交卷 / 解析态在最后一题有出口
+     * 栈只有一层（深链 / 分享落地）时回记录列表，练习与考试各归各的页
+     */
+    backPrev() {
+      var pages = getCurrentPages();
+      if (pages && pages.length > 1) {
+        uni.navigateBack({ delta: 1 });
+        return;
       }
-    },
-
-    //答题卡跳转
-    jumpQuestion(index) {
-      that.modal.answerSheet = false;
-      that.currentIndex = index;
+      var logPage =
+        that.pageParams.jobtype == "test"
+          ? "/pages/app/test/log/log"
+          : "/pages/app/exam/log/log";
+      that.$nav.to(logPage, "local", "redirectTo");
     },
 
     /**
@@ -151,6 +123,7 @@ export default {
           id: that.pageParams.id,
         })
         .then((res) => {
+          that.loading = false;
           if (res.code === 1) {
             that.data = res.data;
             if (res.data.user_answer) {
@@ -159,6 +132,7 @@ export default {
 
             if (
               that.pageParams.jobtype == "test" &&
+              res.data.test &&
               res.data.test.test_duration_limit == 1
             ) {
               //自动交卷
@@ -167,7 +141,12 @@ export default {
               }, res.data.test.test_duration_val * 1000);
             }
           }
+        })
+        .catch((err) => {
+          // 骨架的三个出口必须收齐（硬约束 22）：成功 / 业务失败 / 请求异常
           that.loading = false;
+          if (err && err.plugin) return;
+          that.$u.toast((err && err.msg) || "网络异常");
         });
     },
 
@@ -188,6 +167,11 @@ export default {
               that.answerList = that.normalizeAnswerObject(res.data.user_answer);
             }
           }
+        })
+        .catch((err) => {
+          that.loading = false;
+          if (err && err.plugin) return;
+          that.$u.toast((err && err.msg) || "网络异常");
         });
     },
 
@@ -348,8 +332,6 @@ export default {
     that = this;
     clearTimeout(this.autoSubmitTimer);
     that.pageParams = that.$nav.parsePageParams(pageParams);
-
-    that.setSwiperHeight();
 
     if (that.pageParams.type && that.pageParams.type == "error") {
       that.getErrorQuestion();

@@ -78,6 +78,30 @@
                 </view>
             </template>
 
+            <!-- 带货商品卡片（中控台「商品管理 → 发送到讨论区」落的那条消息，2026-11-14 用户点名）
+                 几何逐项照本族基准卡 `.redpacket-msg-box`（M30）：同宽 220、同 `margin 4px 12px`、
+                 同磨砂底、同 12px 圆角、同 `padding 10px 12px`、同 20px 图标 + 10px 间距、
+                 同 12px/10px 两行字号、同右侧小按钮 4px 圆角；差别只有图标与
+                 按钮上那两个字。
+                 左侧那一格放商品封面（2026-11-14 用户点名）：会员卡这类本来就没有封面的商品、
+                 以及封面取图失败的那一档，都退回默认商品图标 goods.png（M65 的失败档同口径，
+                 不新造图）；封面按 aspectFill 裁成 20px 方块，避免 aspectFit 留出两条透明边。
+                 吃消息体、不反查接口：商品之后被隐藏/下架，这张卡仍是发出那一刻的样子。
+                 核心功能（带货不属付费插件），所以**没有** installed 闸门（与另两张活动卡不同）。 -->
+            <template v-else-if="item.type == 'live_goods'">
+                <view class="live-goods-msg-box" @click="openLiveGoods(item)">
+                    <view class="live-goods-msg-main">
+                        <image class="live-goods-msg-icon" :src="liveGoodsIcon(item)" mode="aspectFill"
+                            @error="onGoodsIconError(item)" />
+                        <view class="live-goods-msg-content">
+                            <text class="live-goods-msg-text">{{ liveGoodsTitle(item) }}</text>
+                            <text class="live-goods-msg-tip">{{ liveGoodsSubtitle(item) }}</text>
+                        </view>
+                        <text class="live-goods-msg-btn">抢购</text>
+                    </view>
+                </view>
+            </template>
+
             <!-- 红包抢夺消息 -->
             <template v-else-if="item.type == 'redpacket_grab'">
                 <view class="redpacket-grab-box">
@@ -155,7 +179,10 @@
 </template>
 
 <script>
+import { mpKey } from '@/common/utils/mp-data-key.js';
 var that;
+// 带货商品卡左侧图标的默认图（没有封面的会员卡这类落它，不新造图）
+const LIVE_GOODS_ICON = '/static/image/live/goods.png';
 export default {
   components: {},
   data() {
@@ -164,6 +191,9 @@ export default {
 
       //时间组件显示的间隔时间
       timeShowInterval: 120,
+
+      // 带货商品卡图标的封面加载失败标记（键 = mpKey(地址)，M27），失败档退回 LIVE_GOODS_ICON
+      goodsIconErrors: {},
     };
   },
 
@@ -252,6 +282,38 @@ export default {
     // 事件名取非原生名（M28①：H5 把模板里的 @tap 改写成 @click，$emit('tap') 那一侧不改名）
     openInviteRank(item) {
       this.$emit('openInviteRank', this.parseInviteRankMessage(item));
+    },
+    parseLiveGoodsMessage(item) {
+      if (!item || !item.message || typeof item.message !== 'string') return {};
+      try {
+        return JSON.parse(item.message) || {};
+      } catch (e) {
+        return {};
+      }
+    },
+    // 标题/副标题都由后端一处算好下发（GoodsCard::payload），前端不拼文案
+    liveGoodsTitle(item) {
+      return this.parseLiveGoodsMessage(item).title || '直播带货商品';
+    },
+    liveGoodsSubtitle(item) {
+      return this.parseLiveGoodsMessage(item).subtitle || '';
+    },
+    /* 左侧图标摆哪一张（2026-11-14 用户点名）：有封面用商品封面，没有封面（会员卡这类）
+       或这一张取图失败都退回默认商品图标。失败表按 mpKey(地址) 查——模板看不到模块级
+       import，所以走方法（M27） */
+    liveGoodsIcon(item) {
+      const url = String(this.parseLiveGoodsMessage(item).cover || '');
+      if (!url) return LIVE_GOODS_ICON;
+      return this.goodsIconErrors[mpKey(url)] ? LIVE_GOODS_ICON : url;
+    },
+    /* 封面加载失败：记下这一张（写点同样过 mpKey）；回调先过「已销毁」闸门（M26②） */
+    onGoodsIconError(item) {
+      if (this._isDestroyed === true || this._isBeingDestroyed === true) return;
+      const url = String(this.parseLiveGoodsMessage(item).cover || '');
+      if (url) this.$set(this.goodsIconErrors, mpKey(url), true);
+    },
+    openLiveGoods(item) {
+      this.$emit('openLiveGoods', this.parseLiveGoodsMessage(item));
     },
     redpacketStatusTip(item) {
       return this.isRedpacketExpired(item) ? '已过期' : '领取红包';
@@ -665,6 +727,74 @@ export default {
     }
 
     .invite-rank-msg-btn {
+      flex: none;
+      margin-left: 6px;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: #ffffff;
+      background-color: rgba(255, 77, 79, 0.9);
+      border-radius: 4px;
+    }
+  }
+
+  /* 带货商品卡片：本族老规矩是照 `.redpacket-msg-box` 抄（`.share-gift-msg-box` /
+     `.invite-rank-msg-box` 已经是它的副本），逐项对齐：同宽 220、同 `margin 4px 12px`、
+     同磨砂底 rgba(0,0,0,.3) + blur(10px)、同 12px 圆角、同 `padding 10px 12px`、
+     同 20px 图标 + 10px 间距、同 12px/10px 两行字号、同右侧小按钮 4px 圆角；
+     差别只有图标（有封面摆封面、没有就摆 goods.png）与按钮上那两个字。
+     本族是压在视频上的磨砂消息气泡，不受 M21「页面卡片直角通栏」约束。 */
+  .live-goods-msg-box {
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    margin: 4px 12px;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+
+    .live-goods-msg-main {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+    }
+
+    .live-goods-msg-icon {
+      width: 20px;
+      height: 20px;
+      flex: none;
+      margin-right: 10px;
+      /* 封面裁成 20px 方块后给同卡小按钮的 4px 圆角（默认图标是方形墨迹，看不出差别） */
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .live-goods-msg-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .live-goods-msg-text {
+      font-size: 12px;
+      color: #ffffff;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .live-goods-msg-tip {
+      margin-top: 3px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.75);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .live-goods-msg-btn {
       flex: none;
       margin-left: 6px;
       padding: 3px 8px;

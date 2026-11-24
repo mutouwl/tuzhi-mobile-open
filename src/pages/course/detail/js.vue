@@ -25,8 +25,12 @@ import courseLibrary from "@/common/utils/course.js";
 import columnNextTipModal from "@/pages/course/components/column-next-tip-modal.vue";
 import circleCourseModal from "@/components/modal/circle-course-modal.vue";
 import checkinCourseModal from "@/pages/course/components/checkin-course-modal.vue";
+import drillBookCourseModal from "@/pages/course/components/drill-book-course-modal.vue";
+import { drillBookCardRows } from "@/common/utils/drill-book-card.js";
 import { goActivity } from "@/common/utils/checkin-activity";
 import { rememberInviter, resolveInviter, inviterFromParams } from "@/common/utils/live-inviter";
+// 付费插件安装态三态（`pluginState`）+ init 回包广播：刷题本入口在 init 还没回包时不能判「没装」
+import { onSystemConfigReady } from "@/common/utils/plugin-guard.js";
 // 拼团「加入别人的团」上下文（URL 上的 gb_team 那一组，只活在本页实例上）
 import { readGroupBuyJoin } from "@/common/utils/group-buy-join.js";
 import customForm from "@/components/tz/custom-form.vue";
@@ -79,6 +83,7 @@ export default {
     ,circleCourseModal
     ,customForm
     ,checkinCourseModal
+    ,drillBookCourseModal
   },
   data() {
     return {
@@ -108,6 +113,7 @@ export default {
         columnNextTip:false,
         circleCourse: false,
         checkin: false,
+        drillBook: false,
       },
 
       columnNextCourse:{},
@@ -135,6 +141,21 @@ export default {
       checkinLimit: 20,
       checkinHasMore: false,
       checkinLoadStatus: "loadmore",
+
+      //底栏「刷题本」那一枚与它弹出的列表（付费插件 drill_book）：本课程关联的刷题本，
+      //同样一次取到喂两处——按钮显隐与弹窗列表读同一份，不让弹窗自己再取一遍
+      drillBookList: [],
+      drillBookTotal: 0,
+      drillBookPage: 1,
+      drillBookLimit: 10,
+      drillBookHasMore: false,
+      drillBookLoadStatus: "loadmore",
+      //首屏取数在途且尚无数据：弹窗出骨架卡（不出「暂无」，M16）
+      drillBookLoading: false,
+      //空态文案：首屏失败时是后端那句原因，成功无数据时是「暂无关联刷题本」
+      drillBookMsg: "",
+      //是否已经取过一次（区分「还没取」与「取过、确实没有」，首帧不摆空态）
+      drillBookLoaded: false,
 
       //推荐评价
       evaluate: {
@@ -272,6 +293,15 @@ export default {
      */
     isScorePage() {
       return !!(this.pageParams.type && this.pageParams.type == "score");
+    },
+    /**
+     * 刷题本弹窗的卡片行：接口行 → `tz-course-mini` 的卡片契约
+     *
+     * 映射只在 `common/utils/drill-book-card.js` 一处（刷题本列表页与本弹窗共用），
+     * 本页不另写一份 sales_type → pay_type 的翻译（硬约束 11）。
+     */
+    drillBookCards() {
+      return drillBookCardRows(this.drillBookList);
     },
     /**
      * 页签集合：课程数据 + 商家配置 + 两份展示类数据的到手情况，纯函数算出来
@@ -970,6 +1000,7 @@ export default {
       that.getIsCollect();
       that.getGoodsVipPrivilege();
       that.loadCheckin();
+      that.loadDrillBooks();
       // 骨架屏的落点在 runLearnChain 里（只有直播中转那一档要保持加载态）
       that.runLearnChain();
     },
@@ -1627,6 +1658,98 @@ export default {
       goActivity(item);
     },
 
+    /**
+     * 取本课程关联的刷题本：底栏要不要出「刷题本」那一枚，就看这一次请求的结果
+     *
+     * 守卫只有一道（paid-plugins.md §4.1）：**刷题本是付费插件**，未装（含本地系统配置还没到手的
+     * null 态）时整条链都不发 —— 后端目录不在盘上，任何 `app/drill_book/…` 只会得到 404 /
+     * `Class not found`。装了之后**不再按订阅态收**：用户口径是「刷题本关联了课程，底栏就要有这一枚」，
+     * 未订阅那一档的底栏（购买栏）同样要能点开看这门课挂了哪些刷题本（能不能进由刷题本自己的
+     * 权益闸门判，`is_auth` 随列表下发）。
+     *
+     * 列表同时喂底栏按钮与弹窗（两处各取就会出现「按钮出了、弹窗是空的」）；调用点只有
+     * `applyCourseData` 一处，订阅态翻转（购买后回本页那一支）也会跟着再取一次。
+     * 守卫没过时把列表清干净，别让上一档的残留撑出底栏那一枚。
+     */
+    loadDrillBooks() {
+      if (that.getPluginInstallState("app_isinstall_drill_book") !== true) {
+        that.drillBookList = [];
+        that.drillBookTotal = 0;
+        that.drillBookHasMore = false;
+        that.drillBookLoaded = false;
+        return;
+      }
+      that.fetchDrillBooks(1);
+    },
+
+    /** 弹窗列表上拉加载（滚动到底由 tz-popup-list emit lower） */
+    loadMoreDrillBooks() {
+      if (!that.drillBookHasMore || that.drillBookLoadStatus === "loading") return;
+      that.fetchDrillBooks(that.drillBookPage + 1);
+    },
+
+    /**
+     * 取一页并回填：page=1 整张换掉，page>1 追加
+     * @param {Number} page 页码
+     */
+    fetchDrillBooks(page) {
+      if (page === 1) {
+        // 首屏（或订阅态翻转后的重取）：只有一只空列表在屏上时才铺骨架，
+        // 已有内容的重取不闪骨架（口径同 list 页的 retry）
+        that.drillBookLoading = !that.drillBookList.length;
+        that.drillBookMsg = "";
+      } else {
+        that.drillBookLoadStatus = "loading";
+      }
+      return that
+        .$api("app.drill_book.index.courseBind", {
+          course_id: that.pageParams.id,
+          page: page,
+          limit: that.drillBookLimit,
+        })
+        .then((ret) => {
+          that.drillBookLoading = false;
+          that.drillBookLoaded = true;
+          if (!ret || ret.code !== 1) {
+            // 失败要有读得出来的出口（M13）：翻页失败当场把后端那句原因说出口，已取到的那些条留着；
+            // 首屏失败把弹窗空态写成原因，而不是「暂无关联刷题本」
+            if (page > 1) {
+              uni.showToast({ title: (ret && ret.msg) || "刷题本加载失败，请稍后重试", icon: "none" });
+            } else {
+              that.drillBookMsg = (ret && ret.msg) || "刷题本加载失败，请稍后重试";
+            }
+            that.drillBookHasMore = page > 1;
+            that.drillBookLoadStatus = "loadmore";
+            return;
+          }
+          const data = ret.data || {};
+          const rows = data.rows || [];
+          that.drillBookTotal = Number(data.total || 0);
+          if (page > 1) {
+            that.drillBookList = that.drillBookList.concat(rows);
+          } else {
+            that.drillBookList = rows;
+            if (!rows.length) {
+              that.drillBookMsg = "暂无关联刷题本";
+            }
+          }
+          that.drillBookPage = page;
+          that.drillBookHasMore = Number(data.has_more) === 1;
+          that.drillBookLoadStatus = that.drillBookHasMore ? "loadmore" : "nomore";
+        })
+        .catch(() => {
+          that.drillBookLoading = false;
+          that.drillBookLoaded = true;
+          if (page > 1) {
+            uni.showToast({ title: "刷题本加载失败，请稍后重试", icon: "none" });
+          } else {
+            that.drillBookMsg = "刷题本加载失败，请稍后重试";
+          }
+          that.drillBookHasMore = page > 1;
+          that.drillBookLoadStatus = "loadmore";
+        });
+    },
+
     // 圈子课程按圈子目录的排序展示，用于详情页底部前后课程导航。
     async loadCircleCourseNav() {
       if (!that.pageParams.circle_id) return;
@@ -2114,6 +2237,11 @@ export default {
       uni.$off(PAY_EVENT, this._onPaySuccess);
       this._onPaySuccess = null;
     }
+    // 插件 init 回包的订阅同一档（只摘本页这一份）
+    if (this._offDrillReady) {
+      this._offDrillReady();
+      this._offDrillReady = null;
+    }
   },
   /**
    * 回本页要不要取数，判据只有这三条（2026-10-09 用户点名「onShow 方法中存在刷新方法，
@@ -2191,14 +2319,26 @@ export default {
 
     this.isLogin = uni.getStorageSync("user_token") ? true : false;
 
+    // 刷题本是付费插件：`common.init` 是异步的，商详页可能比它先挂载。init 还没回包时
+    // `getPluginInstallState` 回 null，此时判「没装」就等于这一枚入口永远补不回来（M14）。
+    // 订阅 init 回包后再判一次：装了就把那一发补上（重取是幂等的，
+    // 已经在首屏取过时这一次只会再覆盖同一份数据）。
+    // ⚠ 用闭包捕获本页实例，不读模块级 `that`——同路由在栈里出现两次时（订阅专栏那一跳就是同一路由
+    // 新实例），`that` 停在后创建的那一个，补取会打到别人身上（与下面 `_onPaySuccess` 同一条理由）
+    const vm = this;
+    vm._offDrillReady = onSystemConfigReady(function () {
+      if (vm.getPluginInstallState("app_isinstall_drill_book") === true && !vm.drillBookLoaded) {
+        vm.loadDrillBooks();
+      }
+    });
+
     // 首屏取数不在这里发，由 onShow 判据① 发（H5 端 onLoad 紧接着就 onShow，两处都发会撞成
     // 两条并发请求，弱网下靠 token 丢一条等于白跑一趟）
 
     // 「别处改了用户态」的账：下单页、会员页、别的课那一头付过款都要回到本页回收一次
     // （2026-10-09 去掉 onShow 全量刷新后，购买态的显示改由这一枚账 + refreshState 静默回收承担）。
     // handler 里不许碰模块级 that——同路由在栈里出现两次时（订阅专栏那一跳就是同一路由新实例），
-    // that 停在后创建的那一个，账会标到别人身上；用闭包捕获本页实例
-    const vm = this;
+    // that 停在后创建的那一个，账会标到别人身上；用闭包捕获本页实例（`vm` 见上）
     vm._onPaySuccess = function () {
       vm.stateDirty = true;
       // 拼团区随支付成功重取自己的那两条（开团付完款回来，凑团名单里要有自己那一行；

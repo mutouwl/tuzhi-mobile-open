@@ -93,6 +93,29 @@
 							:margin="data.compontents[index].config.margin"
 							:show-redeemed="scoreShowRedeemed" />
 
+						<!-- 做题组件三档（刷题本 / 考试 / 练习，均为付费插件）：行数据由装修接口按配置取好下发。
+							 刷题本 / 练习按用户点名用紧凑商品卡 tz-course-mini（与「我的刷题本」列表同一只卡，80 高）；
+							 考试用三版式的 tz-exam-list（列表 / 大图 / 一行两个，状态角标 + 起止时间 + 报名人数）；
+							 未安装时模板不渲染 -->
+						<tz-course-mini v-if="item && item.type == 'drill_book' && drillBookInstalled"
+							:list="data.compontents[index].config.list"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin" />
+
+						<tz-exam-list v-if="item && item.type == 'test' && testInstalled"
+							:list="data.compontents[index].config.list"
+							:type="data.compontents[index].config.type"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin" />
+
+						<tz-course-mini v-if="item && item.type == 'exercises' && examInstalled"
+							:list="data.compontents[index].config.list"
+							:border="data.compontents[index].config.border"
+							:round="data.compontents[index].config.round"
+							:margin="data.compontents[index].config.margin" />
+
 						<!-- 教务组件（付费插件）：未安装时模板不渲染，组件自身在无数据时也不占位 -->
 						<tz-school-package v-if="item && item.type == 'school_package' && schoolInstalled"
 							:list="data.compontents[index].config.list"

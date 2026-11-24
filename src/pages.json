@@ -714,6 +714,83 @@
 					}
 				},
 				{
+					"path": "drill_book/index/index",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "刷题本",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/list/list",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "我的刷题本",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/all/all",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "刷题本列表",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/setting/setting",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "刷题设置"
+					}
+				},
+				{
+					"path": "drill_book/work/work",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "刷题"
+					}
+				},
+				{
+					"path": "drill_book/result/result",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "刷题结果"
+					}
+				},
+				{
+					"path": "drill_book/wrong/wrong",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "错题本",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/collect/collect",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "我的收藏",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/history/history",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "练习历史",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "drill_book/paper/paper",
+					"style": {
+						"h5": { "titleNView": false },
+						"navigationBarTitleText": "模拟测试",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
 					"path": "exam/detail/detail",
 					"style": {
 						"navigationBarTitleText": "练习介绍",

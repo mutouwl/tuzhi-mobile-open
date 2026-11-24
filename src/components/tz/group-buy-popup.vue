@@ -51,8 +51,8 @@
                 <view class="gbp-price-row">
                     <view class="gbp-sk gbp-sk-price" v-if="sk"></view>
                     <block v-else>
-                        <text class="gbp-price">¥{{ shownPrice.toFixed(2) }}</text>
-                        <text class="gbp-origin">¥{{ shownOrigin.toFixed(2) }}</text>
+                        <text class="gbp-price">{{ gbPricePrefix }}{{ shownPrice.toFixed(2) }}{{ gbPriceSuffix }}</text>
+                        <text class="gbp-origin">{{ gbPricePrefix }}{{ shownOrigin.toFixed(2) }}{{ gbPriceSuffix }}</text>
                     </block>
                 </view>
                 <view class="gbp-meta-row">
@@ -73,7 +73,7 @@
                         @click="pickSpec(row)"
                     >
                         <text class="gbp-spec-name">{{ row.spec_text || '默认' }}</text>
-                        <text class="gbp-spec-price">¥{{ Number(row.price).toFixed(2) }}</text>
+                        <text class="gbp-spec-price">{{ gbPricePrefix }}{{ Number(row.price).toFixed(2) }}{{ gbPriceSuffix }}</text>
                     </view>
                 </view>
 
@@ -89,7 +89,7 @@
                         @click="pickLadder(row)"
                     >
                         <text class="gbp-ladder-num">{{ row.invite_num }} 人</text>
-                        <text class="gbp-ladder-price">¥{{ Number(row.price).toFixed(2) }}</text>
+                        <text class="gbp-ladder-price">{{ gbPricePrefix }}{{ Number(row.price).toFixed(2) }}{{ gbPriceSuffix }}</text>
                     </view>
                 </view>
 
@@ -244,6 +244,23 @@ export default {
         shownOrigin() {
             if (this.chosenSpec) { return Number(this.chosenSpec.origin_price) || 0; }
             return Number(this.activity.origin_price) || 0;
+        },
+        /**
+         * 价格单位：虚拟支付商品走代币名（后端已把 price / origin_price / 档位价换成代币数），
+         * 其余仍是人民币；判据只读后端下发的 `is_virtual_pay`（2026-11-23 用户点名拼团刷题本适配）
+         */
+        gbVirtual() {
+            return Number(this.activity && this.activity.is_virtual_pay) === 1;
+        },
+        coinName() {
+            return this.$tools.systemConfig('coin_name') || '金币';
+        },
+        /** 代币是后缀（99金币），人民币是前缀（¥99） */
+        gbPricePrefix() {
+            return this.gbVirtual ? '' : '¥';
+        },
+        gbPriceSuffix() {
+            return this.gbVirtual ? this.coinName : '';
         },
         expireText() {
             const hours = Math.round((Number(this.activity.team_expire) || 0) / 3600);

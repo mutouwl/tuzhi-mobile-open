@@ -1,5 +1,7 @@
 # 积分商品详情
 
+> 积分商品详情 新链优先按 `score_goods_id`（积分商品行 id）取；旧课程链仍兼容 `id` = 课程 id 的调用。返回形状与列表行一致。
+
 ## 基本信息
 
 | 项目 | 内容 |
@@ -15,14 +17,15 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| id | string | 否 | ID | `28` |
+| score_goods_id | integer | 否 | 积分商品ID | `0` |
+| id | integer | 否 | ID | `0` |
 
 ## 请求示例
 
 ```bash
 curl -X POST '{apiUrl}app/score/goods/detail' \
   -H 'Content-Type: application/json' \
-  -d '{"id":28}'
+  -d '{"score_goods_id":0,"id":0}'
 ```
 
 ## 返回示例

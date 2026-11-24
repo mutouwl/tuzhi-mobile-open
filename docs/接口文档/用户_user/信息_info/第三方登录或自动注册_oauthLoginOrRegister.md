@@ -19,7 +19,7 @@
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
-| decryptData | string | 否 | 解密参数 | - |
+| decrypt_data | string | 否 | 解密参数 | - |
 | platform | string | 否 | 平台名称 | - |
 | provider | string | 否 | 厂商名称 | - |
 | keeptime | string | 否 | 有效时长 | - |
@@ -35,7 +35,7 @@
 ```bash
 curl -X POST '{apiUrl}user/info/oauthLoginOrRegister' \
   -H 'Content-Type: application/json' \
-  -d '{"decryptData":"xxx","platform":"xxx","provider":"xxx","keeptime":"xxx"}'
+  -d '{"decrypt_data":"xxx","platform":"xxx","provider":"xxx","keeptime":"xxx"}'
 ```
 
 ## 返回示例

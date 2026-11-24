@@ -5,9 +5,10 @@
 		</u-sticky>
 
 		<tz-box bgColor="none">
-		<tz-course v-if="list.length > 0" :round="true" :border="false" :list="list"></tz-course>
-			<!-- <tz-course v-if="list.length > 0" :key="index" v-for="(item, index) in list" :cover="item.course.cover" :border="false" :round="true"
-				:start_time="item.createtime" @cancel="cancel" :index="index" :end_time="item.validity_time" :type="item.course.type" :name="item.course.name" :itemId="item.course.id" /> -->
+			<!-- 收藏课程列表走全站紧凑横排卡 `tz-course-mini`（封面 140×80、标题两行截断）；
+			     骨架档由组件自己出，不再用整张大课卡 `tz-course`（2026-11-23 用户点名） -->
+			<tz-course-mini :skeleton="loading && list.length === 0" :skeleton-count="4" :list="list"
+				:round="true" :border="false" />
 			<u-empty mode="favor" v-if="list.length == 0 && !loading" />
 		</tz-box>
 

@@ -62,7 +62,7 @@
           class="scroller"
         >
           <view id="chatlistbox" class="chat-list">
-            <message-list-box :meessageList="messageList" @openRedpacket="onOpenRedpacket" @openShareGift="onOpenShareGift" @openInviteRank="onOpenInviteRank"/>
+            <message-list-box :meessageList="messageList" @openRedpacket="onOpenRedpacket" @openShareGift="onOpenShareGift" @openInviteRank="onOpenInviteRank" @openLiveGoods="onOpenLiveGoods"/>
           </view>
         </scroll-view>
       </view>
@@ -1014,6 +1014,11 @@ export default {
     // 由直播间页打开右侧那枚达人榜入口的榜单弹层
     onOpenInviteRank(payload) {
       that.$emit("openInviteRank", payload);
+    },
+    // 带货商品卡片：列表层解析好的载荷（{goods_id, goods_type, title, subtitle, cover}）原样上抛，
+    // 由直播间页打开那只商品详情层（goods-detail-popup）
+    onOpenLiveGoods(payload) {
+      that.$emit("openLiveGoods", payload);
     },
   },
   mounted() {

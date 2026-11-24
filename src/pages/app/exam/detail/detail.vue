@@ -158,7 +158,13 @@
 				<tz-divider bgColor="#fafafa" />
 				<tz-title title="该练习关联课程" size="small" :more="false" />
 				<tz-box padding="0 15px 15px">
-					<u-empty icon="/static/image/empty.png" width="70" height="70" text="暂无关联课程"></u-empty>
+					<!-- 空档必须包一层宿主：u-empty 根节点自带 `margin: 100px !important`，而这张卡是
+					     `padding="0 15px 15px"`（卡顶无内衬）⇒ 那 100px 外距从卡里穿出去，白底盖不到，
+					     页面底 `#fafafa` 就露成标题与图标之间那条灰带。留白改由这一层给（40/48，全站空态配方，
+					     参照 tz/group-buy-popup.vue 的 .gbp-empty），组件外距在 css.css 里收成 0 -->
+					<view class="exam-course-empty">
+						<u-empty icon="/static/image/empty.png" width="70" height="70" text="暂无关联课程"></u-empty>
+					</view>
 				</tz-box>
 			</template>
 

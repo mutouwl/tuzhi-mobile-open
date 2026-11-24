@@ -65,6 +65,11 @@ export default {
       checkinInstalled: false,
       // 拼团插件安装状态（付费插件）：未安装时模板不渲染拼团商品组件
       groupBuyInstalled: false,
+      // 做题组件三档的插件安装状态（刷题本 / 考试 / 练习，均为付费插件）：
+      // 未安装时模板不渲染对应那一档（行数据也由装修接口按安装态下发）
+      drillBookInstalled: false,
+      testInstalled: false,
+      examInstalled: false,
       // 积分商城「展示兑换量」开关：缺省 1 = 显示，与 /marketing/score 设置、装修组件同一份配置
       scoreShowRedeemed: 1,
     };
@@ -173,6 +178,13 @@ export default {
       that.checkinInstalled = !!that.$tools.systemConfig("app_isinstall_checkin");
       // 拼团组件安装状态：同上（付费插件，未安装时装修接口也不下发这一段的 list）
       that.groupBuyInstalled = !!that.$tools.systemConfig("app_isinstall_group_buy");
+      // 做题组件三档的安装状态：同上，取数已在装修接口里按安装态做完，这里只挡模板。
+      // 刷题本 / 考试的 flag 早就有（drill_book / test）；练习与考试是同一对（题库 exam ∨ test），
+      // 与后端 `practice\ExercisesDecor::available()`、`api/common/init` 同一判据
+      that.drillBookInstalled = !!that.$tools.systemConfig("app_isinstall_drill_book");
+      that.testInstalled = !!that.$tools.systemConfig("app_isinstall_test");
+      that.examInstalled = !!that.$tools.systemConfig("app_isinstall_exam")
+        || !!that.$tools.systemConfig("app_isinstall_test");
       // 圈子组件安装状态：**必须在落地这一处判**——缓存里 circleLoaded 已凑齐时不会再走
       // loadCircleComponents，少了这一句，切 tab 回来圈子那两段会因为模板闸门恒 false 整段消失
       that.circleInstalled = !!that.$tools.systemConfig("app_isinstall_circle");

@@ -197,6 +197,7 @@
                 @openRedpacket="openRedpacket"
                 @openShareGift="openShareGift"
                 @openInviteRank="openInviteRank"
+                @openLiveGoods="openLiveGoods"
                 @link-allow="onLinkAllow"
                 @link-rejected="onLinkRejected"
                 @link-invite="onLinkInvited"
@@ -403,6 +404,12 @@
       icon="/static/image/live/message_error.png"
       @open="linkBarDismissed = false"
     />
+
+    <!-- 带货商品详情层（讨论区那张商品气泡卡点开，2026-11-14 用户点名）。
+         挂页面根、.ui-layer 之外：与上面那两枚运营弹层同一个层叠理由（.ui-layer 自带 z-index:150
+         且带 position，是一层新的层叠上下文，里面 fixed 弹层排不进根挂载的弹层之上）。
+         壳复用工具条那两只（goods-modal / goods-popover）已在用的 detail-popup，不新造第三只弹窗。 -->
+    <goods-detail-popup ref="goodsDetailPopup" />
 
     <!-- 红包记录：右侧那枚红包入口开的一屏。点列表里某一只时**这一屏不关**（2026-10-01 用户点名
          「点击弹出领取红包弹窗，不要关闭这个红包记录弹窗」），信封叠在它上面，关掉信封就回到这一屏。

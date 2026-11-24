@@ -55,10 +55,10 @@
 		     未订阅的购买栏不再挂这一枚（2026-10-27 用户点名，见头注释）：入口已经在信息卡长条里。
 		     图标取 `lipin`（礼品）——`liwu`/`liwu1` 在 iconfont.css 里有类但 TTF 缺字形，
 		     用了渲染成空白（2026-10-16 用户点名「只有文字没有 icon」）；size 按墨迹归一：lipin 墨迹 0.938，
-		     同栏兄弟（share 0.845 / collection 0.876 / tasklist 0.876）在默认 30px 下墨迹 25~26.3px，
-		     lipin 取 28px（墨迹 ≈ 26.3px）与最饱满那枚对齐。 -->
+		     同栏兄弟（share 0.845 / collection 0.876 / tasklist 0.876）2026-11-22 起统一收到 24px
+		     （墨迹 20.3~21px），lipin 取 22px（墨迹 ≈ 20.6px）与最饱满那枚对齐。 -->
 		<template v-else>
-			<view><tz-icon name="lipin" :size="28" color="#444" /></view>
+			<view><tz-icon name="lipin" :size="22" color="#444" /></view>
 			<view class="sfa-entry-text">送好友</view>
 		</template>
 	</view>

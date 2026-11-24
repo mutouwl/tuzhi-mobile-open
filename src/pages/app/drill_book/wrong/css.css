@@ -1,0 +1,229 @@
+.db-wrong {
+	min-height: 100vh;
+	background: #f7f8fa;
+	padding-bottom: 20px;
+}
+/* 只有错题列表挂吸底操作栏，分组视图（两个页签）不挂 */
+.db-wrong-with-bottom {
+	padding-bottom: 92px;
+}
+
+/* ---------- 分组视图（参照图3 / 图5） ---------- */
+/* 白卡满宽（2026-11-22 用户点名）：直角卡不再左右各缩 12px，左右留白交给卡自己的 padding */
+.db-wrong-card {
+	background: #fff;
+	margin: 10px 0 0;
+	padding: 0 12px;
+}
+/* 目录行：与「刷题目录」（drill_book/index）同一套行结构 —— 缩进 + 左侧层级导引线 +
+   折叠圆钮（父级实心 / 子级描边 / 叶子灰点）+ 名称 + 右侧题数。
+   本屏「所有题目」汇总行与目录行用同一档字号字重（16px / 600，照参照图实测：
+   两行笔画粗细与页签激活态一致），不再一个 16 粗、一个 15 细。
+   行与行之间不画分割线（2026-11-22 用户点名「目录列表之间不要有分割线」），
+   层级只靠缩进与导引线表达。 */
+.db-wrong-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	min-height: 52px;
+	padding: 10px 0;
+	box-sizing: border-box;
+}
+.db-wrong-row-name {
+	flex: 1;
+	min-width: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 22px;
+	color: #1d2129;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.db-wrong-row-right {
+	display: flex;
+	align-items: center;
+	flex: none;
+	margin-left: 8px;
+}
+.db-wrong-row-count {
+	font-size: 13px;
+	color: #86909c;
+	margin-right: 4px;
+}
+/* 层级导引线 / 折叠圆钮 / 叶子占位点已收进共用组件 `components/drill-catalog.vue`
+   （与刷题本首页、收藏同一份版式与几何，竖线一律从圆钮下沿起画） */
+
+/* 试卷场次列表：整块白底，行与行之间只用浅灰细线分隔（不再一卡一行留灰缝） */
+.db-wrong-paper-list {
+	background: #fff;
+	margin: 10px 0 0;
+}
+.db-wrong-paper {
+	padding: 14px 12px;
+	border-bottom: 1px solid #f2f3f5;
+}
+.db-wrong-paper:last-child {
+	border-bottom: none;
+}
+.db-wrong-paper-name {
+	font-size: 15px;
+	color: #1d2129;
+	line-height: 20px;
+	margin-bottom: 8px;
+	word-break: break-all;
+}
+.db-wrong-paper-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+}
+.db-wrong-paper-time {
+	margin-right: 10px;
+}
+.db-wrong-paper-stat {
+	flex: none;
+}
+
+/* ---------- 错题列表（参照图2 / 图4） ---------- */
+.db-wrong-searchbar {
+	display: flex;
+	align-items: center;
+	background: #fff;
+	padding: 6px 12px 10px;
+}
+.db-wrong-search {
+	flex: 1;
+	min-width: 0;
+}
+/* 管理态「取消」：落在搜索框右侧（不挤占搜索框，只占自身文字宽） */
+.db-wrong-cancel {
+	flex: none;
+	margin-left: 12px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #0968f6;
+}
+/* 错题列表：整块白底，题目与题目之间只用浅灰细线分隔（不再一卡一行留灰缝）。
+   白底同时落到每一行 / 卡片本体：列表外层是 `u-checkbox-group`（自定义组件宿主），
+   页面类名只落在宿主节点上，行本身不继承白底时露出的就是页面的灰底
+   （2026-11-23 用户点名「错题本列表背景变成灰色了」） */
+.db-wrong-list {
+	margin: 10px 0 0;
+	background: #fff;
+}
+.db-wrong-qrow {
+	display: flex;
+	align-items: flex-start;
+	background: #fff;
+	border-bottom: 1px solid #f2f3f5;
+}
+.db-wrong-qrow:last-child {
+	border-bottom: none;
+}
+.db-wrong-qcard {
+	flex: 1;
+	min-width: 0;
+	padding: 14px 12px;
+	background: #fff;
+}
+.db-wrong-qtext {
+	font-size: 14px;
+	color: #1d2129;
+	line-height: 22px;
+	word-break: break-all;
+}
+.db-wrong-qtext p {
+	margin: 0;
+}
+.db-wrong-qtext img {
+	max-width: 100%;
+}
+/* 卡片顶部一行：左侧题型标签，右侧「错误次数」贴右上角、整块不折行 */
+.db-wrong-qhead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+.db-wrong-type {
+	font-size: 12px;
+	color: #0968f6;
+	background: #e8f3ff;
+	padding: 2px 6px;
+	border-radius: 2px;
+	flex: none;
+}
+.db-wrong-qreminder {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	flex: 1;
+	min-width: 0;
+	margin-left: 10px;
+	overflow: hidden;
+}
+.db-wrong-meta-text {
+	font-size: 12px;
+	color: #86909c;
+	line-height: 18px;
+	white-space: nowrap;
+	flex: none;
+}
+
+/* 勾选列：只负责左侧落位，勾选框本体走 uview 的 u-checkbox（20px 圆形，选中态自带对号）。
+   列表容器已不再左右内缩，勾选列自己留 8px，避免圆钮贴着屏幕边 */
+.db-wrong-check-hit {
+	width: 36px;
+	flex: 0 0 36px;
+	display: flex;
+	justify-content: flex-start;
+	padding-top: 16px;
+	padding-left: 8px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.db-loadmore {
+	padding: 14px 0;
+}
+.db-sk-line {
+	height: 12px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+.db-wrong-sk-card {
+	background: #fff;
+	margin: 10px 0 0;
+	padding: 14px 12px;
+}
+
+/* ---------- 底部吸底：管理/错题练习；管理模式为全选/删除（取消已上移到搜索框右侧） ---------- */
+/* 定位 / 内衬 / 阴影 / 安全区 / 层级走全局 `.school-footer`（模板已挂该类），这里只补页内布局 */
+.db-wrong-bottom {
+	display: flex;
+	align-items: center;
+}
+.db-wrong-manage {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 56px;
+	font-size: 12px;
+	color: #4e5969;
+	flex: none;
+}
+.db-wrong-practice {
+	flex: 1;
+	margin-left: 10px;
+}
+.db-wrong-selectall {
+	flex: none;
+}
+.db-wrong-delete {
+	flex: 1;
+	margin-left: 10px;
+}

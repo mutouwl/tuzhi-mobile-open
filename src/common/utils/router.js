@@ -128,6 +128,10 @@ export default {
                     case 'checkin':
                         url = '/pages/app/checkin/detail/detail?id=' + src;
                         break;
+                    // 刷题本（付费插件 drill_book）：落地页是刷题本首页（目录 + 购买/答题入口都在该页）
+                    case 'drill_book':
+                        url = '/pages/app/drill_book/index/index?id=' + src;
+                        break;
                 }
             }
         }

@@ -88,18 +88,23 @@
     <template v-if="data.grade_status != 0 && data.question_list && data.question_list.length > 0">
       <tz-divider bgColor="#fafafa" />
       <tz-title title="答卷" size="small" :more="false" />
-      <tz-box padding="0 15px 15px">
+      <!-- report 版式自带 15px 左右内衬，外层不再叠加同档内衬（叠加会变成 30px） -->
+      <tz-box padding="0">
         <template v-for="(item, index) in data.question_list">
+          <!-- 题目展示复用刷题本做题 / 解析页的 report 版式（题型 + 分数徽标、题干、选项、
+               「答案 / 解析」分节、我的答案），不再走旧的练习版式（2026-11-23 用户点名） -->
           <question-box
             :key="item.id"
+            variant="report"
             :edit="false"
             :score="item.score"
             :option="item.option"
             :type="item.type"
             :analysis="item.analysis"
             :question="item.question"
-            :user_answer="data.user_answer ? data.user_answer[item.id] : ''"
-            :answer="item.answer"
+            :user_answer="userAnswerOf(item)"
+            :answer="reportAnswerOf(item)"
+            :result="item.is_correct"
             :grade_status_text="item.grade_status_text"
             :grade_comment="item.grade_comment"
             :user_score="item.user_score"

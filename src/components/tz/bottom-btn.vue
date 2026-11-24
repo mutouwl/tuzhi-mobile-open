@@ -8,30 +8,43 @@
                     <tz-icon name="homepage" color="#444" />
                     <div>首页</div>
                 </div> -->
+                <!-- 图标尺寸统一走 `controlIconSize`（2026-11-22 用户点名「icon 大小要保持统一，
+                     现在有点略大，可以缩小点」）：30px 墨迹配 12px 文字就是 ui-baseline-mobile
+                     那句「图标与文字不协调」，收到 24px 后与文字同档。 -->
                 <div class="control-btn" @click="collect">
-                    <tz-icon name="collection_fill" v-if="params.iscollect" :customStyle="{ color: '#0968f6' }" color="#0968f6" />
-                    <tz-icon name="collection" v-if="!params.iscollect" :customStyle="{ color: '#0968f6' }" color="#444" />
+                    <tz-icon name="collection_fill" v-if="params.iscollect" :size="controlIconSize" color="#0968f6" />
+                    <tz-icon name="collection" v-if="!params.iscollect" :size="controlIconSize" color="#444" />
                     <div>收藏</div>
                 </div>
                 <div class="control-btn" @click="dir" v-if="params.column_id">
-                    <div><tz-icon name="createtask" color="#444" /></div>
+                    <div><tz-icon name="createtask" :size="controlIconSize" color="#444" /></div>
                     <div>目录</div>
                 </div>
 
                 <div class="control-btn" @click="comment" v-if="$tools.systemConfig('comment_entry_status') != 'close'">
-                    <div><tz-icon name="editor" color="#444" /></div>
+                    <div><tz-icon name="editor" :size="controlIconSize" color="#444" /></div>
                     <div>评论</div>
                 </div>
 
                 <!-- 打卡入口只在「这门课（或其所属专栏）确实关联了上架活动」时出，显隐判据由调用页按接口
                      返回值给（params.checkin），未安装打卡插件时调用页根本不发请求，这里不再判一次 -->
                 <div class="control-btn" @click="checkin" v-if="params.checkin">
-                    <div><tz-icon name="tasklist" color="#444" /></div>
+                    <div><tz-icon name="tasklist" :size="controlIconSize" color="#444" /></div>
                     <div>打卡</div>
                 </div>
 
+                <!-- 刷题本入口与打卡同档：只在「这门课关联了刷题本」时出，判据由调用页按
+                     `app.drill_book.books.courseBind` 的回行数给（params.drill_book）；刷题本是付费插件，
+                     未安装时调用页既不挂本入口也不发那一发请求（paid-plugins.md §4.1）。
+                     字形与个人中心「刷题本」（`pages/user/index/js.vue` 的 `icon: "task"`）保持一致
+                     （2026-11-22 用户点名），不另用 `questions`。 -->
+                <div class="control-btn" @click="drillBook" v-if="params.drill_book">
+                    <div><tz-icon name="task" :size="controlIconSize" color="#444" /></div>
+                    <div>刷题本</div>
+                </div>
+
                 <div class="control-btn" @click="share">
-                    <div><tz-icon name="share" color="#444" /></div>
+                    <div><tz-icon name="share" :size="controlIconSize" color="#444" /></div>
                     <div>分享</div>
                 </div>
 
@@ -163,7 +176,10 @@ var that;
 export default {
     data() {
         return {
-            platform: ''
+            platform: '',
+            /* 控制栏（已订阅那一档）图标字号：六枚入口共用这一份，改一处即全栏统一。
+               24px 与 12px 标签同档；原先不传 size 吃 tz-icon 缺省 30，用户 2026-11-22 点名「略大」。 */
+            controlIconSize: 24
         }
     },
     computed: {
@@ -183,10 +199,17 @@ export default {
          * **submit / evaluate 两支不要这一档**：submit 的 `.price` 是定宽 400px，给主按钮
          * `flex:1 1 0` 会把它压成 0（与 2026-10-16 那条同一个坑，底栏 `.box--peer-main` 只挂
          * order 与空档两支正是为此）。
+         *
+         * **左右内衬必须撤掉**（2026-11-23 用户点名刷题本「立即购买比立即开团宽」）：
+         * `uni-button` 自带 `padding: 0 14px`，而 `flex-basis: 0` + `box-sizing: border-box`
+         * 下**内衬是不可压缩的最小宽度**（border box 不能小于 padding）⇒ 主按钮的最小宽度是
+         * 28px、同栏插件入口（`.tbb-slot`，无内衬）是 0，两枚同时 `flex-grow:1` 平分后
+         * 主按钮恒宽 28px（实测 375 宽屏：163.5 vs 191.5，内容盒其实一样宽）。
+         * 底栏按钮文字居中、高度固定，撤掉内衬观感不变；两枚的等分才真的相等。
          */
         mainBtnStyle() {
             if (this.type === 'order' || this.type === '') {
-                return { width: '100%', flex: '1 1 0', minWidth: 0 };
+                return { width: '100%', flex: '1 1 0', minWidth: 0, paddingLeft: 0, paddingRight: 0 };
             }
             return { width: '100%' };
         },
@@ -278,6 +301,9 @@ export default {
         },
         checkin() {
             this.$emit('checkin', false);
+        },
+        drillBook() {
+            this.$emit('drill-book', false);
         }
     }
 }
@@ -334,10 +360,18 @@ export default {
    不这么写就是「主按钮 flex-basis = width:100%、容器没有剩余空间 ⇒ flex:1（basis 0）的
    插件入口被压成 0 宽」，2026-10-16 用户点名「立即按钮把拼团按钮覆盖掉了」即此。
    参照页三处同款：实物商详 `.detail-tabbar{gap:10px} + .buy-btn{flex:1}`、
-   圈子 `.footer-btn-group{gap:10px} + .footer-btn{flex:1}`、打卡 `.cdi-main-btn{flex:1}` */
+   圈子 `.footer-btn-group{gap:10px} + .footer-btn{flex:1}`、打卡 `.cdi-main-btn{flex:1}`
+
+   **左右内衬一并撤掉**（2026-11-23 用户点名刷题本「立即购买比立即开团宽」）：
+   按钮自带 `padding: 0 14px`，而 `flex-basis: 0` 下 border box 不能小于 padding ⇒
+   主按钮的最小宽度是 28px、无内衬的插件入口是 0，平分后主按钮恒宽 28px。
+   内衬只服务于文字不贴边，底栏文字居中、高度固定，撤掉观感不变；
+   小程序端（virtualHost）够不着这里，同一档在 `mainBtnStyle` 的 inline 里也写了一行。 */
 .box--peer-main .u-button {
     flex: 1 1 0;
     min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* ⚠ 小程序端（2026-10-31 实测）u-button 是 **virtualHost**：组件标签不产生宿主节点，渲染出来
@@ -353,6 +387,8 @@ export default {
 .box--peer-main .custom-style {
     flex: 1 1 0;
     min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* ⚠ 插槽里的插件入口（拼团 `.tbb-slot` / 送好友 `.sf-control-slot`）的宽度**不在这张表里**：

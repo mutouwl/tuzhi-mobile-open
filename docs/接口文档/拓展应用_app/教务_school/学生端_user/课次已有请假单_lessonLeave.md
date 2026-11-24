@@ -19,7 +19,7 @@
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 | --- | --- | --- | --- | --- |
 | student_id | integer | 是 | 学生ID（须为本人名下） | `3619` |
-| schedule_student_ids | array | 是 | 学员课次ID数组，单次最多 30 个 | `8762` |
+| schedule_student_ids | array | 是 | 学员课次ID数组，单次最多 30 个 | `[8762]` |
 
 ## 请求头
 

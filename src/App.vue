@@ -237,12 +237,18 @@
 	}
 
 	/*  #ifdef H5  */
-	/* uni-app 内置弹层（H5）默认 z-index 999，低于底部导航 tz-tab-bar 的 1001：
-	   带 tabbar 的页面弹 uni.showModal 确认框时（如个人中心绑定手机号提示合并账号），
-	   遮罩压不住 tabbar，导航条会浮在确认框遮罩之上；uni.showActionSheet、picker 同理。
-	   统一抬到 1010——高于 tabbar(1001)，仍低于 uview 弹层（u-overlay 10070、
-	   u-popup / u-modal 10075）与页面自定义浮层（10000+），
+	/* uni-app 内置弹层（H5）默认 z-index 999，低于底部导航 tz-tab-bar 的 1001、
+	   也低于整页吸底操作栏 .school-footer 的 10063：带 tabbar 的页面弹 uni.showModal 确认框时
+	   （如个人中心绑定手机号提示合并账号）遮罩压不住 tabbar；挂 .school-footer 的页面
+	   （做题类页面点「交卷」最典型）底栏整条亮在遮罩之上——刷题本做题页 2026-11-22 用户点名
+	   「确认框弹出时，底部的按钮栏未被遮罩层覆盖」，与练习/考试做题页是同一条栏、同一个病。
+	   uni.showActionSheet、picker 同理。
+	   统一抬到 10065——**这一档是唯一窗口**：高于 tabbar(1001) 与吸底操作栏(10063)，
+	   仍低于 uview 弹层（u-overlay 10070、u-popup / u-modal 10075），
 	   circle-comment 等处"u-modal 须在 uni.showModal 之上"的既有层级约定不受影响。
+	   代价要认：页面自绘浮层（9999 / 10000 那几档）此刻低于本档 ⇒ 确认框会连它们一起压住
+	   （这正是想要的：固定栏与自绘浮层都该被遮罩盖住）；仍压得住本档的只有 uview 弹层
+	   与做题页答题卡（10100 / 10110）。改这条阶梯任何一头都要对着这几个数重算。
 	   选择器与 uni-h5 自带规则同为单类/单标签，层级取决于样式注入顺序，
 	   故加 !important 保证生效（同下方 .uni-system-preview-image） */
 	uni-modal,
@@ -250,7 +256,7 @@
 	.uni-mask.uni-actionsheet__mask,
 	.uni-picker-container,
 	.uni-mask.uni-picker-mask {
-		z-index: 1010 !important;
+		z-index: 10065 !important;
 	}
 	/*  #endif  */
 

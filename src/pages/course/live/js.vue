@@ -18,6 +18,8 @@ import columnCourseModal from "@/pages/course/components/column-course-modal.vue
 import platformLimit from "@/pages/course/live/components/platform-limit.vue";
 import redpacketModal from "@/pages/course/live/redpacket/redpacket-modal.vue";
 import redpacketRecords from "@/pages/course/live/redpacket/records-modal.vue";
+// 讨论区带货商品卡片点开的商详层（2026-11-14）；壳复用工具条那两只已在用的 detail-popup
+import goodsDetailPopup from "@/pages/course/live/goods/goods-detail-popup.vue";
 // 分享有礼（直播拉新付费插件）：悬浮入口 + 活动列表/详情/受邀助力三层弹窗都收在这一只组件里，
 // 页面只负责把讨论区卡片那一次点击转进去（未安装时连挂载都进不去，判据在模板的 v-if）
 import shareGiftPopup from "@/pages/course/live/share-gift/share-gift-popup.vue";
@@ -70,6 +72,8 @@ export default {
     platformLimit,
     redpacketModal,
     redpacketRecords,
+    // 讨论区带货商品卡片点开的商详层（页面根挂载，见 live.vue 末尾）
+    goodsDetailPopup,
     shareGiftPopup,
     inviteRankEntry,
     shareModal
@@ -849,6 +853,22 @@ export default {
         return;
       }
       popup.openDetail(activityId);
+    },
+
+    /**
+     * 打开带货商品的商详层（讨论区那张商品气泡卡点进来，2026-11-14 用户点名）
+     * 负载 = 消息体里的 JSON（{goods_id, goods_type, title, subtitle, cover}）。
+     * 端路（H5 弹窗 / 非 H5 直跳）与九大类→页面映射都在 goods-detail-popup 一份实现里，
+     * 这一层只把载荷递下去，不在这里再抄一份路由表（M18⑧ / 硬约束 11）。
+     * 带货是核心功能、没有插件闸门；弹层没挂上时仍给一句原因，不留静默点击（M13）。
+     */
+    openLiveGoods(payload) {
+      const popup = this.$refs.goodsDetailPopup;
+      if (!popup || typeof popup.open !== 'function') {
+        uni.showToast({ title: '商品详情暂时打不开，请到商品列表里查看', icon: 'none' });
+        return;
+      }
+      popup.open(payload);
     },
 
     /**

@@ -1,0 +1,257 @@
+.db-result {
+	min-height: 100vh;
+	background: #f5f5f5;
+	/* 吸底两枚按钮：按钮行 40 + 上下内衬 10×2 + 安全区，留一点余量 */
+	padding-bottom: 84px;
+}
+
+/* 蓝底头图：参照图（375 宽）沿左侧留白条逐行实采 —— 蓝色渐变从顶到 274pt 收尾，
+   第一张白卡从 124.5pt 起；七档色值全部取采样值。
+   头图高 = 内衬 22 + 标签 21 + 环 150 + 底衬 172；卡片上提 145 后卡顶落在环底下方 27pt，
+   环与首卡不叠（沿用原来那一版的几何关系，只把「左右两支月桂」换成「一圈」） */
+.db-result-head {
+	background: linear-gradient(180deg, #1b77ff 0%, #3f8dfc 20%, #579bfe 30%, #79adfa 45%, #b1cff9 70%, #dbe6f7 90%, #f1f2f5 100%);
+	padding: 22px 16px 172px;
+	text-align: center;
+	color: #fff;
+}
+.db-result-head-label {
+	font-size: 15px;
+	line-height: 21px;
+	opacity: 0.92;
+}
+/* 环形月桂：一整圈把数字托在环心（参照产品是环绕式，不是左右各半支）。
+   环径 150 是按 PNG 实测内孔比反算的：内孔直径 = 150 × 0.617 ≈ 92pt，
+   32px 的「100%」约 80pt 宽，两侧各留 6pt（叶子不能再压到数字上） */
+.db-result-head-main {
+	position: relative;
+	width: 150px;
+	height: 150px;
+	margin: 2px auto 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.db-result-wreath {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+.db-result-head-value {
+	position: relative;
+	font-size: 32px;
+	line-height: 38px;
+	font-weight: 700;
+	letter-spacing: -1px;
+}
+.db-result-head-unit {
+	font-size: 15px;
+	font-weight: 600;
+	margin-left: 1px;
+}
+
+/* 卡片上提 145pt 落到参照图那一行（124.5）；卡间距 12 同取实测值。
+   白卡满宽（2026-11-22 用户点名，与刷题本其余页 .db-card 同一档），左右留白交给卡的 padding。
+   圆角一律直角（M21：卡片本身不给圆角） */
+.db-result-body {
+	margin-top: -145px;
+	padding: 0;
+}
+.db-card {
+	background: #fff;
+	border-radius: 0;
+	padding: 16px 14px;
+	margin-bottom: 12px;
+}
+.db-card:last-child {
+	margin-bottom: 0;
+}
+.db-card-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.db-card-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: #1d2129;
+	line-height: 20px;
+}
+
+/* 知识点行（与刷题目录同构）：父目录一行，子目录缩进 + 左侧竖线；
+   行首圆钮与刷题目录那两档同一口径（父级实心蓝 20、子级描边空心 20），
+   钮内是层级图标（父级分类 / 子级知识点条目），右侧一列是这一行的正确率
+   （与目录行的「继续上次 / ›」同位） */
+.db-group-item {
+	position: relative;
+	padding: 20px 0 11px;
+}
+.db-group-item:last-child {
+	padding-bottom: 0;
+}
+.db-group-item-child {
+	padding-left: 20px;
+}
+/* 子行左侧的竖线：连在上一行圆钮中心下方（20px 钮的圆心在 10px），
+   表示「属于上一级目录」 */
+.db-group-line {
+	position: absolute;
+	left: 9px;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: #e5e6eb;
+}
+.db-group-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.db-group-dot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #0968f6;
+	flex: 0 0 20px;
+	/* 钮内是自定义组件 tz-icon：进到小程序后，flex 居中的是**宿主节点**，
+	   而宿主自己的行盒由它继承到的字号/行高决定（两端默认行高不同），
+	   只写 flex 时小程序里图标会偏下半个到一个像素（2026-11-23 用户点名
+	   「知识点情况的 icon 没有垂直居中」）。把行盒钉死成「字号 = 图标 12、
+	   行高 = 钮高 20」，字形墨迹中心正好落在钮心（12px 下 fenlei / document
+	   墨迹中心均在行盒中心，tools/icon-text-baseline.py 实测偏差 ≤0.02px）。 */
+	font-size: 12px;
+	line-height: 20px;
+}
+.db-group-dot-child {
+	background: #fff;
+	border: 1px solid #0968f6;
+	box-sizing: border-box;
+}
+.db-group-name {
+	font-size: 14px;
+	line-height: 20px;
+	color: #1d2129;
+	font-weight: 500;
+	flex: 1 1 0;
+	min-width: 0;
+}
+.db-group-acc {
+	flex: 0 0 auto;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 600;
+	color: #0968f6;
+}
+/* 口径行与行名同一条左缘（缩进到名称文字下面：圆钮 20 + gap 8 = 28） */
+.db-group-meta {
+	font-size: 13px;
+	line-height: 18px;
+	color: #86909c;
+	margin-top: 7px;
+	padding-left: 28px;
+}
+
+/* 刷题情况：五格等分一行（一共 / 答对 / 答错 / 未答题 / 总用时）——「总用时」放得下就留在
+   第五列，放不下（「1150分33秒」这类长串）才整格折到第二行、停在第一列并居中
+   （2026-11-23 用户点名「要对齐一共」）。
+   折不折行由脚本按真实渲染宽度判定（js.vue measureTimeCell），不铺字数阈值：各端字号与屏宽
+   不同，按字数估会在小屏误判。两行共用一个浅蓝底，行距只由容器的 row-gap 给 */
+.db-stat-row {
+	display: flex;
+	flex-wrap: nowrap;
+	row-gap: 22px;
+	background: #f5f9ff;
+	border-radius: 4px;
+	padding: 25px 4px;
+	margin-top: 28px;
+}
+.db-stat-cell {
+	flex: 0 0 20%;
+	min-width: 0;
+	text-align: center;
+}
+/* 折行态：前四格回到四等分，总用时独占第二行、停在第一列（25%）并居中 ——
+   数字与标签都和上一行的「一共」落在同一条竖轴上（2026-11-23 用户点名
+   「总用时要在第一列对齐一共，现在完全靠近最左侧」）。不再用 JS 算左内衬：
+   那一版量出来贴住行左缘，既没对齐「一共」也不居中 */
+.db-stat-row.is-wrapped {
+	flex-wrap: wrap;
+}
+.db-stat-row.is-wrapped .db-stat-cell {
+	flex-basis: 25%;
+}
+.db-stat-row.is-wrapped .db-stat-cell-time {
+	flex-basis: 25%;
+	text-align: center;
+	box-sizing: border-box;
+}
+.db-stat-num {
+	font-size: 17px;
+	line-height: 24px;
+	font-weight: 700;
+	color: #1d2129;
+	white-space: nowrap;
+}
+/* 「总用时」的数字捏成内容宽（nowrap + inline-block）：量出来的宽度就是这段文本本身的宽度，
+   用来判它放不放得进五等分那一格（「一共」同档保留，避免两格宽度规则不一致） */
+.db-stat-num-total,
+.db-stat-num-time {
+	display: inline-block;
+}
+.db-stat-unit {
+	font-size: 11px;
+	font-weight: 600;
+	margin-left: 1px;
+}
+.db-stat-blue {
+	color: #0968f6;
+}
+.db-stat-green {
+	color: #00b42a;
+}
+.db-stat-red {
+	color: #f53f3f;
+}
+.db-stat-label {
+	font-size: 12px;
+	line-height: 18px;
+	color: #86909c;
+	margin-top: 8px;
+}
+
+/* 吸底两枚：左「全部解析」浅蓝底蓝字，右「错题解析」实心蓝（参照图）——
+   两枚等分，间距只由这条栏的 gap 给（硬约束 20：不给单项写 margin） */
+.db-result-btns {
+	gap: 12px;
+}
+.db-result-btn {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+/* ---------- 骨架屏 ---------- */
+.db-sk-line {
+	height: 12px;
+	border-radius: 4px;
+	background: #e5e6eb;
+}
+.db-sk-head-label {
+	width: 56px;
+	height: 14px;
+	margin: 0 auto 10px;
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.35);
+}
+/* 头图那一环：与真实版式同几何（150×150），骨架不塌高 */
+.db-sk-head-ring {
+	width: 150px;
+	height: 150px;
+	margin: 2px auto 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.18);
+}
